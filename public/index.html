@@ -2376,9 +2376,9 @@ body.dark .dark-toggle .dt-moon { display: none; }
   </div>
   <div class="container">
     <div class="showcase-tabs reveal">
-      <button class="showcase-tab active" onclick="showPanel('planilla')" data-i18n="tab_planilla">Planilla</button>
-      <button class="showcase-tab" onclick="showPanel('dashboard')" data-i18n="tab_dashboard">Dashboard</button>
-      <button class="showcase-tab" onclick="showPanel('ai')" data-i18n="tab_ai">Cobertura IA</button>
+      <button class="showcase-tab active" onclick="showPanel('planilla', this)" data-i18n="tab_planilla">Planilla</button>
+      <button class="showcase-tab" onclick="showPanel('dashboard', this)" data-i18n="tab_dashboard">Dashboard</button>
+      <button class="showcase-tab" onclick="showPanel('ai', this)" data-i18n="tab_ai">Cobertura IA</button>
     </div>
     <div class="showcase-frame">
       <div class="showcase-screen reveal d1">
@@ -2835,7 +2835,7 @@ body.dark .dark-toggle .dt-moon { display: none; }
       </div>
       <div class="faq-item reveal d2">
         <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq3_q">¿Cuanto tiempo tarda la implantacion?</div>
-        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq3_a">La mayoria de equipos estan operativos en menos de una hora. No hay migraciones complejas: configuras tu equipo, importas o creas la planilla, y empiezas a trabajar. Ofrecemos acompañamiento en la configuracion inicial.</div></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq3_a">El plazo de implantacion es de 1 a 5 dias desde la contratacion del servicio. Configuramos tu equipo, importamos o creamos la planilla y dejamos todo listo para que empieces a trabajar. Ofrecemos acompañamiento completo durante todo el proceso de puesta en marcha.</div></div>
       </div>
       <div class="faq-item reveal d3">
         <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq4_q">¿La IA sustituye al supervisor?</div>
@@ -2934,14 +2934,14 @@ body.dark .dark-toggle .dt-moon { display: none; }
     <div class="form-card reveal d2">
       <form id="contactForm" onsubmit="handleSubmit(event)">
         <div class="form-row">
-          <div class="fg"><label data-i18n="fl_name">Nombre completo</label><input type="text" placeholder="Tu nombre" data-i18n-ph="fl_ph_name" required></div>
-          <div class="fg"><label data-i18n="fl_email">Email profesional</label><input type="email" placeholder="tu@empresa.es" data-i18n-ph="fl_ph_email" required></div>
+          <div class="fg"><label for="cf-name" data-i18n="fl_name">Nombre completo</label><input id="cf-name" type="text" placeholder="Tu nombre" data-i18n-ph="fl_ph_name" required></div>
+          <div class="fg"><label for="cf-email" data-i18n="fl_email">Email profesional</label><input id="cf-email" type="email" placeholder="tu@empresa.es" data-i18n-ph="fl_ph_email" required></div>
         </div>
         <div class="form-row">
-          <div class="fg"><label data-i18n="fl_center">Centro / Empresa</label><input type="text" placeholder="Nombre de tu empresa" data-i18n-ph="fl_ph_center" required></div>
+          <div class="fg"><label for="cf-company" data-i18n="fl_center">Centro / Empresa</label><input id="cf-company" type="text" placeholder="Nombre de tu empresa" data-i18n-ph="fl_ph_center" required></div>
           <div class="fg">
-            <label data-i18n="fl_workers">Num. trabajadores</label>
-            <select required>
+            <label for="cf-workers" data-i18n="fl_workers">Num. trabajadores</label>
+            <select id="cf-workers" required>
               <option value="" disabled selected data-i18n="fl_select">Selecciona</option>
               <option data-i18n="fl_w1">1 – 10</option>
               <option data-i18n="fl_w2">11 – 25</option>
@@ -2951,8 +2951,8 @@ body.dark .dark-toggle .dt-moon { display: none; }
             </select>
           </div>
         </div>
-        <div class="fg"><label data-i18n="fl_service">Departamento / Area</label><input type="text" placeholder="Ej: Produccion, Logistica, Enfermeria, Seguridad..." data-i18n-ph="fl_ph_service"></div>
-        <div class="fg"><label data-i18n="fl_message">Cuentanos tu caso</label><textarea placeholder="Describe tu situacion actual, que turnos manejais, que problemas teneis..." data-i18n-ph="fl_ph_message" required></textarea></div>
+        <div class="fg"><label for="cf-dept" data-i18n="fl_service">Departamento / Area</label><input id="cf-dept" type="text" placeholder="Ej: Produccion, Logistica, Enfermeria, Seguridad..." data-i18n-ph="fl_ph_service"></div>
+        <div class="fg"><label for="cf-message" data-i18n="fl_message">Cuentanos tu caso</label><textarea id="cf-message" placeholder="Describe tu situacion actual, que turnos manejais, que problemas teneis..." data-i18n-ph="fl_ph_message" required></textarea></div>
         <button type="submit" class="form-submit" data-i18n="fl_submit">Enviar solicitud</button>
         <div class="form-note" data-i18n="fl_note">Te responderemos en menos de 24 horas laborables.</div>
       </form>
@@ -3229,12 +3229,12 @@ async function handleSubmit(e) {
   btn.disabled = true;
 
   const data = {
-    name: inputs[0].value,
-    email: inputs[1].value,
-    company: inputs[2].value,
-    workers: inputs[3].value,
-    department: inputs[4] ? inputs[4].value : '',
-    message: form.querySelector('textarea') ? form.querySelector('textarea').value : ''
+    name: document.getElementById('cf-name').value,
+    email: document.getElementById('cf-email').value,
+    company: document.getElementById('cf-company').value,
+    workers: document.getElementById('cf-workers').value,
+    department: document.getElementById('cf-dept').value || '',
+    message: document.getElementById('cf-message').value || ''
   };
 
   try {
@@ -3259,11 +3259,12 @@ async function handleSubmit(e) {
 }
 
 // ===================== SHOWCASE TABS =====================
-function showPanel(name) {
+function showPanel(name, btn) {
   document.querySelectorAll('.showcase-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.showcase-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  event.target.classList.add('active');
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 // ===================== i18n SYSTEM =====================
@@ -3317,7 +3318,7 @@ const translations = {
     faq_eyebrow: 'Preguntas frecuentes', faq_title: 'Resolvemos tus dudas',
     faq1_q: '¿Puedo importar mi Excel o cuadrante actual?', faq1_a: 'Si. Puedes importar tu planilla actual en PDF y Shiftia extrae los datos automaticamente. Tambien puedes crear la planilla desde cero en minutos.',
     faq2_q: '¿Funciona sin conexion a internet?', faq2_a: 'Shiftia es una app web que requiere conexion. Una vez cargada, puedes trabajar temporalmente offline y los cambios se sincronizaran al reconectar.',
-    faq3_q: '¿Cuanto tiempo tarda la implantacion?', faq3_a: 'La mayoria de equipos estan operativos en menos de una hora. Sin migraciones complejas.',
+    faq3_q: '¿Cuanto tiempo tarda la implantacion?', faq3_a: 'El plazo de implantacion es de 1 a 5 dias desde la contratacion. Configuramos tu equipo, importamos la planilla y te acompañamos en todo el proceso.',
     faq4_q: '¿La IA sustituye al supervisor?', faq4_a: 'No. Shiftia asiste sugiriendo candidatos, pero la decision final siempre es humana.',
     faq5_q: '¿Mis datos estan seguros?', faq5_a: 'Si. Datos cifrados, copias automaticas, cumplimiento RGPD y opcion on-premise.',
     faq6_q: '¿Puedo cancelar en cualquier momento?', faq6_a: 'Si. Sin permanencia. Cancela cuando quieras y exporta tus datos.',
@@ -3357,7 +3358,8 @@ const translations = {
     imp3_num: '100%', imp3_label: 'Reparto justo y visible', imp3_sub: 'Horas, turnos y carga de trabajo equilibrados. Tu equipo lo ve y confia',
     imp4_num: '24/7', imp4_label: 'Acceso total', imp4_sub: 'Desde cualquier dispositivo',
     show_eyebrow: 'Interfaz', show_title: 'Mira Shiftia en accion', show_desc: 'Una herramienta visual, rapida e intuitiva. Esto es lo que ven tus supervisores cada dia.',
-    tab_planilla: 'Planilla', tab_dashboard: 'Dashboard', tab_ai: 'Cobertura IA'
+    tab_planilla: 'Planilla', tab_dashboard: 'Dashboard', tab_ai: 'Cobertura IA',
+    chat_online: 'Online ahora', chat_ph: 'Escribe tu pregunta...', chat_s1: '¿Que es Shiftia?', chat_s2: '¿Cuanto cuesta?', chat_s3: '¿Como funciona la IA?', chat_s4: '¿Es seguro?', chat_s5: '¿Prueba gratis?'
   },
   en: {
     nav_features: 'Features', nav_usecases: 'Use', nav_pricing: 'Pricing',
@@ -3407,7 +3409,7 @@ const translations = {
     faq_eyebrow: 'FAQ', faq_title: 'Common questions answered',
     faq1_q: 'Can I import my current Excel or schedule?', faq1_a: 'Yes. Import your schedule as PDF and Shiftia extracts data automatically. Or create from scratch in minutes.',
     faq2_q: 'Does it work offline?', faq2_a: 'Shiftia is a web app requiring connection. Once loaded, you can work temporarily offline and changes sync when reconnected.',
-    faq3_q: 'How long does setup take?', faq3_a: 'Most teams are operational in under an hour. No complex migrations.',
+    faq3_q: 'How long does setup take?', faq3_a: 'Setup takes 1 to 5 business days from service activation. We configure your team, import your schedule, and guide you through the entire process.',
     faq4_q: 'Does AI replace the supervisor?', faq4_a: 'No. Shiftia assists by suggesting candidates, but the final decision is always human.',
     faq5_q: 'Is my data secure?', faq5_a: 'Yes. Encrypted data, automatic backups, GDPR compliant, and on-premise option available.',
     faq6_q: 'Can I cancel anytime?', faq6_a: 'Yes. No commitment. Cancel anytime and export your data.',
@@ -3447,7 +3449,8 @@ const translations = {
     imp3_num: '100%', imp3_label: 'Fair and visible workload', imp3_sub: 'Hours, shifts, and workload balanced. Your team sees it and trusts it',
     imp4_num: '24/7', imp4_label: 'Full access', imp4_sub: 'From any device',
     show_eyebrow: 'Interface', show_title: 'See Shiftia in action', show_desc: 'A visual, fast, and intuitive tool. This is what your supervisors see every day.',
-    tab_planilla: 'Roster', tab_dashboard: 'Dashboard', tab_ai: 'AI Coverage'
+    tab_planilla: 'Roster', tab_dashboard: 'Dashboard', tab_ai: 'AI Coverage',
+    chat_online: 'Online now', chat_ph: 'Type your question...', chat_s1: 'What is Shiftia?', chat_s2: 'How much does it cost?', chat_s3: 'How does the AI work?', chat_s4: 'Is it secure?', chat_s5: 'Free trial?'
   },
   de: {
     nav_features: 'Funktionen', nav_usecases: 'Einsatz', nav_pricing: 'Preise',
@@ -3497,7 +3500,7 @@ const translations = {
     faq_eyebrow: 'Häufige Fragen', faq_title: 'Wir beantworten Ihre Fragen',
     faq1_q: 'Kann ich meinen aktuellen Dienstplan importieren?', faq1_a: 'Ja. PDF importieren oder von Grund auf erstellen.',
     faq2_q: 'Funktioniert es offline?', faq2_a: 'Shiftia ist eine Web-App. Einmal geladen, können Sie vorübergehend offline arbeiten.',
-    faq3_q: 'Wie lange dauert die Einrichtung?', faq3_a: 'Die meisten Teams sind in unter einer Stunde einsatzbereit.',
+    faq3_q: 'Wie lange dauert die Einrichtung?', faq3_a: 'Die Einrichtung dauert 1 bis 5 Werktage ab Vertragsabschluss. Wir konfigurieren Ihr Team, importieren den Dienstplan und begleiten Sie durch den gesamten Prozess.',
     faq4_q: 'Ersetzt die KI den Vorgesetzten?', faq4_a: 'Nein. Shiftia unterstützt mit Vorschlägen, die Entscheidung bleibt beim Menschen.',
     faq5_q: 'Sind meine Daten sicher?', faq5_a: 'Ja. Verschlüsselt, automatische Backups, DSGVO-konform.',
     faq6_q: 'Kann ich jederzeit kündigen?', faq6_a: 'Ja. Keine Mindestlaufzeit. Jederzeit kündbar.',
@@ -3537,7 +3540,8 @@ const translations = {
     imp3_num: '100%', imp3_label: 'Faire und sichtbare Verteilung', imp3_sub: 'Stunden, Schichten und Arbeitsbelastung ausgeglichen. Ihr Team sieht es und vertraut',
     imp4_num: '24/7', imp4_label: 'Voller Zugang', imp4_sub: 'Von jedem Gerat',
     show_eyebrow: 'Oberflache', show_title: 'Shiftia in Aktion erleben', show_desc: 'Ein visuelles, schnelles und intuitives Tool. Das sehen Ihre Teamleiter jeden Tag.',
-    tab_planilla: 'Dienstplan', tab_dashboard: 'Dashboard', tab_ai: 'KI-Vertretung'
+    tab_planilla: 'Dienstplan', tab_dashboard: 'Dashboard', tab_ai: 'KI-Vertretung',
+    chat_online: 'Jetzt online', chat_ph: 'Schreibe deine Frage...', chat_s1: 'Was ist Shiftia?', chat_s2: 'Was kostet es?', chat_s3: 'Wie funktioniert die KI?', chat_s4: 'Ist es sicher?', chat_s5: 'Kostenlose Testphase?'
   },
   fr: {
     nav_features: 'Fonctionnalites', nav_usecases: 'Usage', nav_pricing: 'Tarifs',
@@ -3587,7 +3591,7 @@ const translations = {
     faq_eyebrow: 'Questions frequentes', faq_title: 'Vos questions, nos reponses',
     faq1_q: 'Puis-je importer mon planning actuel ?', faq1_a: 'Oui. Importez en PDF ou creez de zero en quelques minutes.',
     faq2_q: 'Fonctionne-t-il hors ligne ?', faq2_a: 'Shiftia est une app web. Une fois chargee, vous pouvez travailler temporairement hors ligne.',
-    faq3_q: 'Combien de temps prend la mise en place ?', faq3_a: 'La plupart des equipes sont operationnelles en moins d\'une heure.',
+    faq3_q: 'Combien de temps prend la mise en place ?', faq3_a: 'La mise en place prend de 1 a 5 jours ouvrables apres la souscription. Nous configurons votre equipe, importons le planning et vous accompagnons tout au long du processus.',
     faq4_q: 'L\'IA remplace-t-elle le superviseur ?', faq4_a: 'Non. Shiftia assiste avec des suggestions, la decision finale reste humaine.',
     faq5_q: 'Mes donnees sont-elles securisees ?', faq5_a: 'Oui. Chiffrees, sauvegardes automatiques, conforme RGPD.',
     faq6_q: 'Puis-je annuler a tout moment ?', faq6_a: 'Oui. Sans engagement. Annulez quand vous voulez.',
@@ -3627,7 +3631,8 @@ const translations = {
     imp3_num: '100%', imp3_label: 'Repartition juste et visible', imp3_sub: 'Heures, gardes et charge de travail equilibres. Votre equipe le voit et fait confiance',
     imp4_num: '24/7', imp4_label: 'Acces total', imp4_sub: 'Depuis n\'importe quel appareil',
     show_eyebrow: 'Interface', show_title: 'Decouvrez Shiftia en action', show_desc: 'Un outil visuel, rapide et intuitif. C\'est ce que vos cadres voient chaque jour.',
-    tab_planilla: 'Planning', tab_dashboard: 'Tableau de bord', tab_ai: 'Couverture IA'
+    tab_planilla: 'Planning', tab_dashboard: 'Tableau de bord', tab_ai: 'Couverture IA',
+    chat_online: 'En ligne', chat_ph: 'Ecrivez votre question...', chat_s1: 'Qu\'est-ce que Shiftia?', chat_s2: 'Combien ca coute?', chat_s3: 'Comment fonctionne l\'IA?', chat_s4: 'Est-ce securise?', chat_s5: 'Essai gratuit?'
   }
 };
 
@@ -3757,6 +3762,16 @@ function closeFeatModal() {
   document.body.style.overflow = '';
 }
 
+// Close modals and chat with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('featModal');
+    if (modal && modal.classList.contains('active')) { closeFeatModal(); return; }
+    const chatWin = document.getElementById('chatWindow');
+    if (chatWin && chatWin.classList.contains('open')) { toggleChat(); }
+  }
+});
+
 document.getElementById('featModal').addEventListener('click', (e) => {
   if (e.target === e.currentTarget) closeFeatModal();
 });
@@ -3843,7 +3858,7 @@ const chatKB = {
   'prueba gratis': '¡Si! Todos nuestros planes incluyen 30 dias de prueba completamente gratis, sin compromiso ni tarjeta de credito. Si no te convence, no pagas nada. Puedes empezar ahora mismo.',
   'gratis': '¡Claro! Ofrecemos 30 dias de prueba gratis en todos los planes, sin tarjeta ni compromiso. Cancela cuando quieras.',
   'implantar': 'La mayoria de equipos estan operativos en menos de 1 hora. No hay migraciones complejas: 1) Configuras tu equipo, 2) Importas tu planilla en PDF o la creas desde cero, 3) Empiezas a gestionar. Ofrecemos acompañamiento personalizado en la configuracion inicial.',
-  'implantacion': 'Es muy rapido. En menos de una hora tu equipo puede estar trabajando con Shiftia. Configuras trabajadores, importas la planilla y listo. Te acompañamos en todo el proceso.',
+  'implantacion': 'El plazo de implantacion es de 1 a 5 dias desde la contratacion. Configuramos tu equipo, importamos la planilla y te acompañamos en todo el proceso de puesta en marcha.',
   'importar excel': 'Puedes importar tu planilla actual en formato PDF y Shiftia extrae los datos automaticamente. Tambien puedes crear la planilla desde cero en minutos añadiendo tu equipo y configurando los turnos. Estamos trabajando en importacion directa desde Excel.',
   'excel': 'Shiftia sustituye a Excel para la gestion de turnos. Puedes importar tu cuadrante en PDF y la plataforma lo convierte automaticamente. Adios a las hojas de calculo compartidas por email.',
   'hospital': 'Shiftia es perfecto para hospitales y clinicas. Gestiona equipos mixtos de enfermeria, tecnicos y especialistas con rotacion de mañana, tarde y noche. Maneja conciliaciones, jornadas reducidas y restricciones medicas automaticamente.',
@@ -3883,19 +3898,32 @@ function findAnswer(q) {
   return 'No tengo una respuesta especifica para eso, pero puedo ayudarte con precios, funcionalidades, seguridad, implantacion o cualquier otra duda sobre Shiftia. Tambien puedes rellenar el formulario de contacto y te responderemos en menos de 24h.';
 }
 
+function sanitizeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatChatText(text) {
+  // Sanitize first, then apply safe markdown formatting
+  const safe = sanitizeHTML(text);
+  return safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+}
+
 function addMsg(text, isUser) {
   const body = document.getElementById('chatBody');
   const msg = document.createElement('div');
   msg.className = 'chat-msg ' + (isUser ? 'user' : 'bot');
   const avatarContent = isUser ? '<svg viewBox="0 0 24 24" fill="none" width="14" height="14"><circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/><path d="M4 21v-1a6 6 0 0112 0v1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>' : '<svg viewBox="0 0 40 40" fill="none" width="16" height="16"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="white" stroke-width="4" fill="none"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="white" stroke-width="4" fill="none"/></svg>';
-  const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
   msg.innerHTML = '<div class="chat-msg-avatar">' + avatarContent + '</div><div class="chat-msg-text"></div>';
   body.appendChild(msg);
   body.scrollTop = body.scrollHeight;
   if (isUser) {
-    msg.querySelector('.chat-msg-text').innerHTML = formatted;
+    // User input: sanitize to prevent XSS
+    msg.querySelector('.chat-msg-text').textContent = text;
   } else {
-    // Typing effect for bot messages
+    // Bot responses from chatKB are trusted but we sanitize anyway
+    const formatted = formatChatText(text);
     const textEl = msg.querySelector('.chat-msg-text');
     let i = 0;
     const chars = formatted;
@@ -3949,9 +3977,10 @@ function askSuggestion(btn) {
 
 // Rotating words
 const rotatingWords = document.querySelectorAll('.rw-word');
+let rwInterval = null;
 if (rotatingWords.length > 0) {
   let rwIndex = 0;
-  setInterval(() => {
+  rwInterval = setInterval(() => {
     rotatingWords[rwIndex].classList.remove('active');
     rwIndex = (rwIndex + 1) % rotatingWords.length;
     rotatingWords[rwIndex].classList.add('active');
@@ -4072,12 +4101,25 @@ function showSocialProof() {
   const time = spTimes[Math.floor(Math.random() * spTimes.length)];
   const initials = name.split(' ').map(w => w[0]).join('').replace('.','');
   document.getElementById('snAvatar').textContent = initials;
-  document.getElementById('snText').innerHTML = '<strong>' + name + '</strong> ' + action;
+  const snText = document.getElementById('snText');
+  snText.textContent = '';
+  const strong = document.createElement('strong');
+  strong.textContent = name;
+  snText.appendChild(strong);
+  snText.appendChild(document.createTextNode(' ' + action));
   document.getElementById('snTime').textContent = time;
   notif.classList.add('visible');
   setTimeout(() => notif.classList.remove('visible'), 4000);
 }
-setTimeout(() => { showSocialProof(); setInterval(showSocialProof, 25000); }, 8000);
+let spInterval = null;
+setTimeout(() => { showSocialProof(); spInterval = setInterval(showSocialProof, 25000); }, 8000);
+
+// Cleanup intervals on page unload to prevent memory leaks
+window.addEventListener('beforeunload', () => {
+  if (rwInterval) clearInterval(rwInterval);
+  if (autoSlide) clearInterval(autoSlide);
+  if (spInterval) clearInterval(spInterval);
+});
 
 // ====== STEP CONNECTOR FILL ANIMATION ======
 const stepObserver = new IntersectionObserver((entries) => {
@@ -4124,7 +4166,7 @@ document.addEventListener('keydown', (e) => {
     </div>
     <div class="chat-header-info">
       <div class="chat-header-name">Shiftia AI</div>
-      <div class="chat-header-status"><div class="chat-header-dot"></div> Online ahora</div>
+      <div class="chat-header-status"><div class="chat-header-dot"></div> <span data-i18n="chat_online">Online ahora</span></div>
     </div>
     <button class="chat-close" onclick="toggleChat()">&times;</button>
   </div>
@@ -4140,14 +4182,14 @@ document.addEventListener('keydown', (e) => {
     </div>
   </div>
   <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" onclick="askSuggestion(this)">¿Que es Shiftia?</button>
-    <button class="chat-suggestion" onclick="askSuggestion(this)">¿Cuanto cuesta?</button>
-    <button class="chat-suggestion" onclick="askSuggestion(this)">¿Como funciona la IA?</button>
-    <button class="chat-suggestion" onclick="askSuggestion(this)">¿Es seguro?</button>
-    <button class="chat-suggestion" onclick="askSuggestion(this)">¿Prueba gratis?</button>
+    <button class="chat-suggestion" onclick="askSuggestion(this)" data-i18n="chat_s1">¿Que es Shiftia?</button>
+    <button class="chat-suggestion" onclick="askSuggestion(this)" data-i18n="chat_s2">¿Cuanto cuesta?</button>
+    <button class="chat-suggestion" onclick="askSuggestion(this)" data-i18n="chat_s3">¿Como funciona la IA?</button>
+    <button class="chat-suggestion" onclick="askSuggestion(this)" data-i18n="chat_s4">¿Es seguro?</button>
+    <button class="chat-suggestion" onclick="askSuggestion(this)" data-i18n="chat_s5">¿Prueba gratis?</button>
   </div>
   <div class="chat-input-area">
-    <input class="chat-input" id="chatInput" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendChat()">
+    <input class="chat-input" id="chatInput" placeholder="Escribe tu pregunta..." data-i18n-ph="chat_ph" aria-label="Chat message" onkeydown="if(event.key==='Enter')sendChat()">
     <button class="chat-send" onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22l-4-9-9-4L22 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
 </div>

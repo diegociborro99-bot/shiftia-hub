@@ -17,9 +17,28 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// ====== RATE LIMITING ======
+const rateLimit = new Map();
+function isRateLimited(ip) {
+  const now = Date.now();
+  const attempts = rateLimit.get(ip) || [];
+  const recent = attempts.filter(t => now - t < 60000); // 1 minute window
+  rateLimit.set(ip, recent);
+  if (recent.length >= 3) return true; // Max 3 per minute
+  recent.push(now);
+  rateLimit.set(ip, recent);
+  return false;
+}
+
 // ====== CONTACT FORM API ======
 app.post('/api/contact', async (req, res) => {
   try {
+    // Rate limiting
+    const clientIP = req.ip || req.connection.remoteAddress;
+    if (isRateLimited(clientIP)) {
+      return res.status(429).json({ error: 'Demasiadas solicitudes. Espera un momento.' });
+    }
+
     const { name, email, company, workers, department, message } = req.body;
 
     // Validate required fields
@@ -27,11 +46,26 @@ app.post('/api/contact', async (req, res) => {
       return res.status(400).json({ error: 'Nombre y email son obligatorios' });
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Email no valido' });
+    }
+
+    // Sanitize HTML to prevent XSS in emails
+    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const safeName = esc(name);
+    const safeEmail = esc(email);
+    const safeCompany = esc(company);
+    const safeWorkers = esc(workers);
+    const safeDepartment = esc(department);
+    const safeMessage = esc(message);
+
     // 1. Send notification to Shiftia team
     await transporter.sendMail({
       from: `"Shiftia HUB" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
       to: 'highkeycvsender@gmail.com',
-      subject: `Nueva solicitud de demo — ${name} (${company || 'Sin empresa'})`,
+      subject: `Nueva solicitud de demo — ${safeName} (${safeCompany || 'Sin empresa'})`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
           <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
@@ -39,16 +73,16 @@ app.post('/api/contact', async (req, res) => {
           </div>
           <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
             <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 140px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${name}</td></tr>
-              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${email}" style="color: #2980b9;">${email}</a></td></tr>
-              ${company ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${company}</td></tr>` : ''}
-              ${workers ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Trabajadores</td><td style="padding: 10px 0; color: #1e293b;">${workers}</td></tr>` : ''}
-              ${department ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Departamento</td><td style="padding: 10px 0; color: #1e293b;">${department}</td></tr>` : ''}
+              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 140px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${safeName}</td></tr>
+              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${safeEmail}" style="color: #2980b9;">${safeEmail}</a></td></tr>
+              ${safeCompany ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${safeCompany}</td></tr>` : ''}
+              ${safeWorkers ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Trabajadores</td><td style="padding: 10px 0; color: #1e293b;">${safeWorkers}</td></tr>` : ''}
+              ${safeDepartment ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Departamento</td><td style="padding: 10px 0; color: #1e293b;">${safeDepartment}</td></tr>` : ''}
             </table>
-            ${message ? `
+            ${safeMessage ? `
               <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
                 <p style="color: #64748b; font-weight: 600; margin-bottom: 8px;">Mensaje:</p>
-                <p style="color: #1e293b; line-height: 1.6; background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">${message}</p>
+                <p style="color: #1e293b; line-height: 1.6; background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">${safeMessage}</p>
               </div>
             ` : ''}
             <p style="color: #94a3b8; font-size: 0.82rem; margin-top: 24px;">Enviado desde www.shiftia.es — ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}</p>
@@ -68,7 +102,7 @@ app.post('/api/contact', async (req, res) => {
             <h1 style="color: white; margin: 0; font-size: 1.5rem;">Shiftia</h1>
           </div>
           <div style="background: #ffffff; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-            <h2 style="color: #1e293b; margin-top: 0;">Hola ${name.split(' ')[0]},</h2>
+            <h2 style="color: #1e293b; margin-top: 0;">Hola ${safeName.split(' ')[0]},</h2>
             <p style="color: #475569; line-height: 1.7;">Hemos recibido tu solicitud correctamente. Nuestro equipo la revisara y te contactaremos en <strong>menos de 24 horas laborables</strong> con una propuesta personalizada.</p>
             <p style="color: #475569; line-height: 1.7;">Mientras tanto, si tienes cualquier duda, puedes responder a este email directamente.</p>
             <div style="margin: 28px 0; padding: 20px; background: #f0fdf9; border-radius: 8px; border-left: 4px solid #4ecdc4;">
