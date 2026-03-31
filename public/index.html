@@ -3408,32 +3408,49 @@ function selectDate(date) {
   updateDatetimeDisplay();
 }
 
-function showTimeSlots(date) {
+async function showTimeSlots(date) {
   const wrap = document.getElementById('timeSlotsWrap');
   const container = document.getElementById('timeSlots');
   const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
   const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   document.getElementById('timeSlotsLabel').textContent = `Horarios para ${dayNames[date.getDay()]} ${date.getDate()} de ${monthNames[date.getMonth()]}:`;
 
+  container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text3);padding:12px;">Cargando horarios...</div>';
+  wrap.classList.add('show');
+
+  // Fetch already booked slots for this date
+  let bookedSlots = [];
+  try {
+    const dateStr = date.toISOString().split('T')[0];
+    const resp = await fetch(`/api/booking/slots?date=${dateStr}`);
+    const data = await resp.json();
+    bookedSlots = data.booked || [];
+  } catch (e) { /* ignore — show all available */ }
+
   container.innerHTML = '';
   const now = new Date();
   const isToday = date.toDateString() === now.toDateString();
 
   for (let h = 8; h <= 18; h++) {
+    const timeStr = `${String(h).padStart(2,'0')}:00`;
     const el = document.createElement('div');
     el.className = 'time-slot';
-    el.textContent = `${String(h).padStart(2,'0')}:00`;
+    el.textContent = timeStr;
 
-    // If today, disable past hours
-    if (isToday && h <= now.getHours()) {
+    const isBooked = bookedSlots.includes(timeStr);
+    const isPast = isToday && h <= now.getHours();
+
+    if (isPast || isBooked) {
       el.classList.add('disabled');
+      if (isBooked) {
+        el.title = 'Hora ya reservada';
+        el.style.textDecoration = 'line-through';
+      }
     } else {
       el.addEventListener('click', () => selectTime(h, el));
     }
     container.appendChild(el);
   }
-
-  wrap.classList.add('show');
 }
 
 function selectTime(hour, el) {
@@ -3510,7 +3527,7 @@ async function handleSubmit(e) {
   } catch (err) {
     btn.textContent = 'Agendar llamada';
     btn.disabled = false;
-    alert('Error al agendar. Inténtalo de nuevo.');
+    alert(err.message || 'Error al agendar. Inténtalo de nuevo.');
   }
 }
 

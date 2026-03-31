@@ -149,13 +149,44 @@ function isValidEmail(email) {
 }
 
 // ====== EMAIL CONFIG ======
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER || 'highkeycvsender@gmail.com',
-    pass: process.env.GMAIL_APP_PASSWORD || ''
+const GMAIL_USER = process.env.GMAIL_USER || 'highkeycvsender@gmail.com';
+const GMAIL_PASS = process.env.GMAIL_APP_PASSWORD || '';
+
+let transporter = null;
+let emailReady = false;
+let emailError = null;
+
+if (GMAIL_PASS) {
+  transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: GMAIL_USER, pass: GMAIL_PASS }
+  });
+  // Verify SMTP connection on startup
+  transporter.verify()
+    .then(() => {
+      emailReady = true;
+      emailError = null;
+      console.log(`Email OK: connected as ${GMAIL_USER}`);
+    })
+    .catch(err => {
+      emailReady = false;
+      emailError = err.message;
+      console.error(`Email FAILED: ${err.message}`);
+    });
+} else {
+  console.warn('Email DISABLED: GMAIL_APP_PASSWORD not set');
+}
+
+// Safe send helper — only sends if transporter verified OK
+function sendMail(options) {
+  if (!transporter || !GMAIL_PASS) {
+    console.warn('Email skip: no transporter configured');
+    return Promise.resolve();
   }
-});
+  return transporter.sendMail(options)
+    .then(info => { console.log('Email sent:', options.subject); return info; })
+    .catch(err => { console.error('Email error:', err.message); });
+}
 
 // ====== AUTHENTICATION ROUTES ======
 // POST /api/auth/register
@@ -399,11 +430,9 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     res.json({ ok: true });
 
     // Fire-and-forget email (don't block response)
-    try {
-      if (process.env.GMAIL_APP_PASSWORD) {
-        transporter.sendMail({
-          from: `"Shiftia Support" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
-          to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
+    sendMail({
+          from: `"Shiftia Support" <${GMAIL_USER}>`,
+          to: process.env.SUPPORT_EMAIL || GMAIL_USER,
           subject: `[Soporte - ${catLabels[cat] || cat}] ${subject}`,
           html: `
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
@@ -424,12 +453,7 @@ app.post('/api/support', authMiddleware, async (req, res) => {
               </div>
             </div>
           `
-        }).then(() => console.log('Support email sent'))
-          .catch(e => console.warn('Support email failed:', e.message));
-      }
-    } catch (emailErr) {
-      console.warn('Support email setup failed:', emailErr.message);
-    }
+        });
   } catch (err) {
     console.error('Support ticket error:', err.message);
     res.status(500).json({ error: 'Error sending support request' });
@@ -509,11 +533,9 @@ app.post('/api/contact', async (req, res) => {
     res.json({ ok: true });
 
     // Fire-and-forget emails (don't block response)
-    try {
-      if (process.env.GMAIL_APP_PASSWORD) {
-        transporter.sendMail({
-          from: `"Shiftia HUB" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
-          to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
+    sendMail({
+          from: `"Shiftia HUB" <${GMAIL_USER}>`,
+          to: process.env.SUPPORT_EMAIL || GMAIL_USER,
           subject: `Nueva solicitud de demo — ${safeName} (${safeCompany || 'Sin empresa'})`,
           html: `
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
@@ -538,11 +560,10 @@ app.post('/api/contact', async (req, res) => {
               </div>
             </div>
           `
-        }).then(() => console.log('Contact notification email sent'))
-          .catch(e => console.warn('Contact notification email failed:', e.message));
+        });
 
-        transporter.sendMail({
-          from: `"Shiftia" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
+    sendMail({
+          from: `"Shiftia" <${GMAIL_USER}>`,
           to: email,
           subject: 'Hemos recibido tu solicitud — Shiftia',
           html: `
@@ -567,20 +588,31 @@ app.post('/api/contact', async (req, res) => {
               <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
             </div>
           `
-        }).then(() => console.log('Contact confirmation email sent'))
-          .catch(e => console.warn('Contact confirmation email failed:', e.message));
-      }
-    } catch (emailErr) {
-      console.warn('Contact email setup failed:', emailErr.message);
-    }
+        });
 
   } catch (err) {
     console.error('Contact form error:', err.message);
-    res.status(500).json({ error: 'Error al enviar. Intentalo de nuevo.' });
+    if (!res.headersSent) res.status(500).json({ error: 'Error al enviar. Intentalo de nuevo.' });
   }
 });
 
 // ====== CALL BOOKING API ======
+// GET booked slots for a date (so frontend can disable them)
+app.get('/api/booking/slots', async (req, res) => {
+  try {
+    const { date } = req.query;
+    if (!date) return res.json({ booked: [] });
+    const result = await pool.query(
+      "SELECT booking_time FROM bookings WHERE booking_date = $1 AND status != 'cancelled'",
+      [date]
+    );
+    res.json({ booked: result.rows.map(r => r.booking_time) });
+  } catch (err) {
+    // Table might not exist
+    res.json({ booked: [] });
+  }
+});
+
 app.post('/api/booking', async (req, res) => {
   try {
     // Rate limiting
@@ -615,6 +647,22 @@ app.post('/api/booking', async (req, res) => {
     }
 
     const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    // Check for conflicting booking (same day + same hour)
+    try {
+      const conflict = await pool.query(
+        'SELECT id FROM bookings WHERE booking_date = $1 AND booking_time = $2 AND status != $3 LIMIT 1',
+        [date, time, 'cancelled']
+      );
+      if (conflict.rows.length > 0) {
+        return res.status(409).json({ error: 'Esa hora ya está reservada. Por favor, elige otra.' });
+      }
+    } catch (conflictErr) {
+      // Table might not exist yet — that's fine, no conflict possible
+      if (!conflictErr.message.includes('does not exist')) {
+        console.warn('Conflict check failed:', conflictErr.message);
+      }
+    }
 
     // Save booking to database
     try {
@@ -652,12 +700,10 @@ app.post('/api/booking', async (req, res) => {
     res.json({ ok: true });
 
     // Fire-and-forget email notifications (don't block the response)
-    try {
-      if (process.env.GMAIL_APP_PASSWORD) {
-        // 1. Notification to Diego
-        transporter.sendMail({
-          from: `"Shiftia Booking" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
-          to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
+    // 1. Notification to Diego
+    sendMail({
+          from: `"Shiftia Booking" <${GMAIL_USER}>`,
+          to: process.env.SUPPORT_EMAIL || GMAIL_USER,
           subject: `📞 Nueva llamada agendada — ${esc(name)} (${esc(company || 'N/A')}) — ${prettyDate} ${time}h`,
           html: `
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -681,12 +727,11 @@ app.post('/api/booking', async (req, res) => {
               </div>
             </div>
           `
-        }).then(() => console.log('Booking notification email sent'))
-          .catch(e => console.warn('Booking notification email failed:', e.message));
+        });
 
-        // 2. Confirmation to client
-        transporter.sendMail({
-          from: `"Shiftia" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
+    // 2. Confirmation to client
+    sendMail({
+          from: `"Shiftia" <${GMAIL_USER}>`,
           to: email,
           subject: `Llamada confirmada — ${prettyDate} a las ${time}h — Shiftia`,
           html: `
@@ -709,12 +754,7 @@ app.post('/api/booking', async (req, res) => {
               <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
             </div>
           `
-        }).then(() => console.log('Booking confirmation email sent to', email))
-          .catch(e => console.warn('Booking confirmation email failed:', e.message));
-      }
-    } catch (emailErr) {
-      console.warn('Booking email setup failed:', emailErr.message);
-    }
+        });
 
   } catch (err) {
     console.error('Booking error:', err.message);
@@ -740,9 +780,19 @@ app.get('/docs', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'docs.html'));
 });
 
-// Health check
+// Health check with email diagnostics
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', version: '2.0.0', auth: 'enabled' });
+  res.json({
+    status: 'ok',
+    version: '2.1.0',
+    auth: 'enabled',
+    email: {
+      configured: !!GMAIL_PASS,
+      user: GMAIL_USER,
+      ready: emailReady,
+      error: emailError
+    }
+  });
 });
 
 // SPA fallback
