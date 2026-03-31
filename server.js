@@ -199,16 +199,28 @@ if (RESEND_KEY) {
   console.warn('Email DISABLED: set RESEND_API_KEY or GMAIL_APP_PASSWORD');
 }
 
+// Resend verified domain — change once you verify shiftia.es in Resend dashboard
+const RESEND_FROM = process.env.RESEND_FROM || 'Shiftia <onboarding@resend.dev>';
+
 // Safe send helper — uses Resend API or Gmail SMTP
 function sendMail(options) {
   if (RESEND_KEY) {
-    // Use Resend HTTP API
+    // Resend free tier: MUST use onboarding@resend.dev (or your verified domain)
+    // Extract display name from original "from" for friendlier emails
+    const displayMatch = (options.from || '').match(/^"?([^"<]+)"?\s*</);
+    const displayName = displayMatch ? displayMatch[1].trim() : 'Shiftia';
+    const fromAddr = RESEND_FROM.includes('<') ? RESEND_FROM : `${displayName} <${RESEND_FROM}>`;
+
     const payload = {
-      from: options.from || `Shiftia <onboarding@resend.dev>`,
+      from: fromAddr,
       to: Array.isArray(options.to) ? options.to : [options.to],
       subject: options.subject,
-      html: options.html
+      html: options.html,
+      reply_to: options.replyTo || GMAIL_USER
     };
+
+    console.log(`Resend: sending to ${payload.to.join(', ')} — ${payload.subject}`);
+
     return fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
@@ -216,11 +228,14 @@ function sendMail(options) {
     })
     .then(async r => {
       const body = await r.json();
-      if (!r.ok) throw new Error(body.message || JSON.stringify(body));
-      console.log('Email sent (Resend):', options.subject);
+      if (!r.ok) {
+        console.error('Resend API error:', r.status, JSON.stringify(body));
+        throw new Error(body.message || JSON.stringify(body));
+      }
+      console.log('Email sent OK (Resend):', options.subject, '→', payload.to.join(', '));
       return body;
     })
-    .catch(err => { console.error('Resend error:', err.message); });
+    .catch(err => { console.error('Resend failed:', err.message); });
   }
 
   if (transporter && emailReady) {
@@ -829,15 +844,32 @@ app.get('/docs', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    version: '2.2.0',
+    version: '2.3.0',
     auth: 'enabled',
     email: {
       provider: RESEND_KEY ? 'resend' : (GMAIL_PASS ? 'gmail-smtp' : 'none'),
+      from: RESEND_KEY ? RESEND_FROM : GMAIL_USER,
       ready: emailReady,
       error: emailError,
       user: GMAIL_USER
     }
   });
+});
+
+// Test email endpoint — send a test to verify delivery
+app.get('/api/test-email', async (req, res) => {
+  const to = req.query.to || process.env.SUPPORT_EMAIL || GMAIL_USER;
+  try {
+    const result = await sendMail({
+      from: `"Shiftia Test" <${GMAIL_USER}>`,
+      to: to,
+      subject: 'Test email desde Shiftia — ' + new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' }),
+      html: '<div style="font-family:sans-serif;padding:20px;"><h2 style="color:#2980b9;">Email de prueba</h2><p>Si ves esto, los emails de Shiftia funcionan correctamente.</p><p style="color:#64748b;font-size:0.85rem;">Enviado: ' + new Date().toISOString() + '</p></div>'
+    });
+    res.json({ ok: true, to, result: result || 'sent (no response body)', provider: RESEND_KEY ? 'resend' : 'smtp' });
+  } catch (err) {
+    res.json({ ok: false, to, error: err.message, provider: RESEND_KEY ? 'resend' : 'smtp' });
+  }
 });
 
 // SPA fallback
