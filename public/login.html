@@ -222,7 +222,8 @@
         }
 
         input[type="email"],
-        input[type="password"] {
+        input[type="password"],
+        input[type="text"] {
             width: 100%;
             padding: 12px 16px;
             border: 1px solid var(--border);
@@ -235,14 +236,16 @@
         }
 
         input[type="email"]:focus,
-        input[type="password"]:focus {
+        input[type="password"]:focus,
+        input[type="text"]:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
         }
 
         input[type="email"]::placeholder,
-        input[type="password"]::placeholder {
+        input[type="password"]::placeholder,
+        input[type="text"]::placeholder {
             color: var(--text3);
         }
 
@@ -449,19 +452,19 @@
             <form id="registerForm" style="display:none;">
                 <div class="form-group">
                     <label for="regName">Nombre completo</label>
-                    <input type="text" id="regName" placeholder="Tu nombre" required autocomplete="name">
+                    <input type="text" id="regName" name="name" placeholder="Tu nombre" required autocomplete="name">
                 </div>
                 <div class="form-group">
                     <label for="regEmail">Correo Electronico</label>
-                    <input type="email" id="regEmail" placeholder="tu@hospital.es" required autocomplete="email">
+                    <input type="email" id="regEmail" name="email" placeholder="tu@hospital.es" required autocomplete="email">
                 </div>
                 <div class="form-group">
                     <label for="regCompany">Hospital / Empresa</label>
-                    <input type="text" id="regCompany" placeholder="Nombre de tu centro (opcional)" autocomplete="organization">
+                    <input type="text" id="regCompany" name="company" placeholder="Nombre de tu centro (opcional)" autocomplete="organization">
                 </div>
                 <div class="form-group">
                     <label for="regPassword">Contrasena</label>
-                    <input type="password" id="regPassword" placeholder="Minimo 6 caracteres" required minlength="6" autocomplete="new-password">
+                    <input type="password" id="regPassword" name="password" placeholder="Minimo 6 caracteres" required minlength="6" autocomplete="new-password">
                 </div>
                 <button type="submit" class="submit-btn" id="regSubmitBtn">
                     <span id="regBtnText">Crear cuenta</span>

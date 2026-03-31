@@ -567,8 +567,11 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     }
 
     const user = userResult.rows[0];
-    const cat = category || 'general';
+    const cat = ['general', 'bug', 'billing', 'feature'].includes(category) ? category : 'general';
     const catLabels = { general: 'Consulta general', bug: 'Reporte de error', billing: 'Facturación', feature: 'Sugerencia de mejora' };
+
+    // HTML-escape helper for email content
+    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
     // Save ticket to database (primary)
     try {
@@ -601,22 +604,22 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     sendMail({
           from: `"Shiftia Support" <${GMAIL_USER}>`,
           to: process.env.SUPPORT_EMAIL || GMAIL_USER,
-          subject: `[Soporte - ${catLabels[cat] || cat}] ${subject}`,
+          subject: `[Soporte - ${catLabels[cat] || cat}] ${esc(subject)}`,
           html: `
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
               <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 1.4rem;">${catLabels[cat] || cat}: ${subject}</h1>
+                <h1 style="color: white; margin: 0; font-size: 1.4rem;">${esc(catLabels[cat] || cat)}: ${esc(subject)}</h1>
               </div>
               <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 110px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${user.name}</td></tr>
-                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${user.email}" style="color: #2980b9;">${user.email}</a></td></tr>
-                  ${user.company ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${user.company}</td></tr>` : ''}
-                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Categoría</td><td style="padding: 10px 0; color: #1e293b;">${catLabels[cat] || cat}</td></tr>
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 110px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${esc(user.name)}</td></tr>
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${esc(user.email)}" style="color: #2980b9;">${esc(user.email)}</a></td></tr>
+                  ${user.company ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${esc(user.company)}</td></tr>` : ''}
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Categoría</td><td style="padding: 10px 0; color: #1e293b;">${esc(catLabels[cat] || cat)}</td></tr>
                 </table>
                 <div style="padding: 20px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
                   <p style="color: #64748b; font-weight: 600; margin-bottom: 12px;">Mensaje:</p>
-                  <p style="color: #1e293b; line-height: 1.6; margin: 0; white-space: pre-wrap;">${message}</p>
+                  <p style="color: #1e293b; line-height: 1.6; margin: 0; white-space: pre-wrap;">${esc(message)}</p>
                 </div>
               </div>
             </div>
@@ -631,24 +634,27 @@ app.post('/api/support', authMiddleware, async (req, res) => {
 // ====== STRIPE CHECKOUT API ======
 
 // Create Checkout Session (requires auth)
-app.post('/api/stripe/checkout', async (req, res) => {
+app.post('/api/stripe/checkout', authMiddleware, async (req, res) => {
   if (!stripe) return res.status(400).json({ error: 'Stripe no configurado. Contacta con soporte.' });
 
   try {
-    // Auth check
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
-    const token = authHeader.replace('Bearer ', '');
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userResult = await pool.query('SELECT id, email, name, plan, stripe_customer_id FROM users WHERE id = $1', [decoded.userId]);
+    const userResult = await pool.query('SELECT id, email, name, plan, stripe_customer_id FROM users WHERE id = $1', [req.user.id]);
     if (userResult.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
     const user = userResult.rows[0];
 
-    const { plan, billing } = req.body; // plan: starter|pro|business, billing: monthly|annual
+    const { plan, billing } = req.body;
+
+    // Validate plan and billing values
+    const validPlans = ['starter', 'pro', 'business'];
+    const validBillings = ['monthly', 'annual'];
+    if (!validPlans.includes(plan) || !validBillings.includes(billing)) {
+      return res.status(400).json({ error: 'Plan o período de facturación no válido' });
+    }
+
     const priceKey = `${plan}_${billing}`;
     const priceId = STRIPE_PRICES[priceKey];
 
-    if (!priceId) return res.status(400).json({ error: `Plan no válido: ${plan} (${billing})` });
+    if (!priceId) return res.status(400).json({ error: `Precio no configurado para: ${plan} (${billing})` });
 
     // Reuse or create Stripe customer
     let customerId = user.stripe_customer_id;
@@ -688,15 +694,11 @@ app.post('/api/stripe/checkout', async (req, res) => {
 });
 
 // Customer portal (manage subscription, cancel, update card)
-app.post('/api/stripe/portal', async (req, res) => {
+app.post('/api/stripe/portal', authMiddleware, async (req, res) => {
   if (!stripe) return res.status(400).json({ error: 'Stripe no configurado' });
 
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
-    const token = authHeader.replace('Bearer ', '');
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userResult = await pool.query('SELECT stripe_customer_id FROM users WHERE id = $1', [decoded.userId]);
+    const userResult = await pool.query('SELECT stripe_customer_id FROM users WHERE id = $1', [req.user.id]);
     if (userResult.rows.length === 0 || !userResult.rows[0].stripe_customer_id) {
       return res.status(400).json({ error: 'No tienes una suscripción activa' });
     }
@@ -899,15 +901,35 @@ app.post('/api/booking', async (req, res) => {
       return res.status(400).json({ error: 'Email no válido' });
     }
 
+    // Validate date format (YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({ error: 'Formato de fecha no válido' });
+    }
+
+    // Validate time format (HH:MM)
+    if (!/^\d{2}:\d{2}$/.test(time)) {
+      return res.status(400).json({ error: 'Formato de hora no válido' });
+    }
+
     // Validate date is weekday and not in the past
     const bookingDate = new Date(date + 'T00:00:00');
+    if (isNaN(bookingDate.getTime())) {
+      return res.status(400).json({ error: 'Fecha no válida' });
+    }
     const dow = bookingDate.getDay();
     if (dow === 0 || dow === 6) {
       return res.status(400).json({ error: 'Solo se puede agendar de lunes a viernes' });
     }
 
+    // Check date is not in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (bookingDate < today) {
+      return res.status(400).json({ error: 'No se puede agendar en una fecha pasada' });
+    }
+
     // Validate time is 8-18
-    const hour = parseInt(time.split(':')[0]);
+    const hour = parseInt(time.split(':')[0], 10);
     if (hour < 8 || hour > 18) {
       return res.status(400).json({ error: 'Horario disponible: 8:00 - 18:00' });
     }
@@ -926,7 +948,8 @@ app.post('/api/booking', async (req, res) => {
     } catch (conflictErr) {
       // Table might not exist yet — that's fine, no conflict possible
       if (!conflictErr.message.includes('does not exist')) {
-        console.warn('Conflict check failed:', conflictErr.message);
+        console.error('Conflict check failed:', conflictErr.message);
+        return res.status(500).json({ error: 'Error al verificar disponibilidad. Inténtalo de nuevo.' });
       }
     }
 

@@ -3299,10 +3299,11 @@ function goToCheckout(plan) {
   const token = localStorage.getItem('shiftia_token');
   if (token) {
     // User logged in — go to dashboard with checkout intent
-    window.location.href = `/dashboard?intent=checkout&plan=${plan}&billing=${billing}`;
+    window.location.href = `/dashboard?intent=checkout&plan=${encodeURIComponent(plan)}&billing=${encodeURIComponent(billing)}`;
   } else {
     // Not logged in — go to login with redirect
-    window.location.href = `/login?redirect=/dashboard?intent=checkout%26plan=${plan}%26billing=${billing}`;
+    const redirectPath = `/dashboard?intent=checkout&plan=${encodeURIComponent(plan)}&billing=${encodeURIComponent(billing)}`;
+    window.location.href = `/login?redirect=${encodeURIComponent(redirectPath)}`;
   }
 }
 

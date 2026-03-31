@@ -1647,7 +1647,7 @@
             });
 
             // Plan options click
-            let selectedModalPlan = null;
+            selectedModalPlan = null;
             document.querySelectorAll('.plan-option').forEach(el => {
                 el.addEventListener('click', () => {
                     const plan = el.dataset.plan;
@@ -1681,29 +1681,9 @@
                 }
             });
 
-            // Check URL for checkout result
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('checkout') === 'success') {
-                showAlert('supportMsgBox', 'success', 'Tu plan ha sido actualizado correctamente. Los cambios se reflejarán en unos segundos.');
-                window.history.replaceState({}, '', '/dashboard');
-                setTimeout(() => location.reload(), 2000);
-            } else if (params.get('checkout') === 'cancel') {
-                showAlert('supportMsgBox', 'info', 'El proceso de pago ha sido cancelado.');
-                window.history.replaceState({}, '', '/dashboard');
-            } else if (params.get('intent') === 'checkout') {
-                // Coming from landing page — auto-start checkout
-                const intentPlan = params.get('plan');
-                const intentBilling = params.get('billing') || 'monthly';
-                if (intentPlan && ['starter', 'pro', 'business'].includes(intentPlan)) {
-                    isBillingAnnual = intentBilling === 'annual';
-                    window.history.replaceState({}, '', '/dashboard');
-                    setTimeout(() => startCheckout(intentPlan), 500);
-                }
-            }
-        }
-
         // ===== STRIPE / BILLING =====
         let isBillingAnnual = false;
+        let selectedModalPlan = null;
 
         const PLAN_PRICES = {
             starter:  { monthly: 20,  annual: 192,  monthlyEquiv: 16 },
@@ -1804,6 +1784,28 @@
                 }
             } catch (err) {
                 showAlert('supportMsgBox', 'error', err.message || 'Error al abrir el portal de pagos');
+            }
+        }
+
+        // Check URL for checkout result
+        {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('checkout') === 'success') {
+                showAlert('supportMsgBox', 'success', 'Tu plan ha sido actualizado correctamente. Los cambios se reflejarán en unos segundos.');
+                window.history.replaceState({}, '', '/dashboard');
+                setTimeout(() => location.reload(), 2000);
+            } else if (params.get('checkout') === 'cancel') {
+                showAlert('supportMsgBox', 'info', 'El proceso de pago ha sido cancelado.');
+                window.history.replaceState({}, '', '/dashboard');
+            } else if (params.get('intent') === 'checkout') {
+                // Coming from landing page — auto-start checkout
+                const intentPlan = params.get('plan');
+                const intentBilling = params.get('billing') || 'monthly';
+                if (intentPlan && ['starter', 'pro', 'business'].includes(intentPlan)) {
+                    isBillingAnnual = intentBilling === 'annual';
+                    window.history.replaceState({}, '', '/dashboard');
+                    setTimeout(() => startCheckout(intentPlan), 500);
+                }
             }
         }
 
