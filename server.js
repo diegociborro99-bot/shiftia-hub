@@ -4,10 +4,108 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
+const Stripe = require('stripe');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'shiftia-secret-dev-2024';
+
+// ====== STRIPE CONFIG ======
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+const APP_URL = process.env.APP_URL || 'https://shiftia.es';
+
+// Stripe price IDs — set these in Railway after creating products in Stripe dashboard
+const STRIPE_PRICES = {
+  starter_monthly:  process.env.STRIPE_PRICE_STARTER_MONTHLY  || '',
+  starter_annual:   process.env.STRIPE_PRICE_STARTER_ANNUAL   || '',
+  pro_monthly:      process.env.STRIPE_PRICE_PRO_MONTHLY      || '',
+  pro_annual:       process.env.STRIPE_PRICE_PRO_ANNUAL       || '',
+  business_monthly: process.env.STRIPE_PRICE_BUSINESS_MONTHLY || '',
+  business_annual:  process.env.STRIPE_PRICE_BUSINESS_ANNUAL  || '',
+};
+
+// Stripe webhook MUST receive raw body — register BEFORE express.json()
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) return res.status(400).json({ error: 'Stripe not configured' });
+
+  let event;
+  try {
+    if (STRIPE_WEBHOOK_SECRET) {
+      event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
+    } else {
+      event = JSON.parse(req.body);
+    }
+  } catch (err) {
+    console.error('Stripe webhook signature failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  console.log('Stripe webhook:', event.type);
+
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const userId = session.metadata?.user_id;
+        const plan = session.metadata?.plan;
+        const billing = session.metadata?.billing;
+        const stripeCustomerId = session.customer;
+        const subscriptionId = session.subscription;
+
+        if (userId && plan) {
+          const workersMap = { starter: 15, pro: 40, business: -1 };
+          await pool.query(
+            `UPDATE users SET plan = $1, plan_status = 'active', workers_limit = $2,
+             stripe_customer_id = $3, stripe_subscription_id = $4, billing_cycle = $5,
+             next_billing_date = NOW() + INTERVAL '1 ${billing === 'annual' ? 'year' : 'month'}'
+             WHERE id = $6`,
+            [plan, workersMap[plan] || 15, stripeCustomerId, subscriptionId, billing || 'monthly', userId]
+          );
+          console.log(`Plan updated: user ${userId} → ${plan} (${billing})`);
+        }
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const sub = event.data.object;
+        const status = sub.status; // active, past_due, canceled, unpaid
+        if (sub.metadata?.user_id) {
+          const planStatus = status === 'active' ? 'active' : (status === 'canceled' ? 'cancelled' : 'past_due');
+          await pool.query(
+            `UPDATE users SET plan_status = $1 WHERE id = $2`,
+            [planStatus, sub.metadata.user_id]
+          );
+          console.log(`Subscription ${status} for user ${sub.metadata.user_id}`);
+        }
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object;
+        if (sub.metadata?.user_id) {
+          await pool.query(
+            `UPDATE users SET plan = 'trial', plan_status = 'active', workers_limit = 25,
+             stripe_subscription_id = NULL, billing_cycle = NULL WHERE id = $1`,
+            [sub.metadata.user_id]
+          );
+          console.log(`Subscription cancelled → trial for user ${sub.metadata.user_id}`);
+        }
+        break;
+      }
+
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object;
+        console.warn('Payment failed for customer:', invoice.customer);
+        break;
+      }
+    }
+  } catch (err) {
+    console.error('Webhook handler error:', err.message);
+  }
+
+  res.json({ received: true });
+});
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -52,6 +150,16 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT NOW()
       );
     `);
+
+    // Add Stripe columns if missing
+    const stripeCols = [
+      { name: 'stripe_customer_id', type: 'VARCHAR(255)' },
+      { name: 'stripe_subscription_id', type: 'VARCHAR(255)' },
+      { name: 'billing_cycle', type: "VARCHAR(20) DEFAULT 'monthly'" }
+    ];
+    for (const col of stripeCols) {
+      await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS ${col.name} ${col.type}`).catch(() => {});
+    }
 
     // Create support tickets table
     await client.query(`
@@ -133,7 +241,7 @@ function authMiddleware(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    req.user = { id: decoded.userId || decoded.id, email: decoded.email };
     next();
   } catch (err) {
     console.error('Token verification error:', err.message);
@@ -264,9 +372,9 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
-    // Validate password strength (at least 8 chars)
-    if (password.length < 8) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    // Validate password strength (at least 6 chars)
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'La contrasena debe tener al menos 6 caracteres' });
     }
 
     // Check if email already exists
@@ -290,7 +398,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { userId: user.id, email: user.email },
       JWT_SECRET,
       { expiresIn: '30d' }
     );
@@ -328,7 +436,7 @@ app.post('/api/auth/login', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { userId: user.id, email: user.email },
       JWT_SECRET,
       { expiresIn: '30d' }
     );
@@ -347,7 +455,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/auth/me', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, email, name, company, plan, plan_status, workers_limit, next_billing_date, created_at, updated_at FROM users WHERE id = $1',
+      'SELECT id, email, name, company, plan, plan_status, workers_limit, next_billing_date, billing_cycle, stripe_customer_id, stripe_subscription_id, created_at, updated_at FROM users WHERE id = $1',
       [req.user.id]
     );
 
@@ -518,6 +626,104 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     console.error('Support ticket error:', err.message);
     res.status(500).json({ error: 'Error sending support request' });
   }
+});
+
+// ====== STRIPE CHECKOUT API ======
+
+// Create Checkout Session (requires auth)
+app.post('/api/stripe/checkout', async (req, res) => {
+  if (!stripe) return res.status(400).json({ error: 'Stripe no configurado. Contacta con soporte.' });
+
+  try {
+    // Auth check
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
+    const token = authHeader.replace('Bearer ', '');
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userResult = await pool.query('SELECT id, email, name, plan, stripe_customer_id FROM users WHERE id = $1', [decoded.userId]);
+    if (userResult.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
+    const user = userResult.rows[0];
+
+    const { plan, billing } = req.body; // plan: starter|pro|business, billing: monthly|annual
+    const priceKey = `${plan}_${billing}`;
+    const priceId = STRIPE_PRICES[priceKey];
+
+    if (!priceId) return res.status(400).json({ error: `Plan no válido: ${plan} (${billing})` });
+
+    // Reuse or create Stripe customer
+    let customerId = user.stripe_customer_id;
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        name: user.name,
+        metadata: { user_id: String(user.id) }
+      });
+      customerId = customer.id;
+      await pool.query('UPDATE users SET stripe_customer_id = $1 WHERE id = $2', [customerId, user.id]);
+    }
+
+    // Create Checkout Session
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: [{ price: priceId, quantity: 1 }],
+      metadata: { user_id: String(user.id), plan, billing },
+      subscription_data: {
+        metadata: { user_id: String(user.id), plan, billing }
+      },
+      success_url: `${APP_URL}/dashboard?checkout=success&plan=${plan}`,
+      cancel_url: `${APP_URL}/dashboard?checkout=cancel`,
+      locale: 'es',
+      allow_promotion_codes: true,
+    });
+
+    console.log(`Checkout session created: user ${user.id} → ${plan} (${billing}) — ${session.id}`);
+    res.json({ url: session.url });
+
+  } catch (err) {
+    console.error('Stripe checkout error:', err.message);
+    res.status(500).json({ error: 'Error al crear sesión de pago' });
+  }
+});
+
+// Customer portal (manage subscription, cancel, update card)
+app.post('/api/stripe/portal', async (req, res) => {
+  if (!stripe) return res.status(400).json({ error: 'Stripe no configurado' });
+
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'No autorizado' });
+    const token = authHeader.replace('Bearer ', '');
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userResult = await pool.query('SELECT stripe_customer_id FROM users WHERE id = $1', [decoded.userId]);
+    if (userResult.rows.length === 0 || !userResult.rows[0].stripe_customer_id) {
+      return res.status(400).json({ error: 'No tienes una suscripción activa' });
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: userResult.rows[0].stripe_customer_id,
+      return_url: `${APP_URL}/dashboard`,
+    });
+
+    res.json({ url: portalSession.url });
+  } catch (err) {
+    console.error('Stripe portal error:', err.message);
+    res.status(500).json({ error: 'Error al abrir el portal de pagos' });
+  }
+});
+
+// Get available prices for frontend
+app.get('/api/stripe/prices', (req, res) => {
+  const configured = Object.values(STRIPE_PRICES).some(v => v);
+  res.json({
+    configured,
+    plans: {
+      starter:  { monthly: 20,  annual: 192,  monthlyEquiv: 16 },
+      pro:      { monthly: 30,  annual: 288,  monthlyEquiv: 24 },
+      business: { monthly: 50,  annual: 480,  monthlyEquiv: 40 }
+    }
+  });
 });
 
 // ====== RATE LIMITING ======

@@ -762,6 +762,81 @@
             color: var(--text3);
         }
 
+        /* Billing toggle */
+        .billing-toggle-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 1.25rem;
+        }
+        .billing-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text3);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .billing-label.active { color: var(--text1); }
+        .billing-switch {
+            width: 44px; height: 24px;
+            border-radius: 12px;
+            background: var(--border);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+        .billing-switch.annual { background: linear-gradient(135deg, #4ecdc4, #2980b9); }
+        .billing-switch-knob {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            position: absolute;
+            top: 3px; left: 3px;
+            transition: left 0.3s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .billing-switch.annual .billing-switch-knob { left: 23px; }
+        .billing-save {
+            font-size: 0.7rem;
+            background: linear-gradient(135deg, #4ecdc4, #2980b9);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-weight: 600;
+        }
+        .plan-option-annual-price {
+            font-size: 0.75rem;
+            color: var(--text3);
+            margin-top: 4px;
+        }
+        .plan-checkout-btn {
+            margin-top: 1.25rem;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4ecdc4, #2980b9);
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .plan-checkout-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(41,128,185,0.3); }
+        .plan-checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .plan-manage-link {
+            display: block;
+            text-align: center;
+            margin-top: 0.75rem;
+            font-size: 0.82rem;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .navbar {
@@ -896,7 +971,11 @@
                             </div>
                         </div>
                         <div class="subscription-detail">
-                            <div class="subscription-label">Próxima facturación</div>
+                            <div class="subscription-label">Ciclo de facturacion</div>
+                            <div class="subscription-value" id="billingCycle">—</div>
+                        </div>
+                        <div class="subscription-detail">
+                            <div class="subscription-label">Proxima facturacion</div>
                             <div class="subscription-value" id="nextBillingDate">—</div>
                         </div>
                     </div>
@@ -906,10 +985,11 @@
                             <div class="subscription-value" id="workerLimit">—</div>
                         </div>
                         <div class="subscription-detail">
-                            <div class="subscription-label">Coste mensual</div>
+                            <div class="subscription-label">Coste</div>
                             <div class="subscription-value" id="monthlyCost">—</div>
                         </div>
                         <button class="change-plan-btn" id="changePlanBtn">Cambiar plan</button>
+                        <button class="change-plan-btn" id="manageSubBtn" style="display:none;margin-top:8px;background:transparent;border:1px solid var(--primary);color:var(--primary);" onclick="openBillingPortal()">Gestionar suscripcion</button>
                     </div>
                 </div>
                 <!-- Workers usage bar -->
@@ -1043,25 +1123,40 @@
         <div class="modal-box">
             <button class="modal-close" id="planModalClose">&times;</button>
             <h2 class="modal-title">Cambiar Plan</h2>
-            <p style="color: var(--text2); margin-bottom: 1.5rem; font-size: 0.92rem;">Selecciona el plan que mejor se adapte a tu hospital.</p>
+            <p style="color: var(--text2); margin-bottom: 1rem; font-size: 0.92rem;">Selecciona el plan que mejor se adapte a tu hospital.</p>
+
+            <div class="billing-toggle-wrap">
+                <span class="billing-label active" id="blMonthly">Mensual</span>
+                <button class="billing-switch" id="billingSwitch" onclick="toggleBilling()">
+                    <div class="billing-switch-knob"></div>
+                </button>
+                <span class="billing-label" id="blAnnual">Anual <span class="billing-save">-20%</span></span>
+            </div>
+
             <div class="plan-options">
                 <div class="plan-option" data-plan="starter">
                     <div class="plan-option-name">Starter</div>
-                    <div class="plan-option-price">€20<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-price" id="priceStarter">€20<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-annual-price" id="annualInfoStarter"></div>
                     <div class="plan-option-workers">Hasta 15 trabajadores</div>
                 </div>
                 <div class="plan-option" data-plan="pro">
                     <div class="plan-option-name">Pro</div>
-                    <div class="plan-option-price">€30<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-price" id="pricePro">€30<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-annual-price" id="annualInfoPro"></div>
                     <div class="plan-option-workers">Hasta 40 trabajadores</div>
                 </div>
                 <div class="plan-option" data-plan="business">
                     <div class="plan-option-name">Business</div>
-                    <div class="plan-option-price">€50<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-price" id="priceBusiness">€50<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-annual-price" id="annualInfoBusiness"></div>
                     <div class="plan-option-workers">Trabajadores ilimitados</div>
                 </div>
             </div>
-            <p style="color: var(--text3); font-size: 0.82rem; margin-top: 1.25rem; text-align: center;">Sin permanencia. 30 días de prueba gratis. Si pagas anual, te ahorras un 20%.</p>
+
+            <button class="plan-checkout-btn" id="planCheckoutBtn" disabled>Selecciona un plan</button>
+            <span class="plan-manage-link" id="manageSubLink" style="display:none;" onclick="openBillingPortal()">Gestionar suscripcion actual</span>
+            <p style="color: var(--text3); font-size: 0.82rem; margin-top: 1rem; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 dias.</p>
         </div>
     </div>
 
@@ -1168,7 +1263,20 @@
             const plan = u.plan || 'trial';
             const info = PLAN_INFO[plan] || PLAN_INFO.trial;
             document.getElementById('planName').textContent = info.name;
-            document.getElementById('monthlyCost').textContent = info.cost === 0 ? 'Gratis' : `€${info.cost}/mes`;
+
+            // Billing cycle & cost
+            const cycle = u.billing_cycle || 'monthly';
+            const isAnnualPlan = cycle === 'annual';
+            document.getElementById('billingCycle').textContent = isAnnualPlan ? 'Anual' : (plan === 'trial' ? '—' : 'Mensual');
+            if (info.cost === 0) {
+                document.getElementById('monthlyCost').textContent = 'Gratis';
+            } else if (isAnnualPlan) {
+                const annualPrices = { starter: 192, pro: 288, business: 480 };
+                const annualTotal = annualPrices[plan] || info.cost * 12;
+                document.getElementById('monthlyCost').textContent = `€${annualTotal}/año (€${Math.round(annualTotal/12)}/mes)`;
+            } else {
+                document.getElementById('monthlyCost').textContent = `€${info.cost}/mes`;
+            }
 
             const limit = u.workers_limit || (info.workers === -1 ? 9999 : info.workers);
             const isUnlimited = info.workers === -1 || limit >= 9999;
@@ -1177,15 +1285,20 @@
             // Status badge
             const statusEl = document.getElementById('planStatus');
             const status = u.plan_status || 'active';
-            statusEl.textContent = status === 'active' ? 'Activo' : status === 'trial' ? 'Prueba' : 'Inactivo';
-            statusEl.className = 'status-badge ' + (status === 'active' ? 'badge-active' : status === 'trial' ? 'badge-trial' : 'badge-inactive');
+            const statusLabels = { active: 'Activo', trial: 'Prueba', past_due: 'Pago pendiente', cancelled: 'Cancelado' };
+            statusEl.textContent = statusLabels[status] || status;
+            statusEl.className = 'status-badge ' + (status === 'active' ? 'badge-active' : status === 'past_due' ? 'badge-warning' : 'badge-inactive');
+
+            // Show manage subscription button if has Stripe subscription
+            const hasStripe = u.stripe_subscription_id;
+            document.getElementById('manageSubBtn').style.display = hasStripe ? 'block' : 'none';
 
             // Next billing
             if (u.next_billing_date) {
                 const d = new Date(u.next_billing_date);
                 document.getElementById('nextBillingDate').textContent = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
             } else {
-                document.getElementById('nextBillingDate').textContent = 'No programada';
+                document.getElementById('nextBillingDate').textContent = plan === 'trial' ? 'Sin suscripcion activa' : 'No programada';
             }
 
             // Workers usage bar
@@ -1524,7 +1637,7 @@
 
             // Plan modal
             document.getElementById('changePlanBtn').addEventListener('click', () => {
-                document.getElementById('planModal').classList.add('show');
+                openPlanModal();
             });
             document.getElementById('planModalClose').addEventListener('click', () => {
                 document.getElementById('planModal').classList.remove('show');
@@ -1534,16 +1647,30 @@
             });
 
             // Plan options click
+            let selectedModalPlan = null;
             document.querySelectorAll('.plan-option').forEach(el => {
                 el.addEventListener('click', () => {
-                    const selectedPlan = el.dataset.plan;
+                    const plan = el.dataset.plan;
                     const userPlan = currentUser ? (currentUser.plan === 'enterprise' ? 'business' : currentUser.plan) : '';
-                    if (userPlan === selectedPlan) return;
                     document.querySelectorAll('.plan-option').forEach(o => o.classList.remove('current'));
                     el.classList.add('current');
-                    showAlert('supportMsgBox', 'info', `Para cambiar al plan ${PLAN_INFO[selectedPlan]?.name || selectedPlan}, contacta con soporte@shiftia.es`);
-                    document.getElementById('planModal').classList.remove('show');
+                    selectedModalPlan = plan;
+                    const btn = document.getElementById('planCheckoutBtn');
+                    if (userPlan === plan && currentUser.stripe_subscription_id) {
+                        btn.textContent = 'Plan actual';
+                        btn.disabled = true;
+                    } else {
+                        const billing = isBillingAnnual ? 'anual' : 'mensual';
+                        const info = PLAN_INFO[plan] || {};
+                        btn.textContent = `Contratar ${info.name || plan} (${billing})`;
+                        btn.disabled = false;
+                    }
                 });
+            });
+
+            // Checkout button
+            document.getElementById('planCheckoutBtn').addEventListener('click', () => {
+                if (selectedModalPlan) startCheckout(selectedModalPlan);
             });
 
             // Escape key closes modal
@@ -1553,6 +1680,131 @@
                     document.getElementById('notifDropdown').classList.remove('show');
                 }
             });
+
+            // Check URL for checkout result
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('checkout') === 'success') {
+                showAlert('supportMsgBox', 'success', 'Tu plan ha sido actualizado correctamente. Los cambios se reflejarán en unos segundos.');
+                window.history.replaceState({}, '', '/dashboard');
+                setTimeout(() => location.reload(), 2000);
+            } else if (params.get('checkout') === 'cancel') {
+                showAlert('supportMsgBox', 'info', 'El proceso de pago ha sido cancelado.');
+                window.history.replaceState({}, '', '/dashboard');
+            } else if (params.get('intent') === 'checkout') {
+                // Coming from landing page — auto-start checkout
+                const intentPlan = params.get('plan');
+                const intentBilling = params.get('billing') || 'monthly';
+                if (intentPlan && ['starter', 'pro', 'business'].includes(intentPlan)) {
+                    isBillingAnnual = intentBilling === 'annual';
+                    window.history.replaceState({}, '', '/dashboard');
+                    setTimeout(() => startCheckout(intentPlan), 500);
+                }
+            }
+        }
+
+        // ===== STRIPE / BILLING =====
+        let isBillingAnnual = false;
+
+        const PLAN_PRICES = {
+            starter:  { monthly: 20,  annual: 192,  monthlyEquiv: 16 },
+            pro:      { monthly: 30,  annual: 288,  monthlyEquiv: 24 },
+            business: { monthly: 50,  annual: 480,  monthlyEquiv: 40 }
+        };
+
+        function toggleBilling() {
+            isBillingAnnual = !isBillingAnnual;
+            document.getElementById('billingSwitch').classList.toggle('annual', isBillingAnnual);
+            document.getElementById('blMonthly').classList.toggle('active', !isBillingAnnual);
+            document.getElementById('blAnnual').classList.toggle('active', isBillingAnnual);
+            updatePlanPrices();
+            // Reset checkout button
+            selectedModalPlan = null;
+            document.querySelectorAll('.plan-option').forEach(o => o.classList.remove('current'));
+            const btn = document.getElementById('planCheckoutBtn');
+            btn.textContent = 'Selecciona un plan';
+            btn.disabled = true;
+            // Re-mark current plan
+            markCurrentPlan();
+        }
+
+        function updatePlanPrices() {
+            for (const [plan, prices] of Object.entries(PLAN_PRICES)) {
+                const priceEl = document.getElementById('price' + plan.charAt(0).toUpperCase() + plan.slice(1));
+                const annualEl = document.getElementById('annualInfo' + plan.charAt(0).toUpperCase() + plan.slice(1));
+                if (isBillingAnnual) {
+                    priceEl.innerHTML = `€${prices.monthlyEquiv}<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span>`;
+                    annualEl.textContent = `Facturado €${prices.annual}/año`;
+                } else {
+                    priceEl.innerHTML = `€${prices.monthly}<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span>`;
+                    annualEl.textContent = '';
+                }
+            }
+        }
+
+        function openPlanModal() {
+            document.getElementById('planModal').classList.add('show');
+            updatePlanPrices();
+            markCurrentPlan();
+            // Show manage link if user has subscription
+            const hasSubscription = currentUser && currentUser.stripe_subscription_id;
+            document.getElementById('manageSubLink').style.display = hasSubscription ? 'block' : 'none';
+            // Reset button
+            const btn = document.getElementById('planCheckoutBtn');
+            btn.textContent = 'Selecciona un plan';
+            btn.disabled = true;
+            selectedModalPlan = null;
+        }
+
+        function markCurrentPlan() {
+            const userPlan = currentUser ? (currentUser.plan === 'enterprise' ? 'business' : currentUser.plan) : '';
+            document.querySelectorAll('.plan-option').forEach(el => {
+                el.classList.toggle('current', el.dataset.plan === userPlan);
+            });
+        }
+
+        async function startCheckout(plan) {
+            const btn = document.getElementById('planCheckoutBtn');
+            btn.disabled = true;
+            btn.textContent = 'Redirigiendo a Stripe...';
+
+            try {
+                const token = localStorage.getItem('shiftia_token');
+                const billing = isBillingAnnual ? 'annual' : 'monthly';
+                const res = await fetch('/api/stripe/checkout', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan, billing })
+                });
+                const data = await res.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error(data.error || 'Error al crear sesión de pago');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = 'Reintentar pago';
+                showAlert('supportMsgBox', 'error', err.message || 'Error al conectar con Stripe');
+                document.getElementById('planModal').classList.remove('show');
+            }
+        }
+
+        async function openBillingPortal() {
+            try {
+                const token = localStorage.getItem('shiftia_token');
+                const res = await fetch('/api/stripe/portal', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error(data.error || 'Error');
+                }
+            } catch (err) {
+                showAlert('supportMsgBox', 'error', err.message || 'Error al abrir el portal de pagos');
+            }
         }
 
         // ===== ACTIONS =====

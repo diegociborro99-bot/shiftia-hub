@@ -2194,7 +2194,7 @@ body.dark .dark-toggle .dt-moon { display: none; }
         </a>
         <a href="#how" class="btn-lg ghost" data-i18n="hero_cta2">Como funciona</a>
       </div>
-      <div class="hero-trial-badge" data-i18n="hero_trial">✨ 30 dias gratis en todos los planes</div>
+      <div class="hero-trial-badge" data-i18n="hero_trial">Garantia de devolucion de 30 dias</div>
     </div>
     <div class="hero-visual">
       <div class="hero-product">
@@ -2932,7 +2932,7 @@ body.dark .dark-toggle .dt-moon { display: none; }
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="price_eyebrow">Planes</div>
     <h2 class="section-h2 reveal" data-i18n="price_title">Precios transparentes, sin sorpresas</h2>
-    <p class="section-p reveal" data-i18n="price_desc">Sin permanencia. Prueba gratuita de 30 dias en todos los planes.</p>
+    <p class="section-p reveal" data-i18n="price_desc">Sin permanencia. Garantia de devolucion de 30 dias en todos los planes.</p>
   </div>
   <div class="price-toggle-wrap reveal">
     <span class="price-toggle-label active" id="ptMonthly" data-i18n="price_monthly">Mensual</span>
@@ -2952,7 +2952,7 @@ body.dark .dark-toggle .dt-moon { display: none; }
         <li data-i18n="p1_f3">Dashboard basico</li>
         <li data-i18n="p1_f4">Guardado en la nube</li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Empezar gratis</button>
+      <button class="price-btn outline" data-i18n="price_btn" onclick="goToCheckout('starter')">Comprar ahora</button>
     </div>
     <div class="price-card pop reveal d1">
       <div class="price-name" data-i18n="p2_n">Pro</div>
@@ -2965,7 +2965,7 @@ body.dark .dark-toggle .dt-moon { display: none; }
         <li data-i18n="p2_f4">Importacion PDF automatica</li>
         <li data-i18n="p2_f5">Historial de cambios</li>
       </ul>
-      <button class="price-btn fill" data-i18n="price_btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Empezar gratis</button>
+      <button class="price-btn fill" data-i18n="price_btn" onclick="goToCheckout('pro')">Comprar ahora</button>
     </div>
     <div class="price-card reveal d2">
       <div class="price-name" data-i18n="p3_n">Business</div>
@@ -2978,7 +2978,7 @@ body.dark .dark-toggle .dt-moon { display: none; }
         <li data-i18n="p3_f4">Soporte prioritario</li>
         <li data-i18n="p3_f5" data-tip>Despliegue on-premise<span class="tooltip">Instalacion en tus propios servidores</span></li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Empezar gratis</button>
+      <button class="price-btn outline" data-i18n="price_btn" onclick="goToCheckout('business')">Contratar Business</button>
     </div>
   </div>
 </section>
@@ -3000,7 +3000,7 @@ body.dark .dark-toggle .dt-moon { display: none; }
         </div>
         <div class="cperk">
           <div class="cperk-icon"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M8 11V7a4 4 0 118 0v4" stroke="#4ecdc4" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="#4ecdc4"/></svg></div>
-          <div><h4 data-i18n="cp3_t">30 dias gratis</h4><p data-i18n="cp3_d">Prueba sin riesgo. Si no te convence, no pagas nada.</p></div>
+          <div><h4 data-i18n="cp3_t">Devolucion garantizada</h4><p data-i18n="cp3_d">Si no te convence en 30 dias, te devolvemos el 100% sin preguntas.</p></div>
         </div>
       </div>
     </div>
@@ -3293,6 +3293,19 @@ function toggleFaq(el) {
 }
 
 // Pricing toggle
+// Redirect to login/dashboard for checkout
+function goToCheckout(plan) {
+  const billing = isAnnual ? 'annual' : 'monthly';
+  const token = localStorage.getItem('shiftia_token');
+  if (token) {
+    // User logged in — go to dashboard with checkout intent
+    window.location.href = `/dashboard?intent=checkout&plan=${plan}&billing=${billing}`;
+  } else {
+    // Not logged in — go to login with redirect
+    window.location.href = `/login?redirect=/dashboard?intent=checkout%26plan=${plan}%26billing=${billing}`;
+  }
+}
+
 let isAnnual = false;
 function togglePricing() {
   isAnnual = !isAnnual;
@@ -3550,7 +3563,7 @@ const translations = {
     hero_title_1: 'Planificacion de turnos y planillas,',
     hero_title_2: 'simplificada',
     hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clinicas, residencias, fabricas y cualquier negocio con planillas. Menos Excel, mas control.',
-    hero_cta: 'Solicitar demo', hero_cta2: 'Como funciona', hero_trial: '✨ 30 dias gratis en todos los planes',
+    hero_cta: 'Solicitar demo', hero_cta2: 'Como funciona', hero_trial: 'Garantia de devolucion de 30 dias',
     stat1: 'Trabajadores', stat2: 'Tiempo ahorrado', stat3: 'Conflictos sin resolver',
     orbit_eyebrow: 'Ecosistema', orbit_title: 'Todo conectado. Todo inteligente.', orbit_desc: 'Shiftia integra cada aspecto de la gestion de turnos en un unico sistema inteligente.',
     orb_ai: 'Motor IA', orb_schedule: 'Planilla', orb_equity: 'Equidad', orb_dashboard: 'Dashboard', orb_alerts: 'Alertas', orb_coverage: 'Coberturas', orb_nights: 'Noches', orb_mobile: 'App movil', orb_sync: 'Sincronizacion', orb_gdpr: 'RGPD', orb_pdf: 'Import PDF', orb_conciliation: 'Conciliacion', orb_holidays: 'Vacaciones',
@@ -3598,19 +3611,19 @@ const translations = {
 
     price_monthly: 'Mensual', price_annual: 'Anual', price_save: '-20%',
     price_eyebrow: 'Planes', price_title: 'Precios transparentes, sin sorpresas',
-    price_desc: 'Sin permanencia. Prueba gratuita de 30 dias en todos los planes.',
+    price_desc: 'Sin permanencia. Garantia de devolucion de 30 dias en todos los planes.',
     p1_n: 'Starter', p1_d: 'Hasta 15 trabajadores',
     p1_f1: 'Planilla visual completa', p1_f2: 'Deteccion de conflictos', p1_f3: 'Dashboard basico', p1_f4: 'Guardado en la nube',
     p2_n: 'Pro', p2_d: 'Hasta 40 trabajadores',
     p2_f1: 'Todo del plan Starter', p2_f2: 'Motor IA de coberturas', p2_f3: 'Equidad nocturna avanzada', p2_f4: 'Importacion PDF automatica', p2_f5: 'Historial de cambios',
     p3_n: 'Business', p3_d: 'Trabajadores ilimitados',
     p3_f1: 'Todo del plan Pro', p3_f2: 'Multiples servicios / sedes', p3_f3: 'Integracion con RRHH', p3_f4: 'Soporte prioritario', p3_f5: 'Despliegue on-premise',
-    price_btn: 'Empezar gratis',
+    price_btn: 'Comprar ahora',
     contact_title: 'Cuentanos tu caso y agenda una llamada',
     contact_desc: 'Cada empresa es diferente. Explicanos tu situacion y te hacemos una propuesta personalizada con demo incluida.',
     cp1_t: 'Respuesta en 24h', cp1_d: 'Te contestamos con una propuesta clara y sin compromiso.',
     cp2_t: 'Demo personalizada', cp2_d: 'Te mostramos Shiftia configurado con los datos de tu equipo.',
-    cp3_t: '30 dias gratis', cp3_d: 'Prueba sin riesgo. Si no te convence, no pagas nada.',
+    cp3_t: 'Devolucion garantizada', cp3_d: 'Si no te convence en 30 dias, te devolvemos el 100% sin preguntas.',
     fl_name: 'Nombre completo', fl_email: 'Email profesional', fl_center: 'Centro / Empresa',
     fl_workers: 'Num. trabajadores', fl_select: 'Selecciona', fl_service: 'Departamento / Area',
     fl_message: 'Cuentanos tu caso', fl_submit: 'Enviar solicitud',
@@ -3641,7 +3654,7 @@ const translations = {
     hero_title_1: 'Shift scheduling and rosters,',
     hero_title_2: 'simplified',
     hero_desc: 'Shiftia automates shift planning, manages absences with AI, and ensures team equity. For hospitals, clinics, care homes, factories, and any business with rosters. Less Excel, more control.',
-    hero_cta: 'Request demo', hero_cta2: 'How it works', hero_trial: '✨ 30 days free on all plans',
+    hero_cta: 'Request demo', hero_cta2: 'How it works', hero_trial: '30-day money-back guarantee',
     stat1: 'Workers', stat2: 'Time saved', stat3: 'Unresolved conflicts',
     orbit_eyebrow: 'Ecosystem', orbit_title: 'All connected. All intelligent.', orbit_desc: 'Shiftia integrates every aspect of shift management into a single smart system.',
     orb_ai: 'AI Engine', orb_schedule: 'Schedule', orb_equity: 'Equity', orb_dashboard: 'Dashboard', orb_alerts: 'Alerts', orb_coverage: 'Coverage', orb_nights: 'Nights', orb_mobile: 'Mobile app', orb_sync: 'Sync', orb_gdpr: 'GDPR', orb_pdf: 'PDF Import', orb_conciliation: 'Work-life', orb_holidays: 'Holidays',
@@ -3689,19 +3702,19 @@ const translations = {
 
     price_monthly: 'Monthly', price_annual: 'Annual', price_save: '-20%',
     price_eyebrow: 'Pricing', price_title: 'Transparent pricing, no surprises',
-    price_desc: 'No lock-in. 30-day free trial on all plans.',
+    price_desc: 'No lock-in. 30-day money-back guarantee on all plans.',
     p1_n: 'Starter', p1_d: 'Up to 15 workers',
     p1_f1: 'Full visual roster', p1_f2: 'Conflict detection', p1_f3: 'Basic dashboard', p1_f4: 'Cloud storage',
     p2_n: 'Pro', p2_d: 'Up to 40 workers',
     p2_f1: 'Everything in Starter', p2_f2: 'AI Coverage Engine', p2_f3: 'Advanced night equity', p2_f4: 'Auto PDF import', p2_f5: 'Change history',
     p3_n: 'Business', p3_d: 'Unlimited workers',
     p3_f1: 'Everything in Pro', p3_f2: 'Multiple services / sites', p3_f3: 'HR integration', p3_f4: 'Priority support', p3_f5: 'On-premise deployment',
-    price_btn: 'Start free',
+    price_btn: 'Buy now',
     contact_title: 'Tell us about your case and schedule a call',
     contact_desc: 'Every workplace is different. Explain your situation and we\'ll create a personalized proposal with a demo included.',
     cp1_t: 'Response in 24h', cp1_d: 'We\'ll get back with a clear, no-commitment proposal.',
     cp2_t: 'Personalized demo', cp2_d: 'We\'ll show you Shiftia configured with your team\'s data.',
-    cp3_t: '30 days free', cp3_d: 'Risk-free trial. If you\'re not convinced, you don\'t pay.',
+    cp3_t: 'Money-back guarantee', cp3_d: 'Not satisfied in 30 days? We refund 100%, no questions asked.',
     fl_name: 'Full name', fl_email: 'Work email', fl_center: 'Company / Center',
     fl_workers: 'Number of workers', fl_select: 'Select', fl_service: 'Department / Area',
     fl_message: 'Tell us about your case', fl_submit: 'Send request',
@@ -3723,7 +3736,7 @@ const translations = {
     imp4_num: '24/7', imp4_label: 'Full access', imp4_sub: 'From any device',
     show_eyebrow: 'Interface', show_title: 'See Shiftia in action', show_desc: 'A visual, fast, and intuitive tool. This is what your supervisors see every day.',
     tab_planilla: 'Roster', tab_dashboard: 'Dashboard', tab_ai: 'AI Coverage',
-    chat_online: 'Online now', chat_ph: 'Type your question...', chat_s1: 'What is Shiftia?', chat_s2: 'How much does it cost?', chat_s3: 'How does the AI work?', chat_s4: 'Is it secure?', chat_s5: 'Free trial?'
+    chat_online: 'Online now', chat_ph: 'Type your question...', chat_s1: 'What is Shiftia?', chat_s2: 'How much does it cost?', chat_s3: 'How does the AI work?', chat_s4: 'Is it secure?', chat_s5: 'Money-back guarantee?'
   },
   de: {
     nav_features: 'Funktionen', nav_usecases: 'Einsatz', nav_pricing: 'Preise',
@@ -3732,7 +3745,7 @@ const translations = {
     hero_title_1: 'Schichtplanung und Dienstplane,',
     hero_title_2: 'vereinfacht',
     hero_desc: 'Shiftia automatisiert Schichten, verwaltet Abwesenheiten mit KI und garantiert die Fairness Ihres Teams. Fur Krankenhäuser, Kliniken, Pflegeheime, Fabriken und jedes Unternehmen mit Dienstplanen.',
-    hero_cta: 'Demo anfragen', hero_cta2: 'So funktioniert es', hero_trial: '✨ 30 Tage kostenlos bei allen Tarifen',
+    hero_cta: 'Demo anfragen', hero_cta2: 'So funktioniert es', hero_trial: '30 Tage Geld-zuruck-Garantie',
     stat1: 'Mitarbeiter', stat2: 'Zeitersparnis', stat3: 'Offene Konflikte',
     orbit_eyebrow: 'Okosystem', orbit_title: 'Alles verbunden. Alles intelligent.', orbit_desc: 'Shiftia integriert jeden Aspekt der Schichtplanung in ein einziges intelligentes System.',
     orb_ai: 'KI-Engine', orb_schedule: 'Dienstplan', orb_equity: 'Fairness', orb_dashboard: 'Dashboard', orb_alerts: 'Warnungen', orb_coverage: 'Vertretung', orb_nights: 'Nachtdienst', orb_mobile: 'Mobile App', orb_sync: 'Synchronisation', orb_gdpr: 'DSGVO', orb_pdf: 'PDF-Import', orb_conciliation: 'Vereinbarkeit', orb_holidays: 'Urlaub',
@@ -4122,14 +4135,15 @@ document.querySelectorAll('.price-list').forEach(list => {
 // ===================== AI CHAT ASSISTANT =====================
 const chatKB = {
   'que es shiftia': 'Shiftia es una plataforma de planificacion inteligente de turnos y planillas. Automatiza la gestion de ausencias con un motor de IA que analiza 7 criterios para encontrar el mejor sustituto en menos de 1 segundo. Funciona para hospitales, fabricas, residencias, seguridad, hosteleria y cualquier negocio con turnos.',
-  'cuanto cuesta': 'Tenemos 3 planes:\n\n• **Starter** — 20€/mes (hasta 15 trabajadores)\n• **Pro** — 30€/mes (hasta 40 trabajadores)\n• **Business** — 50€/mes (ilimitados)\n\nTodos incluyen 30 dias de prueba gratis. Si pagas anual, te ahorras un 20%.',
-  'precio': 'Tenemos 3 planes:\n\n• **Starter** — 20€/mes (hasta 15 trabajadores)\n• **Pro** — 30€/mes (hasta 40 trabajadores)\n• **Business** — 50€/mes (ilimitados)\n\nTodos incluyen 30 dias de prueba gratis. Si pagas anual, te ahorras un 20%.',
+  'cuanto cuesta': 'Tenemos 3 planes:\n\n• **Starter** — 20€/mes (hasta 15 trabajadores)\n• **Pro** — 30€/mes (hasta 40 trabajadores)\n• **Business** — 50€/mes (ilimitados)\n\nTodos incluyen garantia de devolucion de 30 dias. Si pagas anual, te ahorras un 20%.',
+  'precio': 'Tenemos 3 planes:\n\n• **Starter** — 20€/mes (hasta 15 trabajadores)\n• **Pro** — 30€/mes (hasta 40 trabajadores)\n• **Business** — 50€/mes (ilimitados)\n\nTodos incluyen garantia de devolucion de 30 dias. Si pagas anual, te ahorras un 20%.',
   'como funciona la ia': 'Cuando un trabajador reporta una ausencia, el motor de IA analiza 7 criterios en tiempo real: disponibilidad, horas acumuladas, equidad de noches, competencias, preferencias, historico de cambios y compatibilidad. En menos de 1 segundo te presenta 3 candidatos ordenados por idoneidad con puntuacion y nivel de confianza. Tu solo apruebas con un clic.',
   'inteligencia artificial': 'Nuestro motor IA v3.0 analiza 7 criterios simultaneamente para encontrar el mejor sustituto. No reemplaza al supervisor — le ahorra horas de trabajo presentando candidatos puntuados. La decision final siempre es humana.',
   'seguro': 'Absolutamente. Todos los datos se almacenan cifrados con copias de seguridad automaticas. Cumplimos al 100% con el RGPD. Para organizaciones que lo requieran, ofrecemos la opcion de despliegue on-premise en el plan Business.',
   'seguridad': 'Tus datos estan cifrados y protegidos con copias automaticas. Cumplimos con RGPD y ofrecemos despliegue on-premise para maxima seguridad. Solo tu equipo tiene acceso a los datos.',
-  'prueba gratis': '¡Si! Todos nuestros planes incluyen 30 dias de prueba completamente gratis, sin compromiso ni tarjeta de credito. Si no te convence, no pagas nada. Puedes empezar ahora mismo.',
-  'gratis': '¡Claro! Ofrecemos 30 dias de prueba gratis en todos los planes, sin tarjeta ni compromiso. Cancela cuando quieras.',
+  'prueba gratis': '¡Todos nuestros planes incluyen garantia de devolucion de 30 dias! Si no te convence, te devolvemos el 100% sin preguntas. Puedes comprar ahora con total tranquilidad.',
+  'gratis': '¡Todos los planes incluyen garantia de devolucion de 30 dias! Compra con confianza — si no te convence, te devolvemos el dinero.',
+  'devolucion': 'Ofrecemos garantia de devolucion de 30 dias en todos los planes. Si no estas satisfecho, te devolvemos el 100% sin preguntas. Solo tienes que contactarnos.',
   'implantar': 'La mayoria de equipos estan operativos en menos de 1 hora. No hay migraciones complejas: 1) Configuras tu equipo, 2) Importas tu planilla en PDF o la creas desde cero, 3) Empiezas a gestionar. Ofrecemos acompañamiento personalizado en la configuracion inicial.',
   'implantacion': 'El plazo de implantacion es de 1 a 5 dias desde la contratacion. Configuramos tu equipo, importamos la planilla y te acompañamos en todo el proceso de puesta en marcha.',
   'importar excel': 'Puedes importar tu planilla actual en formato PDF y Shiftia extrae los datos automaticamente. Tambien puedes crear la planilla desde cero en minutos añadiendo tu equipo y configurando los turnos. Estamos trabajando en importacion directa desde Excel.',
