@@ -156,36 +156,81 @@ let transporter = null;
 let emailReady = false;
 let emailError = null;
 
-if (GMAIL_PASS) {
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: GMAIL_USER, pass: GMAIL_PASS }
-  });
-  // Verify SMTP connection on startup
-  transporter.verify()
-    .then(() => {
-      emailReady = true;
-      emailError = null;
-      console.log(`Email OK: connected as ${GMAIL_USER}`);
-    })
-    .catch(err => {
-      emailReady = false;
-      emailError = err.message;
-      console.error(`Email FAILED: ${err.message}`);
-    });
+// RESEND_API_KEY takes priority (HTTP-based, works everywhere)
+// Falls back to GMAIL SMTP if no Resend key
+const RESEND_KEY = process.env.RESEND_API_KEY || '';
+
+if (RESEND_KEY) {
+  // Resend HTTP API — no SMTP, no blocked ports
+  emailReady = true;
+  emailError = null;
+  console.log('Email OK via Resend API (HTTP)');
+} else if (GMAIL_PASS) {
+  // Try multiple SMTP configs — some hosts block certain ports
+  const smtpConfigs = [
+    { name: 'STARTTLS-587', host: 'smtp.gmail.com', port: 587, secure: false },
+    { name: 'SSL-465', host: 'smtp.gmail.com', port: 465, secure: true },
+    { name: 'service', service: 'gmail' }
+  ];
+
+  (async function tryConnect() {
+    for (const cfg of smtpConfigs) {
+      try {
+        const opts = { auth: { user: GMAIL_USER, pass: GMAIL_PASS }, connectionTimeout: 8000, greetingTimeout: 8000, socketTimeout: 8000 };
+        if (cfg.service) opts.service = cfg.service;
+        else { opts.host = cfg.host; opts.port = cfg.port; opts.secure = cfg.secure; }
+        const t = nodemailer.createTransport(opts);
+        await t.verify();
+        transporter = t;
+        emailReady = true;
+        emailError = null;
+        console.log(`Email OK via Gmail ${cfg.name} as ${GMAIL_USER}`);
+        return;
+      } catch (err) {
+        console.warn(`Gmail ${cfg.name}: ${err.message}`);
+        emailError = `${cfg.name}: ${err.message}`;
+      }
+    }
+    emailReady = false;
+    console.error('Email FAILED: all SMTP configs failed —', emailError);
+    console.error('TIP: Add RESEND_API_KEY for reliable email (resend.com, free 100/day)');
+  })();
 } else {
-  console.warn('Email DISABLED: GMAIL_APP_PASSWORD not set');
+  console.warn('Email DISABLED: set RESEND_API_KEY or GMAIL_APP_PASSWORD');
 }
 
-// Safe send helper — only sends if transporter verified OK
+// Safe send helper — uses Resend API or Gmail SMTP
 function sendMail(options) {
-  if (!transporter || !GMAIL_PASS) {
-    console.warn('Email skip: no transporter configured');
-    return Promise.resolve();
+  if (RESEND_KEY) {
+    // Use Resend HTTP API
+    const payload = {
+      from: options.from || `Shiftia <onboarding@resend.dev>`,
+      to: Array.isArray(options.to) ? options.to : [options.to],
+      subject: options.subject,
+      html: options.html
+    };
+    return fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(async r => {
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.message || JSON.stringify(body));
+      console.log('Email sent (Resend):', options.subject);
+      return body;
+    })
+    .catch(err => { console.error('Resend error:', err.message); });
   }
-  return transporter.sendMail(options)
-    .then(info => { console.log('Email sent:', options.subject); return info; })
-    .catch(err => { console.error('Email error:', err.message); });
+
+  if (transporter && emailReady) {
+    return transporter.sendMail(options)
+      .then(info => { console.log('Email sent (SMTP):', options.subject); return info; })
+      .catch(err => { console.error('SMTP error:', err.message); });
+  }
+
+  console.warn('Email skip: no email provider available');
+  return Promise.resolve();
 }
 
 // ====== AUTHENTICATION ROUTES ======
@@ -784,13 +829,13 @@ app.get('/docs', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    version: '2.1.0',
+    version: '2.2.0',
     auth: 'enabled',
     email: {
-      configured: !!GMAIL_PASS,
-      user: GMAIL_USER,
+      provider: RESEND_KEY ? 'resend' : (GMAIL_PASS ? 'gmail-smtp' : 'none'),
       ready: emailReady,
-      error: emailError
+      error: emailError,
+      user: GMAIL_USER
     }
   });
 });
