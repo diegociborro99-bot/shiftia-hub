@@ -1040,21 +1040,21 @@
             <div class="plan-options">
                 <div class="plan-option" data-plan="starter">
                     <div class="plan-option-name">Starter</div>
-                    <div class="plan-option-price">€49<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
-                    <div class="plan-option-workers">Hasta 25 trabajadores</div>
+                    <div class="plan-option-price">€20<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-workers">Hasta 15 trabajadores</div>
                 </div>
-                <div class="plan-option" data-plan="professional">
-                    <div class="plan-option-name">Profesional</div>
-                    <div class="plan-option-price">€99<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
-                    <div class="plan-option-workers">Hasta 100 trabajadores</div>
+                <div class="plan-option" data-plan="pro">
+                    <div class="plan-option-name">Pro</div>
+                    <div class="plan-option-price">€30<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-workers">Hasta 40 trabajadores</div>
                 </div>
-                <div class="plan-option" data-plan="enterprise">
-                    <div class="plan-option-name">Enterprise</div>
-                    <div class="plan-option-price">€199<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                <div class="plan-option" data-plan="business">
+                    <div class="plan-option-name">Business</div>
+                    <div class="plan-option-price">€50<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
                     <div class="plan-option-workers">Trabajadores ilimitados</div>
                 </div>
             </div>
-            <p style="color: var(--text3); font-size: 0.82rem; margin-top: 1.25rem; text-align: center;">Los cambios se aplicarán en tu próximo ciclo de facturación. Contacta a soporte para planes personalizados.</p>
+            <p style="color: var(--text3); font-size: 0.82rem; margin-top: 1.25rem; text-align: center;">Sin permanencia. 30 días de prueba gratis. Si pagas anual, te ahorras un 20%.</p>
         </div>
     </div>
 
@@ -1062,10 +1062,11 @@
         // ===== STATE =====
         let currentUser = null;
         const PLAN_INFO = {
-            trial:        { name: 'Prueba Gratuita', cost: 0, workers: 25 },
-            starter:      { name: 'Starter', cost: 49, workers: 25 },
-            professional: { name: 'Profesional', cost: 99, workers: 100 },
-            enterprise:   { name: 'Enterprise', cost: 199, workers: 1000 }
+            trial:      { name: 'Prueba Gratuita', cost: 0, workers: 15 },
+            starter:    { name: 'Starter', cost: 20, workers: 15 },
+            pro:        { name: 'Pro', cost: 30, workers: 40 },
+            business:   { name: 'Business', cost: 50, workers: -1 },
+            enterprise: { name: 'Business', cost: 50, workers: -1 }   // legacy alias
         };
 
         // ===== INIT =====
@@ -1162,8 +1163,9 @@
             document.getElementById('planName').textContent = info.name;
             document.getElementById('monthlyCost').textContent = info.cost === 0 ? 'Gratis' : `€${info.cost}/mes`;
 
-            const limit = u.workers_limit || info.workers;
-            document.getElementById('workerLimit').textContent = `${limit} trabajadores`;
+            const limit = u.workers_limit || (info.workers === -1 ? 9999 : info.workers);
+            const isUnlimited = info.workers === -1 || limit >= 9999;
+            document.getElementById('workerLimit').textContent = isUnlimited ? 'Ilimitados' : `${limit} trabajadores`;
 
             // Status badge
             const statusEl = document.getElementById('planStatus');
@@ -1179,21 +1181,28 @@
                 document.getElementById('nextBillingDate').textContent = 'No programada';
             }
 
-            // Workers usage bar (simulated current usage)
-            const usedWorkers = Math.floor(Math.random() * limit * 0.85) + 1;
-            updateWorkersBar(usedWorkers, limit);
+            // Workers usage bar
+            // In production this would come from an API — for now use a stable estimate
+            const usedWorkers = u.workers_used || Math.max(1, Math.floor(limit * 0.6));
+            updateWorkersBar(usedWorkers, limit, isUnlimited);
 
             // Account form
             document.getElementById('accountName').value = fullName;
             document.getElementById('accountEmail').value = u.email || '';
 
-            // Mark current plan in modal
+            // Mark current plan in modal (normalize enterprise → business)
+            const normalizedPlan = plan === 'enterprise' ? 'business' : plan;
             document.querySelectorAll('.plan-option').forEach(el => {
-                el.classList.toggle('current', el.dataset.plan === plan);
+                el.classList.toggle('current', el.dataset.plan === normalizedPlan);
             });
         }
 
-        function updateWorkersBar(used, limit) {
+        function updateWorkersBar(used, limit, isUnlimited) {
+            if (isUnlimited) {
+                document.getElementById('workersCountText').textContent = `${used} activos`;
+                document.getElementById('workersBarFill').style.width = '30%';
+                return;
+            }
             const pct = Math.min((used / limit) * 100, 100);
             document.getElementById('workersCountText').textContent = `${used} / ${limit}`;
             const bar = document.getElementById('workersBarFill');
@@ -1229,7 +1238,7 @@
                     concept: `${info.name} - Mensual`,
                     amount: `€${info.cost.toFixed(2)}`,
                     status: i === 0 ? 'pending' : 'paid',
-                    id: `INV-${now.getFullYear()}-${String(now.getMonth() + 1 - i).padStart(2,'0')}`
+                    id: `INV-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}`
                 });
             }
 
@@ -1380,12 +1389,12 @@ Gracias por confiar en Shiftia.
             // Plan options click
             document.querySelectorAll('.plan-option').forEach(el => {
                 el.addEventListener('click', () => {
-                    const plan = el.dataset.plan;
-                    if (currentUser && currentUser.plan === plan) return;
+                    const selectedPlan = el.dataset.plan;
+                    const userPlan = currentUser ? (currentUser.plan === 'enterprise' ? 'business' : currentUser.plan) : '';
+                    if (userPlan === selectedPlan) return;
                     document.querySelectorAll('.plan-option').forEach(o => o.classList.remove('current'));
                     el.classList.add('current');
-                    // In production, this would call an API to update the plan
-                    showAlert('supportMsgBox', 'info', `Para cambiar al plan ${PLAN_INFO[plan]?.name || plan}, contacta con soporte@shiftia.es`);
+                    showAlert('supportMsgBox', 'info', `Para cambiar al plan ${PLAN_INFO[selectedPlan]?.name || selectedPlan}, contacta con soporte@shiftia.es`);
                     document.getElementById('planModal').classList.remove('show');
                 });
             });
