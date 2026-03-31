@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Shiftia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables */
+        :root {
+            --bg: #ffffff;
+            --bg-warm: #f9fafb;
+            --bg-card: #f3f4f6;
+            --text1: #1a1a1a;
+            --text2: #4a4a4a;
+            --text3: #808080;
+            --border: #e5e7eb;
+            --border-light: #f0f0f0;
+            --primary: #2980b9;
+            --accent: #4ecdc4;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+
+        body.dark {
+            --bg: #0f1117;
+            --bg-warm: #161b22;
+            --bg-card: #1a1d2e;
+            --text1: #f0f0f5;
+            --text2: #d0d0d0;
+            --text3: #a0a0a0;
+            --border: #30363d;
+            --border-light: #21262d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text1);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-left {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .navbar-center {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .dark-mode-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: var(--text1);
+            transition: transform 0.2s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            color: var(--text2);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--bg);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text1);
+        }
+
+        .welcome-date {
+            color: var(--text3);
+            font-size: 0.95rem;
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text1);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Quick Access Cards */
+        .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-card {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(41, 128, 185, 0.3);
+        }
+
+        /* Card */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Subscription Info Card */
+        .subscription-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .subscription-detail {
+            margin-bottom: 1rem;
+        }
+
+        .subscription-label {
+            color: var(--text3);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .subscription-value {
+            color: var(--text1);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+
+        .change-plan-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            align-self: flex-start;
+        }
+
+        .change-plan-btn:hover {
+            background-color: #1e5d8f;
+            box-shadow: 0 4px 8px rgba(41, 128, 185, 0.3);
+        }
+
+        /* Billing Table */
+        .billing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        .billing-table thead {
+            background-color: var(--bg-warm);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .billing-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text1);
+        }
+
+        .billing-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text2);
+        }
+
+        .billing-table tbody tr:hover {
+            background-color: var(--bg-warm);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-paid {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--warning);
+        }
+
+        .download-btn {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Support Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text1);
+            font-weight: 500;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg);
+            color: var(--text1);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            background-color: #1e5d8f;
+            box-shadow: 0 4px 8px rgba(41, 128, 185, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* FAQ Link */
+        .faq-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .faq-link:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        /* Support Section */
+        .support-info {
+            color: var(--text2);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .support-info a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .support-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Account Settings Grid */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .navbar-right {
+                order: 3;
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .welcome-title {
+                font-size: 1.5rem;
+            }
+
+            .quick-access-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .subscription-info {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .billing-table {
+                font-size: 0.9rem;
+            }
+
+            .billing-table th,
+            .billing-table td {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Loading and Error States */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .alert-success {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(39, 174, 96, 0.3);
+        }
+
+        .alert-error {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .alert-info {
+            background-color: rgba(41, 128, 185, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(41, 128, 185, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-left">Shiftia</div>
+        <div class="navbar-center"></div>
+        <div class="navbar-right">
+            <button class="dark-mode-toggle" id="darkModeBtn" title="Cambiar tema">🌙</button>
+            <div class="user-info">
+                <span id="userName">Usuario</span>
+                <div class="avatar" id="userAvatar">U</div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h1 class="welcome-title" id="welcomeMessage">Bienvenido</h1>
+            <p class="welcome-date" id="currentDate"></p>
+        </section>
+
+        <!-- Quick Access Cards -->
+        <section class="section">
+            <div class="quick-access-grid">
+                <a href="https://sara.shiftia.es" target="_blank" class="quick-card" title="Abrir SARA">
+                    Abrir SARA
+                </a>
+                <button class="quick-card" id="supportCardBtn" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                    Soporte
+                </button>
+                <a href="#" class="quick-card" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);" title="Documentación">
+                    Documentación
+                </a>
+            </div>
+        </section>
+
+        <!-- Subscription Info Card -->
+        <section class="section">
+            <h2 class="section-title">Tu Suscripción</h2>
+            <div class="card">
+                <div class="subscription-info">
+                    <div>
+                        <div class="subscription-detail">
+                            <div class="subscription-label">Plan Actual</div>
+                            <div class="subscription-value" id="planName">Plan Profesional</div>
+                        </div>
+                        <div class="subscription-detail">
+                            <div class="subscription-label">Estado</div>
+                            <div class="subscription-value">
+                                <span class="status-badge badge-active" id="planStatus">Activo</span>
+                            </div>
+                        </div>
+                        <div class="subscription-detail">
+                            <div class="subscription-label">Próxima Facturación</div>
+                            <div class="subscription-value" id="nextBillingDate">15 de abril, 2026</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="subscription-detail">
+                            <div class="subscription-label">Trabajadores Permitidos</div>
+                            <div class="subscription-value" id="workerLimit">50 trabajadores</div>
+                        </div>
+                        <div class="subscription-detail">
+                            <div class="subscription-label">Costo Mensual</div>
+                            <div class="subscription-value" id="monthlyCost">€99/mes</div>
+                        </div>
+                        <button class="change-plan-btn">Cambiar plan</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Billing History -->
+        <section class="section">
+            <h2 class="section-title">Historial de Facturación</h2>
+            <div class="card">
+                <table class="billing-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="billingTableBody">
+                        <tr>
+                            <td>31 de marzo, 2026</td>
+                            <td>Plan Profesional - Mensual</td>
+                            <td>€99.00</td>
+                            <td><span class="status-pill status-paid">Pagado</span></td>
+                            <td><button class="download-btn">Descargar</button></td>
+                        </tr>
+                        <tr>
+                            <td>28 de febrero, 2026</td>
+                            <td>Plan Profesional - Mensual</td>
+                            <td>€99.00</td>
+                            <td><span class="status-pill status-paid">Pagado</span></td>
+                            <td><button class="download-btn">Descargar</button></td>
+                        </tr>
+                        <tr>
+                            <td>31 de enero, 2026</td>
+                            <td>Plan Profesional - Mensual</td>
+                            <td>€99.00</td>
+                            <td><span class="status-pill status-paid">Pagado</span></td>
+                            <td><button class="download-btn">Descargar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Support Section -->
+        <section class="section" id="supportSection">
+            <h2 class="section-title">Soporte</h2>
+            <div class="card">
+                <p class="support-info">
+                    ¿Tienes preguntas o necesitas ayuda? Ponte en contacto con nuestro equipo de soporte.
+                    También puedes consultar nuestro <a href="#" class="faq-link">FAQ aquí</a>.
+                </p>
+                <form id="supportForm">
+                    <div id="supportMessage"></div>
+                    <div class="form-group">
+                        <label for="supportSubject" class="form-label">Asunto</label>
+                        <input type="text" id="supportSubject" class="form-input" placeholder="Ej: Problema con la planificación" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="supportMessage" class="form-label">Mensaje</label>
+                        <textarea id="supportMessage" class="form-textarea" placeholder="Describe tu problema o pregunta..." required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Enviar</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Account Settings -->
+        <section class="section">
+            <h2 class="section-title">Configuración de Cuenta</h2>
+            <div class="card">
+                <form id="accountForm">
+                    <div id="accountMessage"></div>
+                    <div class="settings-grid">
+                        <div class="form-group">
+                            <label for="accountName" class="form-label">Nombre</label>
+                            <input type="text" id="accountName" class="form-input" placeholder="Tu nombre completo">
+                        </div>
+                        <div class="form-group">
+                            <label for="accountEmail" class="form-label">Email</label>
+                            <input type="email" id="accountEmail" class="form-input" placeholder="tu@email.com">
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--text1);">Cambiar Contraseña</h3>
+                        <div class="settings-grid">
+                            <div class="form-group">
+                                <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                                <input type="password" id="currentPassword" class="form-input" placeholder="Contraseña actual">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                                <input type="password" id="newPassword" class="form-input" placeholder="Nueva contraseña">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirmar nueva contraseña">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn" style="margin-top: 1.5rem;">Guardar Cambios</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        async function initDashboard() {
+            // Check authentication
+            const token = localStorage.getItem('shiftia_token');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+
+            // Load dark mode preference
+            loadDarkModePreference();
+
+            // Set current date
+            setCurrentDate();
+
+            // Fetch user data
+            await fetchUserData();
+
+            // Setup event listeners
+            setupEventListeners();
+        }
+
+        function loadDarkModePreference() {
+            const isDarkMode = localStorage.getItem('shiftia_darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark');
+                updateDarkModeIcon(true);
+            }
+        }
+
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            const capitalizedDate = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+            document.getElementById('currentDate').textContent = capitalizedDate;
+        }
+
+        async function fetchUserData() {
+            try {
+                const token = localStorage.getItem('shiftia_token');
+                const response = await fetch('/api/auth/me', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('shiftia_token');
+                        window.location.href = '/login';
+                        return;
+                    }
+                    throw new Error('Error fetching user data');
+                }
+
+                const userData = await response.json();
+                populateUserData(userData);
+            } catch (error) {
+                console.error('Error:', error);
+                // Use default data if API fails (for development)
+                populateDefaultData();
+            }
+        }
+
+        function populateUserData(data) {
+            // Welcome message
+            const firstName = data.name ? data.name.split(' ')[0] : 'Usuario';
+            document.getElementById('welcomeMessage').textContent = `Bienvenido, ${firstName}`;
+
+            // User name and avatar
+            const fullName = data.name || 'Usuario';
+            document.getElementById('userName').textContent = fullName;
+            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            document.getElementById('userAvatar').textContent = initials;
+
+            // Subscription info
+            if (data.subscription) {
+                document.getElementById('planName').textContent = data.subscription.planName || 'Plan Profesional';
+                document.getElementById('nextBillingDate').textContent = data.subscription.nextBillingDate || '15 de abril, 2026';
+                document.getElementById('workerLimit').textContent = `${data.subscription.workerLimit || 50} trabajadores`;
+                document.getElementById('monthlyCost').textContent = `€${data.subscription.monthlyCost || 99}/mes`;
+            }
+
+            // Account form
+            document.getElementById('accountName').value = fullName;
+            document.getElementById('accountEmail').value = data.email || '';
+        }
+
+        function populateDefaultData() {
+            const firstName = 'Usuario';
+            document.getElementById('welcomeMessage').textContent = `Bienvenido, ${firstName}`;
+            document.getElementById('userName').textContent = firstName;
+            document.getElementById('userAvatar').textContent = 'U';
+        }
+
+        function setupEventListeners() {
+            // Dark mode toggle
+            document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Support card
+            document.getElementById('supportCardBtn').addEventListener('click', scrollToSupport);
+
+            // Support form
+            document.getElementById('supportForm').addEventListener('submit', handleSupportSubmit);
+
+            // Account form
+            document.getElementById('accountForm').addEventListener('submit', handleAccountSubmit);
+
+            // Download buttons
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', downloadInvoice);
+            });
+        }
+
+        function toggleDarkMode() {
+            const isDarkMode = document.body.classList.toggle('dark');
+            localStorage.setItem('shiftia_darkMode', isDarkMode);
+            updateDarkModeIcon(isDarkMode);
+        }
+
+        function updateDarkModeIcon(isDarkMode) {
+            const btn = document.getElementById('darkModeBtn');
+            btn.textContent = isDarkMode ? '☀️' : '🌙';
+        }
+
+        function logout() {
+            localStorage.removeItem('shiftia_token');
+            localStorage.removeItem('shiftia_darkMode');
+            window.location.href = '/login';
+        }
+
+        function scrollToSupport() {
+            document.getElementById('supportSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function handleSupportSubmit(e) {
+            e.preventDefault();
+
+            const subject = document.getElementById('supportSubject').value;
+            const message = document.getElementById('supportMessage').value;
+            const messageDiv = document.getElementById('supportMessage');
+
+            try {
+                const token = localStorage.getItem('shiftia_token');
+                const response = await fetch('/api/support', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ subject, message })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error sending support request');
+                }
+
+                // Show success message
+                messageDiv.innerHTML = '<div class="alert alert-success">Tu mensaje ha sido enviado. Nos pondremos en contacto pronto.</div>';
+                document.getElementById('supportForm').reset();
+
+                // Clear message after 5 seconds
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 5000);
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.innerHTML = '<div class="alert alert-error">Error al enviar el mensaje. Por favor, intenta de nuevo.</div>';
+            }
+        }
+
+        async function handleAccountSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('accountName').value;
+            const email = document.getElementById('accountEmail').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('accountMessage');
+
+            // Validation
+            if (!name || !email) {
+                messageDiv.innerHTML = '<div class="alert alert-error">Por favor, completa todos los campos requeridos.</div>';
+                return;
+            }
+
+            if (newPassword && newPassword !== confirmPassword) {
+                messageDiv.innerHTML = '<div class="alert alert-error">Las contraseñas no coinciden.</div>';
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('shiftia_token');
+                const updateData = { name, email };
+
+                if (newPassword && currentPassword) {
+                    updateData.currentPassword = currentPassword;
+                    updateData.newPassword = newPassword;
+                }
+
+                const response = await fetch('/api/auth/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error updating account');
+                }
+
+                // Show success message
+                messageDiv.innerHTML = '<div class="alert alert-success">Cambios guardados exitosamente.</div>';
+                document.getElementById('accountForm').reset();
+                document.getElementById('accountName').value = name;
+                document.getElementById('accountEmail').value = email;
+
+                // Clear message after 5 seconds
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 5000);
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.innerHTML = '<div class="alert alert-error">Error al guardar los cambios. Por favor, intenta de nuevo.</div>';
+            }
+        }
+
+        function downloadInvoice(e) {
+            e.preventDefault();
+            // Placeholder for invoice download functionality
+            alert('Descarga de factura - funcionalidad a implementar');
+        }
+    </script>
+</body>
+</html>

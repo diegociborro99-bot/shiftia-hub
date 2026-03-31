@@ -7,8 +7,11 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.18.2",
-    "nodemailer": "^6.9.8"
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.8",
+    "pg": "^8.11.3"
   },
   "engines": {
     "node": ">=18.0.0"
