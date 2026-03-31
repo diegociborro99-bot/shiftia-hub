@@ -353,11 +353,29 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     const cat = category || 'general';
     const catLabels = { general: 'Consulta general', bug: 'Reporte de error', billing: 'Facturación', feature: 'Sugerencia de mejora' };
 
-    // Save ticket to database (primary — always works)
-    await pool.query(
-      'INSERT INTO support_tickets (user_id, category, subject, message) VALUES ($1, $2, $3, $4)',
-      [req.user.id, cat, subject, message]
-    );
+    // Save ticket to database (primary)
+    try {
+      await pool.query(
+        'INSERT INTO support_tickets (user_id, category, subject, message) VALUES ($1, $2, $3, $4)',
+        [req.user.id, cat, subject, message]
+      );
+    } catch (dbErr) {
+      if (dbErr.message.includes('does not exist')) {
+        await pool.query(`
+          CREATE TABLE IF NOT EXISTS support_tickets (
+            id SERIAL PRIMARY KEY, user_id INTEGER, category VARCHAR(50) DEFAULT 'general',
+            subject VARCHAR(500) NOT NULL, message TEXT NOT NULL,
+            status VARCHAR(50) DEFAULT 'open', created_at TIMESTAMP DEFAULT NOW()
+          );
+        `);
+        await pool.query(
+          'INSERT INTO support_tickets (user_id, category, subject, message) VALUES ($1, $2, $3, $4)',
+          [req.user.id, cat, subject, message]
+        );
+      } else {
+        console.warn('DB insert ticket failed (continuing):', dbErr.message);
+      }
+    }
 
     // Try to send email notification (secondary — may fail if no GMAIL_APP_PASSWORD)
     try {
@@ -443,11 +461,30 @@ app.post('/api/contact', async (req, res) => {
     const safeDepartment = esc(department);
     const safeMessage = esc(message);
 
-    // 1. Save lead to database (primary — always works)
-    await pool.query(
-      'INSERT INTO contact_leads (name, email, company, workers, department, message) VALUES ($1, $2, $3, $4, $5, $6)',
-      [name, email, company || null, workers || null, department || null, message || null]
-    );
+    // 1. Save lead to database (primary)
+    try {
+      await pool.query(
+        'INSERT INTO contact_leads (name, email, company, workers, department, message) VALUES ($1, $2, $3, $4, $5, $6)',
+        [name, email, company || null, workers || null, department || null, message || null]
+      );
+    } catch (dbErr) {
+      // Table might not exist yet — create it and retry
+      if (dbErr.message.includes('does not exist')) {
+        await pool.query(`
+          CREATE TABLE IF NOT EXISTS contact_leads (
+            id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL,
+            company VARCHAR(255), workers VARCHAR(50), department VARCHAR(255),
+            message TEXT, created_at TIMESTAMP DEFAULT NOW()
+          );
+        `);
+        await pool.query(
+          'INSERT INTO contact_leads (name, email, company, workers, department, message) VALUES ($1, $2, $3, $4, $5, $6)',
+          [name, email, company || null, workers || null, department || null, message || null]
+        );
+      } else {
+        console.warn('DB insert lead failed (continuing):', dbErr.message);
+      }
+    }
 
     // 2. Try sending emails (secondary — may fail without GMAIL_APP_PASSWORD)
     let emailSent = false;
