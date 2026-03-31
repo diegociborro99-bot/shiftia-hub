@@ -66,6 +66,24 @@ async function initializeDatabase() {
       );
     `);
 
+    // Create bookings table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS bookings (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
+        company VARCHAR(255),
+        workers VARCHAR(50),
+        department VARCHAR(255),
+        message TEXT,
+        booking_date DATE NOT NULL,
+        booking_time VARCHAR(10) NOT NULL,
+        status VARCHAR(50) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
     // Create contact leads table
     await client.query(`
       CREATE TABLE IF NOT EXISTS contact_leads (
@@ -559,6 +577,145 @@ app.post('/api/contact', async (req, res) => {
   } catch (err) {
     console.error('Contact form error:', err.message);
     res.status(500).json({ error: 'Error al enviar. Intentalo de nuevo.' });
+  }
+});
+
+// ====== CALL BOOKING API ======
+app.post('/api/booking', async (req, res) => {
+  try {
+    // Rate limiting
+    const clientIP = req.ip || req.connection.remoteAddress;
+    if (isRateLimited(clientIP)) {
+      return res.status(429).json({ error: 'Demasiadas solicitudes. Espera un momento.' });
+    }
+
+    const { name, email, phone, company, workers, department, message, date, time } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !phone || !date || !time) {
+      return res.status(400).json({ error: 'Nombre, email, teléfono, fecha y hora son obligatorios' });
+    }
+
+    // Validate email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Email no válido' });
+    }
+
+    // Validate date is weekday and not in the past
+    const bookingDate = new Date(date + 'T00:00:00');
+    const dow = bookingDate.getDay();
+    if (dow === 0 || dow === 6) {
+      return res.status(400).json({ error: 'Solo se puede agendar de lunes a viernes' });
+    }
+
+    // Validate time is 8-18
+    const hour = parseInt(time.split(':')[0]);
+    if (hour < 8 || hour > 18) {
+      return res.status(400).json({ error: 'Horario disponible: 8:00 - 18:00' });
+    }
+
+    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+    // Save booking to database
+    try {
+      await pool.query(
+        'INSERT INTO bookings (name, email, phone, company, workers, department, message, booking_date, booking_time) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+        [name, email, phone, company || null, workers || null, department || null, message || null, date, time]
+      );
+    } catch (dbErr) {
+      if (dbErr.message.includes('does not exist')) {
+        await pool.query(`
+          CREATE TABLE IF NOT EXISTS bookings (
+            id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL,
+            phone VARCHAR(50) NOT NULL, company VARCHAR(255), workers VARCHAR(50),
+            department VARCHAR(255), message TEXT, booking_date DATE NOT NULL,
+            booking_time VARCHAR(10) NOT NULL, status VARCHAR(50) DEFAULT 'pending',
+            created_at TIMESTAMP DEFAULT NOW()
+          );
+        `);
+        await pool.query(
+          'INSERT INTO bookings (name, email, phone, company, workers, department, message, booking_date, booking_time) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+          [name, email, phone, company || null, workers || null, department || null, message || null, date, time]
+        );
+      } else {
+        console.warn('DB insert booking failed:', dbErr.message);
+      }
+    }
+
+    // Format date for emails
+    const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+    const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const prettyDate = `${dayNames[bookingDate.getDay()]} ${bookingDate.getDate()} de ${monthNames[bookingDate.getMonth()]} de ${bookingDate.getFullYear()}`;
+
+    // Try sending notification emails
+    try {
+      if (process.env.GMAIL_APP_PASSWORD) {
+        // 1. Notification to Diego
+        await transporter.sendMail({
+          from: `"Shiftia Booking" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
+          to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
+          subject: `📞 Nueva llamada agendada — ${esc(name)} (${esc(company || 'N/A')}) — ${prettyDate} ${time}h`,
+          html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 1.3rem;">📞 Llamada agendada</h1>
+              </div>
+              <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                <div style="background: #f0fdf9; padding: 20px; border-radius: 10px; border-left: 4px solid #4ecdc4; margin-bottom: 24px;">
+                  <p style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">📅 ${prettyDate} a las ${time}h</p>
+                </div>
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 130px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${esc(name)}</td></tr>
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${esc(email)}" style="color: #2980b9;">${esc(email)}</a></td></tr>
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Teléfono</td><td style="padding: 10px 0; color: #1e293b; font-weight: 700;"><a href="tel:${esc(phone)}" style="color: #2980b9;">${esc(phone)}</a></td></tr>
+                  ${company ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${esc(company)}</td></tr>` : ''}
+                  ${workers ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Trabajadores</td><td style="padding: 10px 0; color: #1e293b;">${esc(workers)}</td></tr>` : ''}
+                  ${department ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Departamento</td><td style="padding: 10px 0; color: #1e293b;">${esc(department)}</td></tr>` : ''}
+                </table>
+                ${message ? `<div style="margin-top: 20px; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;"><p style="color: #64748b; font-weight: 600; margin: 0 0 8px 0;">Mensaje:</p><p style="color: #1e293b; line-height: 1.6; margin: 0;">${esc(message)}</p></div>` : ''}
+                <p style="color: #94a3b8; font-size: 0.82rem; margin-top: 24px;">Reservado desde shiftia.es — ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}</p>
+              </div>
+            </div>
+          `
+        });
+
+        // 2. Confirmation to client
+        await transporter.sendMail({
+          from: `"Shiftia" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
+          to: email,
+          subject: `Llamada confirmada — ${prettyDate} a las ${time}h — Shiftia`,
+          html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 1.5rem;">Shiftia</h1>
+              </div>
+              <div style="background: #ffffff; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                <h2 style="color: #1e293b; margin-top: 0;">Hola ${esc(name).split(' ')[0]},</h2>
+                <p style="color: #475569; line-height: 1.7;">Tu llamada ha sido agendada correctamente. Aquí tienes los detalles:</p>
+                <div style="margin: 24px 0; padding: 24px; background: linear-gradient(135deg, rgba(78,205,196,0.08), rgba(41,128,185,0.08)); border-radius: 12px; border: 1px solid rgba(78,205,196,0.2); text-align: center;">
+                  <p style="margin: 0 0 4px 0; font-size: 0.85rem; color: #64748b;">Fecha y hora</p>
+                  <p style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #2980b9;">${prettyDate}</p>
+                  <p style="margin: 4px 0 0 0; font-size: 1.5rem; font-weight: 800; color: #4ecdc4;">${time}h</p>
+                </div>
+                <p style="color: #475569; line-height: 1.7;">Nos pondremos en contacto contigo al teléfono <strong>${esc(phone)}</strong> o por email para coordinar los detalles de la reunión.</p>
+                <p style="color: #475569; line-height: 1.7;">Si necesitas cancelar o cambiar la hora, responde a este email.</p>
+                <p style="color: #475569; margin-top: 24px;">Un saludo,<br><strong>El equipo de Shiftia</strong></p>
+              </div>
+              <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
+            </div>
+          `
+        });
+      }
+    } catch (emailErr) {
+      console.warn('Booking email failed (booking saved to DB):', emailErr.message);
+    }
+
+    console.log(`Booking: ${name} <${email}> tel:${phone} — ${date} ${time}`);
+    res.json({ ok: true });
+
+  } catch (err) {
+    console.error('Booking error:', err.message);
+    res.status(500).json({ error: 'Error al agendar. Inténtalo de nuevo.' });
   }
 });
 
