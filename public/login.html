@@ -132,30 +132,72 @@
             margin-bottom: 40px;
         }
 
-        .logo-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 16px;
-            animation: spin 3s linear infinite;
+        .logo-icon-wrap {
+            width: 72px;
+            height: 72px;
+            margin-bottom: 20px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #4ecdc4, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(78,205,196,0.25), 0 2px 8px rgba(41,128,185,0.15);
+            animation: logoPulse 3s ease-in-out infinite;
+            position: relative;
         }
 
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+        .logo-icon-wrap::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #4ecdc4, #2980b9, #4ecdc4);
+            background-size: 200% 200%;
+            z-index: -1;
+            opacity: 0.4;
+            filter: blur(8px);
+            animation: logoGlow 4s ease-in-out infinite;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            animation: logoSpin 8s linear infinite;
+        }
+
+        @keyframes logoSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(78,205,196,0.25); }
+            50% { transform: scale(1.04); box-shadow: 0 12px 40px rgba(78,205,196,0.35); }
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { background-position: 0% 50%; opacity: 0.4; }
+            50% { background-position: 100% 50%; opacity: 0.6; }
         }
 
         .logo-text {
-            font-size: 28px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .logo-sh {
+            color: var(--text1);
+        }
+
+        .logo-iftia {
+            background: linear-gradient(135deg, #4ecdc4, #2980b9);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 8px;
         }
 
         .logo-subtitle {
@@ -332,9 +374,15 @@
                 font-size: 24px;
             }
 
+            .logo-icon-wrap {
+                width: 56px;
+                height: 56px;
+                border-radius: 14px;
+            }
+
             .logo-icon {
-                width: 50px;
-                height: 50px;
+                width: 30px;
+                height: 30px;
             }
 
             .content {
@@ -360,28 +408,16 @@
         <div class="login-card">
             <!-- Logo section -->
             <div class="logo-section">
-                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#4ecdc4;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <!-- Calendar grid -->
-                    <rect x="15" y="15" width="70" height="70" rx="8" fill="none" stroke="url(#logoGradient)" stroke-width="2"/>
-                    <!-- Calendar header -->
-                    <rect x="15" y="15" width="70" height="15" rx="8" fill="url(#logoGradient)" opacity="0.2"/>
-                    <!-- Grid lines -->
-                    <line x1="15" y1="35" x2="85" y2="35" stroke="url(#logoGradient)" stroke-width="1" opacity="0.5"/>
-                    <line x1="15" y1="50" x2="85" y2="50" stroke="url(#logoGradient)" stroke-width="1" opacity="0.5"/>
-                    <line x1="15" y1="65" x2="85" y2="65" stroke="url(#logoGradient)" stroke-width="1" opacity="0.5"/>
-                    <line x1="35" y1="15" x2="35" y2="85" stroke="url(#logoGradient)" stroke-width="1" opacity="0.5"/>
-                    <line x1="55" y1="15" x2="55" y2="85" stroke="url(#logoGradient)" stroke-width="1" opacity="0.5"/>
-                    <!-- Highlight dot -->
-                    <circle cx="70" cy="40" r="3" fill="url(#logoGradient)"/>
-                </svg>
-                <h1 class="logo-text">Shiftia</h1>
-                <p class="logo-subtitle">Planificación de Turnos Hospitalarios</p>
+                <div class="logo-icon-wrap">
+                    <svg class="logo-icon" viewBox="0 0 40 40" fill="none">
+                        <defs><linearGradient id="sG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="rgba(255,255,255,0.7)"/></linearGradient></defs>
+                        <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sG)" stroke-width="2.5" fill="none"/>
+                        <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sG)" stroke-width="2.5" fill="none"/>
+                        <path d="M28 8l4-4 2 5" stroke="url(#sG)" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+                <h1 class="logo-text"><span class="logo-sh">Sh</span><span class="logo-iftia">iftia</span></h1>
+                <p class="logo-subtitle">Planificacion de Turnos Hospitalarios</p>
             </div>
 
             <!-- Error message -->
