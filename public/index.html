@@ -770,8 +770,9 @@ section { padding: 140px 48px; }
 .time-slot.selected { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
 .time-slot.disabled { opacity: 0.3; cursor: not-allowed; }
 
-.selected-datetime { margin-top: 10px; padding: 10px 14px; background: rgba(78,205,196,0.08); border: 1px solid rgba(78,205,196,0.25); border-radius: 8px; font-size: 0.85rem; color: var(--accent); font-weight: 600; display: none; text-align: center; }
-.selected-datetime.show { display: block; }
+.selected-datetime { margin-top: 16px; padding: 14px 20px; background: linear-gradient(135deg, rgba(78,205,196,0.1), rgba(41,128,185,0.1)); border: 1px solid rgba(78,205,196,0.3); border-radius: 10px; font-size: 0.9rem; color: var(--text1); font-weight: 600; display: none; text-align: center; gap: 8px; align-items: center; justify-content: center; }
+.selected-datetime.show { display: flex; }
+.selected-datetime svg { flex-shrink: 0; }
 
 /* ====== LANGUAGE SELECTOR ====== */
 .lang-selector {
@@ -3448,7 +3449,7 @@ function updateDatetimeDisplay() {
   if (selectedDate && selectedTime) {
     const dayNames = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
     const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-    display.textContent = `📅 ${dayNames[selectedDate.getDay()]} ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]} a las ${selectedTime}h`;
+    display.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${dayNames[selectedDate.getDay()]} ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]} a las ${selectedTime}h`;
     display.classList.add('show');
   } else {
     display.classList.remove('show');

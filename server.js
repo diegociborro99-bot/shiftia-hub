@@ -395,10 +395,13 @@ app.post('/api/support', authMiddleware, async (req, res) => {
       }
     }
 
-    // Try to send email notification (secondary — may fail if no GMAIL_APP_PASSWORD)
+    console.log(`Support ticket from ${user.name} <${user.email}>: [${cat}] ${subject}`);
+    res.json({ ok: true });
+
+    // Fire-and-forget email (don't block response)
     try {
       if (process.env.GMAIL_APP_PASSWORD) {
-        await transporter.sendMail({
+        transporter.sendMail({
           from: `"Shiftia Support" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
           to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
           subject: `[Soporte - ${catLabels[cat] || cat}] ${subject}`,
@@ -421,14 +424,12 @@ app.post('/api/support', authMiddleware, async (req, res) => {
               </div>
             </div>
           `
-        });
+        }).then(() => console.log('Support email sent'))
+          .catch(e => console.warn('Support email failed:', e.message));
       }
     } catch (emailErr) {
-      console.warn('Support email notification failed (ticket saved to DB):', emailErr.message);
+      console.warn('Support email setup failed:', emailErr.message);
     }
-
-    console.log(`Support ticket from ${user.name} <${user.email}>: [${cat}] ${subject}`);
-    res.json({ ok: true });
   } catch (err) {
     console.error('Support ticket error:', err.message);
     res.status(500).json({ error: 'Error sending support request' });
@@ -504,11 +505,13 @@ app.post('/api/contact', async (req, res) => {
       }
     }
 
-    // 2. Try sending emails (secondary — may fail without GMAIL_APP_PASSWORD)
-    let emailSent = false;
+    console.log(`Contact lead saved: ${name} <${email}> — ${company || 'N/A'}`);
+    res.json({ ok: true });
+
+    // Fire-and-forget emails (don't block response)
     try {
       if (process.env.GMAIL_APP_PASSWORD) {
-        await transporter.sendMail({
+        transporter.sendMail({
           from: `"Shiftia HUB" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
           to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
           subject: `Nueva solicitud de demo — ${safeName} (${safeCompany || 'Sin empresa'})`,
@@ -535,9 +538,10 @@ app.post('/api/contact', async (req, res) => {
               </div>
             </div>
           `
-        });
+        }).then(() => console.log('Contact notification email sent'))
+          .catch(e => console.warn('Contact notification email failed:', e.message));
 
-        await transporter.sendMail({
+        transporter.sendMail({
           from: `"Shiftia" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
           to: email,
           subject: 'Hemos recibido tu solicitud — Shiftia',
@@ -563,16 +567,12 @@ app.post('/api/contact', async (req, res) => {
               <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
             </div>
           `
-        });
-
-        emailSent = true;
+        }).then(() => console.log('Contact confirmation email sent'))
+          .catch(e => console.warn('Contact confirmation email failed:', e.message));
       }
     } catch (emailErr) {
-      console.warn('Contact email failed (lead saved to DB):', emailErr.message);
+      console.warn('Contact email setup failed:', emailErr.message);
     }
-
-    console.log(`Contact lead saved: ${name} <${email}> — ${company || 'N/A'} (email: ${emailSent ? 'sent' : 'skipped'})`);
-    res.json({ ok: true });
 
   } catch (err) {
     console.error('Contact form error:', err.message);
@@ -647,11 +647,15 @@ app.post('/api/booking', async (req, res) => {
     const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
     const prettyDate = `${dayNames[bookingDate.getDay()]} ${bookingDate.getDate()} de ${monthNames[bookingDate.getMonth()]} de ${bookingDate.getFullYear()}`;
 
-    // Try sending notification emails
+    // Respond immediately — don't wait for emails
+    console.log(`Booking: ${name} <${email}> tel:${phone} — ${date} ${time}`);
+    res.json({ ok: true });
+
+    // Fire-and-forget email notifications (don't block the response)
     try {
       if (process.env.GMAIL_APP_PASSWORD) {
         // 1. Notification to Diego
-        await transporter.sendMail({
+        transporter.sendMail({
           from: `"Shiftia Booking" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
           to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
           subject: `📞 Nueva llamada agendada — ${esc(name)} (${esc(company || 'N/A')}) — ${prettyDate} ${time}h`,
@@ -677,10 +681,11 @@ app.post('/api/booking', async (req, res) => {
               </div>
             </div>
           `
-        });
+        }).then(() => console.log('Booking notification email sent'))
+          .catch(e => console.warn('Booking notification email failed:', e.message));
 
         // 2. Confirmation to client
-        await transporter.sendMail({
+        transporter.sendMail({
           from: `"Shiftia" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
           to: email,
           subject: `Llamada confirmada — ${prettyDate} a las ${time}h — Shiftia`,
@@ -704,18 +709,18 @@ app.post('/api/booking', async (req, res) => {
               <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
             </div>
           `
-        });
+        }).then(() => console.log('Booking confirmation email sent to', email))
+          .catch(e => console.warn('Booking confirmation email failed:', e.message));
       }
     } catch (emailErr) {
-      console.warn('Booking email failed (booking saved to DB):', emailErr.message);
+      console.warn('Booking email setup failed:', emailErr.message);
     }
-
-    console.log(`Booking: ${name} <${email}> tel:${phone} — ${date} ${time}`);
-    res.json({ ok: true });
 
   } catch (err) {
     console.error('Booking error:', err.message);
-    res.status(500).json({ error: 'Error al agendar. Inténtalo de nuevo.' });
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Error al agendar. Inténtalo de nuevo.' });
+    }
   }
 });
 
