@@ -8,6 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+    <script>
+        // Fallback CDN if cloudflare fails
+        if (typeof window.jspdf === 'undefined') {
+            document.write('<script src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"><\/script>');
+        }
+    </script>
     <style>
         /* CSS Variables */
         :root {
@@ -860,7 +866,7 @@
                     <span class="quick-card-label">Soporte</span>
                     <span class="quick-card-desc">Contacta con nosotros</span>
                 </button>
-                <a href="https://docs.shiftia.es" target="_blank" class="quick-card" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                <a href="/docs" class="quick-card" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
                     <div class="quick-card-icon">
                         <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                     </div>
@@ -1289,6 +1295,14 @@
         }
 
         function downloadInvoice(invoiceId) {
+            if (!window.jspdf) {
+                alert('Cargando librería de PDF... Inténtalo de nuevo en unos segundos.');
+                // Dynamically load jsPDF
+                const s = document.createElement('script');
+                s.src = 'https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';
+                document.head.appendChild(s);
+                return;
+            }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: 'mm', format: 'a4' });
             const user = currentUser || {};

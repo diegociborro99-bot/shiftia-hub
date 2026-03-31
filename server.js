@@ -66,7 +66,21 @@ async function initializeDatabase() {
       );
     `);
 
-    console.log('Database initialized: tables created');
+    // Create contact leads table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS contact_leads (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        company VARCHAR(255),
+        workers VARCHAR(50),
+        department VARCHAR(255),
+        message TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    console.log('Database initialized: all tables created');
 
     // Seed admin user
     const adminEmail = 'admin@shiftia.es';
@@ -429,70 +443,84 @@ app.post('/api/contact', async (req, res) => {
     const safeDepartment = esc(department);
     const safeMessage = esc(message);
 
-    // 1. Send notification to Shiftia team
-    await transporter.sendMail({
-      from: `"Shiftia HUB" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
-      to: 'highkeycvsender@gmail.com',
-      subject: `Nueva solicitud de demo — ${safeName} (${safeCompany || 'Sin empresa'})`,
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
-          <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 1.4rem;">Nueva solicitud de demo</h1>
-          </div>
-          <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 140px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${safeName}</td></tr>
-              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${safeEmail}" style="color: #2980b9;">${safeEmail}</a></td></tr>
-              ${safeCompany ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${safeCompany}</td></tr>` : ''}
-              ${safeWorkers ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Trabajadores</td><td style="padding: 10px 0; color: #1e293b;">${safeWorkers}</td></tr>` : ''}
-              ${safeDepartment ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Departamento</td><td style="padding: 10px 0; color: #1e293b;">${safeDepartment}</td></tr>` : ''}
-            </table>
-            ${safeMessage ? `
-              <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-                <p style="color: #64748b; font-weight: 600; margin-bottom: 8px;">Mensaje:</p>
-                <p style="color: #1e293b; line-height: 1.6; background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">${safeMessage}</p>
+    // 1. Save lead to database (primary — always works)
+    await pool.query(
+      'INSERT INTO contact_leads (name, email, company, workers, department, message) VALUES ($1, $2, $3, $4, $5, $6)',
+      [name, email, company || null, workers || null, department || null, message || null]
+    );
+
+    // 2. Try sending emails (secondary — may fail without GMAIL_APP_PASSWORD)
+    let emailSent = false;
+    try {
+      if (process.env.GMAIL_APP_PASSWORD) {
+        await transporter.sendMail({
+          from: `"Shiftia HUB" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
+          to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
+          subject: `Nueva solicitud de demo — ${safeName} (${safeCompany || 'Sin empresa'})`,
+          html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
+              <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 1.4rem;">Nueva solicitud de demo</h1>
               </div>
-            ` : ''}
-            <p style="color: #94a3b8; font-size: 0.82rem; margin-top: 24px;">Enviado desde www.shiftia.es — ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}</p>
-          </div>
-        </div>
-      `
-    });
-
-    // 2. Send confirmation to the client
-    await transporter.sendMail({
-      from: `"Shiftia" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
-      to: email,
-      subject: 'Hemos recibido tu solicitud — Shiftia',
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
-          <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 1.5rem;">Shiftia</h1>
-          </div>
-          <div style="background: #ffffff; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-            <h2 style="color: #1e293b; margin-top: 0;">Hola ${safeName.split(' ')[0]},</h2>
-            <p style="color: #475569; line-height: 1.7;">Hemos recibido tu solicitud correctamente. Nuestro equipo la revisara y te contactaremos en <strong>menos de 24 horas laborables</strong> con una propuesta personalizada.</p>
-            <p style="color: #475569; line-height: 1.7;">Mientras tanto, si tienes cualquier duda, puedes responder a este email directamente.</p>
-            <div style="margin: 28px 0; padding: 20px; background: #f0fdf9; border-radius: 8px; border-left: 4px solid #4ecdc4;">
-              <p style="color: #1e293b; margin: 0; font-weight: 600;">Lo que incluye tu demo:</p>
-              <ul style="color: #475569; line-height: 1.8; padding-left: 20px;">
-                <li>Configuracion con los datos de tu equipo</li>
-                <li>Demo en vivo del motor IA de coberturas</li>
-                <li>30 dias de prueba gratuita sin compromiso</li>
-              </ul>
+              <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 140px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${safeName}</td></tr>
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${safeEmail}" style="color: #2980b9;">${safeEmail}</a></td></tr>
+                  ${safeCompany ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${safeCompany}</td></tr>` : ''}
+                  ${safeWorkers ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Trabajadores</td><td style="padding: 10px 0; color: #1e293b;">${safeWorkers}</td></tr>` : ''}
+                  ${safeDepartment ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Departamento</td><td style="padding: 10px 0; color: #1e293b;">${safeDepartment}</td></tr>` : ''}
+                </table>
+                ${safeMessage ? `
+                  <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                    <p style="color: #64748b; font-weight: 600; margin-bottom: 8px;">Mensaje:</p>
+                    <p style="color: #1e293b; line-height: 1.6; background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">${safeMessage}</p>
+                  </div>
+                ` : ''}
+                <p style="color: #94a3b8; font-size: 0.82rem; margin-top: 24px;">Enviado desde www.shiftia.es — ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}</p>
+              </div>
             </div>
-            <p style="color: #475569;">Un saludo,<br><strong>El equipo de Shiftia</strong></p>
-          </div>
-          <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
-        </div>
-      `
-    });
+          `
+        });
 
-    console.log(`Contact form: ${name} <${email}> — ${company || 'N/A'}`);
+        await transporter.sendMail({
+          from: `"Shiftia" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
+          to: email,
+          subject: 'Hemos recibido tu solicitud — Shiftia',
+          html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
+              <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 1.5rem;">Shiftia</h1>
+              </div>
+              <div style="background: #ffffff; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                <h2 style="color: #1e293b; margin-top: 0;">Hola ${safeName.split(' ')[0]},</h2>
+                <p style="color: #475569; line-height: 1.7;">Hemos recibido tu solicitud correctamente. Nuestro equipo la revisara y te contactaremos en <strong>menos de 24 horas laborables</strong> con una propuesta personalizada.</p>
+                <p style="color: #475569; line-height: 1.7;">Mientras tanto, si tienes cualquier duda, puedes responder a este email directamente.</p>
+                <div style="margin: 28px 0; padding: 20px; background: #f0fdf9; border-radius: 8px; border-left: 4px solid #4ecdc4;">
+                  <p style="color: #1e293b; margin: 0; font-weight: 600;">Lo que incluye tu demo:</p>
+                  <ul style="color: #475569; line-height: 1.8; padding-left: 20px;">
+                    <li>Configuracion con los datos de tu equipo</li>
+                    <li>Demo en vivo del motor IA de coberturas</li>
+                    <li>30 dias de prueba gratuita sin compromiso</li>
+                  </ul>
+                </div>
+                <p style="color: #475569;">Un saludo,<br><strong>El equipo de Shiftia</strong></p>
+              </div>
+              <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
+            </div>
+          `
+        });
+
+        emailSent = true;
+      }
+    } catch (emailErr) {
+      console.warn('Contact email failed (lead saved to DB):', emailErr.message);
+    }
+
+    console.log(`Contact lead saved: ${name} <${email}> — ${company || 'N/A'} (email: ${emailSent ? 'sent' : 'skipped'})`);
     res.json({ ok: true });
 
   } catch (err) {
-    console.error('Email error:', err.message);
+    console.error('Contact form error:', err.message);
     res.status(500).json({ error: 'Error al enviar. Intentalo de nuevo.' });
   }
 });
@@ -506,6 +534,11 @@ app.get('/login', (req, res) => {
 // Serve dashboard.html
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+// Serve docs.html
+app.get('/docs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'docs.html'));
 });
 
 // Health check
