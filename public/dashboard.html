@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
     <style>
         /* CSS Variables */
         :root {
@@ -1288,38 +1289,170 @@
         }
 
         function downloadInvoice(invoiceId) {
-            // Generate a simple PDF invoice
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: 'mm', format: 'a4' });
             const user = currentUser || {};
             const planInfo = PLAN_INFO[user.plan] || PLAN_INFO.trial;
+            const w = doc.internal.pageSize.getWidth();
 
-            const invoiceContent = `
-FACTURA ${invoiceId}
-═══════════════════════════
-Shiftia - Planificación de Turnos Hospitalarios
-NIF: B12345678
+            // Parse invoice date from ID (INV-2026-03 → March 2026)
+            const parts = invoiceId.split('-');
+            const invYear = parts[1] || new Date().getFullYear();
+            const invMonth = parseInt(parts[2] || (new Date().getMonth() + 1));
+            const invDate = new Date(invYear, invMonth - 1, 1);
+            const invDateStr = invDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 
-Cliente: ${user.name || 'Cliente'}
-Email: ${user.email || ''}
-Empresa: ${user.company || 'N/A'}
+            const base = planInfo.cost;
+            const iva = base * 0.21;
+            const total = base + iva;
 
-Concepto: ${planInfo.name} - Suscripción Mensual
-Importe: €${planInfo.cost.toFixed(2)}
-IVA (21%): €${(planInfo.cost * 0.21).toFixed(2)}
-TOTAL: €${(planInfo.cost * 1.21).toFixed(2)}
+            // ===== HEADER GRADIENT BAR =====
+            // Teal-to-blue gradient simulation with rectangles
+            const gradSteps = 60;
+            for (let i = 0; i < gradSteps; i++) {
+                const ratio = i / gradSteps;
+                const r = Math.round(78 + (41 - 78) * ratio);
+                const g = Math.round(205 + (128 - 205) * ratio);
+                const b = Math.round(196 + (185 - 196) * ratio);
+                doc.setFillColor(r, g, b);
+                doc.rect(i * (w / gradSteps), 0, (w / gradSteps) + 0.5, 38, 'F');
+            }
 
-Fecha: ${new Date().toLocaleDateString('es-ES')}
-Estado: Pagado
+            // Logo text on gradient
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(28);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Shiftia', 20, 22);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Planificación Inteligente de Turnos', 20, 30);
 
-Gracias por confiar en Shiftia.
-            `.trim();
+            // Invoice number on header right
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Factura ${invoiceId}`, w - 20, 18, { align: 'right' });
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.text(`Fecha: ${invDateStr}`, w - 20, 25, { align: 'right' });
+            doc.text('Estado: Pagado', w - 20, 31, { align: 'right' });
 
-            const blob = new Blob([invoiceContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${invoiceId}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
+            // ===== COMPANY INFO =====
+            let y = 52;
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(8);
+            doc.text('EMISOR', 20, y);
+            doc.text('CLIENTE', 115, y);
+            y += 6;
+
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Shiftia Technologies S.L.', 20, y);
+            doc.text(user.name || 'Cliente', 115, y);
+            y += 5;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(71, 85, 105);
+            doc.text('CIF: B12345678', 20, y);
+            doc.text(user.email || '', 115, y);
+            y += 4.5;
+            doc.text('Calle Ejemplo 42, 33212 Gijón', 20, y);
+            doc.text(user.company || '', 115, y);
+            y += 4.5;
+            doc.text('info@shiftia.es', 20, y);
+
+            // ===== SEPARATOR =====
+            y += 10;
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.4);
+            doc.line(20, y, w - 20, y);
+
+            // ===== TABLE HEADER =====
+            y += 10;
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(20, y - 5, w - 40, 10, 2, 2, 'F');
+            doc.setTextColor(100, 116, 139);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CONCEPTO', 25, y + 1);
+            doc.text('CANTIDAD', 110, y + 1);
+            doc.text('PRECIO', 140, y + 1);
+            doc.text('IMPORTE', w - 25, y + 1, { align: 'right' });
+
+            // ===== TABLE ROW =====
+            y += 12;
+            doc.setTextColor(30, 41, 59);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Plan ${planInfo.name} — Suscripción Mensual`, 25, y);
+            doc.text('1', 116, y);
+            doc.text(`${base.toFixed(2)} €`, 140, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`${base.toFixed(2)} €`, w - 25, y, { align: 'right' });
+
+            // Row separator
+            y += 5;
+            doc.setDrawColor(241, 245, 249);
+            doc.line(20, y, w - 20, y);
+
+            // ===== TOTALS BOX =====
+            y += 12;
+            const totalsX = 125;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(100, 116, 139);
+
+            doc.text('Subtotal', totalsX, y);
+            doc.setTextColor(30, 41, 59);
+            doc.text(`${base.toFixed(2)} €`, w - 25, y, { align: 'right' });
+
+            y += 6;
+            doc.setTextColor(100, 116, 139);
+            doc.text('IVA (21%)', totalsX, y);
+            doc.setTextColor(30, 41, 59);
+            doc.text(`${iva.toFixed(2)} €`, w - 25, y, { align: 'right' });
+
+            y += 8;
+            doc.setDrawColor(41, 128, 185);
+            doc.setLineWidth(0.6);
+            doc.line(totalsX - 5, y - 3, w - 20, y - 3);
+
+            doc.setFontSize(13);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(41, 128, 185);
+            doc.text('TOTAL', totalsX, y + 3);
+            doc.text(`${total.toFixed(2)} €`, w - 25, y + 3, { align: 'right' });
+
+            // ===== PAYMENT INFO BOX =====
+            y += 22;
+            doc.setFillColor(240, 249, 255);
+            doc.roundedRect(20, y - 4, w - 40, 22, 3, 3, 'F');
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(41, 128, 185);
+            doc.text('INFORMACIÓN DE PAGO', 28, y + 2);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(71, 85, 105);
+            doc.setFontSize(8);
+            doc.text('Método: Tarjeta de crédito / débito', 28, y + 8);
+            doc.text(`Referencia: ${invoiceId}`, 28, y + 13);
+            doc.text(`Fecha de pago: ${invDateStr}`, 120, y + 8);
+
+            // ===== FOOTER =====
+            const footerY = 270;
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.3);
+            doc.line(20, footerY, w - 20, footerY);
+
+            doc.setFontSize(8);
+            doc.setTextColor(148, 163, 184);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Shiftia Technologies S.L. · CIF B12345678 · shiftia.es', w / 2, footerY + 6, { align: 'center' });
+            doc.text('Esta factura ha sido generada automáticamente y es válida sin firma.', w / 2, footerY + 11, { align: 'center' });
+            doc.text('Gracias por confiar en Shiftia.', w / 2, footerY + 16, { align: 'center' });
+
+            // ===== SAVE =====
+            doc.save(`Factura-${invoiceId}.pdf`);
         }
 
         // ===== NOTIFICATIONS =====

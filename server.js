@@ -53,7 +53,20 @@ async function initializeDatabase() {
       );
     `);
 
-    console.log('Database initialized: users table created');
+    // Create support tickets table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS support_tickets (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        category VARCHAR(50) DEFAULT 'general',
+        subject VARCHAR(500) NOT NULL,
+        message TEXT NOT NULL,
+        status VARCHAR(50) DEFAULT 'open',
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    console.log('Database initialized: tables created');
 
     // Seed admin user
     const adminEmail = 'admin@shiftia.es';
@@ -305,7 +318,7 @@ app.put('/api/auth/update', authMiddleware, async (req, res) => {
 // POST /api/support (protected)
 app.post('/api/support', authMiddleware, async (req, res) => {
   try {
-    const { subject, message } = req.body;
+    const { category, subject, message } = req.body;
 
     // Validate required fields
     if (!subject || !message) {
@@ -323,36 +336,51 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     }
 
     const user = userResult.rows[0];
+    const cat = category || 'general';
+    const catLabels = { general: 'Consulta general', bug: 'Reporte de error', billing: 'Facturación', feature: 'Sugerencia de mejora' };
 
-    // Send email to support
-    await transporter.sendMail({
-      from: `"Shiftia Support" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
-      to: 'highkeycvsender@gmail.com',
-      subject: `[Support] ${subject}`,
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
-          <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 1.4rem;">Support Request: ${subject}</h1>
-          </div>
-          <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 100px;">Name</td><td style="padding: 10px 0; color: #1e293b;">${user.name}</td></tr>
-              <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${user.email}" style="color: #2980b9;">${user.email}</a></td></tr>
-              ${user.company ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Company</td><td style="padding: 10px 0; color: #1e293b;">${user.company}</td></tr>` : ''}
-            </table>
-            <div style="padding: 20px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
-              <p style="color: #64748b; font-weight: 600; margin-bottom: 12px;">Message:</p>
-              <p style="color: #1e293b; line-height: 1.6; margin: 0; white-space: pre-wrap;">${message}</p>
+    // Save ticket to database (primary — always works)
+    await pool.query(
+      'INSERT INTO support_tickets (user_id, category, subject, message) VALUES ($1, $2, $3, $4)',
+      [req.user.id, cat, subject, message]
+    );
+
+    // Try to send email notification (secondary — may fail if no GMAIL_APP_PASSWORD)
+    try {
+      if (process.env.GMAIL_APP_PASSWORD) {
+        await transporter.sendMail({
+          from: `"Shiftia Support" <${process.env.GMAIL_USER || 'highkeycvsender@gmail.com'}>`,
+          to: process.env.SUPPORT_EMAIL || 'highkeycvsender@gmail.com',
+          subject: `[Soporte - ${catLabels[cat] || cat}] ${subject}`,
+          html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px;">
+              <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 1.4rem;">${catLabels[cat] || cat}: ${subject}</h1>
+              </div>
+              <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 110px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${user.name}</td></tr>
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${user.email}" style="color: #2980b9;">${user.email}</a></td></tr>
+                  ${user.company ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${user.company}</td></tr>` : ''}
+                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Categoría</td><td style="padding: 10px 0; color: #1e293b;">${catLabels[cat] || cat}</td></tr>
+                </table>
+                <div style="padding: 20px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
+                  <p style="color: #64748b; font-weight: 600; margin-bottom: 12px;">Mensaje:</p>
+                  <p style="color: #1e293b; line-height: 1.6; margin: 0; white-space: pre-wrap;">${message}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      `
-    });
+          `
+        });
+      }
+    } catch (emailErr) {
+      console.warn('Support email notification failed (ticket saved to DB):', emailErr.message);
+    }
 
-    console.log(`Support request from ${user.name} <${user.email}>: ${subject}`);
+    console.log(`Support ticket from ${user.name} <${user.email}>: [${cat}] ${subject}`);
     res.json({ ok: true });
   } catch (err) {
-    console.error('Support email error:', err.message);
+    console.error('Support ticket error:', err.message);
     res.status(500).json({ error: 'Error sending support request' });
   }
 });
