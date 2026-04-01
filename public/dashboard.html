@@ -70,7 +70,7 @@
             line-height: 1.6;
         }
 
-        /* Loading overlay */
+        /* Loading overlay with skeleton screens */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -78,13 +78,66 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             z-index: 9999;
             transition: opacity 0.4s ease;
+            overflow-y: auto;
+            padding: 2rem;
         }
         .loading-overlay.fade-out {
             opacity: 0;
             pointer-events: none;
+        }
+        .skeleton-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--border-light) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+            border-radius: 8px;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-header {
+            height: 48px;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+        }
+        .skeleton-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .skeleton-stat-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+        .skeleton-stat-label {
+            height: 12px;
+            width: 40%;
+            margin-bottom: 0.75rem;
+        }
+        .skeleton-stat-value {
+            height: 28px;
+            width: 70%;
+            margin-bottom: 0.5rem;
+        }
+        .skeleton-stat-trend {
+            height: 10px;
+            width: 45%;
+        }
+        .skeleton-content {
+            height: 200px;
+            border-radius: 12px;
+            margin-bottom: 1rem;
         }
         .loading-spinner {
             width: 48px;
@@ -93,6 +146,7 @@
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
+            margin-top: 2rem;
         }
         .loading-text {
             margin-top: 1rem;
@@ -100,6 +154,145 @@
             font-size: 0.95rem;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Onboarding bar */
+        .onboarding-bar {
+            background: var(--bg-card);
+            border-left: 4px solid;
+            border-image: linear-gradient(135deg, var(--primary), var(--accent)) 1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: none; }
+        }
+        .onboarding-content {
+            max-width: 100%;
+        }
+        .onboarding-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .onboarding-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text1);
+            margin: 0;
+        }
+        .onboarding-dismiss {
+            background: none;
+            border: none;
+            color: var(--text3);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        .onboarding-dismiss:hover {
+            background: var(--bg-warm);
+            color: var(--text1);
+        }
+        .onboarding-bar p {
+            font-size: 0.88rem;
+            color: var(--text2);
+            margin: 0 0 1rem 0;
+        }
+        .onboarding-steps {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .ob-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text2);
+        }
+        .ob-step-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            background: var(--bg);
+        }
+        .ob-step-dot.completed {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-color: transparent;
+            color: white;
+            font-size: 0.75rem;
+        }
+        .onboarding-progress {
+            height: 4px;
+            background: var(--border-light);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .onboarding-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.4s ease;
+        }
+
+        /* Empty states */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .empty-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--border);
+            stroke-width: 1.5;
+            fill: none;
+        }
+        .empty-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text1);
+            margin: 0 0 0.5rem 0;
+        }
+        .empty-desc {
+            font-size: 0.88rem;
+            color: var(--text3);
+            margin: 0 0 1.5rem 0;
+            max-width: 350px;
+            line-height: 1.6;
+        }
+        .empty-state .submit-btn {
+            min-width: 160px;
+        }
 
         /* Navbar */
         .navbar {
@@ -868,10 +1061,39 @@
     </style>
 </head>
 <body>
-    <!-- Loading overlay -->
+    <!-- Loading overlay with skeleton screens -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Cargando tu panel...</p>
+        <div class="skeleton-container">
+            <!-- Header skeleton -->
+            <div class="skeleton skeleton-header"></div>
+
+            <!-- Stat cards skeleton grid -->
+            <div class="skeleton-stat-grid">
+                <div class="skeleton-stat-card">
+                    <div class="skeleton skeleton-stat-label"></div>
+                    <div class="skeleton skeleton-stat-value"></div>
+                    <div class="skeleton skeleton-stat-trend"></div>
+                </div>
+                <div class="skeleton-stat-card">
+                    <div class="skeleton skeleton-stat-label"></div>
+                    <div class="skeleton skeleton-stat-value"></div>
+                    <div class="skeleton skeleton-stat-trend"></div>
+                </div>
+                <div class="skeleton-stat-card">
+                    <div class="skeleton skeleton-stat-label"></div>
+                    <div class="skeleton skeleton-stat-value"></div>
+                    <div class="skeleton skeleton-stat-trend"></div>
+                </div>
+                <div class="skeleton-stat-card">
+                    <div class="skeleton skeleton-stat-label"></div>
+                    <div class="skeleton skeleton-stat-value"></div>
+                    <div class="skeleton skeleton-stat-trend"></div>
+                </div>
+            </div>
+
+            <!-- Content area skeleton -->
+            <div class="skeleton skeleton-content"></div>
+        </div>
     </div>
 
     <!-- Navbar -->
@@ -923,6 +1145,34 @@
             <h1 class="welcome-title" id="welcomeMessage">Bienvenido</h1>
             <p class="welcome-date" id="currentDate"></p>
         </section>
+
+        <!-- Onboarding Progress Bar -->
+        <div class="onboarding-bar" id="onboardingBar" style="display:none;">
+            <div class="onboarding-content">
+                <div class="onboarding-header">
+                    <h3>Bienvenido a Shiftia</h3>
+                    <button class="onboarding-dismiss" onclick="dismissOnboarding()">&times;</button>
+                </div>
+                <p>Completa estos pasos para empezar:</p>
+                <div class="onboarding-steps">
+                    <div class="ob-step" data-step="profile">
+                        <div class="ob-step-dot completed">✓</div>
+                        <span>Crear cuenta</span>
+                    </div>
+                    <div class="ob-step" data-step="plan">
+                        <div class="ob-step-dot"></div>
+                        <span>Elegir plan</span>
+                    </div>
+                    <div class="ob-step" data-step="schedule">
+                        <div class="ob-step-dot"></div>
+                        <span>Crear primera planilla</span>
+                    </div>
+                </div>
+                <div class="onboarding-progress">
+                    <div class="onboarding-progress-fill" style="width: 33%"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- Quick Access Cards -->
         <section class="section">
@@ -1012,25 +1262,39 @@
                 Historial de Facturación
             </h2>
             <div class="card">
-                <!-- Desktop table -->
-                <div class="billing-table-wrap">
-                    <table class="billing-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Concepto</th>
-                                <th>Monto</th>
-                                <th>Estado</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="billingTableBody">
-                            <tr><td colspan="5" class="billing-empty">Cargando facturas...</td></tr>
-                        </tbody>
-                    </table>
+                <!-- Billing content container -->
+                <div id="billingContent">
+                    <!-- Desktop table -->
+                    <div class="billing-table-wrap">
+                        <table class="billing-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="billingTableBody">
+                                <tr><td colspan="5" class="billing-empty">Cargando facturas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Mobile cards -->
+                    <div class="billing-cards" id="billingCards">
+                    </div>
                 </div>
-                <!-- Mobile cards -->
-                <div class="billing-cards" id="billingCards">
+                <!-- Billing empty state (shown when no subscription) -->
+                <div id="billingEmptyState" style="display:none;">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </div>
+                        <h3 class="empty-title">Sin suscripción activa</h3>
+                        <p class="empty-desc">Elige un plan para desbloquear todas las funcionalidades de Shiftia.</p>
+                        <button class="submit-btn" onclick="openPlanModal()">Ver planes</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1042,34 +1306,46 @@
                 Soporte
             </h2>
             <div class="card">
-                <p class="support-info">
-                    ¿Tienes preguntas o necesitas ayuda? Ponte en contacto con nuestro equipo de soporte.
-                    También puedes escribirnos a <a href="mailto:soporte@shiftia.es">soporte@shiftia.es</a>.
-                </p>
-                <form id="supportForm">
-                    <div id="supportMsgBox"></div>
-                    <div class="form-group">
-                        <label for="supportCategory" class="form-label">Categoría</label>
-                        <select id="supportCategory" class="form-select">
-                            <option value="general">Consulta general</option>
-                            <option value="bug">Reportar un error</option>
-                            <option value="billing">Facturación</option>
-                            <option value="feature">Sugerencia de mejora</option>
-                        </select>
+                <div id="supportContent">
+                    <p class="support-info">
+                        ¿Tienes preguntas o necesitas ayuda? Ponte en contacto con nuestro equipo de soporte.
+                        También puedes escribirnos a <a href="mailto:soporte@shiftia.es">soporte@shiftia.es</a>.
+                    </p>
+                    <form id="supportForm">
+                        <div id="supportMsgBox"></div>
+                        <div class="form-group">
+                            <label for="supportCategory" class="form-label">Categoría</label>
+                            <select id="supportCategory" class="form-select">
+                                <option value="general">Consulta general</option>
+                                <option value="bug">Reportar un error</option>
+                                <option value="billing">Facturación</option>
+                                <option value="feature">Sugerencia de mejora</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="supportSubject" class="form-label">Asunto</label>
+                            <input type="text" id="supportSubject" class="form-input" placeholder="Ej: Problema con la planificación" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="supportBody" class="form-label">Mensaje</label>
+                            <textarea id="supportBody" class="form-textarea" placeholder="Describe tu problema o pregunta..." required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn" id="supportSubmitBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Enviar
+                        </button>
+                    </form>
+                </div>
+                <!-- Support empty state (shown when no tickets) -->
+                <div id="supportEmptyState" style="display:none;">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <h3 class="empty-title">Todo en orden</h3>
+                        <p class="empty-desc">No tienes tickets de soporte abiertos. Si necesitas ayuda, estamos aquí.</p>
                     </div>
-                    <div class="form-group">
-                        <label for="supportSubject" class="form-label">Asunto</label>
-                        <input type="text" id="supportSubject" class="form-input" placeholder="Ej: Problema con la planificación" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="supportBody" class="form-label">Mensaje</label>
-                        <textarea id="supportBody" class="form-textarea" placeholder="Describe tu problema o pregunta..." required></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn" id="supportSubmitBtn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                        Enviar
-                    </button>
-                </form>
+                </div>
             </div>
         </section>
 
@@ -1170,6 +1446,95 @@
             business:   { name: 'Business', cost: 50, workers: -1 },
             enterprise: { name: 'Business', cost: 50, workers: -1 }   // legacy alias
         };
+
+        // ===== ONBOARDING =====
+        function initOnboarding(user) {
+            const plan = user.plan || 'trial';
+            const hasStripeSubscription = user.stripe_subscription_id;
+            const isDismissed = localStorage.getItem('shiftia_onboarding_dismissed');
+
+            // Show onboarding only for trial users without subscription who haven't dismissed it
+            if (plan === 'trial' && !hasStripeSubscription && !isDismissed) {
+                const bar = document.getElementById('onboardingBar');
+                if (bar) {
+                    bar.style.display = 'block';
+                    updateOnboardingProgress(user);
+                }
+            }
+        }
+
+        function updateOnboardingProgress(user) {
+            const plan = user.plan || 'trial';
+            const hasStripeSubscription = user.stripe_subscription_id;
+
+            // Mark steps as completed
+            const profileStep = document.querySelector('[data-step="profile"]');
+            const planStep = document.querySelector('[data-step="plan"]');
+            const scheduleStep = document.querySelector('[data-step="schedule"]');
+
+            // Profile: always completed (they're logged in)
+            if (profileStep) {
+                profileStep.querySelector('.ob-step-dot').classList.add('completed');
+            }
+
+            // Plan: completed if not trial or has subscription
+            if (plan !== 'trial' || hasStripeSubscription) {
+                if (planStep) {
+                    planStep.querySelector('.ob-step-dot').classList.add('completed');
+                }
+            }
+
+            // Update progress bar
+            let completedSteps = 1; // Always have profile completed
+            if (plan !== 'trial' || hasStripeSubscription) completedSteps++;
+
+            const progressFill = document.querySelector('.onboarding-progress-fill');
+            if (progressFill) {
+                progressFill.style.width = (completedSteps / 3) * 100 + '%';
+            }
+
+            // Make schedule step link to sara
+            if (scheduleStep) {
+                scheduleStep.style.cursor = 'pointer';
+                scheduleStep.addEventListener('click', () => {
+                    window.open('https://sara.shiftia.es', '_blank');
+                });
+            }
+        }
+
+        function dismissOnboarding() {
+            localStorage.setItem('shiftia_onboarding_dismissed', 'true');
+            const bar = document.getElementById('onboardingBar');
+            if (bar) {
+                bar.style.display = 'none';
+            }
+        }
+
+        // ===== EMPTY STATES =====
+        function updateBillingDisplay(user) {
+            const plan = user.plan || 'trial';
+            const hasContent = plan !== 'trial' || (user.stripe_subscription_id);
+
+            const billingContent = document.getElementById('billingContent');
+            const billingEmpty = document.getElementById('billingEmptyState');
+
+            if (billingContent && billingEmpty) {
+                if (hasContent && plan !== 'trial') {
+                    billingContent.style.display = 'block';
+                    billingEmpty.style.display = 'none';
+                } else if (plan === 'trial' && !user.stripe_subscription_id) {
+                    billingContent.style.display = 'none';
+                    billingEmpty.style.display = 'block';
+                }
+            }
+        }
+
+        function showPlanModal() {
+            const modal = document.getElementById('planModal');
+            if (modal) {
+                openPlanModal();
+            }
+        }
 
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', initDashboard);
@@ -1315,6 +1680,12 @@
             document.querySelectorAll('.plan-option').forEach(el => {
                 el.classList.toggle('current', el.dataset.plan === normalizedPlan);
             });
+
+            // Initialize onboarding bar for new users
+            initOnboarding(u);
+
+            // Update billing display (show empty state if no subscription)
+            updateBillingDisplay(u);
         }
 
         function updateWorkersBar(used, limit, isUnlimited) {

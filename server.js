@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -63,6 +64,147 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
             [plan, workersMap[plan] || 15, stripeCustomerId, subscriptionId, billing || 'monthly', userId]
           );
           console.log(`Plan updated: user ${userId} → ${plan} (${billing})`);
+
+          // Fire-and-forget payment confirmation email
+          const userInfo = await pool.query('SELECT email, name FROM users WHERE id = $1', [userId]);
+          if (userInfo.rows.length > 0) {
+            const { email, name } = userInfo.rows[0];
+            const planNames = { starter: 'Starter', pro: 'Pro', business: 'Business' };
+            const planPrices = {
+              starter: { monthly: '20€/mes', annual: '192€/año' },
+              pro: { monthly: '30€/mes', annual: '288€/año' },
+              business: { monthly: '50€/mes', annual: '480€/año' }
+            };
+            const amount = planPrices[plan] ? planPrices[plan][billing === 'annual' ? 'annual' : 'monthly'] : 'contactar';
+            const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+            sendMail({
+              from: RESEND_FROM,
+              to: email,
+              subject: `Tu plan Shiftia ${planNames[plan]} está activo`,
+              html: `
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>Plan activado</title>
+                  <!--[if mso]>
+                  <style>table { border-collapse: collapse; } .gradient-header { background: #2980b9 !important; }</style>
+                  <![endif]-->
+                </head>
+                <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+
+                <!-- Preheader -->
+                <div style="display: none; max-height: 0; overflow: hidden; font-size: 1px; color: #f8fafc;">
+                  Tu suscripción a Shiftia ha sido activada correctamente
+                  &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+                </div>
+
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc;">
+                  <tr>
+                    <td align="center" style="padding: 40px 16px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto;">
+
+                        <!-- Header with gradient -->
+                        <tr>
+                          <td class="gradient-header" style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 32px 40px; border-radius: 12px 12px 0 0;">
+                            <table role="presentation" cellpadding="0" cellspacing="0">
+                              <tr>
+                                <td style="padding-bottom: 20px;">
+                                  <span style="color: white; font-size: 22px; font-weight: 800; letter-spacing: -0.02em;">Shiftia</span>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <h1 style="color: white; margin: 0; font-size: 1.4rem; font-weight: 600; line-height: 1.3;">
+                                    Plan activado
+                                  </h1>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+
+                        <!-- Body -->
+                        <tr>
+                          <td style="background-color: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none;">
+
+                            <p style="margin: 0 0 20px; font-size: 15px; color: #334155; line-height: 1.7;">
+                              Hola ${esc(name)},
+                            </p>
+                            <p style="margin: 0 0 24px; font-size: 15px; color: #334155; line-height: 1.7;">
+                              ¡Tu suscripción a Shiftia ha sido activada correctamente! Gracias por confiar en nosotros.
+                            </p>
+
+                            <!-- Info box -->
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 24px 0; background: #f0fdf9; border-radius: 10px; border-left: 4px solid #4ecdc4;">
+                              <tr>
+                                <td style="padding: 20px;">
+                                  <p style="margin: 0 0 8px; font-size: 14px; font-weight: 600; color: #1e293b;">
+                                    Detalles de tu suscripción
+                                  </p>
+                                  <table role="presentation" cellpadding="0" cellspacing="0">
+                                    <tr><td style="font-size: 13px; color: #64748b; padding: 4px 16px 4px 0; font-weight: 600;">Plan</td><td style="font-size: 14px; color: #1e293b; font-weight: 600;">${planNames[plan]}</td></tr>
+                                    <tr><td style="font-size: 13px; color: #64748b; padding: 4px 16px 4px 0; font-weight: 600;">Ciclo de facturación</td><td style="font-size: 14px; color: #1e293b;">${billing === 'annual' ? 'Anual' : 'Mensual'}</td></tr>
+                                    <tr><td style="font-size: 13px; color: #64748b; padding: 4px 16px 4px 0; font-weight: 600;">Importe</td><td style="font-size: 14px; color: #1e293b; font-weight: 700;">${amount}</td></tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+
+                            <p style="margin: 0 0 20px; font-size: 14px; color: #334155; line-height: 1.6;">
+                              Tienes acceso completo a todas las características de tu plan. Si en los próximos 30 días no estás completamente satisfecho, podemos devolverte el dinero sin preguntas.
+                            </p>
+
+                            <!-- CTA -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 24px 0;">
+                              <tr>
+                                <td style="background: #2980b9; border-radius: 8px;">
+                                  <a href="${APP_URL}/dashboard" target="_blank" style="display: inline-block; padding: 14px 32px; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                                    Ir a mi dashboard
+                                  </a>
+                                </td>
+                              </tr>
+                            </table>
+
+                            <p style="margin: 0; font-size: 14px; color: #64748b; line-height: 1.6;">
+                              Si tienes alguna pregunta sobre tu suscripción, no dudes en responder a este email. Estamos aquí para ayudarte.
+                            </p>
+                          </td>
+                        </tr>
+
+                        <!-- Footer -->
+                        <tr>
+                          <td style="background-color: #ffffff; padding: 0 40px 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                              <tr>
+                                <td style="border-top: 1px solid #e2e8f0; padding-top: 24px;">
+                                  <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+                                    Este email fue enviado por <a href="https://shiftia.es" style="color: #2980b9; text-decoration: none;">Shiftia</a>.
+                                    <br>Planificación inteligente de turnos hospitalarios.
+                                  </p>
+                                  <p style="margin: 12px 0 0; font-size: 12px; color: #94a3b8;">
+                                    <a href="${APP_URL}/dashboard#settings" style="color: #94a3b8; text-decoration: underline;">Gestionar preferencias</a>
+                                    &nbsp;&bull;&nbsp;
+                                    <a href="${APP_URL}/unsubscribe?email=${encodeURIComponent(email)}" style="color: #94a3b8; text-decoration: underline;">Darme de baja</a>
+                                  </p>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                </body>
+                </html>
+              `
+            }).then(() => console.log('Payment confirmation email sent to', email)).catch(err => console.error('Payment confirmation email failed:', err.message));
+          }
         }
         break;
       }
@@ -97,6 +239,141 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
       case 'invoice.payment_failed': {
         const invoice = event.data.object;
         console.warn('Payment failed for customer:', invoice.customer);
+
+        // Fire-and-forget payment failed dunning email
+        const custResult = await pool.query('SELECT id, email, name, plan FROM users WHERE stripe_customer_id = $1', [invoice.customer]);
+        if (custResult.rows.length > 0) {
+          const { email, name, plan } = custResult.rows[0];
+          const planNames = { starter: 'Starter', pro: 'Pro', business: 'Business' };
+          const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+          sendMail({
+            from: RESEND_FROM,
+            to: email,
+            subject: 'Hay un problema con tu pago — Shiftia',
+            html: `
+              <!DOCTYPE html>
+              <html lang="es">
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Problema con el pago</title>
+                <!--[if mso]>
+                <style>table { border-collapse: collapse; } .gradient-header { background: #2980b9 !important; }</style>
+                <![endif]-->
+              </head>
+              <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+
+              <!-- Preheader -->
+              <div style="display: none; max-height: 0; overflow: hidden; font-size: 1px; color: #f8fafc;">
+                Actualiza tu método de pago para mantener tu cuenta activa
+                &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+              </div>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc;">
+                <tr>
+                  <td align="center" style="padding: 40px 16px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto;">
+
+                      <!-- Header with gradient -->
+                      <tr>
+                        <td class="gradient-header" style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 32px 40px; border-radius: 12px 12px 0 0;">
+                          <table role="presentation" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="padding-bottom: 20px;">
+                                <span style="color: white; font-size: 22px; font-weight: 800; letter-spacing: -0.02em;">Shiftia</span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <h1 style="color: white; margin: 0; font-size: 1.4rem; font-weight: 600; line-height: 1.3;">
+                                  Problema con el pago
+                                </h1>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+
+                      <!-- Body -->
+                      <tr>
+                        <td style="background-color: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none;">
+
+                          <p style="margin: 0 0 20px; font-size: 15px; color: #334155; line-height: 1.7;">
+                            Hola ${esc(name)},
+                          </p>
+                          <p style="margin: 0 0 20px; font-size: 15px; color: #334155; line-height: 1.7;">
+                            No hemos podido procesar el pago de tu suscripción a Shiftia ${planNames[plan] || plan}.
+                            Esto suele ocurrir por una tarjeta caducada o fondos insuficientes — no te preocupes,
+                            es fácil de resolver.
+                          </p>
+
+                          <!-- Payment details -->
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 24px 0; background: #fef2f2; border-radius: 10px; border-left: 4px solid #ef4444;">
+                            <tr>
+                              <td style="padding: 20px;">
+                                <p style="margin: 0 0 8px; font-size: 14px; font-weight: 600; color: #991b1b;">Pago no procesado</p>
+                                <table role="presentation" cellpadding="0" cellspacing="0">
+                                  <tr><td style="font-size: 13px; color: #64748b; padding: 4px 16px 4px 0; font-weight: 600;">Plan</td><td style="font-size: 14px; color: #1e293b;">${planNames[plan] || plan}</td></tr>
+                                  <tr><td style="font-size: 13px; color: #64748b; padding: 4px 16px 4px 0; font-weight: 600;">Fecha del intento</td><td style="font-size: 14px; color: #1e293b;">${new Date().toLocaleDateString('es-ES')}</td></tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+
+                          <p style="margin: 0 0 8px; font-size: 14px; color: #334155; line-height: 1.6;">
+                            Reintentaremos el cobro en 3 días. Para evitar interrupciones en tu servicio, puedes
+                            actualizar tu método de pago ahora:
+                          </p>
+
+                          <!-- CTA -->
+                          <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 24px 0;">
+                            <tr>
+                              <td style="background: #2980b9; border-radius: 8px;">
+                                <a href="${APP_URL}/dashboard" target="_blank" style="display: inline-block; padding: 14px 32px; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                                  Actualizar método de pago
+                                </a>
+                              </td>
+                            </tr>
+                          </table>
+
+                          <p style="margin: 0; font-size: 14px; color: #64748b; line-height: 1.6;">
+                            Si tienes alguna pregunta, responde a este email y te ayudamos.
+                          </p>
+                        </td>
+                      </tr>
+
+                      <!-- Footer -->
+                      <tr>
+                        <td style="background-color: #ffffff; padding: 0 40px 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="border-top: 1px solid #e2e8f0; padding-top: 24px;">
+                                <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+                                  Este email fue enviado por <a href="https://shiftia.es" style="color: #2980b9; text-decoration: none;">Shiftia</a>.
+                                  <br>Planificación inteligente de turnos hospitalarios.
+                                </p>
+                                <p style="margin: 12px 0 0; font-size: 12px; color: #94a3b8;">
+                                  <a href="${APP_URL}/dashboard#settings" style="color: #94a3b8; text-decoration: underline;">Gestionar preferencias</a>
+                                  &nbsp;&bull;&nbsp;
+                                  <a href="${APP_URL}/unsubscribe?email=${encodeURIComponent(email)}" style="color: #94a3b8; text-decoration: underline;">Darme de baja</a>
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              </body>
+              </html>
+            `
+          }).then(() => console.log('Payment failed email sent to', email)).catch(err => console.error('Payment failed email failed:', err.message));
+        }
         break;
       }
     }
@@ -202,6 +479,18 @@ async function initializeDatabase() {
         workers VARCHAR(50),
         department VARCHAR(255),
         message TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+
+    // Create password reset tokens table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id),
+        token VARCHAR(255) UNIQUE NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        used BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
@@ -404,6 +693,155 @@ app.post('/api/auth/register', async (req, res) => {
     );
 
     res.status(201).json({ token, user });
+
+    // Fire-and-forget welcome email (don't block response)
+    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    sendMail({
+      from: RESEND_FROM,
+      to: user.email,
+      subject: 'Bienvenido a Shiftia — tu planificación de turnos empieza aquí',
+      html: `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Bienvenido a Shiftia</title>
+          <!--[if mso]>
+          <style>table { border-collapse: collapse; } .gradient-header { background: #2980b9 !important; }</style>
+          <![endif]-->
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+
+        <!-- Preheader -->
+        <div style="display: none; max-height: 0; overflow: hidden; font-size: 1px; color: #f8fafc;">
+          Crea tu primera planilla en menos de 5 minutos
+          &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        </div>
+
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc;">
+          <tr>
+            <td align="center" style="padding: 40px 16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto;">
+
+                <!-- Header with gradient -->
+                <tr>
+                  <td class="gradient-header" style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 32px 40px; border-radius: 12px 12px 0 0;">
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding-bottom: 20px;">
+                          <span style="color: white; font-size: 22px; font-weight: 800; letter-spacing: -0.02em;">Shiftia</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <h1 style="color: white; margin: 0; font-size: 1.4rem; font-weight: 600; line-height: 1.3;">
+                            Bienvenido a Shiftia
+                          </h1>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td style="background-color: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none;">
+
+                    <p style="margin: 0 0 20px; font-size: 15px; color: #334155; line-height: 1.7;">
+                      Hola ${esc(user.name)},
+                    </p>
+                    <p style="margin: 0 0 20px; font-size: 15px; color: #334155; line-height: 1.7;">
+                      Acabas de dar un paso importante para simplificar la planificación de turnos${user.company ? ' en ' + esc(user.company) : ''}. Shiftia se encarga de lo complejo para que tú puedas centrarte en tu equipo.
+                    </p>
+
+                    <!-- 3 steps -->
+                    <p style="margin: 0 0 16px; font-size: 14px; font-weight: 600; color: #1e293b;">
+                      Empieza en 3 pasos:
+                    </p>
+
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 24px;">
+                      <tr>
+                        <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                          <table role="presentation" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="width: 32px; height: 32px; background: linear-gradient(135deg, #4ecdc4, #2980b9); border-radius: 50%; text-align: center; vertical-align: middle; color: white; font-size: 14px; font-weight: 700;">1</td>
+                              <td style="padding-left: 14px; font-size: 14px; color: #334155;">Crea tu primera planilla con los turnos de tu servicio</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                          <table role="presentation" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="width: 32px; height: 32px; background: linear-gradient(135deg, #4ecdc4, #2980b9); border-radius: 50%; text-align: center; vertical-align: middle; color: white; font-size: 14px; font-weight: 700;">2</td>
+                              <td style="padding-left: 14px; font-size: 14px; color: #334155;">Añade a los trabajadores de tu equipo</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0;">
+                          <table role="presentation" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td style="width: 32px; height: 32px; background: linear-gradient(135deg, #4ecdc4, #2980b9); border-radius: 50%; text-align: center; vertical-align: middle; color: white; font-size: 14px; font-weight: 700;">3</td>
+                              <td style="padding-left: 14px; font-size: 14px; color: #334155;">Deja que la IA sugiera las coberturas óptimas</td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- CTA -->
+                    <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 8px 0 24px;">
+                      <tr>
+                        <td style="background: #2980b9; border-radius: 8px;">
+                          <a href="https://sara.shiftia.es" target="_blank" style="display: inline-block; padding: 14px 32px; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                            Crear mi primera planilla
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin: 0; font-size: 14px; color: #64748b; line-height: 1.6;">
+                      Si necesitas ayuda, responde a este email o agenda una llamada con nuestro equipo.
+                      Estamos aquí para hacer tu transición lo más fácil posible.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #ffffff; padding: 0 40px 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="border-top: 1px solid #e2e8f0; padding-top: 24px;">
+                          <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+                            Este email fue enviado por <a href="https://shiftia.es" style="color: #2980b9; text-decoration: none;">Shiftia</a>.
+                            <br>Planificación inteligente de turnos hospitalarios.
+                          </p>
+                          <p style="margin: 12px 0 0; font-size: 12px; color: #94a3b8;">
+                            <a href="${APP_URL}/dashboard#settings" style="color: #94a3b8; text-decoration: underline;">Gestionar preferencias</a>
+                            &nbsp;&bull;&nbsp;
+                            <a href="${APP_URL}/unsubscribe?email=${encodeURIComponent(user.email)}" style="color: #94a3b8; text-decoration: underline;">Darme de baja</a>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        </body>
+        </html>
+      `
+    }).then(() => console.log('Welcome email sent to', user.email)).catch(err => console.error('Welcome email failed:', err.message));
+
   } catch (err) {
     console.error('Register error:', err.message);
     res.status(500).json({ error: 'Error creating account' });
@@ -448,6 +886,128 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err.message);
     res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// POST /api/auth/forgot-password
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Look up user by email (case-insensitive)
+    const userResult = await pool.query('SELECT id, email, name FROM users WHERE LOWER(email) = LOWER($1)', [email]);
+    const userExists = userResult.rows.length > 0;
+
+    // Always respond with same success message (don't reveal if email exists)
+    if (userExists) {
+      const user = userResult.rows[0];
+
+      // Generate reset token
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+      // Store token in database
+      await pool.query(
+        'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
+        [user.id, resetToken, expiresAt]
+      );
+
+      // Send email with reset link
+      const resetLink = `${APP_URL}/reset-password?token=${resetToken}`;
+
+      sendMail({
+        from: `"Shiftia" <${RESEND_FROM}>`,
+        to: user.email,
+        subject: 'Restablecer tu contraseña - Shiftia',
+        html: `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 0;">
+            <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 40px 32px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 1.6rem; font-weight: 700;">Shiftia</h1>
+              <p style="color: rgba(255, 255, 255, 0.9); margin: 12px 0 0 0; font-size: 0.95rem;">Planificación de Turnos Hospitalarios</p>
+            </div>
+            <div style="background: #f8fafc; padding: 40px 32px; border-bottom: 1px solid #e2e8f0;">
+              <p style="color: #1e293b; font-size: 1rem; margin: 0 0 24px 0; line-height: 1.6;">
+                Hola ${esc(user.name)},
+              </p>
+              <p style="color: #475569; font-size: 0.95rem; margin: 0 0 24px 0; line-height: 1.6;">
+                Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para crear una nueva contraseña.
+              </p>
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="${resetLink}" style="background: linear-gradient(135deg, #4ecdc4, #2980b9); color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; display: inline-block; transition: transform 0.3s ease;">
+                  Restablecer Contraseña
+                </a>
+              </div>
+              <p style="color: #64748b; font-size: 0.85rem; margin: 32px 0 0 0; padding-top: 24px; border-top: 1px solid #e2e8f0;">
+                Este enlace expira en 1 hora. Si no solicitaste cambiar tu contraseña, puedes ignorar este correo.
+              </p>
+              <p style="color: #64748b; font-size: 0.85rem; margin: 16px 0 0 0;">
+                O copia este enlace en tu navegador:<br/>
+                <span style="color: #2980b9; word-break: break-all;">${resetLink}</span>
+              </p>
+            </div>
+            <div style="background: white; padding: 24px 32px; text-align: center; border-top: 1px solid #e2e8f0;">
+              <p style="color: #64748b; font-size: 0.8rem; margin: 0;">
+                © 2026 Shiftia. Todos los derechos reservados.
+              </p>
+            </div>
+          </div>
+        `
+      });
+
+      console.log(`Password reset email sent to ${user.email}`);
+    }
+
+    // Always send same success message
+    res.json({ message: 'Si el correo existe en nuestro sistema, recibirás instrucciones para restablecer tu contraseña en breve.' });
+  } catch (err) {
+    console.error('Forgot password error:', err.message);
+    res.status(500).json({ error: 'Error processing request' });
+  }
+});
+
+// POST /api/auth/reset-password
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ error: 'Token and password are required' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+
+    // Find token in database
+    const tokenResult = await pool.query(
+      'SELECT id, user_id FROM password_reset_tokens WHERE token = $1 AND used = false AND expires_at > NOW()',
+      [token]
+    );
+
+    if (tokenResult.rows.length === 0) {
+      return res.status(400).json({ error: 'El enlace de restablecimiento es inválido o ha expirado' });
+    }
+
+    const { id: tokenId, user_id: userId } = tokenResult.rows[0];
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update user's password
+    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hashedPassword, userId]);
+
+    // Mark token as used
+    await pool.query('UPDATE password_reset_tokens SET used = true WHERE id = $1', [tokenId]);
+
+    console.log(`Password reset for user ${userId}`);
+    res.json({ message: 'Tu contraseña ha sido restablecida exitosamente' });
+  } catch (err) {
+    console.error('Reset password error:', err.message);
+    res.status(500).json({ error: 'Error resetting password' });
   }
 });
 
@@ -1057,6 +1617,11 @@ app.post('/api/booking', async (req, res) => {
 // Serve login.html
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Serve reset-password.html
+app.get('/reset-password', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'reset-password.html'));
 });
 
 // Serve dashboard.html
