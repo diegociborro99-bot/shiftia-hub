@@ -43,18 +43,8 @@
             --border-light: #21262d;
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root:not(.light-forced) body:not(.light-forced) {
-                --bg: #0f1117;
-                --bg-warm: #161b22;
-                --bg-card: #1a1d2e;
-                --text1: #f0f0f5;
-                --text2: #d0d0d0;
-                --text3: #a0a0a0;
-                --border: #30363d;
-                --border-light: #21262d;
-            }
-        }
+        /* Dark mode is handled by JS adding body.dark class.
+           loadDarkModePreference() already respects prefers-color-scheme. */
 
         * {
             margin: 0;
@@ -2051,6 +2041,7 @@
                     document.getElementById('notifDropdown').classList.remove('show');
                 }
             });
+        }
 
         // ===== STRIPE / BILLING =====
         let isBillingAnnual = false;
