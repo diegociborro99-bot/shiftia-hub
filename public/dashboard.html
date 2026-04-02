@@ -1430,7 +1430,7 @@
         // ===== STATE =====
         let currentUser = null;
         const PLAN_INFO = {
-            trial:      { name: 'Prueba Gratuita', cost: 0, workers: 15 },
+            trial:      { name: 'Sin plan activo', cost: null, workers: 25 },
             starter:    { name: 'Starter', cost: 20, workers: 15 },
             pro:        { name: 'Pro', cost: 30, workers: 40 },
             business:   { name: 'Business', cost: 50, workers: -1 },
@@ -1623,8 +1623,8 @@
             const cycle = u.billing_cycle || 'monthly';
             const isAnnualPlan = cycle === 'annual';
             document.getElementById('billingCycle').textContent = isAnnualPlan ? 'Anual' : (plan === 'trial' ? '—' : 'Mensual');
-            if (info.cost === 0) {
-                document.getElementById('monthlyCost').textContent = 'Gratis';
+            if (info.cost === null || info.cost === undefined) {
+                document.getElementById('monthlyCost').textContent = 'Selecciona un plan';
             } else if (isAnnualPlan) {
                 const annualPrices = { starter: 192, pro: 288, business: 480 };
                 const annualTotal = annualPrices[plan] || info.cost * 12;
@@ -1640,7 +1640,7 @@
             // Status badge
             const statusEl = document.getElementById('planStatus');
             const status = u.plan_status || 'active';
-            const statusLabels = { active: 'Activo', trial: 'Prueba', past_due: 'Pago pendiente', cancelled: 'Cancelado' };
+            const statusLabels = { active: 'Activo', trial: 'Pendiente', past_due: 'Pago pendiente', cancelled: 'Cancelado' };
             statusEl.textContent = statusLabels[status] || status;
             statusEl.className = 'status-badge ' + (status === 'active' ? 'badge-active' : status === 'past_due' ? 'badge-warning' : 'badge-inactive');
 
@@ -1653,7 +1653,7 @@
                 const d = new Date(u.next_billing_date);
                 document.getElementById('nextBillingDate').textContent = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
             } else {
-                document.getElementById('nextBillingDate').textContent = plan === 'trial' ? 'Sin suscripcion activa' : 'No programada';
+                document.getElementById('nextBillingDate').textContent = plan === 'trial' ? 'Elige un plan para empezar' : 'No programada';
             }
 
             // Workers usage bar

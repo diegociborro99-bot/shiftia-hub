@@ -9,7 +9,11 @@ const Stripe = require('stripe');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'shiftia-secret-dev-2024';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET env var is required. Set it in Railway.');
+  process.exit(1);
+}
 
 // ====== STRIPE CONFIG ======
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
@@ -497,17 +501,20 @@ async function initializeDatabase() {
 
     console.log('Database initialized: all tables created');
 
-    // Seed admin user
-    const adminEmail = 'admin@shiftia.es';
+    // Seed admin user (password from env var — never hardcoded)
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@shiftia.es';
+    const adminPassword = process.env.ADMIN_PASSWORD;
     const existingAdmin = await client.query('SELECT id FROM users WHERE email = $1', [adminEmail]);
 
-    if (existingAdmin.rows.length === 0) {
-      const hashedPassword = await bcrypt.hash('Shiftia2024!', 10);
+    if (existingAdmin.rows.length === 0 && adminPassword) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
       await client.query(`
         INSERT INTO users (email, password_hash, name, company, plan, plan_status, workers_limit)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
       `, [adminEmail, hashedPassword, 'Administrador', 'Shiftia', 'enterprise', 'active', 1000]);
-      console.log('Admin user created: admin@shiftia.es');
+      console.log('Admin user created:', adminEmail);
+    } else if (existingAdmin.rows.length === 0 && !adminPassword) {
+      console.warn('ADMIN_PASSWORD env var not set — skipping admin seed. Set it in Railway to create admin user.');
     }
 
     client.release();
@@ -661,9 +668,9 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
-    // Validate password strength (at least 6 chars)
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'La contrasena debe tener al menos 6 caracteres' });
+    // Validate password strength (at least 8 chars)
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'La contrasena debe tener al menos 8 caracteres' });
     }
 
     // Check if email already exists
@@ -978,8 +985,8 @@ app.post('/api/auth/reset-password', async (req, res) => {
       return res.status(400).json({ error: 'Token and password are required' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
     // Find token in database
@@ -1408,7 +1415,7 @@ app.post('/api/contact', async (req, res) => {
                   <ul style="color: #475569; line-height: 1.8; padding-left: 20px;">
                     <li>Configuracion con los datos de tu equipo</li>
                     <li>Demo en vivo del motor IA de coberturas</li>
-                    <li>30 dias de prueba gratuita sin compromiso</li>
+                    <li>30 dias de garantia de reembolso en todos los planes</li>
                   </ul>
                 </div>
                 <p style="color: #475569;">Un saludo,<br><strong>El equipo de Shiftia</strong></p>
