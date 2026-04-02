@@ -704,7 +704,8 @@ app.post('/api/auth/register', async (req, res) => {
     // Fire-and-forget welcome email (don't block response)
     const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     sendMail({
-      from: RESEND_FROM,
+      from: `"Shiftia" <${GMAIL_USER}>`,
+      replyTo: process.env.SUPPORT_EMAIL || GMAIL_USER,
       to: user.email,
       subject: 'Bienvenido a Shiftia — tu planificación de turnos empieza aquí',
       html: `
@@ -804,8 +805,8 @@ app.post('/api/auth/register', async (req, res) => {
                     <table role="presentation" cellpadding="0" cellspacing="0" style="margin: 8px 0 24px;">
                       <tr>
                         <td style="background: #2980b9; border-radius: 8px;">
-                          <a href="https://sara.shiftia.es" target="_blank" style="display: inline-block; padding: 14px 32px; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                            Crear mi primera planilla
+                          <a href="${APP_URL}/dashboard" target="_blank" style="display: inline-block; padding: 14px 32px; color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                            Ir a mi dashboard
                           </a>
                         </td>
                       </tr>
@@ -1588,6 +1589,7 @@ app.post('/api/booking', async (req, res) => {
     // 2. Confirmation to client
     sendMail({
           from: `"Shiftia" <${GMAIL_USER}>`,
+          replyTo: process.env.SUPPORT_EMAIL || GMAIL_USER,
           to: email,
           subject: `Llamada confirmada — ${prettyDate} a las ${time}h — Shiftia`,
           html: `
