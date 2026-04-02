@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const Stripe = require('stripe');
 
+const compression = require('compression');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'shiftia-fallback-change-me-in-production';
@@ -234,12 +236,47 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
       case 'customer.subscription.deleted': {
         const sub = event.data.object;
         if (sub.metadata?.user_id) {
+          const prevUser = await pool.query('SELECT email, name, plan FROM users WHERE id = $1', [sub.metadata.user_id]);
           await pool.query(
             `UPDATE users SET plan = 'trial', plan_status = 'active', workers_limit = 25,
              stripe_subscription_id = NULL, billing_cycle = NULL WHERE id = $1`,
             [sub.metadata.user_id]
           );
           console.log(`Subscription cancelled → trial for user ${sub.metadata.user_id}`);
+
+          // Send cancellation confirmation email
+          if (prevUser.rows.length > 0) {
+            const { email, name, plan } = prevUser.rows[0];
+            const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const planNames = { starter: 'Starter', pro: 'Pro', business: 'Business' };
+            sendMail({
+              from: RESEND_FROM,
+              to: email,
+              replyTo: process.env.SUPPORT_EMAIL || GMAIL_USER,
+              subject: 'Tu suscripción a Shiftia ha sido cancelada',
+              html: `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><!--[if mso]><style>table{border-collapse:collapse;}.gradient-header{background:#2980b9!important;}</style><![endif]--></head>
+              <body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+              <div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#f8fafc;">Tu suscripción ha sido cancelada. Puedes reactivarla cuando quieras.</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;"><tr><td align="center" style="padding:40px 16px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;">
+              <tr><td class="gradient-header" style="background:linear-gradient(135deg,#64748b,#475569);padding:32px 40px;border-radius:12px 12px 0 0;">
+              <span style="color:white;font-size:22px;font-weight:800;">Shiftia</span>
+              <h1 style="color:white;margin:16px 0 0;font-size:1.3rem;font-weight:600;">Suscripción cancelada</h1>
+              </td></tr>
+              <tr><td style="background:#fff;padding:40px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+              <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.7;">Hola ${esc(name)},</p>
+              <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.7;">Te confirmamos que tu plan <strong>${planNames[plan] || plan}</strong> ha sido cancelado. Tu cuenta seguirá activa pero con funcionalidad limitada.</p>
+              <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.7;">Si quieres volver, puedes reactivar tu suscripción en cualquier momento desde tu panel:</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr>
+              <td style="background:#2980b9;border-radius:8px;">
+              <a href="${APP_URL}/dashboard" target="_blank" style="display:inline-block;padding:14px 32px;color:#fff;font-size:15px;font-weight:600;text-decoration:none;">Reactivar suscripción</a>
+              </td></tr></table>
+              <p style="margin:0;font-size:14px;color:#64748b;">Te echamos de menos. Si necesitas ayuda, responde a este email.</p>
+              <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
+              <p style="margin:0;font-size:12px;color:#94a3b8;">Este email fue enviado por <a href="https://www.shiftia.es" style="color:#2980b9;text-decoration:none;">Shiftia</a>.</p>
+              </td></tr></table></td></tr></table></body></html>`
+            }).then(() => console.log('Cancellation email sent to', email)).catch(err => console.error('Cancellation email failed:', err.message));
+          }
         }
         break;
       }
@@ -392,8 +429,30 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
   res.json({ received: true });
 });
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// ====== SECURITY & PERFORMANCE MIDDLEWARE ======
+// Gzip/brotli compression for all responses
+app.use(compression());
+
+// Security headers (lightweight helmet alternative — no extra dependency)
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  // Strict Transport Security (HTTPS only)
+  if (process.env.NODE_ENV === 'production') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
+  next();
+});
+
+app.use(express.json({ limit: '1mb' }));
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
+  etag: true,
+  lastModified: true
+}));
 
 // ====== DATABASE CONFIG ======
 // Filter out undefined values to avoid overriding connectionString
@@ -1708,6 +1767,24 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// ====== GLOBAL ERROR HANDLER ======
+app.use((err, req, res, next) => {
+  console.error('[ERROR]', req.method, req.path, err.message);
+  if (process.env.NODE_ENV !== 'production') console.error(err.stack);
+  res.status(err.status || 500).json({
+    error: process.env.NODE_ENV === 'production'
+      ? 'Error interno del servidor'
+      : err.message
+  });
+});
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM received — shutting down gracefully');
+  await pool.end();
+  process.exit(0);
+});
+
 // ====== SERVER STARTUP ======
 async function startServer() {
   try {
@@ -1715,9 +1792,12 @@ async function startServer() {
     await initializeDatabase();
 
     app.listen(PORT, () => {
-      console.log(`Shiftia HUB v2.0 running on port ${PORT}`);
-      console.log('Authentication enabled');
-      console.log(`Database connected`);
+      console.log(`Shiftia HUB v2.3 running on port ${PORT}`);
+      console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`  Auth: enabled | Compression: enabled`);
+      console.log(`  Email: ${RESEND_KEY ? 'Resend' : (GMAIL_PASS ? 'Gmail SMTP' : 'DISABLED')}`);
+      console.log(`  Stripe: ${stripe ? 'configured' : 'NOT configured'}`);
+      console.log(`  APP_URL: ${APP_URL}`);
     });
   } catch (err) {
     console.error('Failed to start server:', err.message);

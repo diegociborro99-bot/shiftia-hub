@@ -3,15 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Shiftia: planificación inteligente de turnos y planillas con IA. Para hospitales, fábricas, residencias y cualquier negocio con turnos.">
-<meta property="og:title" content="Shiftia — Planificación de turnos simplificada">
-<meta property="og:description" content="Automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo.">
+<meta name="description" content="Shiftia: planificación inteligente de turnos y planillas con IA. Para hospitales, fábricas, residencias y cualquier negocio con turnos. Desde 20€/mes.">
+<meta name="keywords" content="turnos, planificación, hospital, enfermería, IA, cuadrantes, planillas, gestión turnos">
+<meta name="author" content="Shiftia">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.shiftia.es/">
+<meta property="og:title" content="Shiftia — Planificación de turnos simplificada con IA">
+<meta property="og:description" content="Automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Desde 20€/mes.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://shiftia.es/og-image.png">
+<meta property="og:url" content="https://www.shiftia.es/">
+<meta property="og:image" content="https://www.shiftia.es/og-image.png">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Shiftia">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shiftia — Planificación de turnos simplificada">
+<meta name="twitter:description" content="Automatiza turnos, gestiona ausencias con IA y garantiza la equidad.">
+<meta name="twitter:image" content="https://www.shiftia.es/og-image.png">
+<meta name="theme-color" content="#2980b9">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><linearGradient id='g' x1='0' y1='0' x2='40' y2='40'><stop stop-color='%234ecdc4'/><stop offset='1' stop-color='%232980b9'/></linearGradient></defs><path d='M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14' stroke='url(%23g)' stroke-width='3' fill='none'/><path d='M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14' stroke='url(%23g)' stroke-width='3' fill='none'/><path d='M28 8l4-4 2 5' stroke='url(%23g)' stroke-width='2.5' fill='none'/></svg>">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Shiftia","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"Planificación inteligente de turnos y planillas con motor IA de coberturas","offers":{"@type":"AggregateOffer","lowPrice":"20","highPrice":"50","priceCurrency":"EUR"}}
+{
+  "@context":"https://schema.org",
+  "@type":"SoftwareApplication",
+  "name":"Shiftia",
+  "applicationCategory":"BusinessApplication",
+  "operatingSystem":"Web",
+  "description":"Planificación inteligente de turnos y planillas con motor IA de coberturas. Para hospitales, fábricas, residencias.",
+  "url":"https://www.shiftia.es",
+  "offers":{
+    "@type":"AggregateOffer",
+    "lowPrice":"20",
+    "highPrice":"50",
+    "priceCurrency":"EUR",
+    "offerCount":"3"
+  },
+  "featureList":"Gestión de turnos, Motor IA de coberturas, Cuadrantes automáticos, Gestión de ausencias, Informes y analytics",
+  "screenshot":"https://www.shiftia.es/og-image.png",
+  "creator":{
+    "@type":"Organization",
+    "name":"Shiftia",
+    "url":"https://www.shiftia.es"
+  }
+}
 </script>
 <title>Shiftia — Planificacion inteligente de turnos y planillas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2147,6 +2180,47 @@ body.dark .dark-toggle .dt-moon { display: none; }
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; color: transparent;
   pointer-events: none;
+}
+
+/* ====== SMOOTH PAGE LOAD ENTRANCE ====== */
+body {
+  animation: pageIn 0.6s ease both;
+}
+@keyframes pageIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ====== LINK HOVER MICRO-ANIMATION ====== */
+a[href]:not(.btn-lg):not(.nav-btn-primary):not(.nav-btn-ghost):not(.price-btn) {
+  transition: color 0.2s ease;
+}
+
+/* ====== IMPROVED DARK MODE TRANSITIONS ====== */
+body.dark .hero::before { filter: brightness(0.7); }
+body.dark .compare-card { transition: background 0.3s, border-color 0.3s; }
+body.dark .feat-card::after { background: linear-gradient(to right, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%); }
+body.dark .price-card::after { background: linear-gradient(to right, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%); }
+body.dark .floating-cta { box-shadow: 0 8px 30px rgba(78,205,196,0.25); }
+
+/* ====== PRICING TOGGLE MICRO-INTERACTION ====== */
+.price-toggle { position: relative; transition: background 0.3s, box-shadow 0.3s; }
+.price-toggle:active { transform: scale(0.95); }
+.price-toggle.annual { box-shadow: 0 0 12px rgba(78,205,196,0.2); }
+
+/* ====== SECTION DIVIDER DOTS ====== */
+.section-dot-divider {
+  display: flex; justify-content: center; gap: 8px; padding: 12px 0;
+}
+.section-dot-divider span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); transition: background 0.3s;
+}
+.section-dot-divider span:nth-child(2) { background: var(--primary); }
+
+/* ====== SCROLL-TRIGGERED COUNTERS ====== */
+.impact-num[data-count] {
+  transition: opacity 0.3s;
 }
 
 </style>
