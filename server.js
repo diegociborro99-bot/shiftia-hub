@@ -38,7 +38,12 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
     if (STRIPE_WEBHOOK_SECRET) {
       event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
     } else {
+      console.warn('WARNING: Stripe webhook received without STRIPE_WEBHOOK_SECRET — signature not verified');
       event = JSON.parse(req.body);
+      // In production, reject unverified webhooks
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(400).json({ error: 'Webhook secret not configured' });
+      }
     }
   } catch (err) {
     console.error('Stripe webhook signature failed:', err.message);
@@ -652,8 +657,17 @@ function sendMail(options) {
 }
 
 // ====== AUTHENTICATION ROUTES ======
+// Rate limit middleware for auth endpoints
+function authRateLimit(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress;
+  if (isRateLimited(ip, RATE_LIMIT_MAX_AUTH)) {
+    return res.status(429).json({ error: 'Demasiados intentos. Espera un momento antes de reintentar.' });
+  }
+  next();
+}
+
 // POST /api/auth/register
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authRateLimit, async (req, res) => {
   try {
     const { email, password, name, company } = req.body;
 
@@ -856,7 +870,7 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // POST /api/auth/login
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', authRateLimit, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -897,7 +911,7 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // POST /api/auth/forgot-password
-app.post('/api/auth/forgot-password', async (req, res) => {
+app.post('/api/auth/forgot-password', authRateLimit, async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -925,6 +939,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 
       // Send email with reset link
       const resetLink = `${APP_URL}/reset-password?token=${resetToken}`;
+      const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
       sendMail({
         from: `"Shiftia" <${RESEND_FROM}>`,
@@ -963,9 +978,8 @@ app.post('/api/auth/forgot-password', async (req, res) => {
             </div>
           </div>
         `
-      });
-
-      console.log(`Password reset email sent to ${user.email}`);
+      }).then(() => console.log('Password reset email sent to', user.email))
+        .catch(err => console.error('Password reset email failed:', err.message));
     }
 
     // Always send same success message
@@ -977,7 +991,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
 });
 
 // POST /api/auth/reset-password
-app.post('/api/auth/reset-password', async (req, res) => {
+app.post('/api/auth/reset-password', authRateLimit, async (req, res) => {
   try {
     const { token, password } = req.body;
 
@@ -1296,17 +1310,32 @@ app.get('/api/stripe/prices', (req, res) => {
 });
 
 // ====== RATE LIMITING ======
-const rateLimit = new Map();
-function isRateLimited(ip) {
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const RATE_LIMIT_MAX_GENERAL = 3;
+const RATE_LIMIT_MAX_AUTH = 5;
+
+function isRateLimited(ip, maxAttempts = RATE_LIMIT_MAX_GENERAL) {
   const now = Date.now();
-  const attempts = rateLimit.get(ip) || [];
-  const recent = attempts.filter(t => now - t < 60000); // 1 minute window
-  rateLimit.set(ip, recent);
-  if (recent.length >= 3) return true; // Max 3 per minute
+  const attempts = rateLimitMap.get(ip) || [];
+  const recent = attempts.filter(t => now - t < RATE_LIMIT_WINDOW);
+  if (recent.length === 0) { rateLimitMap.delete(ip); return false; }
+  rateLimitMap.set(ip, recent);
+  if (recent.length >= maxAttempts) return true;
   recent.push(now);
-  rateLimit.set(ip, recent);
+  rateLimitMap.set(ip, recent);
   return false;
 }
+
+// Periodic cleanup every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, attempts] of rateLimitMap) {
+    const recent = attempts.filter(t => now - t < RATE_LIMIT_WINDOW);
+    if (recent.length === 0) rateLimitMap.delete(ip);
+    else rateLimitMap.set(ip, recent);
+  }
+}, 5 * 60 * 1000);
 
 // ====== CONTACT FORM API ======
 app.post('/api/contact', async (req, res) => {

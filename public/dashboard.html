@@ -4,14 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Shiftia</title>
+    <script>
+        // Apply dark mode BEFORE render to prevent flash
+        (function() {
+            var s = localStorage.getItem('shiftia_darkMode');
+            if (s === 'true' || (s === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark-early');
+            }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
     <script>
-        // Fallback CDN if cloudflare fails
+        // Fallback CDN if cloudflare fails — use dynamic injection (document.write is unsafe after load)
         if (typeof window.jspdf === 'undefined') {
-            document.write('<script src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"><\/script>');
+            var s = document.createElement('script');
+            s.src = 'https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';
+            document.head.appendChild(s);
         }
     </script>
     <style>
@@ -32,7 +43,7 @@
             --danger: #e74c3c;
         }
 
-        body.dark {
+        body.dark, html.dark-early body {
             --bg: #0f1117;
             --bg-warm: #161b22;
             --bg-card: #1a1d2e;
