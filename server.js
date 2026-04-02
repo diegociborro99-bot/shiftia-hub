@@ -9,10 +9,9 @@ const Stripe = require('stripe');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  console.error('FATAL: JWT_SECRET env var is required. Set it in Railway.');
-  process.exit(1);
+const JWT_SECRET = process.env.JWT_SECRET || 'shiftia-fallback-change-me-in-production';
+if (!process.env.JWT_SECRET) {
+  console.warn('WARNING: JWT_SECRET env var not set — using insecure fallback. Set it in Railway for production.');
 }
 
 // ====== STRIPE CONFIG ======
