@@ -13,6 +13,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+// ====== VERSION BANNER ======
+// Visible en logs de Railway para confirmar qué build está corriendo.
+const PKG_VERSION = require('./package.json').version;
+console.log('========================================');
+console.log(`  Shiftia HUB v${PKG_VERSION} starting`);
+console.log(`  NODE_ENV=${process.env.NODE_ENV || 'development'}`);
+console.log(`  PORT=${PORT}`);
+console.log('========================================');
+
 // ====== STARTUP SECRETS HARDENING ======
 // JWT_SECRET: en producción es OBLIGATORIO. En dev permitimos un fallback dev-only.
 let JWT_SECRET = process.env.JWT_SECRET;
@@ -2123,7 +2132,12 @@ app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'pub
 
 // Health check público — minimalista, no expone diagnóstico interno
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ status: 'ok', version: PKG_VERSION });
+});
+
+// Endpoint público para verificar versión desplegada
+app.get('/version', (req, res) => {
+  res.type('text/plain').send(`Shiftia HUB v${PKG_VERSION}\nNODE_ENV=${process.env.NODE_ENV || 'development'}\nBoot: ${new Date().toISOString()}`);
 });
 
 // Health check completo — solo con ADMIN_API_KEY
