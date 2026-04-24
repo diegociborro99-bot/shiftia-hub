@@ -20,9 +20,30 @@
 <meta name="twitter:description" content="Automatiza turnos, gestiona ausencias con IA y garantiza la equidad.">
 <meta name="twitter:image" content="https://www.shiftia.es/og-image.svg">
 <meta name="theme-color" content="#faf9f6">
+<meta name="color-scheme" content="light only">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
 <link rel="manifest" href="/site.webmanifest">
+<script>(function(){
+  // Light-only nuclear: limpia cualquier rastro de dark mode antes del paint.
+  try {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.style.colorScheme = 'light';
+    localStorage.removeItem('shiftia-dark');
+    localStorage.removeItem('shiftia-theme');
+    localStorage.removeItem('shiftia_darkMode');
+    // Cuando el body exista, le quitamos la clase .dark
+    var killDark = function () {
+      if (document.body) {
+        document.body.classList.remove('dark');
+        document.body.style.background = '#faf9f6';
+        document.body.style.color = '#0e0f0f';
+      }
+    };
+    if (document.body) killDark();
+    else document.addEventListener('DOMContentLoaded', killDark);
+  } catch (e) {}
+})();</script>
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -3411,6 +3432,68 @@ a.hero-cta:hover {
 .price-btn .ripple { display: none !important; }     /* legacy ripple muerto */
 
 /* ============================================================================
+   v3.5 — LIGHT-ONLY NUCLEAR OVERRIDE
+   La web debe verse SIEMPRE en modo claro. Esta capa anula:
+   - body.dark legacy class (cientos de reglas heredadas)
+   - @media (prefers-color-scheme: dark) del SO del visitante
+   - [data-theme="dark"] que algún script viejo pueda inyectar
+   ============================================================================ */
+:root, html, body { color-scheme: light only !important; }
+html { background: #faf9f6 !important; }
+body, body.dark,
+html[data-theme="dark"] body, html[data-theme="auto"] body,
+:root[data-theme="dark"] body {
+  background: #faf9f6 !important;
+  background-color: #faf9f6 !important;
+  background-image: none !important;
+  color: #0e0f0f !important;
+}
+/* Anular TODAS las reglas body.dark.* legacy (bg dark, texto light, etc.) */
+body.dark .nav, body.dark .nav.scrolled,
+body.dark .demo-worker-row, body.dark .demo-chart-card, body.dark .demo-kpi,
+body.dark .form-card, body.dark .price-card,
+body.dark .feat-modal, body.dark .feat-modal-close, body.dark .feat-modal-preview,
+body.dark .faq-item, body.dark .compare-card.before, body.dark .compare-card.after,
+body.dark .bento-card, body.dark #preloader, body.dark .preloader,
+body.dark .chat-window, body.dark .chat-body, body.dark .chat-suggestions,
+body.dark .chat-input-area, body.dark .chat-input,
+body.dark .nav-links, body.dark .nav-links a {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #0e0f0f !important;
+  border-color: #e8e6df !important;
+}
+body.dark .proof, body.dark .footer { background: #faf9f6 !important; color: #0e0f0f !important; }
+body.dark .hero-trial-badge {
+  background: #e9f5f2 !important; background-image: none !important;
+  color: #0a5950 !important; border-color: rgba(15,122,109,0.18) !important;
+}
+body.dark .logo-shift, body.dark .logo-ia,
+body.dark .nav-links a {
+  color: #0e0f0f !important;
+  -webkit-text-fill-color: #0e0f0f !important;
+}
+body.dark .cursor-glow { display: none !important; }
+body.dark .orbit-emoji {
+  background: #ffffff !important; background-image: none !important;
+  border: 1px solid #e8e6df !important;
+}
+body.dark .orbit-label {
+  background: transparent !important; color: #0e0f0f !important;
+}
+/* Si el SO del visitante manda dark, lo ignoramos en TODA la web */
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background: #faf9f6 !important;
+    color: #0e0f0f !important;
+    color-scheme: light only !important;
+  }
+  body.dark, body { background: #faf9f6 !important; color: #0e0f0f !important; }
+}
+/* Script-side: nada más cargar, eliminamos body.dark si existe (ataque defensivo) */
+
+/* ============================================================================
    v2.8 — ROI CALCULATOR
    ============================================================================ */
 .roi-section {
@@ -4053,11 +4136,11 @@ section.centered p,
       <div class="hero-trial-badge" data-i18n="hero_trial">Garantia de devolucion de 30 dias</div>
     </div>
     <div class="hero-visual">
-      <!-- Mockup SVG del producto SARA. Se renderiza primero como <img> (rápido,
+      <!-- Mockup SVG del producto Motor IA. Se renderiza primero como <img> (rápido,
            cacheable) y un script ligero al final del body lo intercambia por el
            SVG inline para activar las animaciones de stagger sobre los slots. -->
       <img src="/product-mockup.svg"
-           alt="Vista del cuadrante semanal de Shiftia mostrando turnos asignados automáticamente por la IA SARA"
+           alt="Vista del cuadrante semanal de Shiftia mostrando turnos asignados automáticamente por la IA"
            class="hero-product-svg"
            id="heroProductMockup"
            width="1280" height="880"
@@ -6362,8 +6445,9 @@ function showSocialProof() {
   notif.classList.add('visible');
   setTimeout(() => notif.classList.remove('visible'), 4000);
 }
+// v3.5: social proof notifications desactivadas. El loop ya no se dispara.
 let spInterval = null;
-setTimeout(() => { showSocialProof(); spInterval = setInterval(showSocialProof, 25000); }, 8000);
+// setTimeout(() => { showSocialProof(); spInterval = setInterval(showSocialProof, 25000); }, 8000);
 
 // Cleanup intervals on page unload to prevent memory leaks
 window.addEventListener('beforeunload', () => {
@@ -6442,14 +6526,8 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   </div>
 </div>
 
-<!-- Social Proof Floating Notification -->
-<div class="social-notif" id="socialNotif">
-  <div class="social-notif-avatar" id="snAvatar">MC</div>
-  <div>
-    <div class="social-notif-text" id="snText"><strong>Maria C.</strong> se ha registrado en Shiftia</div>
-    <div class="social-notif-time" id="snTime">hace 3 minutos</div>
-  </div>
-</div>
+<!-- Social proof notifications eliminadas en v3.5: tono fake/spam, no aporta. -->
+<div class="social-notif" id="socialNotif" style="display:none !important;" aria-hidden="true"></div>
 
 <!-- Scroll progress bar (se rellena con JS al scrollear) -->
 <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>

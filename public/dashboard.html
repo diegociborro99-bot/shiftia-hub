@@ -1513,7 +1513,7 @@
                             <text class="donut-center" x="48" y="48">96%</text>
                         </svg>
                         <div class="donut-meta">
-                            <span class="donut-label">SARA reparte los turnos nocturnos sin sesgos.</span>
+                            <span class="donut-label">La IA reparte los turnos nocturnos sin sesgos.</span>
                             <span class="donut-sub">142 turnos · 18 trabajadores</span>
                         </div>
                     </div>
@@ -2421,7 +2421,7 @@
             // Demo extra notifications para clientes con plan activo
             if (currentUser && currentUser.plan && currentUser.plan !== 'trial') {
                 notifs.push(
-                    { title: 'SARA reasignó 3 turnos para equilibrar nocturnos', time: 'hace 2 h', type: 'ai', unread: true },
+                    { title: 'La IA reasignó 3 turnos para equilibrar nocturnos', time: 'hace 2 h', type: 'ai', unread: true },
                     { title: 'Carmen P. ha sido añadida al equipo', time: 'hace 1 día', type: 'team', unread: false }
                 );
             }
@@ -2900,13 +2900,13 @@
 
             // Demo events últimos 30 días — reemplazar por respuesta del endpoint
             const events = [
-                { type: 'ai',      title: 'SARA reasignó 3 turnos para equilibrar nocturnos', meta: 'hace 5 días · 14:22' },
+                { type: 'ai',      title: 'La IA reasignó 3 turnos para equilibrar nocturnos', meta: 'hace 5 días · 14:22' },
                 { type: 'shift',   title: 'Planilla de mayo publicada (142 turnos)',          meta: 'hace 7 días' },
                 { type: 'team',    title: 'Carmen P. añadida al equipo',                       meta: 'hace 12 días' },
                 { type: 'plan',    title: 'Plan Pro activado',                                  meta: 'hace 18 días · activado por ti' },
                 { type: 'login',   title: 'Inicio de sesión desde Gijón',                     meta: 'hace 21 días · Safari · macOS' },
                 { type: 'invoice', title: 'Factura INV-2026-03 pagada',                       meta: 'hace 24 días · €30,00' },
-                { type: 'ai',      title: 'SARA detectó conflicto en el cuadrante de fin de semana', meta: 'hace 27 días' },
+                { type: 'ai',      title: 'La IA detectó conflicto en el cuadrante de fin de semana', meta: 'hace 27 días' },
                 { type: 'invoice', title: 'Factura INV-2026-02 pagada',                       meta: 'hace 28 días · €30,00' }
             ];
 
