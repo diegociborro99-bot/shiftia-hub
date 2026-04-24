@@ -1,0 +1,202 @@
+/* ============================================================================
+   v3.6 — ANIMATIONS & INTERACTIVITY ENHANCEMENTS
+   Hero demo viva · Counter-up · Magnetic CTAs · Excel destructiva · Cursor smart
+   ============================================================================ */
+
+/* ---------- 1. HERO DEMO VIVA: overlay sobre el mockup ---------- */
+.hero-visual { position: relative; }
+
+.hero-demo-overlay {
+  position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  font-family: 'Geist', system-ui, sans-serif;
+}
+
+/* Cursor "fantasma" que recorre el mockup */
+.hd-cursor {
+  position: absolute; width: 22px; height: 22px;
+  left: 0; top: 0; opacity: 0;
+  transition: left 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+              top 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+              opacity 0.4s ease;
+  z-index: 10;
+  filter: drop-shadow(0 4px 8px rgba(15,122,109,0.25));
+}
+.hd-cursor svg { width: 100%; height: 100%; }
+.hd-cursor.is-clicking::after {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%); width: 38px; height: 38px;
+  border: 2px solid #0f7a6d; border-radius: 50%;
+  animation: hdRipple 0.6s ease-out;
+}
+@keyframes hdRipple {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+
+/* Conflicto rojo flotante */
+.hd-conflict {
+  position: absolute; padding: 6px 10px;
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+  color: #b91c1c; font-size: 11px; font-weight: 600;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.18);
+  display: inline-flex; align-items: center; gap: 6px;
+  opacity: 0; transform: translateY(-6px) scale(0.9);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 8;
+}
+.hd-conflict::before {
+  content: '!'; width: 14px; height: 14px; border-radius: 50%;
+  background: #b91c1c; color: white; font-size: 10px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.hd-conflict.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+.hd-conflict.is-resolved {
+  background: #f0fdf4; border-color: #bbf7d0; color: #15803d;
+  transform: translateY(0) scale(1.05);
+}
+.hd-conflict.is-resolved::before {
+  content: '\2713'; background: #15803d;
+}
+.hd-conflict.is-fading { opacity: 0; transform: translateY(-10px) scale(0.85); }
+
+/* KPI badge animado en esquina superior derecha del mockup */
+.hd-kpi-stack {
+  position: absolute; top: 4%; right: 3%;
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 7;
+}
+.hd-kpi {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 12px; background: white; border-radius: 999px;
+  border: 1px solid rgba(15,122,109,0.12);
+  box-shadow: 0 6px 18px rgba(15,15,15,0.06);
+  font-size: 11px; font-weight: 600; color: #0e0f0f;
+  opacity: 0; transform: translateY(-8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.hd-kpi.is-visible { opacity: 1; transform: translateY(0); }
+.hd-kpi-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #0f7a6d;
+  box-shadow: 0 0 0 3px rgba(15,122,109,0.18);
+}
+.hd-kpi-dot.is-bad { background: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.18); }
+.hd-kpi-dot.is-warm { background: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.18); }
+.hd-kpi-value { font-variant-numeric: tabular-nums; min-width: 28px; text-align: right; }
+.hd-kpi-label { color: #6b7280; font-weight: 500; }
+
+/* Texto del "Motor IA" tipo terminal */
+.hd-ai-stream {
+  position: absolute; bottom: 8%; left: 4%; max-width: 60%;
+  padding: 10px 14px; background: rgba(14, 15, 15, 0.92);
+  border: 1px solid rgba(78, 205, 196, 0.25); border-radius: 10px;
+  color: #d1f7f3; font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px; line-height: 1.45;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 7;
+}
+.hd-ai-stream.is-visible { opacity: 1; transform: translateY(0); }
+.hd-ai-stream::before {
+  content: 'Motor IA';
+  display: block; font-size: 9px; letter-spacing: 0.12em;
+  color: #4ecdc4; text-transform: uppercase; margin-bottom: 4px;
+  font-weight: 600;
+}
+.hd-ai-cursor {
+  display: inline-block; width: 6px; height: 11px;
+  background: #4ecdc4; vertical-align: text-bottom; margin-left: 1px;
+  animation: hdBlink 0.8s steps(2) infinite;
+}
+@keyframes hdBlink { 50% { opacity: 0; } }
+
+/* En móvil, ocultamos overlay para no saturar */
+@media (max-width: 900px) {
+  .hd-conflict, .hd-ai-stream, .hd-cursor { display: none; }
+  .hd-kpi-stack { transform: scale(0.85); transform-origin: top right; }
+}
+
+/* ---------- 2. COUNTER-UP de métricas ---------- */
+.metric-count { font-variant-numeric: tabular-nums; transition: color 0.3s; }
+.metric-count.is-counting { color: #0f7a6d; }
+
+/* ---------- 3. MAGNETIC CTAs ---------- */
+.magnetic { transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
+.magnetic-inner { display: inline-block; transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* ---------- 4. EXCEL DESTRUCTIVA / SHIFTIA CONSTRUCTIVA ---------- */
+.vs-cell-anim { position: relative; transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
+
+/* Animación destructiva sobre celdas Excel cuando entran en viewport */
+.vs-table.is-anim .vs-cell-x {
+  position: relative;
+  animation: cellGlitch 1.6s ease-in-out forwards;
+  animation-delay: var(--cell-delay, 0s);
+}
+.vs-table.is-anim .vs-cell-x::after {
+  content: '#REF!'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(220, 38, 38, 0.92); color: white;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+  font-family: 'Geist Mono', monospace;
+  opacity: 0; border-radius: 4px;
+  animation: cellRefShow 0.6s ease forwards;
+  animation-delay: calc(var(--cell-delay, 0s) + 1s);
+}
+@keyframes cellGlitch {
+  0% { transform: translateX(0); filter: none; }
+  10%, 30%, 50% { transform: translateX(-2px); filter: hue-rotate(15deg); }
+  20%, 40% { transform: translateX(2px); filter: hue-rotate(-15deg); }
+  60% { transform: translateX(0); filter: none; opacity: 1; }
+  100% { transform: translateX(0) scale(0.98); opacity: 0.4; filter: blur(0.5px); }
+}
+@keyframes cellRefShow {
+  to { opacity: 1; }
+}
+
+/* Construcción Shiftia: celdas se "ensamblan" con stagger verde */
+.vs-table.is-anim .vs-cell-s {
+  animation: cellAssemble 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  animation-delay: calc(var(--cell-delay, 0s) + 1.6s);
+}
+@keyframes cellAssemble {
+  0% { opacity: 0; transform: translateY(-12px) scale(0.9); background: rgba(15,122,109,0.25); }
+  60% { opacity: 1; background: rgba(15,122,109,0.18); }
+  100% { opacity: 1; transform: none; background: transparent; }
+}
+
+/* ---------- 5. CURSOR SMART (custom cursor) ---------- */
+.smart-cursor {
+  position: fixed; left: 0; top: 0; pointer-events: none;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #0f7a6d; opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 0.25s ease, opacity 0.3s ease,
+              border-color 0.25s ease, mix-blend-mode 0.25s;
+  z-index: 9999; mix-blend-mode: multiply;
+}
+.smart-cursor.is-visible { opacity: 1; }
+.smart-cursor.on-link { width: 28px; height: 28px; background: rgba(15,122,109,0.18); border: 1.5px solid #0f7a6d; }
+.smart-cursor.on-cta {
+  width: 64px; height: 64px;
+  background: rgba(15,122,109,0.92); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  mix-blend-mode: normal;
+}
+.smart-cursor.on-cta::before { content: 'Click'; }
+.smart-cursor.on-text { width: 4px; height: 22px; border-radius: 2px; background: #0e0f0f; }
+
+/* Solo en desktop con puntero fino — móviles, touchscreens y trackpads especiales no */
+@media (hover: none), (pointer: coarse), (max-width: 900px) {
+  .smart-cursor { display: none !important; }
+}
+
+/* Si el usuario prefiere reduced motion, desactiva animaciones invasivas */
+@media (prefers-reduced-motion: reduce) {
+  .hd-cursor, .hd-conflict, .hd-ai-stream, .hd-kpi { transition: opacity 0.15s; }
+  .vs-table.is-anim .vs-cell-x, .vs-table.is-anim .vs-cell-s,
+  .smart-cursor { animation: none !important; transition: opacity 0.15s !important; }
+  .hd-cursor { display: none; }
+}
