@@ -5,91 +5,831 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <meta name="theme-color" content="#2980b9" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d0e0e" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Shiftia</title>
+    <title>Panel — Shiftia</title>
     <link rel="canonical" href="https://www.shiftia.es/dashboard">
     <meta name="description" content="Panel de control de Shiftia: gestiona tu cuenta, suscripción, equipo y planificación inteligente de turnos.">
     <meta name="robots" content="noindex, nofollow">
+
+    <!-- Anti-flash dark mode (must run before <body>) -->
     <script>
-        // Apply dark mode BEFORE render to prevent flash
         (function() {
-            var s = localStorage.getItem('shiftia_darkMode');
-            if (s === 'true' || (s === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark-early');
+            try {
+                var t = localStorage.getItem('shiftia-theme');
+                // Backward compat: migrate legacy shiftia_darkMode
+                if (!t) {
+                    var legacy = localStorage.getItem('shiftia_darkMode');
+                    if (legacy === 'true')      { t = 'dark';  localStorage.setItem('shiftia-theme', 'dark'); }
+                    else if (legacy === 'false'){ t = 'light'; localStorage.setItem('shiftia-theme', 'light'); }
+                    else                         { t = 'auto'; }
+                }
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'auto');
             }
         })();
     </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/design-system.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
     <script>
-        // Fallback CDN if cloudflare fails — use dynamic injection (document.write is unsafe after load)
+        // Fallback CDN if cloudflare fails
         if (typeof window.jspdf === 'undefined') {
             var s = document.createElement('script');
             s.src = 'https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';
             document.head.appendChild(s);
         }
     </script>
+
     <style>
-        /* CSS Variables */
-        :root {
-            --bg: #ffffff;
-            --bg-warm: #f9fafb;
-            --bg-card: #f3f4f6;
-            --text1: #1a1a1a;
-            --text2: #4a4a4a;
-            --text3: #808080;
-            --border: #e5e7eb;
-            --border-light: #f0f0f0;
-            --primary: #2980b9;
-            --accent: #4ecdc4;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-        }
-
-        body.dark, html.dark-early body {
-            --bg: #0f1117;
-            --bg-warm: #161b22;
-            --bg-card: #1a1d2e;
-            --text1: #f0f0f5;
-            --text2: #d0d0d0;
-            --text3: #a0a0a0;
-            --border: #30363d;
-            --border-light: #21262d;
-        }
-
-        /* Dark mode is handled by JS adding body.dark class.
-           loadDarkModePreference() already respects prefers-color-scheme. */
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ===================================================================
+           Dashboard premium — minimal, Linear/Vercel/Stripe inspired
+           =================================================================== */
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text1);
-            transition: background-color 0.3s ease, color 0.3s ease;
-            line-height: 1.6;
+            font-family: var(--ds-font-sans);
+            background: var(--ds-bg);
+            color: var(--ds-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.55;
+        }
+        ::selection { background: var(--ds-accent); color: #fff; }
+
+        /* ----- Loading overlay (skeleton) ----- */
+        .loading-overlay {
+            position: fixed; inset: 0; background: var(--ds-bg);
+            z-index: 9999; padding: 88px 24px 24px;
+            transition: opacity 360ms var(--ds-ease);
+            overflow-y: auto;
+        }
+        .loading-overlay.fade-out { opacity: 0; pointer-events: none; }
+        .skeleton-container { max-width: var(--ds-container); margin: 0 auto; }
+        .skeleton {
+            background: linear-gradient(90deg, var(--ds-bg-subtle) 0%, var(--ds-border) 50%, var(--ds-bg-subtle) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s linear infinite;
+            border-radius: var(--ds-radius);
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .skeleton-eyebrow  { height: 12px; width: 200px; margin-bottom: 18px; border-radius: 4px; }
+        .skeleton-title    { height: 56px; width: 60%; margin-bottom: 14px; }
+        .skeleton-sub      { height: 18px; width: 40%; margin-bottom: 56px; }
+        .skeleton-grid     { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        .skeleton-card     { height: 240px; border-radius: var(--ds-radius-md); background: var(--ds-bg-subtle); border: 1px solid var(--ds-border); }
+        .skeleton-card.tall{ height: 380px; }
+        .skeleton-aside    { display: flex; flex-direction: column; gap: 16px; }
+        .skeleton-aside .skeleton-card { height: 120px; }
+        @media (max-width: 880px) { .skeleton-grid { grid-template-columns: 1fr; } }
+
+        /* ----- Header sticky con backdrop-blur ----- */
+        .app-header {
+            position: sticky; top: 0; z-index: var(--ds-z-nav);
+            background: color-mix(in srgb, var(--ds-bg) 78%, transparent);
+            backdrop-filter: saturate(180%) blur(18px);
+            -webkit-backdrop-filter: saturate(180%) blur(18px);
+            border-bottom: 1px solid var(--ds-border);
+        }
+        .app-header-inner {
+            max-width: var(--ds-container); margin: 0 auto;
+            padding: 14px var(--ds-space-6);
+            display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px;
+        }
+        .app-brand {
+            display: inline-flex; align-items: baseline; gap: 6px;
+            text-decoration: none; color: var(--ds-text);
+        }
+        .app-brand-mark {
+            font-family: var(--ds-font-display); font-size: 28px;
+            line-height: 1; letter-spacing: -0.02em; color: var(--ds-text);
+        }
+        .app-brand-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--ds-accent); display: inline-block;
+            transform: translateY(-3px);
+        }
+        .app-nav {
+            display: inline-flex; align-items: center; gap: 4px;
+            justify-self: center;
+        }
+        .app-nav a {
+            display: inline-flex; align-items: center;
+            padding: 8px 14px; border-radius: var(--ds-radius-pill);
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            font-weight: 500; color: var(--ds-text-muted);
+            text-decoration: none; letter-spacing: -0.005em;
+            transition: color var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
+        }
+        .app-nav a:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+        .app-nav a.active { color: var(--ds-text); background: var(--ds-bg-subtle); }
+
+        .app-header-right {
+            display: inline-flex; align-items: center; gap: 8px;
+            justify-self: end;
+        }
+        .icon-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px; padding: 0;
+            background: transparent; border: 1px solid transparent;
+            border-radius: var(--ds-radius); cursor: pointer; color: var(--ds-text-muted);
+            transition: color var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+            position: relative;
+        }
+        .icon-btn:hover { color: var(--ds-text); background: var(--ds-bg-subtle); border-color: var(--ds-border); }
+        .icon-btn svg { width: 18px; height: 18px; }
+        .notif-badge {
+            position: absolute; top: 6px; right: 7px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--ds-accent); border: 2px solid var(--ds-bg);
+        }
+        .notif-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            min-width: 320px; max-width: 360px;
+            background: var(--ds-bg-elev); border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md); box-shadow: var(--ds-shadow-lg);
+            opacity: 0; pointer-events: none; transform: translateY(-6px);
+            transition: opacity var(--ds-dur) var(--ds-ease), transform var(--ds-dur) var(--ds-ease);
+            z-index: var(--ds-z-overlay);
+            overflow: hidden;
+        }
+        .notif-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .notif-header {
+            padding: 14px 16px; font-size: var(--ds-text-sm); font-weight: 600;
+            color: var(--ds-text); border-bottom: 1px solid var(--ds-border);
+            letter-spacing: -0.005em;
+        }
+        .notif-item {
+            padding: 12px 16px; border-bottom: 1px solid var(--ds-border);
+            transition: background var(--ds-dur) var(--ds-ease);
+        }
+        .notif-item:last-child { border-bottom: 0; }
+        .notif-item:hover { background: var(--ds-bg-subtle); }
+        .notif-item-title { font-size: var(--ds-text-sm); color: var(--ds-text); margin-bottom: 2px; }
+        .notif-item-time { font-size: var(--ds-text-xs); color: var(--ds-text-subtle); font-family: var(--ds-font-mono); }
+        .notif-empty { padding: 24px 16px; text-align: center; color: var(--ds-text-subtle); font-size: var(--ds-text-sm); font-style: italic; font-family: var(--ds-font-display); font-size: 1.1rem; }
+
+        /* ----- User menu ----- */
+        .user-menu-wrap { position: relative; }
+        .user-menu-trigger {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: transparent; border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-pill); padding: 4px 10px 4px 4px;
+            cursor: pointer; color: var(--ds-text);
+            transition: border-color var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm); font-weight: 500;
+        }
+        .user-menu-trigger:hover { border-color: var(--ds-border-strong); background: var(--ds-bg-subtle); }
+        .avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--ds-bg-inverse); color: var(--ds-bg);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-family: var(--ds-font-sans); font-weight: 600; font-size: 12px;
+            letter-spacing: 0.02em;
+        }
+        .user-menu-name { display: inline-block; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        @media (max-width: 720px) { .user-menu-name { display: none; } }
+        .user-menu-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            min-width: 240px;
+            background: var(--ds-bg-elev); border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md); box-shadow: var(--ds-shadow-lg);
+            opacity: 0; pointer-events: none; transform: translateY(-6px);
+            transition: opacity var(--ds-dur) var(--ds-ease), transform var(--ds-dur) var(--ds-ease);
+            z-index: var(--ds-z-overlay); overflow: hidden;
+        }
+        .user-menu-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .user-menu-info {
+            padding: 14px 16px; border-bottom: 1px solid var(--ds-border);
+        }
+        .user-menu-info-name { font-size: var(--ds-text-sm); font-weight: 600; color: var(--ds-text); }
+        .user-menu-info-email { font-size: var(--ds-text-xs); color: var(--ds-text-subtle); margin-top: 2px; font-family: var(--ds-font-mono); }
+        .user-menu-item {
+            display: flex; align-items: center; gap: 10px; width: 100%;
+            background: transparent; border: 0;
+            padding: 10px 16px; font-family: var(--ds-font-sans);
+            font-size: var(--ds-text-sm); color: var(--ds-text);
+            cursor: pointer; text-align: left; text-decoration: none;
+            transition: background var(--ds-dur) var(--ds-ease);
+        }
+        .user-menu-item:hover { background: var(--ds-bg-subtle); }
+        .user-menu-item svg { width: 16px; height: 16px; color: var(--ds-text-muted); }
+        .user-menu-divider { height: 1px; background: var(--ds-border); margin: 4px 0; }
+        .user-menu-item.danger { color: var(--ds-error); }
+        .user-menu-item.danger svg { color: var(--ds-error); }
+
+        /* ----- Theme picker chip ----- */
+        .theme-chip-row {
+            display: flex; gap: 4px; padding: 6px;
+            background: var(--ds-bg-subtle); border-radius: var(--ds-radius-pill);
+            margin: 8px 16px;
+        }
+        .theme-chip {
+            flex: 1; padding: 5px 8px; border: 0; background: transparent;
+            border-radius: var(--ds-radius-pill); font-family: var(--ds-font-sans);
+            font-size: var(--ds-text-xs); font-weight: 500; color: var(--ds-text-muted);
+            cursor: pointer; transition: background var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease);
+        }
+        .theme-chip.active { background: var(--ds-bg-elev); color: var(--ds-text); box-shadow: var(--ds-shadow-xs); }
+
+        /* ----- Main layout ----- */
+        .main-shell {
+            max-width: var(--ds-container); margin: 0 auto;
+            padding: 56px var(--ds-space-6) 96px;
+        }
+        @media (max-width: 640px) { .main-shell { padding: 36px var(--ds-space-4) 64px; } }
+
+        /* ----- Hero ----- */
+        .hero { margin-bottom: 48px; }
+        .hero-eyebrow {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-xs); letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--ds-text-subtle);
+            display: inline-flex; align-items: center; gap: 10px;
+            margin-bottom: 20px;
+        }
+        .hero-eyebrow::before {
+            content: ''; width: 22px; height: 1px; background: currentColor; opacity: 0.5;
+        }
+        .hero-title {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: clamp(2.75rem, 6vw, 4.25rem);
+            line-height: 1.02; letter-spacing: -0.02em;
+            color: var(--ds-text); margin: 0 0 14px;
+        }
+        .hero-title em {
+            font-style: italic; color: var(--ds-text-muted);
+            font-family: var(--ds-font-display);
+        }
+        .hero-sub {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-md);
+            color: var(--ds-text-muted); max-width: 640px; line-height: 1.55;
+            margin: 0;
+        }
+        .hero-date {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-xs);
+            color: var(--ds-text-subtle); margin-top: 16px;
+            text-transform: lowercase; letter-spacing: 0.02em;
         }
 
-        /* Accessibility: skip link */
-        .skip-link { position: absolute; left: -9999px; top: 0; background: #2980b9; color: #fff; padding: 8px 16px; z-index: 9999; text-decoration: none; border-radius: 0 0 8px 0; }
-        .skip-link:focus { left: 0 !important; }
-        /* Accessibility: focus-visible for keyboard nav */
-        a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-            border-radius: 4px;
+        /* ----- Asymmetric grid ----- */
+        .dash-grid {
+            display: grid; grid-template-columns: 2fr 1fr;
+            gap: 24px; align-items: start;
+        }
+        @media (max-width: 980px) { .dash-grid { grid-template-columns: 1fr; } }
+
+        .dash-col { display: flex; flex-direction: column; gap: 24px; }
+
+        /* ----- Card overrides ----- */
+        .card {
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md);
+            padding: 28px;
+            transition: border-color var(--ds-dur) var(--ds-ease);
+        }
+        .card-flush { padding: 0; overflow: hidden; }
+        .card-compact { padding: 22px; }
+        .card-section {
+            padding: 22px 28px; border-top: 1px solid var(--ds-border);
+        }
+        .card-header {
+            display: flex; align-items: baseline; justify-content: space-between;
+            gap: 16px; margin-bottom: 24px;
+        }
+        .card-eyebrow {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-xs); letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--ds-text-subtle);
+        }
+        .card-title {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: var(--ds-text-2xl); line-height: 1.1;
+            letter-spacing: -0.02em; color: var(--ds-text); margin: 0;
+        }
+        .card-title-sm {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-md); letter-spacing: -0.01em;
+            color: var(--ds-text); margin: 0 0 6px;
         }
 
-        /* Accessibility: respect reduced motion */
+        /* ----- Subscription card · signature price ----- */
+        .price-display {
+            display: flex; align-items: baseline; gap: 8px;
+            margin: 12px 0 4px;
+        }
+        .price-currency {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: 1.5rem; color: var(--ds-text-muted);
+            line-height: 1; align-self: flex-start; margin-top: 12px;
+        }
+        .price-amount {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1;
+            letter-spacing: -0.03em; color: var(--ds-text);
+        }
+        .price-period {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-md);
+            color: var(--ds-text-subtle); align-self: flex-end; margin-bottom: 10px;
+        }
+        .price-empty {
+            font-family: var(--ds-font-display); font-style: italic;
+            font-size: 1.5rem; color: var(--ds-text-muted);
+            margin: 18px 0 8px;
+        }
+
+        .sub-meta {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 18px 32px; margin: 28px 0 24px;
+        }
+        @media (max-width: 520px) { .sub-meta { grid-template-columns: 1fr; gap: 14px; } }
+        .sub-meta-item { }
+        .sub-meta-label {
+            font-family: var(--ds-font-sans); font-weight: 500;
+            font-size: var(--ds-text-xs); color: var(--ds-text-subtle);
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+        .sub-meta-value {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-base);
+            color: var(--ds-text); font-weight: 500;
+        }
+        .sub-meta-value.mono { font-family: var(--ds-font-mono); font-size: var(--ds-text-sm); letter-spacing: -0.01em; }
+
+        /* ----- Status badge ----- */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; border-radius: var(--ds-radius-pill);
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-xs);
+            font-weight: 500; letter-spacing: 0.01em;
+            border: 1px solid var(--ds-border);
+            background: var(--ds-bg-subtle); color: var(--ds-text-muted);
+        }
+        .status-badge::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%;
+            background: currentColor; display: inline-block;
+        }
+        .status-badge.badge-active   { color: var(--ds-success); background: color-mix(in srgb, var(--ds-success) 8%, transparent); border-color: color-mix(in srgb, var(--ds-success) 20%, transparent); }
+        .status-badge.badge-warning  { color: var(--ds-warning); background: color-mix(in srgb, var(--ds-warning) 8%, transparent); border-color: color-mix(in srgb, var(--ds-warning) 20%, transparent); }
+        .status-badge.badge-inactive { color: var(--ds-text-subtle); }
+
+        /* ----- Buttons row ----- */
+        .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: var(--ds-font-sans); font-weight: 500; font-size: var(--ds-text-sm);
+            letter-spacing: -0.005em; line-height: 1; cursor: pointer; user-select: none;
+            border: 1px solid transparent; border-radius: var(--ds-radius);
+            padding: 11px 18px; min-height: 42px; text-decoration: none;
+            transition: background var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease), transform var(--ds-dur-fast) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease);
+        }
+        .btn:focus-visible { outline: 2px solid var(--ds-accent); outline-offset: 2px; }
+        .btn-primary { background: var(--ds-bg-inverse); color: var(--ds-bg); border-color: var(--ds-bg-inverse); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--ds-shadow-md); }
+        .btn-secondary { background: transparent; color: var(--ds-text); border-color: var(--ds-border-strong); }
+        .btn-secondary:hover { border-color: var(--ds-text); background: var(--ds-bg-subtle); }
+        .btn-ghost { background: transparent; color: var(--ds-text-muted); }
+        .btn-ghost:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+        .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+        .btn svg { width: 14px; height: 14px; }
+
+        /* ----- Workers progress bar ----- */
+        .workers-block {
+            margin-top: 28px; padding-top: 24px;
+            border-top: 1px solid var(--ds-border);
+        }
+        .workers-head {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 14px;
+        }
+        .workers-label {
+            font-family: var(--ds-font-sans); font-weight: 500;
+            font-size: var(--ds-text-xs); color: var(--ds-text-subtle);
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .workers-count {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-2xl);
+            color: var(--ds-text); letter-spacing: -0.02em; font-weight: 500;
+            line-height: 1;
+        }
+        .workers-bar-track {
+            width: 100%; height: 4px; background: var(--ds-bg-subtle);
+            border-radius: var(--ds-radius-pill); overflow: hidden;
+        }
+        .workers-bar-fill {
+            height: 100%; background: var(--ds-text);
+            border-radius: var(--ds-radius-pill);
+            transition: width var(--ds-dur-slow) var(--ds-ease-out);
+        }
+        .workers-bar-fill.high { background: var(--ds-warning); }
+        .workers-bar-fill.critical { background: var(--ds-error); }
+
+        /* ----- Aside cards ----- */
+        .aside-card {
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md);
+            padding: 22px;
+            transition: border-color var(--ds-dur) var(--ds-ease), transform var(--ds-dur) var(--ds-ease);
+            display: block; text-decoration: none; color: inherit;
+            text-align: left; cursor: pointer;
+            font-family: var(--ds-font-sans);
+            width: 100%;
+        }
+        .aside-card:hover { border-color: var(--ds-border-strong); transform: translateY(-1px); }
+        button.aside-card { background: var(--ds-bg-elev); }
+        .aside-card-head {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .aside-card-icon {
+            width: 32px; height: 32px; border-radius: var(--ds-radius-sm);
+            background: var(--ds-bg-subtle); border: 1px solid var(--ds-border);
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--ds-text);
+        }
+        .aside-card-icon svg { width: 16px; height: 16px; }
+        .aside-card-arrow {
+            color: var(--ds-text-subtle); opacity: 0;
+            transition: opacity var(--ds-dur) var(--ds-ease), transform var(--ds-dur) var(--ds-ease);
+        }
+        .aside-card:hover .aside-card-arrow { opacity: 1; transform: translateX(2px); }
+        .aside-card-arrow svg { width: 14px; height: 14px; }
+        .aside-card-title {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-md); color: var(--ds-text);
+            margin: 0 0 4px; letter-spacing: -0.01em;
+        }
+        .aside-card-desc {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-muted); margin: 0;
+        }
+
+        /* ----- Section spacing ----- */
+        .section-block { margin-top: 80px; }
+        .section-eyebrow {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-xs); letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--ds-text-subtle);
+            display: inline-flex; align-items: center; gap: 10px;
+            margin-bottom: 14px;
+        }
+        .section-eyebrow::before {
+            content: ''; width: 22px; height: 1px; background: currentColor; opacity: 0.5;
+        }
+        .section-title {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: var(--ds-text-3xl); line-height: 1.1;
+            letter-spacing: -0.02em; color: var(--ds-text);
+            margin: 0 0 28px;
+        }
+
+        /* ----- Onboarding bar ----- */
+        .onboarding-bar {
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md);
+            padding: 22px 24px; margin-bottom: 32px;
+            position: relative;
+        }
+        .onboarding-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 6px;
+        }
+        .onboarding-header h3 {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: var(--ds-text-xl); margin: 0; letter-spacing: -0.01em;
+        }
+        .onboarding-dismiss {
+            background: transparent; border: 0; color: var(--ds-text-subtle);
+            cursor: pointer; font-size: 22px; line-height: 1; padding: 4px 8px;
+            border-radius: var(--ds-radius-sm);
+            transition: color var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
+        }
+        .onboarding-dismiss:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+        .onboarding-content > p {
+            font-size: var(--ds-text-sm); color: var(--ds-text-muted); margin: 0 0 18px;
+        }
+        .onboarding-steps {
+            display: flex; flex-wrap: wrap; gap: 18px 28px;
+            margin-bottom: 18px;
+        }
+        .ob-step {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-muted);
+        }
+        .ob-step-dot {
+            width: 18px; height: 18px; border-radius: 50%;
+            border: 1.5px solid var(--ds-border-strong); background: var(--ds-bg);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; color: transparent;
+            transition: background var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+        }
+        .ob-step-dot.completed {
+            background: var(--ds-text); border-color: var(--ds-text);
+            color: var(--ds-bg);
+        }
+        .onboarding-progress {
+            height: 2px; background: var(--ds-bg-subtle);
+            border-radius: var(--ds-radius-pill); overflow: hidden;
+        }
+        .onboarding-progress-fill {
+            height: 100%; background: var(--ds-text);
+            transition: width var(--ds-dur-slow) var(--ds-ease-out);
+        }
+
+        /* ----- Billing table ----- */
+        .billing-table-wrap { overflow-x: auto; }
+        .billing-table { width: 100%; border-collapse: collapse; }
+        .billing-table th {
+            text-align: left; padding: 14px 16px;
+            font-family: var(--ds-font-sans); font-weight: 500;
+            font-size: var(--ds-text-xs); letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--ds-text-subtle);
+            border-bottom: 1px solid var(--ds-border);
+        }
+        .billing-table td {
+            padding: 16px; font-size: var(--ds-text-sm);
+            color: var(--ds-text); border-bottom: 1px solid var(--ds-border);
+            vertical-align: middle;
+        }
+        .billing-table tr:last-child td { border-bottom: 0; }
+        .billing-table tr:hover td { background: var(--ds-bg-subtle); }
+
+        .billing-empty {
+            text-align: center; padding: 40px 24px !important;
+            font-family: var(--ds-font-display); font-style: italic;
+            font-size: 1.2rem; color: var(--ds-text-muted) !important;
+        }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 3px 10px; border-radius: var(--ds-radius-pill);
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-xs);
+            font-weight: 500; letter-spacing: 0.01em;
+        }
+        .status-pill::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%;
+            background: currentColor; display: inline-block;
+        }
+        .status-pill.status-paid    { color: var(--ds-success); background: color-mix(in srgb, var(--ds-success) 8%, transparent); }
+        .status-pill.status-pending { color: var(--ds-warning); background: color-mix(in srgb, var(--ds-warning) 10%, transparent); }
+
+        .download-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px; border-radius: var(--ds-radius);
+            background: transparent; border: 1px solid var(--ds-border-strong);
+            color: var(--ds-text); font-family: var(--ds-font-sans);
+            font-size: var(--ds-text-xs); font-weight: 500;
+            cursor: pointer; transition: background var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease);
+        }
+        .download-btn:hover { background: var(--ds-bg-subtle); border-color: var(--ds-text); }
+        .download-btn svg { width: 13px; height: 13px; }
+
+        /* Mobile billing cards */
+        .billing-cards { display: none; }
+        @media (max-width: 760px) {
+            .billing-table-wrap { display: none; }
+            .billing-cards { display: flex; flex-direction: column; gap: 12px; padding: 8px; }
+            .billing-card-item {
+                background: var(--ds-bg); border: 1px solid var(--ds-border);
+                border-radius: var(--ds-radius); padding: 14px;
+            }
+            .billing-card-row {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 4px 0; font-size: var(--ds-text-sm);
+            }
+            .billing-card-label { color: var(--ds-text-subtle); font-size: var(--ds-text-xs); }
+            .billing-card-value { color: var(--ds-text); }
+        }
+
+        /* ----- Empty state ----- */
+        .empty-state {
+            padding: 56px 24px; text-align: center;
+        }
+        .empty-icon {
+            width: 48px; height: 48px; margin: 0 auto 18px;
+            color: var(--ds-text-subtle);
+        }
+        .empty-icon svg { width: 100%; height: 100%; }
+        .empty-title {
+            font-family: var(--ds-font-display); font-style: italic;
+            font-weight: 400; font-size: 1.6rem; line-height: 1.2;
+            color: var(--ds-text); margin: 0 0 8px;
+        }
+        .empty-desc {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-muted); max-width: 380px;
+            margin: 0 auto 20px;
+        }
+
+        /* ----- Forms ----- */
+        .form-group { margin-bottom: 18px; }
+        .form-label {
+            display: block; font-family: var(--ds-font-sans);
+            font-size: var(--ds-text-sm); font-weight: 500;
+            color: var(--ds-text); margin-bottom: 6px; letter-spacing: -0.005em;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; display: block;
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-base);
+            color: var(--ds-text); background: var(--ds-bg);
+            border: 1px solid var(--ds-border-strong);
+            border-radius: var(--ds-radius);
+            padding: 11px 14px; min-height: 44px;
+            transition: border-color var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
+        }
+        .form-textarea { min-height: 120px; resize: vertical; line-height: 1.55; }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--ds-text-subtle); }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none; border-color: var(--ds-accent);
+            box-shadow: var(--ds-shadow-glow); background: var(--ds-bg-elev);
+        }
+        .form-select {
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8a85' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        .settings-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+        }
+        @media (max-width: 640px) { .settings-grid { grid-template-columns: 1fr; } }
+        .settings-grid--three { grid-template-columns: 1fr 1fr 1fr; }
+        @media (max-width: 880px) { .settings-grid--three { grid-template-columns: 1fr; } }
+
+        /* ----- Alert ----- */
+        .alert {
+            padding: 12px 14px; border-radius: var(--ds-radius);
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            margin-bottom: 16px; border: 1px solid transparent;
+            line-height: 1.5;
+        }
+        .alert-success { background: color-mix(in srgb, var(--ds-success) 8%, transparent); color: var(--ds-success); border-color: color-mix(in srgb, var(--ds-success) 25%, transparent); }
+        .alert-error   { background: color-mix(in srgb, var(--ds-error) 8%, transparent);   color: var(--ds-error);   border-color: color-mix(in srgb, var(--ds-error) 25%, transparent); }
+        .alert-info    { background: var(--ds-accent-soft); color: var(--ds-accent-text); border-color: color-mix(in srgb, var(--ds-accent) 25%, transparent); }
+
+        /* ----- Modal ----- */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: color-mix(in srgb, #000 45%, transparent);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none; align-items: center; justify-content: center;
+            padding: 24px; z-index: var(--ds-z-modal);
+        }
+        .modal-overlay.show { display: flex; animation: ds-fade-up 240ms var(--ds-ease-out); }
+        .modal-box {
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-lg);
+            box-shadow: var(--ds-shadow-lg);
+            max-width: 760px; width: 100%; padding: 36px;
+            position: relative;
+            max-height: 92vh; overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px;
+            background: transparent; border: 0; color: var(--ds-text-subtle);
+            font-size: 24px; line-height: 1; cursor: pointer;
+            width: 36px; height: 36px; border-radius: var(--ds-radius-sm);
+            transition: color var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
+        }
+        .modal-close:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+        .modal-title {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: var(--ds-text-3xl); line-height: 1.1;
+            letter-spacing: -0.02em; color: var(--ds-text);
+            margin: 0 0 8px;
+        }
+
+        /* ----- Billing toggle (modal) ----- */
+        .billing-toggle-wrap {
+            display: inline-flex; align-items: center; gap: 12px;
+            margin: 24px 0 28px; padding: 6px 8px;
+            background: var(--ds-bg-subtle); border-radius: var(--ds-radius-pill);
+        }
+        .billing-label {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-subtle); padding: 4px 10px;
+        }
+        .billing-label.active { color: var(--ds-text); font-weight: 500; }
+        .billing-save {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-xs);
+            color: var(--ds-success); margin-left: 4px;
+        }
+        .billing-switch {
+            position: relative; width: 38px; height: 22px;
+            background: var(--ds-bg-elev); border: 1px solid var(--ds-border-strong);
+            border-radius: var(--ds-radius-pill); cursor: pointer;
+            padding: 0; transition: background var(--ds-dur) var(--ds-ease);
+        }
+        .billing-switch.annual { background: var(--ds-text); border-color: var(--ds-text); }
+        .billing-switch-knob {
+            position: absolute; top: 2px; left: 2px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--ds-text); transition: transform var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
+        }
+        .billing-switch.annual .billing-switch-knob { transform: translateX(16px); background: var(--ds-bg); }
+
+        .plan-options {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 14px; margin-bottom: 24px;
+        }
+        @media (max-width: 640px) { .plan-options { grid-template-columns: 1fr; } }
+        .plan-option {
+            background: var(--ds-bg);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md);
+            padding: 22px 20px; cursor: pointer;
+            transition: border-color var(--ds-dur) var(--ds-ease), transform var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+        }
+        .plan-option:hover { border-color: var(--ds-border-strong); transform: translateY(-1px); }
+        .plan-option.current {
+            border-color: var(--ds-text);
+            box-shadow: 0 0 0 1px var(--ds-text);
+        }
+        .plan-option-name {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-md); color: var(--ds-text);
+            margin-bottom: 8px; letter-spacing: -0.01em;
+        }
+        .plan-option-price {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: 2.25rem; color: var(--ds-text);
+            line-height: 1; letter-spacing: -0.02em; margin-bottom: 4px;
+        }
+        .plan-option-price span {
+            font-family: var(--ds-font-sans); font-size: 0.7rem;
+            color: var(--ds-text-subtle); margin-left: 2px;
+        }
+        .plan-option-annual-price {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-xs);
+            color: var(--ds-text-subtle); margin-bottom: 10px; min-height: 14px;
+        }
+        .plan-option-workers {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-xs);
+            color: var(--ds-text-muted);
+        }
+        .plan-checkout-btn {
+            width: 100%;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: var(--ds-font-sans); font-weight: 500; font-size: var(--ds-text-sm);
+            background: var(--ds-bg-inverse); color: var(--ds-bg);
+            border: 1px solid var(--ds-bg-inverse);
+            border-radius: var(--ds-radius); padding: 14px 18px;
+            min-height: 50px; cursor: pointer;
+            transition: transform var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+        }
+        .plan-checkout-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--ds-shadow-md); }
+        .plan-checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .plan-manage-link {
+            display: block; text-align: center; margin-top: 14px;
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-muted); cursor: pointer; text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .plan-manage-link:hover { color: var(--ds-text); }
+
+        /* ----- Loading spinner (used inline by JS) ----- */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid var(--ds-border);
+            border-top-color: var(--ds-accent);
+            border-radius: 50%;
+            animation: spin 800ms linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ----- Skip link ----- */
+        .ds-skip {
+            position: absolute; left: -9999px; top: 0;
+            background: var(--ds-bg-inverse); color: var(--ds-bg);
+            padding: 10px 16px; z-index: 9999; text-decoration: none;
+            border-radius: 0 0 var(--ds-radius) 0;
+            font-family: var(--ds-font-sans); font-weight: 500; font-size: var(--ds-text-sm);
+        }
+        .ds-skip:focus { left: 0 !important; }
+
+        /* ----- Reveal animation ----- */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .reveal { animation: fadeInUp 480ms var(--ds-ease-out) both; }
+        .reveal:nth-child(1) { animation-delay: 0ms; }
+        .reveal:nth-child(2) { animation-delay: 60ms; }
+        .reveal:nth-child(3) { animation-delay: 120ms; }
+        .reveal:nth-child(4) { animation-delay: 180ms; }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -98,1423 +838,433 @@
             }
         }
 
-        /* Content entrance animation */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .section { animation: fadeInUp 0.4s ease-out both; }
-        .section:nth-child(2) { animation-delay: 0.05s; }
-        .section:nth-child(3) { animation-delay: 0.1s; }
-        .section:nth-child(4) { animation-delay: 0.15s; }
-        .section:nth-child(5) { animation-delay: 0.2s; }
-
-        /* Loading overlay with skeleton screens */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            z-index: 9999;
-            transition: opacity 0.4s ease;
-            overflow-y: auto;
-            padding: 2rem;
-        }
-        .loading-overlay.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .skeleton-container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .skeleton {
-            background: linear-gradient(90deg, var(--bg-card) 25%, var(--border-light) 50%, var(--bg-card) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s ease-in-out infinite;
-            border-radius: 8px;
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        .skeleton-header {
-            height: 48px;
-            margin-bottom: 2rem;
-            border-radius: 12px;
-        }
-        .skeleton-stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .skeleton-stat-card {
-            padding: 1.5rem;
-            border-radius: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-        }
-        .skeleton-stat-label {
-            height: 12px;
-            width: 40%;
-            margin-bottom: 0.75rem;
-        }
-        .skeleton-stat-value {
-            height: 28px;
-            width: 70%;
-            margin-bottom: 0.5rem;
-        }
-        .skeleton-stat-trend {
-            height: 10px;
-            width: 45%;
-        }
-        .skeleton-content {
-            height: 200px;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-        }
-        .loading-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-top: 2rem;
-        }
-        .loading-text {
-            margin-top: 1rem;
-            color: var(--text3);
-            font-size: 0.95rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Onboarding bar */
-        .onboarding-bar {
-            background: var(--bg-card);
-            border-left: 4px solid;
-            border-image: linear-gradient(135deg, var(--primary), var(--accent)) 1;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            animation: slideDown 0.3s ease-out;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-12px); }
-            to { opacity: 1; transform: none; }
-        }
-        .onboarding-content {
-            max-width: 100%;
-        }
-        .onboarding-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        .onboarding-header h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text1);
-            margin: 0;
-        }
-        .onboarding-dismiss {
-            background: none;
-            border: none;
-            color: var(--text3);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-        .onboarding-dismiss:hover {
-            background: var(--bg-warm);
-            color: var(--text1);
-            transform: scale(1.1);
-        }
-        .onboarding-bar p {
-            font-size: 0.88rem;
-            color: var(--text2);
-            margin: 0 0 1rem 0;
-        }
-        .onboarding-steps {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-        .ob-step {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            color: var(--text2);
-        }
-        .ob-step-dot {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-            background: var(--bg);
-        }
-        .ob-step-dot.completed {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-color: transparent;
-            color: white;
-            font-size: 0.75rem;
-        }
-        .onboarding-progress {
-            height: 4px;
-            background: var(--border-light);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .onboarding-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            transition: width 0.4s ease;
-        }
-
-        /* Empty states */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 250px;
-        }
-        .empty-icon {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .empty-icon svg {
-            width: 100%;
-            height: 100%;
-            stroke: var(--border);
-            stroke-width: 1.5;
-            fill: none;
-        }
-        .empty-title {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text1);
-            margin: 0 0 0.5rem 0;
-        }
-        .empty-desc {
-            font-size: 0.88rem;
-            color: var(--text3);
-            margin: 0 0 1.5rem 0;
-            max-width: 350px;
-            line-height: 1.6;
-        }
-        .empty-state .submit-btn {
-            min-width: 160px;
-        }
-
-        /* Navbar */
-        .navbar {
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 0.75rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(12px);
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
-
-        .navbar-logo-wrap {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .navbar-logo-svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .navbar-brand-text {
-            font-size: 1.35rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .navbar-right {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .dark-mode-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: var(--text1);
-            transition: transform 0.2s ease;
-            padding: 0.4rem;
-            border-radius: 8px;
-        }
-        .dark-mode-toggle:hover {
-            transform: scale(1.1);
-            background: var(--bg-warm);
-        }
-
-        /* Notifications */
-        .notif-btn {
-            position: relative;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text2);
-            padding: 0.4rem;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-        .notif-btn:hover {
-            background: var(--bg-warm);
-            color: var(--text1);
-        }
-        .notif-btn svg {
-            width: 22px;
-            height: 22px;
-        }
-        .notif-badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 8px;
-            height: 8px;
-            background: var(--danger);
-            border-radius: 50%;
-            border: 2px solid var(--bg-card);
-        }
-        .notif-dropdown {
-            position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
-            width: 320px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-            display: none;
-            z-index: 200;
-            overflow: hidden;
-        }
-        .notif-dropdown.show { display: block; }
-        .notif-header {
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid var(--border);
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text1);
-        }
-        .notif-item {
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid var(--border-light);
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-        .notif-item:hover { background: var(--bg-warm); }
-        .notif-item:last-child { border-bottom: none; }
-        .notif-item-title {
-            font-size: 0.88rem;
-            font-weight: 500;
-            color: var(--text1);
-            margin-bottom: 2px;
-        }
-        .notif-item-time {
-            font-size: 0.78rem;
-            color: var(--text3);
-        }
-        .notif-empty {
-            padding: 2rem 1rem;
-            text-align: center;
-            color: var(--text3);
-            font-size: 0.9rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .user-name-text {
-            font-size: 0.92rem;
-            font-weight: 500;
-            color: var(--text1);
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-        }
-
-        .logout-btn {
-            background-color: transparent;
-            color: var(--text2);
-            border: 1px solid var(--border);
-            padding: 0.45rem 0.9rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-        }
-        .logout-btn:hover {
-            background-color: var(--bg);
-            border-color: var(--danger);
-            color: var(--danger);
-        }
-
-        /* Container */
-        .container {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Welcome Section */
-        .welcome-section {
-            margin-bottom: 2rem;
-        }
-        .welcome-title {
-            font-size: 1.85rem;
-            font-weight: 700;
-            margin-bottom: 0.35rem;
-            color: var(--text1);
-        }
-        .welcome-date {
-            color: var(--text3);
-            font-size: 0.92rem;
-        }
-
-        /* Section Styling */
-        .section {
-            margin-bottom: 2.5rem;
-        }
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1.25rem;
-            color: var(--text1);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .section-title svg {
-            width: 20px;
-            height: 20px;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-
-        /* Quick Access Cards */
-        .quick-access-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.25rem;
-        }
-
-        .quick-card {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            padding: 1.75rem 1.5rem;
-            border-radius: 14px;
-            text-decoration: none;
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
-            cursor: pointer;
-            border: none;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-        /* Differentiated card colors */
-        .quick-card:nth-child(1) { background: linear-gradient(135deg, #2980b9, #3498db); }
-        .quick-card:nth-child(2) { background: linear-gradient(135deg, #4ecdc4, #2980b9); }
-        .quick-card:nth-child(3) { background: linear-gradient(135deg, #6c5ce7, #4ecdc4); }
-        .quick-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(41, 128, 185, 0.3);
-        }
-        .quick-card:active {
-            transform: translateY(-1px);
-        }
-        /* Subtle shine on hover */
-        .quick-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(to right, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
-            transform: rotate(30deg) translateX(-100%);
-            pointer-events: none;
-        }
-        .quick-card:hover::after {
-            animation: cardShineAnim 0.6s ease-out forwards;
-        }
-        @keyframes cardShineAnim {
-            from { transform: rotate(30deg) translateX(-100%); }
-            to { transform: rotate(30deg) translateX(100%); }
-        }
-        .quick-card-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .quick-card-icon svg {
-            width: 22px;
-            height: 22px;
-            stroke: white;
-            fill: none;
-        }
-        .quick-card-label {
-            font-size: 1.05rem;
-            font-weight: 600;
-        }
-        .quick-card-desc {
-            font-size: 0.82rem;
-            opacity: 0.85;
-            line-height: 1.4;
-        }
-
-        /* Card */
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card:hover {
-            border-color: rgba(41, 128, 185, 0.12);
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-        }
-
-        /* Subscription Info */
-        .sub-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.75rem;
-        }
-
-        .subscription-detail {
-            margin-bottom: 1.15rem;
-        }
-        .subscription-label {
-            color: var(--text3);
-            font-size: 0.82rem;
-            margin-bottom: 0.2rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            font-weight: 500;
-        }
-        .subscription-value {
-            color: var(--text1);
-            font-size: 1.05rem;
-            font-weight: 600;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-        .badge-active {
-            background-color: rgba(39, 174, 96, 0.15);
-            color: var(--success);
-        }
-        .badge-trial {
-            background-color: rgba(243, 156, 18, 0.15);
-            color: var(--warning);
-        }
-        .badge-inactive {
-            background-color: rgba(231, 76, 60, 0.15);
-            color: var(--danger);
-        }
-
-        /* Workers progress bar */
-        .workers-usage {
-            margin-top: 1.25rem;
-            padding-top: 1.25rem;
-            border-top: 1px solid var(--border);
-        }
-        .workers-usage-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 0.6rem;
-        }
-        .workers-usage-label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text2);
-        }
-        .workers-usage-count {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text1);
-        }
-        .workers-bar-track {
-            width: 100%;
-            height: 10px;
-            background: var(--border);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .workers-bar-fill {
-            height: 100%;
-            border-radius: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            transition: width 0.6s ease;
-        }
-        .workers-bar-fill.high { background: linear-gradient(90deg, var(--warning), #e67e22); }
-        .workers-bar-fill.critical { background: linear-gradient(90deg, var(--danger), #c0392b); }
-
-        .change-plan-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.65rem 1.25rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            margin-top: 0.5rem;
-        }
-        .change-plan-btn:hover {
-            background-color: #1e5d8f;
-            box-shadow: 0 4px 12px rgba(41, 128, 185, 0.3);
-        }
-
-        /* Billing Table */
-        .billing-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .billing-table thead {
-            background-color: var(--bg-warm);
-            border-bottom: 2px solid var(--border);
-        }
-        .billing-table th {
-            padding: 0.85rem 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.82rem;
-            color: var(--text3);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .billing-table td {
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid var(--border-light);
-            color: var(--text2);
-            font-size: 0.92rem;
-        }
-        .billing-table tbody tr:hover {
-            background-color: var(--bg-warm);
-        }
-
-        /* Mobile billing cards (hidden on desktop) */
-        .billing-cards { display: none; }
-        .billing-card-item {
-            background: var(--bg-warm);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1rem 1.15rem;
-            margin-bottom: 0.75rem;
-        }
-        .billing-card-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.4rem;
-        }
-        .billing-card-row:last-child { margin-bottom: 0; }
-        .billing-card-label {
-            font-size: 0.8rem;
-            color: var(--text3);
-            font-weight: 500;
-        }
-        .billing-card-value {
-            font-size: 0.88rem;
-            color: var(--text1);
-            font-weight: 500;
-        }
-
-        .status-pill {
-            display: inline-block;
-            padding: 0.25rem 0.7rem;
-            border-radius: 20px;
-            font-size: 0.82rem;
-            font-weight: 500;
-        }
-        .status-paid {
-            background-color: rgba(39, 174, 96, 0.15);
-            color: var(--success);
-        }
-        .status-pending {
-            background-color: rgba(243, 156, 18, 0.15);
-            color: var(--warning);
-        }
-
-        .download-btn {
-            background-color: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 0.35rem 0.7rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.82rem;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-        .download-btn:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-        .download-btn svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .billing-empty {
-            text-align: center;
-            padding: 2.5rem 1rem;
-            color: var(--text3);
-            font-size: 0.92rem;
-        }
-
-        /* Support Form */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 0.4rem;
-            color: var(--text1);
-            font-weight: 500;
-            font-size: 0.92rem;
-        }
-        .form-input,
-        .form-textarea,
-        .form-select {
-            width: 100%;
-            padding: 0.7rem 0.85rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background-color: var(--bg);
-            color: var(--text1);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .form-input:focus,
-        .form-textarea:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.1);
-        }
-        .form-textarea {
-            resize: vertical;
-            min-height: 110px;
-        }
-
-        .submit-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .submit-btn:hover {
-            background-color: #1e5d8f;
-            box-shadow: 0 4px 12px rgba(41, 128, 185, 0.3);
-            transform: translateY(-1px);
-        }
-        .submit-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 1px 4px rgba(41, 128, 185, 0.2);
-        }
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .support-info {
-            color: var(--text2);
-            margin-bottom: 1.25rem;
-            font-size: 0.92rem;
-        }
-        .support-info a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .support-info a:hover { text-decoration: underline; }
-
-        /* Account Settings */
-        .settings-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-        }
-
-        /* Alerts */
-        .alert {
-            padding: 0.85rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.25rem;
-            font-size: 0.92rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .alert-success {
-            background-color: rgba(39, 174, 96, 0.12);
-            color: var(--success);
-            border: 1px solid rgba(39, 174, 96, 0.25);
-        }
-        .alert-error {
-            background-color: rgba(231, 76, 60, 0.12);
-            color: var(--danger);
-            border: 1px solid rgba(231, 76, 60, 0.25);
-        }
-        .alert-info {
-            background-color: rgba(41, 128, 185, 0.12);
-            color: var(--primary);
-            border: 1px solid rgba(41, 128, 185, 0.25);
-        }
-
-        .hidden { display: none; }
-
-        /* Plan modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 500;
-            backdrop-filter: blur(4px);
-        }
-        .modal-overlay.show { display: flex; }
-        .modal-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1.25rem;
-            color: var(--text1);
-        }
-        .modal-close {
-            float: right;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text3);
-            line-height: 1;
-        }
-        .modal-close:hover { color: var(--text1); }
-
-        .plan-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1rem;
-        }
-        .plan-option {
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 1.25rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .plan-option:hover { border-color: var(--primary); }
-        .plan-option.current { border-color: var(--accent); background: rgba(78, 205, 196, 0.08); }
-        .plan-option-name {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text1);
-            margin-bottom: 0.5rem;
-        }
-        .plan-option-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.35rem;
-        }
-        .plan-option-workers {
-            font-size: 0.82rem;
-            color: var(--text3);
-        }
-
-        /* Billing toggle */
-        .billing-toggle-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 1.25rem;
-        }
-        .billing-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text3);
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .billing-label.active { color: var(--text1); }
-        .billing-switch {
-            width: 44px; height: 24px;
-            border-radius: 12px;
-            background: var(--border);
-            border: none;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.3s;
-        }
-        .billing-switch.annual { background: linear-gradient(135deg, #4ecdc4, #2980b9); }
-        .billing-switch-knob {
-            width: 18px; height: 18px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            position: absolute;
-            top: 3px; left: 3px;
-            transition: left 0.3s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-        }
-        .billing-switch.annual .billing-switch-knob { left: 23px; }
-        .billing-save {
-            font-size: 0.7rem;
-            background: linear-gradient(135deg, #4ecdc4, #2980b9);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 4px;
-            font-weight: 600;
-        }
-        .plan-option-annual-price {
-            font-size: 0.75rem;
-            color: var(--text3);
-            margin-top: 4px;
-        }
-        .plan-checkout-btn {
-            margin-top: 1.25rem;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #4ecdc4, #2980b9);
-            color: white;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .plan-checkout-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(41,128,185,0.3); }
-        .plan-checkout-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .plan-manage-link {
-            display: block;
-            text-align: center;
-            margin-top: 0.75rem;
-            font-size: 0.82rem;
-            color: var(--primary);
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0.75rem 1rem;
-            }
-            .user-name-text { display: none; }
-            .container { padding: 1.25rem; }
-            .welcome-title { font-size: 1.4rem; }
-            .quick-access-grid {
-                grid-template-columns: 1fr;
-            }
-            .sub-grid {
-                grid-template-columns: 1fr;
-            }
-            .settings-grid {
-                grid-template-columns: 1fr;
-            }
-            /* Hide table, show cards */
-            .billing-table-wrap { display: none; }
-            .billing-cards { display: block; }
-            .plan-options {
-                grid-template-columns: 1fr;
-            }
-            .notif-dropdown {
-                right: -60px;
-                width: 280px;
-            }
-        }
+        /* ----- Footer mini ----- */
+        .app-footer {
+            border-top: 1px solid var(--ds-border);
+            padding: 28px var(--ds-space-6);
+            margin-top: 96px;
+        }
+        .app-footer-inner {
+            max-width: var(--ds-container); margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 16px; flex-wrap: wrap;
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-xs);
+            color: var(--ds-text-subtle);
+        }
+        .app-footer a { color: var(--ds-text-muted); text-decoration: none; }
+        .app-footer a:hover { color: var(--ds-text); }
     </style>
 </head>
 <body>
-    <a href="#main" class="skip-link">Saltar al contenido principal</a>
-    <!-- Loading overlay with skeleton screens -->
+    <a href="#main" class="ds-skip">Saltar al contenido principal</a>
+
+    <!-- Loading overlay with skeleton -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="skeleton-container">
-            <!-- Header skeleton -->
-            <div class="skeleton skeleton-header"></div>
-
-            <!-- Stat cards skeleton grid -->
-            <div class="skeleton-stat-grid">
-                <div class="skeleton-stat-card">
-                    <div class="skeleton skeleton-stat-label"></div>
-                    <div class="skeleton skeleton-stat-value"></div>
-                    <div class="skeleton skeleton-stat-trend"></div>
-                </div>
-                <div class="skeleton-stat-card">
-                    <div class="skeleton skeleton-stat-label"></div>
-                    <div class="skeleton skeleton-stat-value"></div>
-                    <div class="skeleton skeleton-stat-trend"></div>
-                </div>
-                <div class="skeleton-stat-card">
-                    <div class="skeleton skeleton-stat-label"></div>
-                    <div class="skeleton skeleton-stat-value"></div>
-                    <div class="skeleton skeleton-stat-trend"></div>
-                </div>
-                <div class="skeleton-stat-card">
-                    <div class="skeleton skeleton-stat-label"></div>
-                    <div class="skeleton skeleton-stat-value"></div>
-                    <div class="skeleton skeleton-stat-trend"></div>
+            <div class="skeleton skeleton-eyebrow"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-sub"></div>
+            <div class="skeleton-grid">
+                <div class="skeleton skeleton-card tall"></div>
+                <div class="skeleton-aside">
+                    <div class="skeleton skeleton-card"></div>
+                    <div class="skeleton skeleton-card"></div>
+                    <div class="skeleton skeleton-card"></div>
                 </div>
             </div>
-
-            <!-- Content area skeleton -->
-            <div class="skeleton skeleton-content"></div>
         </div>
     </div>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="/" class="navbar-brand">
-            <div class="navbar-logo-wrap">
-                <svg class="navbar-logo-svg" viewBox="0 0 40 40" fill="none">
-                    <defs><linearGradient id="nG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="rgba(255,255,255,0.7)"/></linearGradient></defs>
-                    <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#nG)" stroke-width="2.5" fill="none"/>
-                    <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#nG)" stroke-width="2.5" fill="none"/>
-                    <path d="M28 8l4-4 2 5" stroke="url(#nG)" stroke-width="2" fill="none"/>
-                </svg>
-            </div>
-            <span class="navbar-brand-text">Shiftia</span>
-        </a>
-        <div class="navbar-right">
-            <button class="dark-mode-toggle" id="darkModeBtn" title="Cambiar tema">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                </svg>
-            </button>
-            <div style="position:relative;">
-                <button class="notif-btn" id="notifBtn" title="Notificaciones">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                    </svg>
-                    <span class="notif-badge" id="notifBadge" style="display:none;"></span>
-                </button>
-                <div class="notif-dropdown" id="notifDropdown">
-                    <div class="notif-header">Notificaciones</div>
-                    <div id="notifList">
-                        <div class="notif-empty">No hay notificaciones</div>
-                    </div>
-                </div>
-            </div>
-            <div class="user-info">
-                <span class="user-name-text" id="userName">Cargando...</span>
-                <div class="avatar" id="userAvatar">...</div>
-            </div>
-            <button class="logout-btn" id="logoutBtn">Cerrar sesión</button>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main id="main" class="container">
-        <!-- Welcome Section -->
-        <section class="welcome-section">
-            <h1 class="welcome-title" id="welcomeMessage">Bienvenido</h1>
-            <p class="welcome-date" id="currentDate"></p>
-        </section>
-
-        <!-- Onboarding Progress Bar -->
-        <div class="onboarding-bar" id="onboardingBar" style="display:none;">
-            <div class="onboarding-content">
-                <div class="onboarding-header">
-                    <h3>Bienvenido a Shiftia</h3>
-                    <button class="onboarding-dismiss" onclick="dismissOnboarding()">&times;</button>
-                </div>
-                <p>Completa estos pasos para empezar:</p>
-                <div class="onboarding-steps">
-                    <div class="ob-step" data-step="profile">
-                        <div class="ob-step-dot completed">✓</div>
-                        <span>Crear cuenta</span>
-                    </div>
-                    <div class="ob-step" data-step="plan">
-                        <div class="ob-step-dot"></div>
-                        <span>Elegir plan</span>
-                    </div>
-                    <div class="ob-step" data-step="schedule">
-                        <div class="ob-step-dot"></div>
-                        <span>Crear primera planilla</span>
-                    </div>
-                </div>
-                <div class="onboarding-progress">
-                    <div class="onboarding-progress-fill" style="width: 33%"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Access Cards -->
-        <section class="section">
-            <div class="quick-access-grid">
-                <a href="https://sara.shiftia.es" target="_blank" class="quick-card">
-                    <div class="quick-card-icon">
-                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
-                    <span class="quick-card-label">Abrir SARA</span>
-                    <span class="quick-card-desc">Planificador de turnos</span>
-                </a>
-                <button class="quick-card" id="supportCardBtn" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
-                    <div class="quick-card-icon">
-                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    </div>
-                    <span class="quick-card-label">Soporte</span>
-                    <span class="quick-card-desc">Contacta con nosotros</span>
-                </button>
-                <a href="/docs" class="quick-card" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
-                    <div class="quick-card-icon">
-                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                    </div>
-                    <span class="quick-card-label">Documentación</span>
-                    <span class="quick-card-desc">Guías y manuales</span>
-                </a>
-            </div>
-        </section>
-
-        <!-- Subscription Info -->
-        <section class="section">
-            <h2 class="section-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                Tu Suscripción
-            </h2>
-            <div class="card">
-                <div class="sub-grid">
-                    <div>
-                        <div class="subscription-detail">
-                            <div class="subscription-label">Plan actual</div>
-                            <div class="subscription-value" id="planName">—</div>
+    <!-- Sticky header -->
+    <header class="app-header" role="banner">
+        <div class="app-header-inner">
+            <a href="/" class="app-brand" aria-label="Shiftia · inicio">
+                <span class="app-brand-mark">Shiftia</span>
+                <span class="app-brand-dot" aria-hidden="true"></span>
+            </a>
+            <nav class="app-nav" aria-label="Navegación principal">
+                <a href="#resumen" class="active" data-section="resumen">Resumen</a>
+                <a href="#suscripcion" data-section="suscripcion">Suscripción</a>
+                <a href="#soporte" data-section="soporte">Soporte</a>
+                <a href="/docs" data-section="docs">Documentación</a>
+            </nav>
+            <div class="app-header-right">
+                <div style="position:relative;">
+                    <button class="icon-btn" id="notifBtn" type="button" aria-label="Notificaciones" aria-haspopup="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+                    </button>
+                    <div class="notif-dropdown" id="notifDropdown" role="menu">
+                        <div class="notif-header">Notificaciones</div>
+                        <div id="notifList">
+                            <div class="notif-empty">Sin novedades</div>
                         </div>
-                        <div class="subscription-detail">
-                            <div class="subscription-label">Estado</div>
-                            <div class="subscription-value">
-                                <span class="status-badge badge-active" id="planStatus">—</span>
+                    </div>
+                </div>
+
+                <div class="user-menu-wrap">
+                    <button class="user-menu-trigger" id="userMenuTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="avatar" id="userAvatar" aria-hidden="true">··</span>
+                        <span class="user-menu-name" id="userName">Cargando…</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="user-menu-dropdown" id="userMenuDropdown" role="menu">
+                        <div class="user-menu-info">
+                            <div class="user-menu-info-name" id="userMenuName">Usuario</div>
+                            <div class="user-menu-info-email" id="userMenuEmail"></div>
+                        </div>
+                        <div class="theme-chip-row" role="group" aria-label="Tema">
+                            <button class="theme-chip" data-theme-set="light" type="button">Claro</button>
+                            <button class="theme-chip" data-theme-set="dark" type="button">Oscuro</button>
+                            <button class="theme-chip" data-theme-set="auto" type="button">Auto</button>
+                        </div>
+                        <a href="#configuracion" class="user-menu-item" id="goToSettings">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            Configuración
+                        </a>
+                        <div class="user-menu-divider"></div>
+                        <button class="user-menu-item danger" id="logoutBtn" type="button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            Cerrar sesión
+                        </button>
+
+                        <!-- Hidden legacy theme toggle (kept for JS compatibility) -->
+                        <button id="darkModeBtn" type="button" style="display:none;" aria-hidden="true">
+                            <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main id="main">
+        <div class="main-shell">
+
+            <!-- Hero -->
+            <section class="hero reveal" id="resumen" aria-labelledby="welcomeMessage">
+                <div class="hero-eyebrow">Tu cuenta · <span id="planEyebrow">Plan —</span></div>
+                <h1 class="hero-title" id="welcomeMessage">Hola, <em>cargando…</em></h1>
+                <p class="hero-sub">Aquí tienes el resumen de tu cuenta, tu suscripción y tu equipo.</p>
+                <div class="hero-date" id="currentDate"></div>
+            </section>
+
+            <!-- Onboarding -->
+            <div class="onboarding-bar reveal" id="onboardingBar" style="display:none;">
+                <div class="onboarding-content">
+                    <div class="onboarding-header">
+                        <h3>Bienvenido a Shiftia</h3>
+                        <button class="onboarding-dismiss" type="button" onclick="dismissOnboarding()" aria-label="Descartar onboarding">&times;</button>
+                    </div>
+                    <p>Completa estos pasos para empezar:</p>
+                    <div class="onboarding-steps">
+                        <div class="ob-step" data-step="profile">
+                            <span class="ob-step-dot completed">✓</span>
+                            <span>Crear cuenta</span>
+                        </div>
+                        <div class="ob-step" data-step="plan">
+                            <span class="ob-step-dot"></span>
+                            <span>Elegir plan</span>
+                        </div>
+                        <div class="ob-step" data-step="schedule">
+                            <span class="ob-step-dot"></span>
+                            <span>Crear primera planilla</span>
+                        </div>
+                    </div>
+                    <div class="onboarding-progress">
+                        <div class="onboarding-progress-fill" style="width: 33%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asymmetric grid -->
+            <div class="dash-grid">
+                <!-- Main column: Subscription + Team -->
+                <div class="dash-col">
+                    <article class="card reveal" aria-labelledby="subTitle">
+                        <header class="card-header">
+                            <div>
+                                <div class="card-eyebrow">Suscripción</div>
+                                <h2 class="card-title" id="subTitle"><span id="planName">—</span></h2>
+                            </div>
+                            <span class="status-badge badge-active" id="planStatus">—</span>
+                        </header>
+
+                        <!-- Signature price display -->
+                        <div class="price-display" id="priceDisplay">
+                            <span class="price-empty" id="priceEmpty" style="display:none;">Selecciona un plan</span>
+                            <span class="price-currency" id="priceCurrency" style="display:none;">€</span>
+                            <span class="price-amount" id="priceAmount" style="display:none;">0</span>
+                            <span class="price-period" id="pricePeriod" style="display:none;">/mes</span>
+                        </div>
+                        <!-- Hidden compatibility node — JS still writes here -->
+                        <span id="monthlyCost" style="display:none;">—</span>
+
+                        <!-- Meta grid -->
+                        <div class="sub-meta">
+                            <div class="sub-meta-item">
+                                <div class="sub-meta-label">Ciclo de facturación</div>
+                                <div class="sub-meta-value" id="billingCycle">—</div>
+                            </div>
+                            <div class="sub-meta-item">
+                                <div class="sub-meta-label">Próxima factura</div>
+                                <div class="sub-meta-value mono" id="nextBillingDate">—</div>
+                            </div>
+                            <div class="sub-meta-item">
+                                <div class="sub-meta-label">Trabajadores incluidos</div>
+                                <div class="sub-meta-value" id="workerLimit">—</div>
+                            </div>
+                            <div class="sub-meta-item">
+                                <div class="sub-meta-label">Forma de pago</div>
+                                <div class="sub-meta-value" style="display:inline-flex;align-items:center;gap:8px;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                                    Tarjeta •••• Stripe
+                                </div>
                             </div>
                         </div>
-                        <div class="subscription-detail">
-                            <div class="subscription-label">Ciclo de facturacion</div>
-                            <div class="subscription-value" id="billingCycle">—</div>
+
+                        <div class="btn-row">
+                            <button class="btn btn-primary" id="changePlanBtn" type="button">Gestionar suscripción</button>
+                            <button class="btn btn-secondary" id="manageSubBtn" type="button" style="display:none;" onclick="openBillingPortal()">Portal de facturación</button>
+                            <a href="#facturacion" class="btn btn-ghost">Ver facturas</a>
                         </div>
-                        <div class="subscription-detail">
-                            <div class="subscription-label">Proxima facturacion</div>
-                            <div class="subscription-value" id="nextBillingDate">—</div>
+
+                        <!-- Workers usage -->
+                        <div class="workers-block">
+                            <div class="workers-head">
+                                <span class="workers-label">Equipo activo</span>
+                                <span class="workers-count" id="workersCountText">0 / 0</span>
+                            </div>
+                            <div class="workers-bar-track">
+                                <div class="workers-bar-fill" id="workersBarFill" style="width: 0%"></div>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <div class="subscription-detail">
-                            <div class="subscription-label">Trabajadores permitidos</div>
-                            <div class="subscription-value" id="workerLimit">—</div>
-                        </div>
-                        <div class="subscription-detail">
-                            <div class="subscription-label">Coste</div>
-                            <div class="subscription-value" id="monthlyCost">—</div>
-                        </div>
-                        <button class="change-plan-btn" id="changePlanBtn">Cambiar plan</button>
-                        <button class="change-plan-btn" id="manageSubBtn" style="display:none;margin-top:8px;background:transparent;border:1px solid var(--primary);color:var(--primary);" onclick="openBillingPortal()">Gestionar suscripcion</button>
-                    </div>
+                    </article>
                 </div>
-                <!-- Workers usage bar -->
-                <div class="workers-usage">
-                    <div class="workers-usage-header">
-                        <span class="workers-usage-label">Uso de trabajadores</span>
-                        <span class="workers-usage-count" id="workersCountText">0 / 0</span>
-                    </div>
-                    <div class="workers-bar-track">
-                        <div class="workers-bar-fill" id="workersBarFill" style="width: 0%"></div>
-                    </div>
+
+                <!-- Aside column -->
+                <div class="dash-col">
+                    <a href="https://sara.shiftia.es" target="_blank" rel="noopener" class="aside-card reveal">
+                        <div class="aside-card-head">
+                            <span class="aside-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </span>
+                            <span class="aside-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                        </div>
+                        <h3 class="aside-card-title">Abrir SARA</h3>
+                        <p class="aside-card-desc">El planificador de turnos de tu hospital.</p>
+                    </a>
+
+                    <button class="aside-card reveal" id="supportCardBtn" type="button">
+                        <div class="aside-card-head">
+                            <span class="aside-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            </span>
+                            <span class="aside-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                        </div>
+                        <h3 class="aside-card-title">Soporte</h3>
+                        <p class="aside-card-desc">Abre un ticket o escríbenos a soporte@shiftia.es.</p>
+                    </button>
+
+                    <a href="/docs" class="aside-card reveal">
+                        <div class="aside-card-head">
+                            <span class="aside-card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            </span>
+                            <span class="aside-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                        </div>
+                        <h3 class="aside-card-title">Documentación</h3>
+                        <p class="aside-card-desc">Guías, manuales y referencia de la plataforma.</p>
+                    </a>
                 </div>
             </div>
-        </section>
 
-        <!-- Billing History -->
-        <section class="section">
-            <h2 class="section-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                Historial de Facturación
-            </h2>
-            <div class="card">
-                <!-- Billing content container -->
-                <div id="billingContent">
-                    <!-- Desktop table -->
-                    <div class="billing-table-wrap">
-                        <table class="billing-table">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Concepto</th>
-                                    <th>Monto</th>
-                                    <th>Estado</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="billingTableBody">
-                                <tr><td colspan="5" class="billing-empty">Cargando facturas...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Mobile cards -->
-                    <div class="billing-cards" id="billingCards">
-                    </div>
-                </div>
-                <!-- Billing empty state (shown when no subscription) -->
-                <div id="billingEmptyState" style="display:none;">
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <!-- Billing history -->
+            <section class="section-block" id="facturacion" aria-labelledby="billingTitle">
+                <div class="section-eyebrow">Facturación</div>
+                <h2 class="section-title" id="billingTitle">Historial de facturas</h2>
+                <article class="card card-flush">
+                    <div id="billingContent">
+                        <div class="billing-table-wrap">
+                            <table class="billing-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Fecha</th>
+                                        <th scope="col">Concepto</th>
+                                        <th scope="col">Importe</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billingTableBody">
+                                    <tr><td colspan="5" class="billing-empty">Cargando facturas…</td></tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <h3 class="empty-title">Sin suscripción activa</h3>
-                        <p class="empty-desc">Elige un plan para desbloquear todas las funcionalidades de Shiftia.</p>
-                        <button class="submit-btn" onclick="openPlanModal()">Ver planes</button>
+                        <div class="billing-cards" id="billingCards"></div>
                     </div>
-                </div>
-            </div>
-        </section>
+                    <div id="billingEmptyState" style="display:none;">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            </div>
+                            <h3 class="empty-title">Sin suscripción activa</h3>
+                            <p class="empty-desc">Elige un plan para desbloquear todas las funcionalidades de Shiftia.</p>
+                            <button class="btn btn-primary" type="button" onclick="openPlanModal()">Ver planes</button>
+                        </div>
+                    </div>
+                </article>
+            </section>
 
-        <!-- Support Section -->
-        <section class="section" id="supportSection">
-            <h2 class="section-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Soporte
-            </h2>
-            <div class="card">
-                <div id="supportContent">
-                    <p class="support-info">
-                        ¿Tienes preguntas o necesitas ayuda? Ponte en contacto con nuestro equipo de soporte.
-                        También puedes escribirnos a <a href="mailto:soporte@shiftia.es">soporte@shiftia.es</a>.
-                    </p>
-                    <form id="supportForm">
-                        <div id="supportMsgBox"></div>
-                        <div class="form-group">
-                            <label for="supportCategory" class="form-label">Categoría</label>
-                            <select id="supportCategory" class="form-select">
-                                <option value="general">Consulta general</option>
-                                <option value="bug">Reportar un error</option>
-                                <option value="billing">Facturación</option>
-                                <option value="feature">Sugerencia de mejora</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="supportSubject" class="form-label">Asunto</label>
-                            <input type="text" id="supportSubject" class="form-input" placeholder="Ej: Problema con la planificación" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="supportBody" class="form-label">Mensaje</label>
-                            <textarea id="supportBody" class="form-textarea" placeholder="Describe tu problema o pregunta..." required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn" id="supportSubmitBtn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                            Enviar
-                        </button>
-                    </form>
-                </div>
-                <!-- Support empty state (shown when no tickets) -->
-                <div id="supportEmptyState" style="display:none;">
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        </div>
-                        <h3 class="empty-title">Todo en orden</h3>
-                        <p class="empty-desc">No tienes tickets de soporte abiertos. Si necesitas ayuda, estamos aquí.</p>
+            <!-- Support -->
+            <section class="section-block" id="soporte" aria-labelledby="supportTitle">
+                <div class="section-eyebrow">Soporte</div>
+                <h2 class="section-title" id="supportTitle">¿En qué te podemos ayudar?</h2>
+                <article class="card" id="supportSection">
+                    <div id="supportContent">
+                        <p style="font-family: var(--ds-font-sans); font-size: var(--ds-text-md); color: var(--ds-text-muted); margin: 0 0 24px; max-width: 640px;">
+                            Respondemos cada ticket en menos de 24 horas hábiles. También puedes escribirnos directamente a
+                            <a href="mailto:soporte@shiftia.es" style="color: var(--ds-accent-text); text-decoration: underline; text-underline-offset: 3px;">soporte@shiftia.es</a>.
+                        </p>
+                        <form id="supportForm" novalidate>
+                            <div id="supportMsgBox"></div>
+                            <div class="settings-grid">
+                                <div class="form-group">
+                                    <label for="supportCategory" class="form-label">Categoría</label>
+                                    <select id="supportCategory" class="form-select">
+                                        <option value="general">Consulta general</option>
+                                        <option value="bug">Reportar un error</option>
+                                        <option value="billing">Facturación</option>
+                                        <option value="feature">Sugerencia de mejora</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="supportSubject" class="form-label">Asunto</label>
+                                    <input type="text" id="supportSubject" class="form-input" placeholder="Ej. Problema con la planificación" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="supportBody" class="form-label">Mensaje</label>
+                                <textarea id="supportBody" class="form-textarea" placeholder="Describe tu problema o pregunta…" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="supportSubmitBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                Enviar
+                            </button>
+                        </form>
                     </div>
-                </div>
-            </div>
-        </section>
+                    <div id="supportEmptyState" style="display:none;">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            </div>
+                            <h3 class="empty-title">Todo en orden</h3>
+                            <p class="empty-desc">No tienes tickets de soporte abiertos. Si necesitas ayuda, estamos aquí.</p>
+                        </div>
+                    </div>
+                </article>
+            </section>
 
-        <!-- Account Settings -->
-        <section class="section">
-            <h2 class="section-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                Configuración de Cuenta
-            </h2>
-            <div class="card">
-                <form id="accountForm">
-                    <div id="accountMsgBox"></div>
-                    <div class="settings-grid">
-                        <div class="form-group">
-                            <label for="accountName" class="form-label">Nombre</label>
-                            <input type="text" id="accountName" class="form-input" placeholder="Tu nombre completo">
-                        </div>
-                        <div class="form-group">
-                            <label for="accountEmail" class="form-label">Email</label>
-                            <input type="email" id="accountEmail" class="form-input" placeholder="tu@email.com">
-                        </div>
-                    </div>
-                    <div style="margin-top: 1.75rem; padding-top: 1.75rem; border-top: 1px solid var(--border);">
-                        <h3 style="font-size: 1.05rem; margin-bottom: 1rem; color: var(--text1); font-weight: 600;">Cambiar Contraseña</h3>
+            <!-- Account settings -->
+            <section class="section-block" id="configuracion" aria-labelledby="accountTitle">
+                <div class="section-eyebrow">Configuración</div>
+                <h2 class="section-title" id="accountTitle">Datos de cuenta</h2>
+                <article class="card">
+                    <form id="accountForm" novalidate>
+                        <div id="accountMsgBox"></div>
                         <div class="settings-grid">
                             <div class="form-group">
+                                <label for="accountName" class="form-label">Nombre completo</label>
+                                <input type="text" id="accountName" class="form-input" placeholder="Tu nombre completo" autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="accountEmail" class="form-label">Correo electrónico</label>
+                                <input type="email" id="accountEmail" class="form-input" placeholder="tu@email.com" autocomplete="email">
+                            </div>
+                        </div>
+                        <h3 style="font-family: var(--ds-font-display); font-weight: 400; font-size: var(--ds-text-xl); letter-spacing: -0.01em; margin: 32px 0 16px; color: var(--ds-text);">Cambiar contraseña</h3>
+                        <div class="settings-grid settings-grid--three">
+                            <div class="form-group">
                                 <label for="currentPassword" class="form-label">Contraseña actual</label>
-                                <input type="password" id="currentPassword" class="form-input" placeholder="Contraseña actual">
+                                <input type="password" id="currentPassword" class="form-input" placeholder="••••••••" autocomplete="current-password">
                             </div>
                             <div class="form-group">
                                 <label for="newPassword" class="form-label">Nueva contraseña</label>
-                                <input type="password" id="newPassword" class="form-input" placeholder="Nueva contraseña">
+                                <input type="password" id="newPassword" class="form-input" placeholder="••••••••" autocomplete="new-password">
                             </div>
                             <div class="form-group">
                                 <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-                                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirmar nueva contraseña">
+                                <input type="password" id="confirmPassword" class="form-input" placeholder="••••••••" autocomplete="new-password">
                             </div>
                         </div>
-                    </div>
-                    <button type="submit" class="submit-btn" style="margin-top: 1.25rem;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        Guardar Cambios
-                    </button>
-                </form>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 12px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            Guardar cambios
+                        </button>
+                    </form>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="app-footer-inner">
+            <div>© <span id="footerYear">2026</span> Shiftia · Planificación inteligente de turnos</div>
+            <div style="display:flex; gap:18px;">
+                <a href="/privacidad">Privacidad</a>
+                <a href="/terminos">Términos</a>
+                <a href="/cookies">Cookies</a>
             </div>
-        </section>
-    </div>
+        </div>
+    </footer>
 
     <!-- Change Plan Modal -->
-    <div class="modal-overlay" id="planModal">
+    <div class="modal-overlay" id="planModal" role="dialog" aria-modal="true" aria-labelledby="planModalTitle">
         <div class="modal-box">
-            <button class="modal-close" id="planModalClose">&times;</button>
-            <h2 class="modal-title">Cambiar Plan</h2>
-            <p style="color: var(--text2); margin-bottom: 1rem; font-size: 0.92rem;">Selecciona el plan que mejor se adapte a tu hospital.</p>
+            <button class="modal-close" id="planModalClose" type="button" aria-label="Cerrar">&times;</button>
+            <h2 class="modal-title" id="planModalTitle">Cambiar plan</h2>
+            <p style="font-family: var(--ds-font-sans); color: var(--ds-text-muted); margin: 0 0 8px; font-size: var(--ds-text-md);">Elige el plan que mejor encaja con tu hospital.</p>
 
             <div class="billing-toggle-wrap">
                 <span class="billing-label active" id="blMonthly">Mensual</span>
-                <button class="billing-switch" id="billingSwitch" onclick="toggleBilling()">
-                    <div class="billing-switch-knob"></div>
+                <button class="billing-switch" type="button" id="billingSwitch" onclick="toggleBilling()" aria-label="Cambiar a anual">
+                    <span class="billing-switch-knob"></span>
                 </button>
-                <span class="billing-label" id="blAnnual">Anual <span class="billing-save">-20%</span></span>
+                <span class="billing-label" id="blAnnual">Anual <span class="billing-save">−20%</span></span>
             </div>
 
             <div class="plan-options">
                 <div class="plan-option" data-plan="starter">
                     <div class="plan-option-name">Starter</div>
-                    <div class="plan-option-price" id="priceStarter">€20<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-price" id="priceStarter">€20<span>/mes</span></div>
                     <div class="plan-option-annual-price" id="annualInfoStarter"></div>
                     <div class="plan-option-workers">Hasta 15 trabajadores</div>
                 </div>
                 <div class="plan-option" data-plan="pro">
                     <div class="plan-option-name">Pro</div>
-                    <div class="plan-option-price" id="pricePro">€30<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-price" id="pricePro">€30<span>/mes</span></div>
                     <div class="plan-option-annual-price" id="annualInfoPro"></div>
                     <div class="plan-option-workers">Hasta 40 trabajadores</div>
                 </div>
                 <div class="plan-option" data-plan="business">
                     <div class="plan-option-name">Business</div>
-                    <div class="plan-option-price" id="priceBusiness">€50<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span></div>
+                    <div class="plan-option-price" id="priceBusiness">€50<span>/mes</span></div>
                     <div class="plan-option-annual-price" id="annualInfoBusiness"></div>
                     <div class="plan-option-workers">Trabajadores ilimitados</div>
                 </div>
             </div>
 
-            <button class="plan-checkout-btn" id="planCheckoutBtn" disabled>Selecciona un plan</button>
+            <button class="plan-checkout-btn" id="planCheckoutBtn" type="button" disabled>Selecciona un plan</button>
             <span class="plan-manage-link" id="manageSubLink" style="display:none;" onclick="openBillingPortal()">Gestionar suscripción actual</span>
-            <p style="color: var(--text3); font-size: 0.82rem; margin-top: 1rem; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 días.</p>
+            <p style="font-family: var(--ds-font-sans); color: var(--ds-text-subtle); font-size: var(--ds-text-xs); margin: 14px 0 0; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 días.</p>
         </div>
-    </main>
+    </div>
 
     <script>
         // ===== STATE =====
@@ -1533,7 +1283,6 @@
             const hasStripeSubscription = user.stripe_subscription_id;
             const isDismissed = localStorage.getItem('shiftia_onboarding_dismissed');
 
-            // Show onboarding only for trial users without subscription who haven't dismissed it
             if (plan === 'trial' && !hasStripeSubscription && !isDismissed) {
                 const bar = document.getElementById('onboardingBar');
                 if (bar) {
@@ -1547,25 +1296,20 @@
             const plan = user.plan || 'trial';
             const hasStripeSubscription = user.stripe_subscription_id;
 
-            // Mark steps as completed
             const profileStep = document.querySelector('[data-step="profile"]');
             const planStep = document.querySelector('[data-step="plan"]');
             const scheduleStep = document.querySelector('[data-step="schedule"]');
 
-            // Profile: always completed (they're logged in)
             if (profileStep) {
                 profileStep.querySelector('.ob-step-dot').classList.add('completed');
             }
-
-            // Plan: completed if not trial or has subscription
             if (plan !== 'trial' || hasStripeSubscription) {
                 if (planStep) {
                     planStep.querySelector('.ob-step-dot').classList.add('completed');
                 }
             }
 
-            // Update progress bar
-            let completedSteps = 1; // Always have profile completed
+            let completedSteps = 1;
             if (plan !== 'trial' || hasStripeSubscription) completedSteps++;
 
             const progressFill = document.querySelector('.onboarding-progress-fill');
@@ -1573,7 +1317,6 @@
                 progressFill.style.width = (completedSteps / 3) * 100 + '%';
             }
 
-            // Make schedule step link to sara
             if (scheduleStep) {
                 scheduleStep.style.cursor = 'pointer';
                 scheduleStep.addEventListener('click', () => {
@@ -1585,9 +1328,7 @@
         function dismissOnboarding() {
             localStorage.setItem('shiftia_onboarding_dismissed', 'true');
             const bar = document.getElementById('onboardingBar');
-            if (bar) {
-                bar.style.display = 'none';
-            }
+            if (bar) bar.style.display = 'none';
         }
 
         // ===== EMPTY STATES =====
@@ -1611,9 +1352,7 @@
 
         function showPlanModal() {
             const modal = document.getElementById('planModal');
-            if (modal) {
-                openPlanModal();
-            }
+            if (modal) openPlanModal();
         }
 
         // ===== INIT =====
@@ -1626,35 +1365,78 @@
                 return;
             }
 
-            loadDarkModePreference();
+            initThemePicker();
             setCurrentDate();
             await fetchUserData();
             setupEventListeners();
             loadNotifications();
+            setFooterYear();
 
-            // Hide loading overlay
             const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.add('fade-out');
-            setTimeout(() => overlay.style.display = 'none', 450);
-        }
-
-        // ===== DARK MODE =====
-        function loadDarkModePreference() {
-            const saved = localStorage.getItem('shiftia_darkMode');
-            if (saved === 'true' || (saved === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.body.classList.add('dark');
-                updateThemeIcon(true);
+            if (overlay) {
+                overlay.classList.add('fade-out');
+                setTimeout(() => overlay.style.display = 'none', 420);
             }
         }
 
-        function toggleDarkMode() {
-            const isDark = document.body.classList.toggle('dark');
-            localStorage.setItem('shiftia_darkMode', isDark);
-            updateThemeIcon(isDark);
+        // ===== THEME (data-theme on <html>) =====
+        function getStoredTheme() {
+            try { return localStorage.getItem('shiftia-theme') || 'auto'; } catch (e) { return 'auto'; }
+        }
+        function setTheme(theme) {
+            try {
+                localStorage.setItem('shiftia-theme', theme);
+                // Mirror legacy key for backward compat with any other page checking it
+                if (theme === 'dark')  localStorage.setItem('shiftia_darkMode', 'true');
+                if (theme === 'light') localStorage.setItem('shiftia_darkMode', 'false');
+                if (theme === 'auto')  localStorage.removeItem('shiftia_darkMode');
+            } catch (e) {}
+            document.documentElement.setAttribute('data-theme', theme);
+            highlightThemeChips(theme);
+            updateThemeIcon(isThemeDark(theme));
+        }
+        function isThemeDark(theme) {
+            if (theme === 'dark') return true;
+            if (theme === 'light') return false;
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        function highlightThemeChips(theme) {
+            document.querySelectorAll('[data-theme-set]').forEach(el => {
+                el.classList.toggle('active', el.dataset.themeSet === theme);
+            });
+        }
+        function initThemePicker() {
+            const t = getStoredTheme();
+            highlightThemeChips(t);
+            updateThemeIcon(isThemeDark(t));
+            document.querySelectorAll('[data-theme-set]').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    setTheme(el.dataset.themeSet);
+                });
+            });
+            // React to OS scheme changes when in auto mode
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                    if (getStoredTheme() === 'auto') updateThemeIcon(isThemeDark('auto'));
+                });
+            }
         }
 
+        // Legacy compatibility shims (other code may still call these)
+        function loadDarkModePreference() {
+            const t = getStoredTheme();
+            highlightThemeChips(t);
+            updateThemeIcon(isThemeDark(t));
+        }
+        function toggleDarkMode() {
+            const dark = isThemeDark(getStoredTheme());
+            setTheme(dark ? 'light' : 'dark');
+        }
         function updateThemeIcon(isDark) {
-            document.getElementById('themeIcon').innerHTML = isDark
+            const icon = document.getElementById('themeIcon');
+            if (!icon) return;
+            icon.innerHTML = isDark
                 ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
                 : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
         }
@@ -1664,7 +1446,12 @@
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const str = now.toLocaleDateString('es-ES', options);
-            document.getElementById('currentDate').textContent = str.charAt(0).toUpperCase() + str.slice(1);
+            const el = document.getElementById('currentDate');
+            if (el) el.textContent = str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        function setFooterYear() {
+            const el = document.getElementById('footerYear');
+            if (el) el.textContent = new Date().getFullYear();
         }
 
         // ===== USER DATA =====
@@ -1695,32 +1482,74 @@
             }
         }
 
-        function populateUserData(u) {
-            const firstName = u.name ? u.name.split(' ')[0] : 'Usuario';
-            document.getElementById('welcomeMessage').textContent = `Bienvenido, ${firstName}`;
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
 
+        function populateUserData(u) {
             const fullName = u.name || 'Usuario';
-            document.getElementById('userName').textContent = fullName;
+            const firstName = fullName.split(' ')[0];
+
+            // Hero title with italic name
+            const welcome = document.getElementById('welcomeMessage');
+            if (welcome) welcome.innerHTML = `Hola, <em>${escapeHtml(firstName)}</em>`;
+
+            // Header user
+            const userNameEl = document.getElementById('userName');
+            if (userNameEl) userNameEl.textContent = firstName;
             const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-            document.getElementById('userAvatar').textContent = initials;
+            const avatar = document.getElementById('userAvatar');
+            if (avatar) avatar.textContent = initials;
+            const menuName = document.getElementById('userMenuName');
+            if (menuName) menuName.textContent = fullName;
+            const menuEmail = document.getElementById('userMenuEmail');
+            if (menuEmail) menuEmail.textContent = u.email || '';
 
             // Subscription
             const plan = u.plan || 'trial';
             const info = PLAN_INFO[plan] || PLAN_INFO.trial;
             document.getElementById('planName').textContent = info.name;
 
+            const planEyebrow = document.getElementById('planEyebrow');
+            if (planEyebrow) planEyebrow.textContent = `Plan ${info.name}`;
+
             // Billing cycle & cost
             const cycle = u.billing_cycle || 'monthly';
             const isAnnualPlan = cycle === 'annual';
             document.getElementById('billingCycle').textContent = isAnnualPlan ? 'Anual' : (plan === 'trial' ? '—' : 'Mensual');
+
+            // Signature price display
+            const priceEmpty = document.getElementById('priceEmpty');
+            const priceCurrency = document.getElementById('priceCurrency');
+            const priceAmount = document.getElementById('priceAmount');
+            const pricePeriod = document.getElementById('pricePeriod');
+            const monthlyCostHidden = document.getElementById('monthlyCost');
+
             if (info.cost === null || info.cost === undefined) {
-                document.getElementById('monthlyCost').textContent = 'Selecciona un plan';
+                priceEmpty.style.display = 'block';
+                priceCurrency.style.display = 'none';
+                priceAmount.style.display = 'none';
+                pricePeriod.style.display = 'none';
+                monthlyCostHidden.textContent = 'Selecciona un plan';
             } else if (isAnnualPlan) {
                 const annualPrices = { starter: 192, pro: 288, business: 480 };
                 const annualTotal = annualPrices[plan] || info.cost * 12;
-                document.getElementById('monthlyCost').textContent = `€${annualTotal}/año (€${Math.round(annualTotal/12)}/mes)`;
+                const monthEquiv = Math.round(annualTotal / 12);
+                priceEmpty.style.display = 'none';
+                priceCurrency.style.display = 'inline-block';
+                priceAmount.style.display = 'inline-block';
+                pricePeriod.style.display = 'inline-block';
+                priceAmount.textContent = monthEquiv;
+                pricePeriod.textContent = `/mes · €${annualTotal}/año`;
+                monthlyCostHidden.textContent = `€${annualTotal}/año (€${monthEquiv}/mes)`;
             } else {
-                document.getElementById('monthlyCost').textContent = `€${info.cost}/mes`;
+                priceEmpty.style.display = 'none';
+                priceCurrency.style.display = 'inline-block';
+                priceAmount.style.display = 'inline-block';
+                pricePeriod.style.display = 'inline-block';
+                priceAmount.textContent = info.cost;
+                pricePeriod.textContent = '/mes';
+                monthlyCostHidden.textContent = `€${info.cost}/mes`;
             }
 
             const limit = u.workers_limit || (info.workers === -1 ? 9999 : info.workers);
@@ -1734,20 +1563,19 @@
             statusEl.textContent = statusLabels[status] || status;
             statusEl.className = 'status-badge ' + (status === 'active' ? 'badge-active' : status === 'past_due' ? 'badge-warning' : 'badge-inactive');
 
-            // Show manage subscription button if has Stripe subscription
+            // Manage subscription button
             const hasStripe = u.stripe_subscription_id;
-            document.getElementById('manageSubBtn').style.display = hasStripe ? 'block' : 'none';
+            document.getElementById('manageSubBtn').style.display = hasStripe ? 'inline-flex' : 'none';
 
             // Next billing
             if (u.next_billing_date) {
                 const d = new Date(u.next_billing_date);
-                document.getElementById('nextBillingDate').textContent = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+                document.getElementById('nextBillingDate').textContent = d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
             } else {
-                document.getElementById('nextBillingDate').textContent = plan === 'trial' ? 'Elige un plan para empezar' : 'No programada';
+                document.getElementById('nextBillingDate').textContent = plan === 'trial' ? 'Sin programar' : 'No programada';
             }
 
             // Workers usage bar
-            // In production this would come from an API — for now use a stable estimate
             const usedWorkers = u.workers_used || Math.max(1, Math.floor(limit * 0.6));
             updateWorkersBar(usedWorkers, limit, isUnlimited);
 
@@ -1761,10 +1589,7 @@
                 el.classList.toggle('current', el.dataset.plan === normalizedPlan);
             });
 
-            // Initialize onboarding bar for new users
             initOnboarding(u);
-
-            // Update billing display (show empty state if no subscription)
             updateBillingDisplay(u);
         }
 
@@ -1784,9 +1609,12 @@
         }
 
         function populateDefaultData() {
-            document.getElementById('welcomeMessage').textContent = 'Bienvenido';
-            document.getElementById('userName').textContent = 'Usuario';
-            document.getElementById('userAvatar').textContent = 'U';
+            const w = document.getElementById('welcomeMessage');
+            if (w) w.innerHTML = 'Hola, <em>cliente</em>';
+            const un = document.getElementById('userName');
+            if (un) un.textContent = 'Usuario';
+            const av = document.getElementById('userAvatar');
+            if (av) av.textContent = 'U';
         }
 
         // ===== BILLING =====
@@ -1794,74 +1622,55 @@
             const plan = u.plan || 'trial';
             const info = PLAN_INFO[plan] || PLAN_INFO.trial;
 
-            if (info.cost === 0) {
+            if (info.cost === 0 || info.cost === null) {
                 populateEmptyBilling();
                 return;
             }
 
-            // Generate mock billing history based on plan
             const invoices = [];
             const now = new Date();
             for (let i = 0; i < 3; i++) {
                 const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
                 invoices.push({
-                    date: d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }),
-                    concept: `${info.name} - Mensual`,
+                    date: d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
+                    concept: `${info.name} · Mensual`,
                     amount: `€${info.cost.toFixed(2)}`,
                     status: i === 0 ? 'pending' : 'paid',
                     id: `INV-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}`
                 });
             }
 
-            // Desktop table
             const tbody = document.getElementById('billingTableBody');
             tbody.innerHTML = invoices.map(inv => `
                 <tr>
-                    <td>${inv.date}</td>
+                    <td style="font-family: var(--ds-font-mono); font-size: var(--ds-text-xs); color: var(--ds-text-muted);">${inv.date}</td>
                     <td>${inv.concept}</td>
-                    <td style="font-weight:600">${inv.amount}</td>
+                    <td style="font-family: var(--ds-font-mono); font-weight: 500;">${inv.amount}</td>
                     <td><span class="status-pill ${inv.status === 'paid' ? 'status-paid' : 'status-pending'}">${inv.status === 'paid' ? 'Pagado' : 'Pendiente'}</span></td>
-                    <td><button class="download-btn" data-id="${inv.id}" onclick="downloadInvoice('${inv.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></td>
+                    <td style="text-align: right;"><button class="download-btn" data-id="${inv.id}" onclick="downloadInvoice('${inv.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></td>
                 </tr>
             `).join('');
 
-            // Mobile cards
             const cardsEl = document.getElementById('billingCards');
             cardsEl.innerHTML = invoices.map(inv => `
                 <div class="billing-card-item">
-                    <div class="billing-card-row">
-                        <span class="billing-card-label">Fecha</span>
-                        <span class="billing-card-value">${inv.date}</span>
-                    </div>
-                    <div class="billing-card-row">
-                        <span class="billing-card-label">Concepto</span>
-                        <span class="billing-card-value">${inv.concept}</span>
-                    </div>
-                    <div class="billing-card-row">
-                        <span class="billing-card-label">Monto</span>
-                        <span class="billing-card-value" style="font-weight:600">${inv.amount}</span>
-                    </div>
-                    <div class="billing-card-row">
-                        <span class="billing-card-label">Estado</span>
-                        <span class="status-pill ${inv.status === 'paid' ? 'status-paid' : 'status-pending'}">${inv.status === 'paid' ? 'Pagado' : 'Pendiente'}</span>
-                    </div>
-                    <div class="billing-card-row" style="margin-top:0.5rem">
-                        <span></span>
-                        <button class="download-btn" onclick="downloadInvoice('${inv.id}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button>
-                    </div>
+                    <div class="billing-card-row"><span class="billing-card-label">Fecha</span><span class="billing-card-value">${inv.date}</span></div>
+                    <div class="billing-card-row"><span class="billing-card-label">Concepto</span><span class="billing-card-value">${inv.concept}</span></div>
+                    <div class="billing-card-row"><span class="billing-card-label">Importe</span><span class="billing-card-value" style="font-family: var(--ds-font-mono);">${inv.amount}</span></div>
+                    <div class="billing-card-row"><span class="billing-card-label">Estado</span><span class="status-pill ${inv.status === 'paid' ? 'status-paid' : 'status-pending'}">${inv.status === 'paid' ? 'Pagado' : 'Pendiente'}</span></div>
+                    <div class="billing-card-row" style="margin-top: 8px;"><span></span><button class="download-btn" onclick="downloadInvoice('${inv.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>
                 </div>
             `).join('');
         }
 
         function populateEmptyBilling() {
-            document.getElementById('billingTableBody').innerHTML = '<tr><td colspan="5" class="billing-empty">No hay facturas todavía. Activa un plan de pago para ver tu historial.</td></tr>';
-            document.getElementById('billingCards').innerHTML = '<div class="billing-empty">No hay facturas todavía.</div>';
+            document.getElementById('billingTableBody').innerHTML = '<tr><td colspan="5" class="billing-empty">Aún no hay facturas. Activa un plan de pago para ver tu historial.</td></tr>';
+            document.getElementById('billingCards').innerHTML = '<div class="billing-empty">Aún no hay facturas.</div>';
         }
 
         function downloadInvoice(invoiceId) {
             if (!window.jspdf) {
-                alert('Cargando librería de PDF... Inténtalo de nuevo en unos segundos.');
-                // Dynamically load jsPDF
+                alert('Cargando librería de PDF… Inténtalo de nuevo en unos segundos.');
                 const s = document.createElement('script');
                 s.src = 'https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';
                 document.head.appendChild(s);
@@ -1873,39 +1682,28 @@
             const planInfo = PLAN_INFO[user.plan] || PLAN_INFO.trial;
             const w = doc.internal.pageSize.getWidth();
 
-            // Parse invoice date from ID (INV-2026-03 → March 2026)
             const parts = invoiceId.split('-');
             const invYear = parts[1] || new Date().getFullYear();
             const invMonth = parseInt(parts[2] || (new Date().getMonth() + 1));
             const invDate = new Date(invYear, invMonth - 1, 1);
             const invDateStr = invDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 
-            const base = planInfo.cost;
+            const base = planInfo.cost || 0;
             const iva = base * 0.21;
             const total = base + iva;
 
-            // ===== HEADER GRADIENT BAR =====
-            // Teal-to-blue gradient simulation with rectangles
-            const gradSteps = 60;
-            for (let i = 0; i < gradSteps; i++) {
-                const ratio = i / gradSteps;
-                const r = Math.round(78 + (41 - 78) * ratio);
-                const g = Math.round(205 + (128 - 205) * ratio);
-                const b = Math.round(196 + (185 - 196) * ratio);
-                doc.setFillColor(r, g, b);
-                doc.rect(i * (w / gradSteps), 0, (w / gradSteps) + 0.5, 38, 'F');
-            }
+            // ===== HEADER (premium minimal: solid dark bar, no gradient) =====
+            doc.setFillColor(14, 15, 15);
+            doc.rect(0, 0, w, 38, 'F');
 
-            // Logo text on gradient
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(250, 249, 246);
             doc.setFontSize(28);
             doc.setFont('helvetica', 'bold');
             doc.text('Shiftia', 20, 22);
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont('helvetica', 'normal');
-            doc.text('Planificación Inteligente de Turnos', 20, 30);
+            doc.text('Planificación inteligente de turnos', 20, 30);
 
-            // Invoice number on header right
             doc.setFontSize(11);
             doc.setFont('helvetica', 'bold');
             doc.text(`Factura ${invoiceId}`, w - 20, 18, { align: 'right' });
@@ -1916,13 +1714,13 @@
 
             // ===== COMPANY INFO =====
             let y = 52;
-            doc.setTextColor(100, 116, 139);
+            doc.setTextColor(138, 138, 133);
             doc.setFontSize(8);
             doc.text('EMISOR', 20, y);
             doc.text('CLIENTE', 115, y);
             y += 6;
 
-            doc.setTextColor(30, 41, 59);
+            doc.setTextColor(14, 15, 15);
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
             doc.text('Shiftia Technologies S.L.', 20, y);
@@ -1930,7 +1728,7 @@
             y += 5;
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
-            doc.setTextColor(71, 85, 105);
+            doc.setTextColor(74, 74, 71);
             doc.text('CIF: B12345678', 20, y);
             doc.text(user.email || '', 115, y);
             y += 4.5;
@@ -1941,15 +1739,15 @@
 
             // ===== SEPARATOR =====
             y += 10;
-            doc.setDrawColor(226, 232, 240);
+            doc.setDrawColor(232, 230, 223);
             doc.setLineWidth(0.4);
             doc.line(20, y, w - 20, y);
 
             // ===== TABLE HEADER =====
             y += 10;
-            doc.setFillColor(248, 250, 252);
+            doc.setFillColor(244, 242, 236);
             doc.roundedRect(20, y - 5, w - 40, 10, 2, 2, 'F');
-            doc.setTextColor(100, 116, 139);
+            doc.setTextColor(138, 138, 133);
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
             doc.text('CONCEPTO', 25, y + 1);
@@ -1959,58 +1757,57 @@
 
             // ===== TABLE ROW =====
             y += 12;
-            doc.setTextColor(30, 41, 59);
+            doc.setTextColor(14, 15, 15);
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.text(`Plan ${planInfo.name} — Suscripción Mensual`, 25, y);
+            doc.text(`Plan ${planInfo.name} — Suscripción mensual`, 25, y);
             doc.text('1', 116, y);
             doc.text(`${base.toFixed(2)} €`, 140, y);
             doc.setFont('helvetica', 'bold');
             doc.text(`${base.toFixed(2)} €`, w - 25, y, { align: 'right' });
 
-            // Row separator
             y += 5;
-            doc.setDrawColor(241, 245, 249);
+            doc.setDrawColor(244, 242, 236);
             doc.line(20, y, w - 20, y);
 
-            // ===== TOTALS BOX =====
+            // ===== TOTALS =====
             y += 12;
             const totalsX = 125;
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
-            doc.setTextColor(100, 116, 139);
+            doc.setTextColor(138, 138, 133);
 
             doc.text('Subtotal', totalsX, y);
-            doc.setTextColor(30, 41, 59);
+            doc.setTextColor(14, 15, 15);
             doc.text(`${base.toFixed(2)} €`, w - 25, y, { align: 'right' });
 
             y += 6;
-            doc.setTextColor(100, 116, 139);
+            doc.setTextColor(138, 138, 133);
             doc.text('IVA (21%)', totalsX, y);
-            doc.setTextColor(30, 41, 59);
+            doc.setTextColor(14, 15, 15);
             doc.text(`${iva.toFixed(2)} €`, w - 25, y, { align: 'right' });
 
             y += 8;
-            doc.setDrawColor(41, 128, 185);
+            doc.setDrawColor(14, 15, 15);
             doc.setLineWidth(0.6);
             doc.line(totalsX - 5, y - 3, w - 20, y - 3);
 
             doc.setFontSize(13);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(41, 128, 185);
+            doc.setTextColor(14, 15, 15);
             doc.text('TOTAL', totalsX, y + 3);
             doc.text(`${total.toFixed(2)} €`, w - 25, y + 3, { align: 'right' });
 
-            // ===== PAYMENT INFO BOX =====
+            // ===== PAYMENT INFO =====
             y += 22;
-            doc.setFillColor(240, 249, 255);
+            doc.setFillColor(244, 242, 236);
             doc.roundedRect(20, y - 4, w - 40, 22, 3, 3, 'F');
             doc.setFontSize(8);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(41, 128, 185);
+            doc.setTextColor(14, 15, 15);
             doc.text('INFORMACIÓN DE PAGO', 28, y + 2);
             doc.setFont('helvetica', 'normal');
-            doc.setTextColor(71, 85, 105);
+            doc.setTextColor(74, 74, 71);
             doc.setFontSize(8);
             doc.text('Método: Tarjeta de crédito / débito', 28, y + 8);
             doc.text(`Referencia: ${invoiceId}`, 28, y + 13);
@@ -2018,24 +1815,22 @@
 
             // ===== FOOTER =====
             const footerY = 270;
-            doc.setDrawColor(226, 232, 240);
+            doc.setDrawColor(232, 230, 223);
             doc.setLineWidth(0.3);
             doc.line(20, footerY, w - 20, footerY);
 
             doc.setFontSize(8);
-            doc.setTextColor(148, 163, 184);
+            doc.setTextColor(138, 138, 133);
             doc.setFont('helvetica', 'normal');
             doc.text('Shiftia Technologies S.L. · CIF B12345678 · shiftia.es', w / 2, footerY + 6, { align: 'center' });
             doc.text('Esta factura ha sido generada automáticamente y es válida sin firma.', w / 2, footerY + 11, { align: 'center' });
             doc.text('Gracias por confiar en Shiftia.', w / 2, footerY + 16, { align: 'center' });
 
-            // ===== SAVE =====
             doc.save(`Factura-${invoiceId}.pdf`);
         }
 
         // ===== NOTIFICATIONS =====
         function loadNotifications() {
-            // Simulated notifications - in production these come from an API
             const notifs = [];
 
             if (currentUser) {
@@ -2065,13 +1860,14 @@
                 `).join('');
             } else {
                 badge.style.display = 'none';
-                list.innerHTML = '<div class="notif-empty">No hay notificaciones nuevas</div>';
+                list.innerHTML = '<div class="notif-empty">Sin novedades</div>';
             }
         }
 
         // ===== EVENT LISTENERS =====
         function setupEventListeners() {
-            document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
+            const darkBtn = document.getElementById('darkModeBtn');
+            if (darkBtn) darkBtn.addEventListener('click', toggleDarkMode);
             document.getElementById('logoutBtn').addEventListener('click', logout);
             document.getElementById('supportCardBtn').addEventListener('click', scrollToSupport);
             document.getElementById('supportForm').addEventListener('submit', handleSupportSubmit);
@@ -2080,16 +1876,43 @@
             // Notifications dropdown
             document.getElementById('notifBtn').addEventListener('click', (e) => {
                 e.stopPropagation();
+                document.getElementById('userMenuDropdown').classList.remove('show');
                 document.getElementById('notifDropdown').classList.toggle('show');
             });
-            document.addEventListener('click', () => {
+
+            // User menu dropdown
+            const userTrigger = document.getElementById('userMenuTrigger');
+            const userDropdown = document.getElementById('userMenuDropdown');
+            userTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
                 document.getElementById('notifDropdown').classList.remove('show');
+                userDropdown.classList.toggle('show');
+                userTrigger.setAttribute('aria-expanded', userDropdown.classList.contains('show'));
+            });
+            // Settings link smooth scroll
+            const goSettings = document.getElementById('goToSettings');
+            if (goSettings) {
+                goSettings.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    userDropdown.classList.remove('show');
+                    const target = document.getElementById('configuracion');
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+
+            // Click outside closes dropdowns (but not when clicking inside them)
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#userMenuDropdown') && !e.target.closest('#userMenuTrigger')) {
+                    userDropdown.classList.remove('show');
+                    userTrigger.setAttribute('aria-expanded', 'false');
+                }
+                if (!e.target.closest('#notifDropdown') && !e.target.closest('#notifBtn')) {
+                    document.getElementById('notifDropdown').classList.remove('show');
+                }
             });
 
             // Plan modal
-            document.getElementById('changePlanBtn').addEventListener('click', () => {
-                openPlanModal();
-            });
+            document.getElementById('changePlanBtn').addEventListener('click', () => openPlanModal());
             document.getElementById('planModalClose').addEventListener('click', () => {
                 document.getElementById('planModal').classList.remove('show');
             });
@@ -2107,7 +1930,7 @@
                     el.classList.add('current');
                     selectedModalPlan = plan;
                     const btn = document.getElementById('planCheckoutBtn');
-                    if (userPlan === plan && currentUser.stripe_subscription_id) {
+                    if (userPlan === plan && currentUser && currentUser.stripe_subscription_id) {
                         btn.textContent = 'Plan actual';
                         btn.disabled = true;
                     } else {
@@ -2119,16 +1942,24 @@
                 });
             });
 
-            // Checkout button
             document.getElementById('planCheckoutBtn').addEventListener('click', () => {
                 if (selectedModalPlan) startCheckout(selectedModalPlan);
             });
 
-            // Escape key closes modal
+            // Active section in nav
+            document.querySelectorAll('.app-nav a[data-section]').forEach(a => {
+                a.addEventListener('click', () => {
+                    document.querySelectorAll('.app-nav a').forEach(x => x.classList.remove('active'));
+                    a.classList.add('active');
+                });
+            });
+
+            // Escape closes modal/dropdowns
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     document.getElementById('planModal').classList.remove('show');
                     document.getElementById('notifDropdown').classList.remove('show');
+                    document.getElementById('userMenuDropdown').classList.remove('show');
                 }
             });
         }
@@ -2149,13 +1980,11 @@
             document.getElementById('blMonthly').classList.toggle('active', !isBillingAnnual);
             document.getElementById('blAnnual').classList.toggle('active', isBillingAnnual);
             updatePlanPrices();
-            // Reset checkout button
             selectedModalPlan = null;
             document.querySelectorAll('.plan-option').forEach(o => o.classList.remove('current'));
             const btn = document.getElementById('planCheckoutBtn');
             btn.textContent = 'Selecciona un plan';
             btn.disabled = true;
-            // Re-mark current plan
             markCurrentPlan();
         }
 
@@ -2164,10 +1993,10 @@
                 const priceEl = document.getElementById('price' + plan.charAt(0).toUpperCase() + plan.slice(1));
                 const annualEl = document.getElementById('annualInfo' + plan.charAt(0).toUpperCase() + plan.slice(1));
                 if (isBillingAnnual) {
-                    priceEl.innerHTML = `€${prices.monthlyEquiv}<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span>`;
+                    priceEl.innerHTML = `€${prices.monthlyEquiv}<span>/mes</span>`;
                     annualEl.textContent = `Facturado €${prices.annual}/año`;
                 } else {
-                    priceEl.innerHTML = `€${prices.monthly}<span style="font-size:0.7rem;font-weight:400;color:var(--text3)">/mes</span>`;
+                    priceEl.innerHTML = `€${prices.monthly}<span>/mes</span>`;
                     annualEl.textContent = '';
                 }
             }
@@ -2177,10 +2006,8 @@
             document.getElementById('planModal').classList.add('show');
             updatePlanPrices();
             markCurrentPlan();
-            // Show manage link if user has subscription
             const hasSubscription = currentUser && currentUser.stripe_subscription_id;
             document.getElementById('manageSubLink').style.display = hasSubscription ? 'block' : 'none';
-            // Reset button
             const btn = document.getElementById('planCheckoutBtn');
             btn.textContent = 'Selecciona un plan';
             btn.disabled = true;
@@ -2197,7 +2024,7 @@
         async function startCheckout(plan) {
             const btn = document.getElementById('planCheckoutBtn');
             btn.disabled = true;
-            btn.textContent = 'Redirigiendo a Stripe...';
+            btn.textContent = 'Redirigiendo a Stripe…';
 
             try {
                 const token = localStorage.getItem('shiftia_token');
@@ -2243,14 +2070,13 @@
         {
             const params = new URLSearchParams(window.location.search);
             if (params.get('checkout') === 'success') {
-                showAlert('supportMsgBox', 'success', 'Tu plan ha sido actualizado correctamente. Los cambios se reflejarán en unos segundos.');
+                showAlert('supportMsgBox', 'success', 'Tu plan se ha actualizado correctamente. Los cambios se reflejarán en unos segundos.');
                 window.history.replaceState({}, '', '/dashboard');
                 setTimeout(() => location.reload(), 2000);
             } else if (params.get('checkout') === 'cancel') {
-                showAlert('supportMsgBox', 'info', 'El proceso de pago ha sido cancelado.');
+                showAlert('supportMsgBox', 'info', 'El proceso de pago se ha cancelado.');
                 window.history.replaceState({}, '', '/dashboard');
             } else if (params.get('intent') === 'checkout') {
-                // Coming from landing page — auto-start checkout
                 const intentPlan = params.get('plan');
                 const intentBilling = params.get('billing') || 'monthly';
                 if (intentPlan && ['starter', 'pro', 'business'].includes(intentPlan)) {
@@ -2264,17 +2090,18 @@
         // ===== ACTIONS =====
         function logout() {
             localStorage.removeItem('shiftia_token');
-            localStorage.removeItem('shiftia_darkMode');
+            // Keep theme preference: do not remove shiftia-theme
             window.location.href = '/login';
         }
 
         function scrollToSupport() {
-            document.getElementById('supportSection').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('supportSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
             setTimeout(() => document.getElementById('supportSubject').focus(), 500);
         }
 
         function showAlert(containerId, type, message) {
             const el = document.getElementById(containerId);
+            if (!el) return;
             el.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
             setTimeout(() => { el.innerHTML = ''; }, 6000);
         }
@@ -2283,7 +2110,7 @@
             e.preventDefault();
             const btn = document.getElementById('supportSubmitBtn');
             btn.disabled = true;
-            btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:0.5rem"><span class="loading-spinner" style="width:16px;height:16px;border-width:2px"></span>Enviando...</span>';
+            btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:0.5rem"><span class="loading-spinner"></span>Enviando…</span>';
 
             try {
                 const token = localStorage.getItem('shiftia_token');
@@ -2298,14 +2125,14 @@
                 });
 
                 if (!res.ok) throw new Error('Error sending support request');
-                showAlert('supportMsgBox', 'success', 'Tu mensaje ha sido enviado. Nos pondremos en contacto pronto.');
+                showAlert('supportMsgBox', 'success', 'Tu mensaje se ha enviado. Te responderemos pronto.');
                 document.getElementById('supportForm').reset();
             } catch (err) {
                 console.error('Error:', err);
-                showAlert('supportMsgBox', 'error', 'Error al enviar el mensaje. Por favor, intenta de nuevo.');
+                showAlert('supportMsgBox', 'error', 'Error al enviar el mensaje. Inténtalo de nuevo.');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Enviar';
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Enviar';
             }
         }
 
@@ -2319,7 +2146,7 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             if (!name || !email) {
-                showAlert('accountMsgBox', 'error', 'Por favor, completa nombre y email.');
+                showAlert('accountMsgBox', 'error', 'Por favor, completa nombre y correo.');
                 return;
             }
 
@@ -2353,15 +2180,19 @@
                     throw new Error(data.error || 'Error updating account');
                 }
 
-                showAlert('accountMsgBox', 'success', 'Cambios guardados exitosamente.');
+                showAlert('accountMsgBox', 'success', 'Cambios guardados correctamente.');
 
                 // Update UI
-                document.getElementById('userName').textContent = name;
+                document.getElementById('userName').textContent = name.split(' ')[0];
                 const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
                 document.getElementById('userAvatar').textContent = initials;
-                document.getElementById('welcomeMessage').textContent = `Bienvenido, ${name.split(' ')[0]}`;
+                const welcome = document.getElementById('welcomeMessage');
+                if (welcome) welcome.innerHTML = `Hola, <em>${escapeHtml(name.split(' ')[0])}</em>`;
+                const menuName = document.getElementById('userMenuName');
+                if (menuName) menuName.textContent = name;
+                const menuEmail = document.getElementById('userMenuEmail');
+                if (menuEmail) menuEmail.textContent = email;
 
-                // Clear password fields
                 document.getElementById('currentPassword').value = '';
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmPassword').value = '';

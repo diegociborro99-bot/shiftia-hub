@@ -52,7 +52,8 @@
 <title>Shiftia — Planificación inteligente de turnos y planillas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/design-system.css">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -2228,6 +2229,274 @@ body.dark .floating-cta { box-shadow: 0 8px 30px rgba(78,205,196,0.25); }
 .impact-num[data-count] {
   transition: opacity 0.3s;
 }
+
+/* ============================================================================
+   v2.5 PREMIUM MINIMAL OVERRIDE — Linear / Vercel / Stripe vibe
+   Aplica el design-system encima de los estilos legacy. Cambia la sensación
+   global sin reescribir cada componente. Las reglas a partir de aquí GANAN
+   por orden CSS y por especificidad cuando hace falta.
+   ============================================================================ */
+
+/* ----- Tipografía global ----- */
+body {
+  font-family: var(--ds-font-sans, 'Geist', -apple-system, sans-serif) !important;
+  background: var(--ds-bg, #faf9f6);
+  color: var(--ds-text, #0e0f0f);
+  font-size: 17px;
+  letter-spacing: -0.005em;
+}
+/* Headings premium con display serif */
+h1, h2, .hero h1, .section-h2, .contact-left h2, .price-name, .step-flow h3, .feat-card h3, .bento-card h3 {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.04 !important;
+  color: var(--ds-text, #0e0f0f);
+}
+.hero h1 {
+  font-size: clamp(3.2rem, 7.5vw, 6rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 0.98 !important;
+}
+.section-h2, h2 {
+  font-size: clamp(2.25rem, 5vw, 3.75rem) !important;
+}
+/* Las palabras rotativas del hero usan italic para señalar el "vivo" */
+.rotating-words .rw-word, .rw-word.active {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: var(--ds-accent, #0f7a6d) !important;
+  color: var(--ds-accent, #0f7a6d) !important;
+}
+/* h3, h4, eyebrow, etc. siguen en sans para legibilidad */
+h3, h4, h5, h6, .nav-links a, .nav-cta, .form-submit, .price-cta {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+}
+/* Body text un punto más sobrio */
+.hero-desc, .section-p, p {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  text-align: left !important;          /* matar justify legacy */
+  hyphens: manual !important;
+  text-wrap: balance;
+  color: var(--ds-text-muted, #4a4a47);
+  letter-spacing: -0.005em;
+}
+.hero-desc {
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem) !important;
+  line-height: 1.55 !important;
+  color: var(--ds-text-muted, #4a4a47);
+  max-width: 36em;
+}
+/* Quitar gradient text generalizado en headings (anti-AI-slop) */
+h1 *, h2 *, .section-h2 * {
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: inherit !important;
+  background: none !important;
+  color: inherit !important;
+}
+
+/* ----- Eyebrow / hero label refinado ----- */
+.hero-label, .hero-eyebrow {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: var(--ds-text-subtle, #8a8a85) !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.hero-label::before, .hero-eyebrow::before {
+  content: ''; width: 24px; height: 1px; background: currentColor; opacity: 0.55; display: block;
+}
+.hero-label-dot, .hero-eyebrow-dot { display: none !important; }
+
+/* ----- Botones premium (matar gradient teal→blue) ----- */
+.nav-cta, .hero-cta, .form-submit, .price-cta, .btn-primary {
+  background: var(--ds-bg-inverse, #0e0f0f) !important;
+  color: var(--ds-bg, #faf9f6) !important;
+  border: 1px solid var(--ds-bg-inverse, #0e0f0f) !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.005em !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: transform 200ms cubic-bezier(0.4,0,0.2,1), box-shadow 200ms cubic-bezier(0.4,0,0.2,1), background 200ms !important;
+}
+.nav-cta:hover, .hero-cta:hover, .form-submit:hover, .price-cta:hover, .btn-primary:hover {
+  background: #000 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 8px 24px rgba(15,15,15,0.10) !important;
+}
+.hero-cta-secondary, .btn-secondary, .nav-btn-ghost {
+  background: transparent !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  border: 1px solid var(--ds-border-strong, #c8c5bb) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+.hero-cta-secondary:hover, .btn-secondary:hover, .nav-btn-ghost:hover {
+  background: var(--ds-bg-subtle, #f4f2ec) !important;
+  border-color: var(--ds-text, #0e0f0f) !important;
+}
+
+/* ----- Cards: bordes hairline en vez de gradientes ----- */
+.feat-card, .bento-card, .price-card, .step, .step-flow, .proof-card, .form-card {
+  background: var(--ds-bg-elev, #fff) !important;
+  border: 1px solid var(--ds-border, #e8e6df) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  transition: border-color 250ms cubic-bezier(0.4,0,0.2,1), box-shadow 250ms cubic-bezier(0.4,0,0.2,1), transform 250ms cubic-bezier(0.4,0,0.2,1) !important;
+}
+.feat-card:hover, .bento-card:hover, .price-card:hover {
+  border-color: var(--ds-border-strong, #c8c5bb) !important;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 4px 12px rgba(15,15,15,0.06) !important;
+  transform: translateY(-2px);
+}
+.price-card.featured, .price-card.popular {
+  border-color: var(--ds-text, #0e0f0f) !important;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 12px 28px rgba(15,15,15,0.08) !important;
+}
+
+/* ----- Nav refinado ----- */
+.nav, .navbar {
+  background: rgba(250, 249, 246, 0.85) !important;
+  backdrop-filter: saturate(160%) blur(14px) !important;
+  -webkit-backdrop-filter: saturate(160%) blur(14px) !important;
+  border-bottom: 1px solid var(--ds-border, #e8e6df) !important;
+}
+.nav-links a, .nav-link {
+  color: var(--ds-text-muted, #4a4a47) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.005em !important;
+}
+.nav-links a:hover, .nav-link:hover { color: var(--ds-text, #0e0f0f) !important; }
+.brand, .nav-logo, .footer-brand-name {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* ----- Inputs premium ----- */
+input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select, textarea {
+  background: var(--ds-bg, #faf9f6) !important;
+  border: 1px solid var(--ds-border-strong, #c8c5bb) !important;
+  border-radius: 10px !important;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 16px !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  transition: border-color 200ms, box-shadow 200ms, background 200ms !important;
+}
+input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: var(--ds-accent, #0f7a6d) !important;
+  box-shadow: 0 0 0 4px rgba(15, 122, 109, 0.12) !important;
+  background: #fff !important;
+}
+label, .fg label, .form-label {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  letter-spacing: -0.005em !important;
+}
+
+/* ----- Background limpio: matar orbs/gradient floods AI-slop ----- */
+.orbs, .orb, .particles, .cursor-glow, .bg-gradient {
+  display: none !important;
+}
+body::before, body::after {
+  display: none !important;
+}
+
+/* ----- Pills, chips ----- */
+.pill, .badge, .chip {
+  background: var(--ds-bg-subtle, #f4f2ec) !important;
+  color: var(--ds-text-muted, #4a4a47) !important;
+  border: 1px solid var(--ds-border, #e8e6df) !important;
+  border-radius: 999px !important;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  padding: 4px 10px !important;
+}
+.pill-accent, .badge-accent {
+  background: var(--ds-accent-soft, #e9f5f2) !important;
+  color: var(--ds-accent-text, #0a5950) !important;
+  border-color: transparent !important;
+}
+
+/* ----- Footer refinado ----- */
+.footer {
+  background: var(--ds-bg, #faf9f6) !important;
+  border-top: 1px solid var(--ds-border, #e8e6df) !important;
+  padding-top: var(--ds-space-16, 64px) !important;
+  padding-bottom: var(--ds-space-12, 48px) !important;
+}
+.footer-bottom { color: var(--ds-text-subtle, #8a8a85) !important; }
+.footer-signature { color: var(--ds-text-subtle, #8a8a85) !important; }
+
+/* ----- Calendar booking: mantener funcional + repintar visual ----- */
+.cal-day { font-family: var(--ds-font-sans, 'Geist', sans-serif) !important; font-weight: 500 !important; border-radius: 10px !important; }
+.cal-day.today { border-color: var(--ds-accent, #0f7a6d) !important; color: var(--ds-accent-text, #0a5950) !important; }
+.cal-day.selected { background: var(--ds-bg-inverse, #0e0f0f) !important; color: var(--ds-bg, #faf9f6) !important; border-color: var(--ds-bg-inverse, #0e0f0f) !important; }
+.cal-day:not(.disabled):not(.empty):hover { border-color: var(--ds-text, #0e0f0f) !important; background: var(--ds-bg-subtle, #f4f2ec) !important; }
+.cal-dow { color: var(--ds-text-subtle, #8a8a85) !important; font-size: 11px !important; letter-spacing: 0.1em !important; text-transform: uppercase !important; }
+.time-slot { font-family: var(--ds-font-mono, 'Geist Mono', monospace) !important; font-size: 13px !important; font-weight: 500 !important; border-radius: 10px !important; padding: 8px 4px !important; }
+.time-slot:not(.disabled):hover { border-color: var(--ds-text, #0e0f0f) !important; background: var(--ds-bg-subtle, #f4f2ec) !important; }
+.time-slot.selected { background: var(--ds-bg-inverse, #0e0f0f) !important; color: var(--ds-bg, #faf9f6) !important; border-color: var(--ds-bg-inverse, #0e0f0f) !important; }
+.cal-nav-btn { border-radius: 10px !important; }
+.scheduler-label { color: var(--ds-text, #0e0f0f) !important; font-weight: 500 !important; }
+
+/* ----- FAQ refinado ----- */
+.faq-q, .faq-a-inner { font-family: var(--ds-font-sans, 'Geist', sans-serif) !important; }
+.faq-q { font-weight: 500 !important; color: var(--ds-text, #0e0f0f) !important; letter-spacing: -0.005em !important; }
+.faq-item, .faq { border-color: var(--ds-border, #e8e6df) !important; }
+
+/* ----- Pricing tiers ----- */
+.price-amount, .price-num { font-family: var(--ds-font-display, 'Instrument Serif', serif) !important; font-weight: 400 !important; letter-spacing: -0.04em !important; }
+.price-period, .price-cycle { font-family: var(--ds-font-sans, 'Geist', sans-serif) !important; font-size: 14px !important; color: var(--ds-text-subtle, #8a8a85) !important; }
+
+/* ----- Hero rotating words container alignment ----- */
+.rotating-words { vertical-align: baseline; }
+
+/* ----- Success card del booking más sobria (sin "1¡llamada agendada!" festivo) ----- */
+.form-success { background: var(--ds-bg-elev, #fff) !important; border: 1px solid var(--ds-border, #e8e6df) !important; border-radius: 16px !important; padding: 40px 32px !important; }
+.form-success .check { background: var(--ds-accent-soft, #e9f5f2) !important; color: var(--ds-accent, #0f7a6d) !important; }
+.form-success h3 { font-family: var(--ds-font-display, 'Instrument Serif', serif) !important; font-weight: 400 !important; }
+
+/* ----- Selection color a accent ----- */
+::selection { background: rgba(15, 122, 109, 0.18); color: var(--ds-text, #0e0f0f); }
+
+/* ----- Chat / proof testimonials refinados ----- */
+.proof-card, .chat-msg { border: 1px solid var(--ds-border, #e8e6df) !important; background: var(--ds-bg-elev, #fff) !important; box-shadow: none !important; border-radius: 16px !important; }
+.proof-text, .chat-msg-text { font-family: var(--ds-font-sans, 'Geist', sans-serif) !important; color: var(--ds-text-muted, #4a4a47) !important; line-height: 1.6 !important; }
+.proof-name, .proof-author { font-family: var(--ds-font-sans, 'Geist', sans-serif) !important; font-weight: 500 !important; color: var(--ds-text, #0e0f0f) !important; }
+
+/* ----- Stats / impact numbers premium ----- */
+.impact-num, .stat-num { font-family: var(--ds-font-display, 'Instrument Serif', serif) !important; font-weight: 400 !important; letter-spacing: -0.03em !important; -webkit-background-clip: initial !important; -webkit-text-fill-color: var(--ds-text, #0e0f0f) !important; background: none !important; color: var(--ds-text, #0e0f0f) !important; }
+.impact-label, .stat-label { font-family: var(--ds-font-sans, 'Geist', sans-serif) !important; color: var(--ds-text-subtle, #8a8a85) !important; }
+
+/* ----- Cookie banner refinado ----- */
+.cookie-banner, .cookies-bar {
+  background: var(--ds-bg-elev, #fff) !important;
+  border: 1px solid var(--ds-border, #e8e6df) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 32px rgba(15,15,15,0.08) !important;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  color: var(--ds-text-muted, #4a4a47) !important;
+}
+
+/* ----- Hover global suavizado: matar transiciones bruscas ----- */
+* { -webkit-tap-highlight-color: transparent; }
 
 </style>
 </head>

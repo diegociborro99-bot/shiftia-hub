@@ -1,6 +1,6 @@
 {
   "name": "shiftia-hub",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Shiftia HUB — Landing + back-office (Express + Stripe + Postgres)",
   "main": "server.js",
   "scripts": {
