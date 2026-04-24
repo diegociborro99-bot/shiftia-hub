@@ -96,43 +96,12 @@
   --ds-z-toast:       110;
 }
 
-/* ----- Dark theme (auto si el usuario prefiere oscuro) ----- */
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="auto"], :root[data-theme="dark"] {
-    --ds-bg:            #0d0e0e;
-    --ds-bg-elev:       #161818;
-    --ds-bg-subtle:     #1a1c1c;
-    --ds-bg-inverse:    #faf9f6;
-    --ds-text:          #f4f2ec;
-    --ds-text-strong:   #ffffff;
-    --ds-text-muted:    #b8b6b0;
-    --ds-text-subtle:   #6e6c66;
-    --ds-border:        #262827;
-    --ds-border-strong: #3a3c3b;
-    --ds-accent:        #4ed3c0;
-    --ds-accent-soft:   rgba(78, 211, 192, 0.10);
-    --ds-accent-text:   #6ce3d2;
-    --ds-shadow-xs:     0 1px 2px rgba(0, 0, 0, 0.5);
-    --ds-shadow-sm:     0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
-    --ds-shadow-md:     0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.4);
-    --ds-shadow-lg:     0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.5);
-  }
-}
-:root[data-theme="dark"] {
-  --ds-bg:            #0d0e0e;
-  --ds-bg-elev:       #161818;
-  --ds-bg-subtle:     #1a1c1c;
-  --ds-bg-inverse:    #faf9f6;
-  --ds-text:          #f4f2ec;
-  --ds-text-strong:   #ffffff;
-  --ds-text-muted:    #b8b6b0;
-  --ds-text-subtle:   #6e6c66;
-  --ds-border:        #262827;
-  --ds-border-strong: #3a3c3b;
-  --ds-accent:        #4ed3c0;
-  --ds-accent-soft:   rgba(78, 211, 192, 0.10);
-  --ds-accent-text:   #6ce3d2;
-}
+/* ----- Modo día permanente ----- */
+/* Por decisión de marca, Shiftia se renderiza siempre en modo claro,
+   independientemente de la preferencia del sistema operativo. Si en el
+   futuro se quiere reactivar el dark mode, restaurar aquí los bloques
+   @media (prefers-color-scheme: dark) y :root[data-theme="dark"]. */
+:root { color-scheme: light; }
 
 /* ===========================================================================
    Reset y base

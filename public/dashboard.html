@@ -5,30 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0d0e0e" media="(prefers-color-scheme: dark)">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#faf9f6">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel — Shiftia</title>
     <link rel="canonical" href="https://www.shiftia.es/dashboard">
     <meta name="description" content="Panel de control de Shiftia: gestiona tu cuenta, suscripción, equipo y planificación inteligente de turnos.">
     <meta name="robots" content="noindex, nofollow">
 
-    <!-- Anti-flash dark mode (must run before <body>) -->
+    <!-- Light-only mode: la app se renderiza siempre en claro. Limpiamos
+         cualquier preferencia legacy de dark mode para dejar el dashboard
+         consistente con el resto de la web. -->
     <script>
         (function() {
             try {
-                var t = localStorage.getItem('shiftia-theme');
-                // Backward compat: migrate legacy shiftia_darkMode
-                if (!t) {
-                    var legacy = localStorage.getItem('shiftia_darkMode');
-                    if (legacy === 'true')      { t = 'dark';  localStorage.setItem('shiftia-theme', 'dark'); }
-                    else if (legacy === 'false'){ t = 'light'; localStorage.setItem('shiftia-theme', 'light'); }
-                    else                         { t = 'auto'; }
-                }
-                document.documentElement.setAttribute('data-theme', t);
-            } catch (e) {
-                document.documentElement.setAttribute('data-theme', 'auto');
-            }
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.removeItem('shiftia-theme');
+                localStorage.removeItem('shiftia_darkMode');
+            } catch (e) {}
         })();
     </script>
 
@@ -916,11 +909,6 @@
                             <div class="user-menu-info-name" id="userMenuName">Usuario</div>
                             <div class="user-menu-info-email" id="userMenuEmail"></div>
                         </div>
-                        <div class="theme-chip-row" role="group" aria-label="Tema">
-                            <button class="theme-chip" data-theme-set="light" type="button">Claro</button>
-                            <button class="theme-chip" data-theme-set="dark" type="button">Oscuro</button>
-                            <button class="theme-chip" data-theme-set="auto" type="button">Auto</button>
-                        </div>
                         <a href="#configuracion" class="user-menu-item" id="goToSettings">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                             Configuración
@@ -1379,67 +1367,17 @@
             }
         }
 
-        // ===== THEME (data-theme on <html>) =====
-        function getStoredTheme() {
-            try { return localStorage.getItem('shiftia-theme') || 'auto'; } catch (e) { return 'auto'; }
-        }
-        function setTheme(theme) {
-            try {
-                localStorage.setItem('shiftia-theme', theme);
-                // Mirror legacy key for backward compat with any other page checking it
-                if (theme === 'dark')  localStorage.setItem('shiftia_darkMode', 'true');
-                if (theme === 'light') localStorage.setItem('shiftia_darkMode', 'false');
-                if (theme === 'auto')  localStorage.removeItem('shiftia_darkMode');
-            } catch (e) {}
-            document.documentElement.setAttribute('data-theme', theme);
-            highlightThemeChips(theme);
-            updateThemeIcon(isThemeDark(theme));
-        }
-        function isThemeDark(theme) {
-            if (theme === 'dark') return true;
-            if (theme === 'light') return false;
-            return window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-        function highlightThemeChips(theme) {
-            document.querySelectorAll('[data-theme-set]').forEach(el => {
-                el.classList.toggle('active', el.dataset.themeSet === theme);
-            });
-        }
-        function initThemePicker() {
-            const t = getStoredTheme();
-            highlightThemeChips(t);
-            updateThemeIcon(isThemeDark(t));
-            document.querySelectorAll('[data-theme-set]').forEach(el => {
-                el.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    setTheme(el.dataset.themeSet);
-                });
-            });
-            // React to OS scheme changes when in auto mode
-            if (window.matchMedia) {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-                    if (getStoredTheme() === 'auto') updateThemeIcon(isThemeDark('auto'));
-                });
-            }
-        }
-
-        // Legacy compatibility shims (other code may still call these)
-        function loadDarkModePreference() {
-            const t = getStoredTheme();
-            highlightThemeChips(t);
-            updateThemeIcon(isThemeDark(t));
-        }
-        function toggleDarkMode() {
-            const dark = isThemeDark(getStoredTheme());
-            setTheme(dark ? 'light' : 'dark');
-        }
-        function updateThemeIcon(isDark) {
-            const icon = document.getElementById('themeIcon');
-            if (!icon) return;
-            icon.innerHTML = isDark
-                ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
-                : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-        }
+        // ===== THEME — light-only (Shiftia se renderiza siempre en modo día) =====
+        // Mantenemos shims no-op para no romper código que aún llame estas
+        // funciones desde otras partes del HTML.
+        function getStoredTheme()      { return 'light'; }
+        function setTheme()            { document.documentElement.setAttribute('data-theme', 'light'); }
+        function isThemeDark()         { return false; }
+        function highlightThemeChips() {}
+        function initThemePicker()     { document.documentElement.setAttribute('data-theme', 'light'); }
+        function loadDarkModePreference() {}
+        function toggleDarkMode()      {}
+        function updateThemeIcon()     {}
 
         // ===== DATE =====
         function setCurrentDate() {

@@ -6,13 +6,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
     <link rel="manifest" href="/site.webmanifest">
-    <meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0d0e0e" media="(prefers-color-scheme: dark)">
-    <title>Documentación de Shiftia · SARA</title>
+    <meta name="theme-color" content="#faf9f6">
+        <title>Documentación de Shiftia · SARA</title>
     <link rel="canonical" href="https://www.shiftia.es/docs">
     <meta name="description" content="Documentación de SARA, el motor IA de Shiftia: guía completa de planificación inteligente de turnos, coberturas, equidad y automatización para hospitales y empresas.">
 
-    <script>(function(){try{var t=localStorage.getItem('shiftia-theme')||'auto';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+    <script>(function(){document.documentElement.setAttribute('data-theme','light');try{localStorage.removeItem('shiftia-theme');}catch(e){}})();</script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -768,9 +767,6 @@
                 <span class="docs-search-kbd" aria-hidden="true">&#8984;K</span>
             </div>
             <div class="docs-header-actions">
-                <button class="theme-btn" id="themeToggle" type="button" aria-label="Cambiar tema">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                </button>
                 <button class="mobile-toc-btn" type="button" id="openToc" aria-label="Abrir índice">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                     Índice
@@ -1176,17 +1172,8 @@
 
     <script>
         // -------- Theme toggle --------
-        (function () {
-            var root = document.documentElement;
-            var btn = document.getElementById('themeToggle');
-            if (!btn) return;
-            btn.addEventListener('click', function () {
-                var current = root.getAttribute('data-theme') || 'auto';
-                var next = current === 'dark' ? 'light' : 'dark';
-                root.setAttribute('data-theme', next);
-                try { localStorage.setItem('shiftia-theme', next); } catch (e) {}
-            });
-        })();
+        // Theme toggle eliminado — Shiftia es light-only por diseño.
+        (function () { document.documentElement.setAttribute('data-theme', 'light'); })();
 
         // -------- Build right TOC from h3/h4 within sections --------
         (function () {
