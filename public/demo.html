@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Demo interactiva — Shiftia</title>
+  <meta name="description" content="Prueba Shiftia sin registro. Toca las celdas para asignar turnos y deja que SARA, nuestra IA, complete el cuadrante en menos de un segundo.">
+  <link rel="canonical" href="https://www.shiftia.es/demo">
+  <meta name="theme-color" content="#faf9f6">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="/design-system.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--ds-bg);
+      color: var(--ds-text);
+      font-family: var(--ds-font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+    }
+
+    /* ----- Header ----- */
+    .demo-header {
+      position: sticky; top: 0; z-index: var(--ds-z-nav);
+      background: rgba(250, 249, 246, 0.85);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--ds-border);
+    }
+    .demo-header__inner {
+      max-width: var(--ds-container);
+      margin: 0 auto;
+      padding: 14px var(--ds-space-6);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .demo-brand {
+      font-family: var(--ds-font-display);
+      font-size: 22px; line-height: 1; letter-spacing: -0.02em;
+      color: var(--ds-text); text-decoration: none;
+    }
+    .demo-brand:hover { color: var(--ds-accent-text); }
+    .demo-header__chip {
+      margin-left: 4px;
+    }
+    .demo-header__spacer { flex: 1; }
+    @media (max-width: 640px) {
+      .demo-header__inner { padding: 12px var(--ds-space-4); }
+    }
+
+    /* ----- Hero ----- */
+    .demo-hero {
+      max-width: var(--ds-container);
+      margin: 0 auto;
+      padding: var(--ds-space-16) var(--ds-space-6) var(--ds-space-8);
+      text-align: center;
+    }
+    .demo-hero h1 {
+      font-family: var(--ds-font-display);
+      font-weight: 400;
+      font-size: var(--ds-display-md);
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      margin: 14px 0 18px;
+      color: var(--ds-text);
+    }
+    .demo-hero h1 em {
+      font-style: italic;
+      color: var(--ds-accent-text);
+    }
+    .demo-hero p {
+      font-family: var(--ds-font-sans);
+      font-size: var(--ds-text-lg);
+      line-height: 1.55;
+      color: var(--ds-text-muted);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    @media (max-width: 640px) {
+      .demo-hero { padding: var(--ds-space-12) var(--ds-space-4) var(--ds-space-6); }
+      .demo-hero p { font-size: var(--ds-text-md); }
+    }
+
+    /* ----- Layout app ----- */
+    .demo-app {
+      max-width: var(--ds-container);
+      margin: 0 auto;
+      padding: 0 var(--ds-space-6) var(--ds-space-16);
+    }
+    .demo-app__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: var(--ds-space-6);
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .demo-app__grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .demo-app { padding: 0 var(--ds-space-4) var(--ds-space-12); }
+    }
+
+    /* ----- Toolbar ----- */
+    .demo-toolbar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+      background: var(--ds-bg-elev);
+      border: 1px solid var(--ds-border);
+      border-radius: var(--ds-radius-md) var(--ds-radius-md) 0 0;
+      padding: 14px 16px;
+      border-bottom: 0;
+    }
+    .demo-toolbar__chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: var(--ds-radius-pill);
+      background: var(--ds-bg-subtle); color: var(--ds-text);
+      font-size: var(--ds-text-xs); font-weight: 500;
+      border: 1px solid var(--ds-border);
+    }
+    .demo-toolbar__chip strong {
+      font-weight: 600; color: var(--ds-text);
+    }
+    .demo-toolbar__week {
+      font-family: var(--ds-font-mono);
+      font-size: var(--ds-text-xs);
+      color: var(--ds-text-muted);
+      letter-spacing: 0.02em;
+    }
+    .demo-toolbar__sep { flex: 1; }
+    .demo-toolbar__btns { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+    .demo-toolbar__btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--ds-font-sans); font-weight: 500;
+      font-size: var(--ds-text-sm); line-height: 1;
+      cursor: pointer; user-select: none;
+      border: 1px solid transparent; border-radius: var(--ds-radius);
+      padding: 9px 14px; min-height: 36px;
+      transition: background var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease), transform var(--ds-dur-fast) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+    }
+    .demo-toolbar__btn:focus-visible { outline: 2px solid var(--ds-accent); outline-offset: 2px; }
+    .demo-toolbar__btn--primary {
+      background: var(--ds-bg-inverse); color: var(--ds-bg);
+      border-color: var(--ds-bg-inverse);
+    }
+    .demo-toolbar__btn--primary:hover {
+      background: var(--ds-text-strong); transform: translateY(-1px);
+      box-shadow: var(--ds-shadow-md);
+    }
+    .demo-toolbar__btn--ghost {
+      background: transparent; color: var(--ds-text-muted);
+      border-color: var(--ds-border-strong);
+    }
+    .demo-toolbar__btn--ghost:hover {
+      color: var(--ds-text); background: var(--ds-bg-subtle);
+      border-color: var(--ds-text);
+    }
+    .demo-toolbar__btn[disabled] { opacity: 0.55; cursor: not-allowed; transform: none !important; }
+    .demo-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #4ed3c0; position: relative;
+    }
+    .demo-dot::after {
+      content: ''; position: absolute; inset: -4px;
+      border-radius: 50%;
+      background: rgba(78, 211, 192, 0.35);
+      animation: demo-pulse 2.2s ease-out infinite;
+    }
+    @keyframes demo-pulse {
+      0%   { transform: scale(0.6); opacity: 0.9; }
+      80%  { transform: scale(1.6); opacity: 0; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* ----- Grid wrapper ----- */
+    .demo-grid-wrap {
+      background: var(--ds-bg-elev);
+      border: 1px solid var(--ds-border);
+      border-radius: 0 0 var(--ds-radius-md) var(--ds-radius-md);
+      padding: 16px 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+    .demo-grid-wrap__hint {
+      display: none;
+      position: absolute; right: 12px; top: 6px;
+      font-family: var(--ds-font-mono); font-size: 10px;
+      color: var(--ds-text-subtle);
+      letter-spacing: 0.05em; text-transform: uppercase;
+      pointer-events: none;
+    }
+    @media (max-width: 768px) {
+      .demo-grid-wrap__hint { display: block; }
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 200px repeat(7, minmax(96px, 1fr));
+      min-width: 760px;
+      gap: 0;
+    }
+    @media (max-width: 768px) {
+      .demo-grid { grid-template-columns: 160px repeat(7, 64px); min-width: calc(160px + 7 * 64px); }
+    }
+
+    .demo-grid__head {
+      position: sticky; top: 0;
+      background: var(--ds-bg-elev);
+      padding: 6px 8px 12px;
+      font-family: var(--ds-font-sans);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ds-text-subtle);
+      text-align: center;
+      border-bottom: 1px solid var(--ds-border);
+    }
+    .demo-grid__head--persona {
+      text-align: left;
+      padding-left: 16px;
+      position: sticky; left: 0; z-index: 3;
+      background: var(--ds-bg-elev);
+    }
+    .demo-grid__head--day strong {
+      display: block;
+      font-family: var(--ds-font-mono);
+      font-size: 11px; font-weight: 500;
+      color: var(--ds-text);
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    /* Persona cell */
+    .demo-person {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--ds-border);
+      position: sticky; left: 0; z-index: 2;
+      background: var(--ds-bg-elev);
+      min-height: 56px;
+    }
+    .demo-person__avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--ds-font-sans);
+      font-size: 11px; font-weight: 600;
+      flex-shrink: 0;
+    }
+    .demo-person__avatar--medico {
+      background: var(--ds-accent-soft); color: var(--ds-accent-text);
+      border: 1px solid var(--ds-accent);
+    }
+    .demo-person__avatar--enfermeria {
+      background: var(--ds-bg-subtle); color: var(--ds-text);
+      border: 1px solid var(--ds-border-strong);
+    }
+    .demo-person__avatar--auxiliar {
+      background: #f9f5e8; color: #7a5f1c;
+      border: 1px solid #d9c98f;
+    }
+    .demo-person__meta { min-width: 0; }
+    .demo-person__name {
+      display: block;
+      font-size: 13px; font-weight: 500; color: var(--ds-text);
+      line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .demo-person__role {
+      display: block;
+      font-size: 11px; color: var(--ds-text-subtle);
+      line-height: 1.3; margin-top: 2px;
+    }
+
+    /* Shift cell button */
+    .demo-cell {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      padding: 6px;
+      border-bottom: 1px solid var(--ds-border);
+      border-left: 1px solid var(--ds-border);
+      min-height: 56px;
+      display: flex; align-items: stretch; justify-content: stretch;
+      transition: background var(--ds-dur-fast) var(--ds-ease);
+      position: relative;
+    }
+    .demo-cell:focus-visible {
+      outline: 2px solid var(--ds-accent);
+      outline-offset: -2px;
+    }
+    .demo-cell__inner {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: 8px;
+      padding: 6px 4px;
+      font-family: var(--ds-font-mono);
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: transform var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+      border: 1px solid transparent;
+      width: 100%;
+      min-height: 38px;
+      position: relative;
+    }
+    .demo-cell:hover .demo-cell__inner {
+      transform: translateY(-1px);
+      box-shadow: var(--ds-shadow-xs);
+    }
+    .demo-cell__label {
+      font-weight: 600; font-size: 12px;
+      line-height: 1;
+    }
+    .demo-cell__hours {
+      font-size: 9px;
+      opacity: 0.75;
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Estados */
+    .demo-cell--empty .demo-cell__inner {
+      background: transparent;
+      border: 1px dashed transparent;
+      color: var(--ds-text-subtle);
+    }
+    .demo-cell--empty:hover .demo-cell__inner {
+      background: var(--ds-bg-subtle);
+      border-color: var(--ds-border);
+    }
+    .demo-cell--empty .demo-cell__label::before {
+      content: '+';
+      opacity: 0;
+      font-size: 14px; font-weight: 400;
+      color: var(--ds-text-subtle);
+    }
+    .demo-cell--empty:hover .demo-cell__label::before { opacity: 1; }
+
+    .demo-cell--M .demo-cell__inner {
+      background: #e9f5f2;
+      color: #0a5950;
+    }
+    .demo-cell--T .demo-cell__inner {
+      background: #f4f2ec;
+      color: #5a4a2a;
+    }
+    .demo-cell--N .demo-cell__inner {
+      background: #0e0f0f;
+      color: #faf9f6;
+    }
+    .demo-cell--L .demo-cell__inner {
+      background: transparent;
+      border: 1px dashed var(--ds-border-strong);
+      color: var(--ds-text-subtle);
+    }
+
+    /* AI badge */
+    .demo-cell__ai {
+      position: absolute;
+      top: -4px; right: -4px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--ds-accent);
+      color: #fff;
+      font-family: var(--ds-font-sans);
+      font-size: 8px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      letter-spacing: 0;
+      box-shadow: 0 0 0 2px var(--ds-bg-elev);
+    }
+
+    /* Stagger pop animation */
+    @keyframes demo-pop-in {
+      0%   { opacity: 0; transform: scale(0.7); }
+      60%  { opacity: 1; transform: scale(1.06); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes demo-pop-out {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.6); }
+    }
+    .demo-cell.is-popping .demo-cell__inner {
+      animation: demo-pop-in 240ms var(--ds-ease-out) both;
+    }
+    .demo-cell.is-leaving .demo-cell__inner {
+      animation: demo-pop-out 180ms var(--ds-ease) both;
+    }
+
+    /* ----- Sara panel ----- */
+    .sara {
+      background: var(--ds-bg-inverse);
+      color: #faf9f6;
+      border-radius: var(--ds-radius-md);
+      padding: 22px 22px 20px;
+      position: sticky; top: 80px;
+      box-shadow: var(--ds-shadow-md);
+    }
+    @media (max-width: 1024px) {
+      .sara { position: static; margin-top: 16px; }
+    }
+    .sara__head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .sara__head-dot {
+      position: relative;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #4ed3c0;
+      box-shadow: 0 0 0 0 rgba(78, 211, 192, 0.5);
+    }
+    .sara__head-dot::after {
+      content: ''; position: absolute; inset: -5px;
+      border-radius: 50%;
+      background: rgba(78, 211, 192, 0.35);
+      animation: demo-pulse 2.2s ease-out infinite;
+    }
+    .sara__name {
+      font-family: var(--ds-font-sans); font-weight: 500;
+      font-size: 12px; color: #faf9f6;
+      letter-spacing: 0.02em;
+    }
+    .sara__name span { color: #6e6c66; margin-left: 6px; font-family: var(--ds-font-mono); font-size: 11px; }
+
+    .sara__title {
+      font-family: var(--ds-font-display);
+      font-weight: 400; line-height: 1.15;
+      font-size: 22px; letter-spacing: -0.01em;
+      margin: 4px 0 4px;
+      color: #faf9f6;
+    }
+    .sara__subtitle {
+      font-family: var(--ds-font-display); font-style: italic;
+      font-size: 18px; line-height: 1.3;
+      color: #6ce3d2;
+      margin: 0 0 16px;
+    }
+    .sara__divider {
+      height: 1px; background: #262827; border: 0; margin: 16px 0;
+    }
+
+    .sara__metric { margin-bottom: 14px; }
+    .sara__metric-label {
+      font-family: var(--ds-font-mono);
+      font-size: 10px;
+      color: #8a8a85;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .sara__metric-value {
+      font-family: var(--ds-font-display);
+      font-weight: 400;
+      font-size: 34px; line-height: 1;
+      letter-spacing: -0.01em;
+      color: #faf9f6;
+    }
+    .sara__metric-value small {
+      font-size: 18px; color: #6e6c66; margin-left: 2px;
+      font-family: var(--ds-font-display);
+    }
+
+    .sara__warnings {
+      background: #1a1c1c;
+      border: 1px solid #262827;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 8px 0 14px;
+    }
+    .sara__warnings-title {
+      font-family: var(--ds-font-mono);
+      font-size: 10px;
+      color: #ffb574;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .sara__warnings ul {
+      margin: 0; padding: 0; list-style: none;
+    }
+    .sara__warnings li {
+      font-family: var(--ds-font-sans);
+      font-size: 12px; line-height: 1.45;
+      color: #d4d2cc;
+      padding: 3px 0 3px 14px;
+      position: relative;
+    }
+    .sara__warnings li::before {
+      content: ''; position: absolute;
+      left: 4px; top: 9px;
+      width: 4px; height: 4px; border-radius: 50%;
+      background: #ffb574;
+    }
+    .sara__warnings--ok .sara__warnings-title { color: #4ed3c0; }
+    .sara__warnings--ok li::before { background: #4ed3c0; }
+
+    .sara__cta {
+      display: block; width: 100%;
+      appearance: none; border: 0;
+      background: #faf9f6; color: var(--ds-bg-inverse);
+      font-family: var(--ds-font-sans); font-weight: 500;
+      font-size: 13px; line-height: 1;
+      padding: 12px 16px; border-radius: 10px;
+      cursor: pointer;
+      transition: background var(--ds-dur) var(--ds-ease), transform var(--ds-dur-fast) var(--ds-ease);
+      margin-top: 6px;
+    }
+    .sara__cta:hover { background: #fff; transform: translateY(-1px); }
+    .sara__cta:focus-visible { outline: 2px solid #4ed3c0; outline-offset: 2px; }
+
+    /* ----- Legend ----- */
+    .demo-legend {
+      display: flex; flex-wrap: wrap; gap: 14px 22px;
+      margin-top: 14px;
+      padding: 0 4px;
+      font-family: var(--ds-font-sans);
+      font-size: 12px;
+      color: var(--ds-text-muted);
+    }
+    .demo-legend__item { display: inline-flex; align-items: center; gap: 8px; }
+    .demo-legend__sw {
+      width: 14px; height: 14px; border-radius: 4px;
+      flex-shrink: 0;
+      border: 1px solid transparent;
+    }
+    .demo-legend__sw--M { background: #e9f5f2; }
+    .demo-legend__sw--T { background: #f4f2ec; }
+    .demo-legend__sw--N { background: #0e0f0f; }
+    .demo-legend__sw--L { background: var(--ds-bg); border: 1px dashed var(--ds-border-strong); }
+    .demo-legend__sw--AI {
+      background: var(--ds-accent);
+      border-radius: 50%;
+      width: 12px; height: 12px;
+    }
+
+    /* ----- Footer CTA ----- */
+    .demo-footer {
+      max-width: var(--ds-container);
+      margin: 0 auto;
+      padding: var(--ds-space-12) var(--ds-space-6) var(--ds-space-16);
+      text-align: center;
+      border-top: 1px solid var(--ds-border);
+    }
+    .demo-footer__note {
+      max-width: 560px; margin: 0 auto var(--ds-space-6);
+      font-family: var(--ds-font-sans); font-size: 14px; line-height: 1.55;
+      color: var(--ds-text-muted);
+    }
+    .demo-footer__actions {
+      display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    }
+    @media (max-width: 640px) {
+      .demo-footer { padding: var(--ds-space-12) var(--ds-space-4) var(--ds-space-12); }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .demo-dot::after,
+      .sara__head-dot::after { animation: none; }
+      .demo-cell.is-popping .demo-cell__inner,
+      .demo-cell.is-leaving .demo-cell__inner { animation: none; }
+      .demo-cell:hover .demo-cell__inner { transform: none; }
+      .demo-toolbar__btn:hover,
+      .sara__cta:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="ds-skip" href="#main">Saltar al contenido principal</a>
+
+  <header class="demo-header" role="banner">
+    <div class="demo-header__inner">
+      <a href="/" class="demo-brand" aria-label="Volver al inicio de Shiftia">Shiftia</a>
+      <span class="ds-pill demo-header__chip">Demo</span>
+      <div class="demo-header__spacer"></div>
+      <a href="/#contact" class="ds-btn ds-btn-primary ds-btn-sm">Pedir demo real</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="demo-hero">
+      <span class="ds-eyebrow">Demo interactiva · sin registro</span>
+      <h1>Prueba <em>Shiftia</em> sin pedir nada.</h1>
+      <p>Toca las celdas para ciclar turnos. Pulsa &laquo;Asignar con IA&raquo; y mira cómo Shiftia rellena los huecos con criterios reales en menos de un segundo.</p>
+    </section>
+
+    <section class="demo-app" aria-label="Cuadrante demo">
+      <div class="demo-app__grid">
+        <div>
+          <!-- Toolbar -->
+          <div class="demo-toolbar" role="toolbar" aria-label="Acciones del cuadrante">
+            <span class="demo-toolbar__chip"><strong>Servicio:</strong> UVI · Hospital Universitario</span>
+            <span class="demo-toolbar__chip demo-toolbar__week">Semana 17 · Abril 2026</span>
+            <div class="demo-toolbar__sep"></div>
+            <div class="demo-toolbar__btns">
+              <button type="button" class="demo-toolbar__btn demo-toolbar__btn--ghost" id="btn-mode" aria-pressed="false">Modo ejemplo</button>
+              <button type="button" class="demo-toolbar__btn demo-toolbar__btn--ghost" id="btn-reset">Reset</button>
+              <button type="button" class="demo-toolbar__btn demo-toolbar__btn--primary" id="btn-ai">
+                <span class="demo-dot" aria-hidden="true"></span>
+                Asignar con IA
+              </button>
+            </div>
+          </div>
+
+          <!-- Grid -->
+          <div class="demo-grid-wrap">
+            <span class="demo-grid-wrap__hint" aria-hidden="true">Desliza →</span>
+            <div class="demo-grid" id="grid" role="grid" aria-label="Cuadrante semanal de turnos"></div>
+          </div>
+
+          <!-- Legend -->
+          <div class="demo-legend" aria-label="Leyenda de turnos">
+            <span class="demo-legend__item"><span class="demo-legend__sw demo-legend__sw--M" aria-hidden="true"></span>Mañana</span>
+            <span class="demo-legend__item"><span class="demo-legend__sw demo-legend__sw--T" aria-hidden="true"></span>Tarde</span>
+            <span class="demo-legend__item"><span class="demo-legend__sw demo-legend__sw--N" aria-hidden="true"></span>Noche</span>
+            <span class="demo-legend__item"><span class="demo-legend__sw demo-legend__sw--L" aria-hidden="true"></span>Libre</span>
+            <span class="demo-legend__item"><span class="demo-legend__sw demo-legend__sw--AI" aria-hidden="true"></span>Asignado por IA</span>
+          </div>
+        </div>
+
+        <!-- SARA panel -->
+        <aside class="sara" aria-label="SARA — Asistente IA">
+          <div class="sara__head">
+            <span class="sara__head-dot" aria-hidden="true"></span>
+            <span class="sara__name">SARA <span>· v3</span></span>
+          </div>
+          <h2 class="sara__title" id="sara-title">A la espera.</h2>
+          <p class="sara__subtitle" id="sara-subtitle">Empieza a tocar el cuadrante.</p>
+
+          <hr class="sara__divider">
+
+          <div class="sara__metric">
+            <div class="sara__metric-label">Cobertura del periodo</div>
+            <div class="sara__metric-value"><span id="m-coverage">0</span><small>%</small></div>
+          </div>
+          <div class="sara__metric">
+            <div class="sara__metric-label">Equidad nocturna</div>
+            <div class="sara__metric-value"><span id="m-equity">0</span><small>%</small></div>
+          </div>
+          <div class="sara__metric">
+            <div class="sara__metric-label">Slots libres restantes</div>
+            <div class="sara__metric-value" id="m-empty">42</div>
+          </div>
+
+          <div class="sara__warnings sara__warnings--ok" id="sara-warn">
+            <div class="sara__warnings-title" id="sara-warn-title">Restricciones</div>
+            <ul id="sara-warn-list">
+              <li>Sin conflictos detectados.</li>
+            </ul>
+          </div>
+
+          <button type="button" class="sara__cta" id="btn-publish">Aprobar y publicar</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="demo-footer">
+      <p class="demo-footer__note">Esto es una demo simplificada. Shiftia real maneja conciliaciones, vacaciones, festivos, restricciones individuales y mucho más.</p>
+      <div class="demo-footer__actions">
+        <a href="/#contact" class="ds-btn ds-btn-primary ds-btn-lg">Pedir demo personalizada</a>
+        <a href="/#pricing" class="ds-btn ds-btn-ghost ds-btn-lg">Ver planes</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ----- Datos -----
+    var people = [
+      { id: 'mc', initials: 'MC', name: 'María C.',  role: 'Enfermería', cls: 'enfermeria' },
+      { id: 'jr', initials: 'JR', name: 'Javier R.', role: 'Enfermería', cls: 'enfermeria' },
+      { id: 'ag', initials: 'AG', name: 'Ana G.',    role: 'Médico',     cls: 'medico' },
+      { id: 'pl', initials: 'PL', name: 'Pedro L.',  role: 'Auxiliar',   cls: 'auxiliar' },
+      { id: 'ls', initials: 'LS', name: 'Laura S.',  role: 'Enfermería', cls: 'enfermeria' },
+      { id: 'cp', initials: 'CP', name: 'Carmen P.', role: 'Médico',     cls: 'medico' }
+    ];
+
+    var days = [
+      { abbr: 'LUN', date: 13 },
+      { abbr: 'MAR', date: 14 },
+      { abbr: 'MIE', date: 15 },
+      { abbr: 'JUE', date: 16 },
+      { abbr: 'VIE', date: 17 },
+      { abbr: 'SAB', date: 18 },
+      { abbr: 'DOM', date: 19 }
+    ];
+
+    // Estado: matriz [persona][dia] -> { state: '' | 'M' | 'T' | 'N' | 'L', ai: bool }
+    var STATES = ['', 'M', 'T', 'N', 'L'];
+    var SHIFT_LABELS = {
+      'M': { label: 'M', hours: '7-15' },
+      'T': { label: 'T', hours: '15-22' },
+      'N': { label: 'N', hours: '22-7' },
+      'L': { label: 'Libre', hours: '' }
+    };
+
+    var grid = [];
+
+    function emptyGrid() {
+      grid = people.map(function () {
+        return days.map(function () { return { state: '', ai: false }; });
+      });
+    }
+
+    // Modo ejemplo (datos canned similares al product-mockup)
+    var EXAMPLE = [
+      ['M','M','T','T','L','L','M'], // Maria
+      ['T','N','N','L','M','M','T'], // Javier
+      ['M','M','L','T','M','L','L'], // Ana
+      ['N','L','M','M','T','T','N'], // Pedro
+      ['L','M','M','T','T','N','N'], // Laura
+      ['M','T','T','L','N','M','L']  // Carmen
+    ];
+
+    function applyExample() {
+      grid = people.map(function (_, p) {
+        return days.map(function (_, d) {
+          return { state: EXAMPLE[p][d], ai: false };
+        });
+      });
+    }
+
+    // ----- Renderizado -----
+    var gridEl = document.getElementById('grid');
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function buildGrid() {
+      gridEl.innerHTML = '';
+
+      // Header row
+      var headPersona = document.createElement('div');
+      headPersona.className = 'demo-grid__head demo-grid__head--persona';
+      headPersona.textContent = 'Persona';
+      gridEl.appendChild(headPersona);
+
+      days.forEach(function (d) {
+        var h = document.createElement('div');
+        h.className = 'demo-grid__head demo-grid__head--day';
+        h.innerHTML = d.abbr + '<strong>' + d.date + '</strong>';
+        gridEl.appendChild(h);
+      });
+
+      // Person rows
+      people.forEach(function (p, pi) {
+        var person = document.createElement('div');
+        person.className = 'demo-person';
+        person.innerHTML = '' +
+          '<span class="demo-person__avatar demo-person__avatar--' + p.cls + '" aria-hidden="true">' + p.initials + '</span>' +
+          '<span class="demo-person__meta">' +
+            '<span class="demo-person__name">' + p.name + '</span>' +
+            '<span class="demo-person__role">' + p.role + '</span>' +
+          '</span>';
+        gridEl.appendChild(person);
+
+        days.forEach(function (d, di) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'demo-cell demo-cell--empty';
+          btn.setAttribute('data-p', pi);
+          btn.setAttribute('data-d', di);
+          btn.setAttribute('aria-label', p.name + ', ' + d.abbr + ' ' + d.date + ', vacío. Pulsa para ciclar.');
+          btn.innerHTML = '<span class="demo-cell__inner"><span class="demo-cell__label"></span><span class="demo-cell__hours"></span></span>';
+          btn.addEventListener('click', function () {
+            cycleCell(pi, di);
+          });
+          gridEl.appendChild(btn);
+        });
+      });
+    }
+
+    function cellEl(pi, di) {
+      return gridEl.querySelector('.demo-cell[data-p="' + pi + '"][data-d="' + di + '"]');
+    }
+
+    function paintCell(pi, di, opts) {
+      opts = opts || {};
+      var cell = grid[pi][di];
+      var el = cellEl(pi, di);
+      if (!el) return;
+      var prevClasses = ['demo-cell--empty', 'demo-cell--M', 'demo-cell--T', 'demo-cell--N', 'demo-cell--L'];
+      prevClasses.forEach(function (c) { el.classList.remove(c); });
+
+      var stateKey = cell.state === '' ? 'empty' : cell.state;
+      el.classList.add('demo-cell--' + stateKey);
+
+      var inner = el.querySelector('.demo-cell__inner');
+      var label = inner.querySelector('.demo-cell__label');
+      var hours = inner.querySelector('.demo-cell__hours');
+
+      // limpiar badge AI previa
+      var prev = inner.querySelector('.demo-cell__ai');
+      if (prev) prev.remove();
+
+      if (cell.state === '') {
+        label.textContent = '';
+        hours.textContent = '';
+        el.setAttribute('aria-label', people[pi].name + ', ' + days[di].abbr + ' ' + days[di].date + ', vacío. Pulsa para ciclar.');
+      } else {
+        var info = SHIFT_LABELS[cell.state];
+        label.textContent = info.label;
+        hours.textContent = info.hours;
+        el.setAttribute('aria-label', people[pi].name + ', ' + days[di].abbr + ' ' + days[di].date + ', turno ' + info.label + (info.hours ? ' ' + info.hours : '') + (cell.ai ? ', asignado por IA' : '') + '. Pulsa para ciclar.');
+      }
+
+      if (cell.ai && cell.state !== '') {
+        var b = document.createElement('span');
+        b.className = 'demo-cell__ai';
+        b.setAttribute('aria-hidden', 'true');
+        b.textContent = 'AI';
+        inner.appendChild(b);
+      }
+
+      if (opts.pop && !prefersReduced) {
+        el.classList.remove('is-popping', 'is-leaving');
+        // forzar reflow
+        void el.offsetWidth;
+        el.classList.add('is-popping');
+        setTimeout(function () { el.classList.remove('is-popping'); }, 280);
+      }
+    }
+
+    function paintAll(opts) {
+      people.forEach(function (_, pi) {
+        days.forEach(function (_, di) {
+          paintCell(pi, di, opts);
+        });
+      });
+    }
+
+    function cycleCell(pi, di) {
+      var cur = grid[pi][di].state;
+      var idx = STATES.indexOf(cur);
+      var next = STATES[(idx + 1) % STATES.length];
+      grid[pi][di] = { state: next, ai: false };
+      paintCell(pi, di);
+      updateMetrics();
+    }
+
+    // ----- Métricas -----
+    function flat() {
+      var arr = [];
+      grid.forEach(function (row) { row.forEach(function (c) { arr.push(c); }); });
+      return arr;
+    }
+
+    function updateMetrics() {
+      var total = people.length * days.length;
+      var cells = flat();
+      var emptyCount = cells.filter(function (c) { return c.state === ''; }).length;
+      var filled = total - emptyCount;
+      var coverage = Math.round((filled / total) * 100);
+
+      // Equidad nocturna: 100 - normalizada(varianza N por persona) * factor
+      var nightsPer = grid.map(function (row) {
+        return row.filter(function (c) { return c.state === 'N'; }).length;
+      });
+      var sumN = nightsPer.reduce(function (a, b) { return a + b; }, 0);
+      var meanN = sumN / people.length;
+      var variance = nightsPer.reduce(function (acc, n) { return acc + (n - meanN) * (n - meanN); }, 0) / people.length;
+      // Si no hay noches asignadas, equidad = 100 (no hay desigualdad)
+      var equity;
+      if (sumN === 0) {
+        equity = 100;
+      } else {
+        // normalizar: max varianza posible cuando todas las N van a 1 persona ≈ sumN^2 * (people-1)/people^2
+        var maxVar = (sumN * sumN) * (people.length - 1) / (people.length * people.length);
+        var ratio = maxVar > 0 ? variance / maxVar : 0;
+        equity = Math.round(Math.max(0, Math.min(100, (1 - ratio) * 100)));
+      }
+
+      document.getElementById('m-coverage').textContent = coverage;
+      document.getElementById('m-equity').textContent = equity;
+      document.getElementById('m-empty').textContent = emptyCount;
+
+      // Headlines
+      var titleEl = document.getElementById('sara-title');
+      var subEl = document.getElementById('sara-subtitle');
+      if (filled === 0) {
+        titleEl.textContent = 'A la espera.';
+        subEl.textContent = 'Empieza a tocar el cuadrante.';
+      } else if (emptyCount === 0) {
+        titleEl.textContent = 'Cuadrante completo.';
+        subEl.textContent = filled + ' turnos asignados';
+      } else {
+        titleEl.textContent = filled + ' turnos asignados.';
+        subEl.textContent = emptyCount + ' slots por cubrir';
+      }
+
+      // Restricciones
+      checkConstraints();
+    }
+
+    function checkConstraints() {
+      var warnings = [];
+      // 1. Más de 2 noches seguidas
+      grid.forEach(function (row, pi) {
+        var streak = 0;
+        for (var d = 0; d < row.length; d++) {
+          if (row[d].state === 'N') {
+            streak++;
+            if (streak === 3) {
+              warnings.push(people[pi].name + ': 3+ noches seguidas');
+              break;
+            }
+          } else {
+            streak = 0;
+          }
+        }
+      });
+      // 2. Sin descanso (7 dias seguidos sin Libre/vacio)
+      grid.forEach(function (row, pi) {
+        var allWork = row.every(function (c) { return c.state === 'M' || c.state === 'T' || c.state === 'N'; });
+        if (allWork) warnings.push(people[pi].name + ': sin día de descanso');
+      });
+      // 3. Cobertura mínima — algún día sin nadie
+      days.forEach(function (d, di) {
+        var anyWork = grid.some(function (row) {
+          var s = row[di].state;
+          return s === 'M' || s === 'T' || s === 'N';
+        });
+        var anyFilled = grid.some(function (row) { return row[di].state !== ''; });
+        if (anyFilled && !anyWork) warnings.push(d.abbr + ' ' + d.date + ': sin nadie de turno');
+      });
+
+      var box = document.getElementById('sara-warn');
+      var title = document.getElementById('sara-warn-title');
+      var list = document.getElementById('sara-warn-list');
+      list.innerHTML = '';
+      if (warnings.length === 0) {
+        box.classList.add('sara__warnings--ok');
+        title.textContent = 'Restricciones';
+        var li = document.createElement('li');
+        li.textContent = 'Sin conflictos detectados.';
+        list.appendChild(li);
+      } else {
+        box.classList.remove('sara__warnings--ok');
+        title.textContent = 'Restricciones detectadas';
+        warnings.slice(0, 4).forEach(function (w) {
+          var li = document.createElement('li');
+          li.textContent = w;
+          list.appendChild(li);
+        });
+      }
+    }
+
+    // ----- IA: rellenar huecos -----
+    function fillWithAI() {
+      // Recolectar huecos
+      var slots = [];
+      grid.forEach(function (row, pi) {
+        row.forEach(function (c, di) {
+          if (c.state === '') slots.push({ pi: pi, di: di });
+        });
+      });
+      if (slots.length === 0) return;
+
+      // Algoritmo simple
+      // 1. Para cada día, asegurar al menos 1 persona en M, T y N
+      var dayShifts = days.map(function () { return { M: 0, T: 0, N: 0 }; });
+      grid.forEach(function (row) {
+        row.forEach(function (c, di) {
+          if (c.state === 'M' || c.state === 'T' || c.state === 'N') dayShifts[di][c.state]++;
+        });
+      });
+
+      // 2. Contar noches por persona y noches consecutivas hasta el día d
+      function nightsBefore(pi, di) {
+        var count = 0;
+        for (var k = di - 1; k >= 0; k--) {
+          if (grid[pi][k].state === 'N') count++;
+          else break;
+        }
+        return count;
+      }
+      function totalNights(pi) {
+        return grid[pi].filter(function (c) { return c.state === 'N'; }).length;
+      }
+
+      var assignments = [];
+
+      // Pasada 1: cubrir mínimos por día (M, T, N) en orden
+      ['M', 'T', 'N'].forEach(function (shift) {
+        days.forEach(function (_, di) {
+          if (dayShifts[di][shift] >= 1) return;
+          // buscar persona libre en este día con menor carga del turno
+          var candidates = slots.filter(function (s) { return s.di === di; });
+          if (candidates.length === 0) return;
+          // ordenar candidatos por nights (para N, los que tienen menos N) y restricción consecutivas
+          candidates.sort(function (a, b) {
+            if (shift === 'N') {
+              var na = totalNights(a.pi);
+              var nb = totalNights(b.pi);
+              if (na !== nb) return na - nb;
+            }
+            // preferir personas con pocas asignaciones nuevas
+            var aCount = assignments.filter(function (x) { return x.pi === a.pi; }).length;
+            var bCount = assignments.filter(function (x) { return x.pi === b.pi; }).length;
+            return aCount - bCount;
+          });
+          for (var i = 0; i < candidates.length; i++) {
+            var c = candidates[i];
+            if (shift === 'N' && nightsBefore(c.pi, c.di) >= 2) continue;
+            // asignar
+            assignments.push({ pi: c.pi, di: c.di, shift: shift });
+            grid[c.pi][c.di] = { state: shift, ai: true };
+            dayShifts[c.di][shift]++;
+            // remover de slots
+            var idx = slots.indexOf(c);
+            if (idx >= 0) slots.splice(idx, 1);
+            break;
+          }
+        });
+      });
+
+      // Pasada 2: rellenar huecos restantes con M/T/L respetando equilibrio
+      // Para cada hueco, decidir un turno
+      slots.forEach(function (s) {
+        var pi = s.pi, di = s.di;
+        // contar lo que ya tiene la persona
+        var personRow = grid[pi];
+        var mCount = personRow.filter(function (c) { return c.state === 'M'; }).length;
+        var tCount = personRow.filter(function (c) { return c.state === 'T'; }).length;
+        var nCount = personRow.filter(function (c) { return c.state === 'N'; }).length;
+        var lCount = personRow.filter(function (c) { return c.state === 'L'; }).length;
+
+        var choice;
+        // Si la persona ya tiene 2 noches seguidas justo antes, NO asignar N
+        var consecN = nightsBefore(pi, di);
+        // Si lleva muchas asignaciones M/T/N (≥5), libre
+        var workload = mCount + tCount + nCount;
+        if (workload >= 5 && lCount < 2) {
+          choice = 'L';
+        } else if (consecN >= 2 && grid[pi][di].state === '') {
+          // forzar T o L
+          choice = (mCount + tCount) % 2 === 0 ? 'T' : 'M';
+        } else {
+          // distribuir equitativamente
+          var pool = ['M', 'T'];
+          // Añadir N solo si el día tiene huecos N o equilibrio lo pide
+          if (nCount < 2 && (di + pi) % 3 === 0) pool.push('N');
+          // Mezclar pseudo-aleatorio determinista
+          var seed = (pi * 7 + di * 3) % pool.length;
+          choice = pool[seed];
+          if (choice === 'N' && consecN >= 2) choice = 'M';
+        }
+        assignments.push({ pi: pi, di: di, shift: choice });
+        grid[pi][di] = { state: choice, ai: true };
+      });
+
+      // Renderizar con stagger
+      // Ordenar por columna, luego fila para efecto barrido
+      assignments.sort(function (a, b) {
+        if (a.di !== b.di) return a.di - b.di;
+        return a.pi - b.pi;
+      });
+
+      var step = prefersReduced ? 0 : 60;
+      assignments.forEach(function (a, i) {
+        setTimeout(function () {
+          paintCell(a.pi, a.di, { pop: true });
+          updateMetrics();
+        }, i * step);
+      });
+
+      if (assignments.length > 0) {
+        setTimeout(function () {
+          var t = document.getElementById('sara-title');
+          var s = document.getElementById('sara-subtitle');
+          t.textContent = 'Asignación lista.';
+          s.textContent = assignments.length + ' turnos en ' + (assignments.length * step / 1000).toFixed(1) + 's';
+        }, assignments.length * step + 50);
+      }
+    }
+
+    // ----- Reset -----
+    function resetGrid(animate) {
+      var filled = [];
+      grid.forEach(function (row, pi) {
+        row.forEach(function (c, di) {
+          if (c.state !== '') filled.push({ pi: pi, di: di });
+        });
+      });
+      // Stagger inverso: empezar por última columna
+      filled.sort(function (a, b) {
+        if (a.di !== b.di) return b.di - a.di;
+        return b.pi - a.pi;
+      });
+      var step = (animate && !prefersReduced) ? 30 : 0;
+      filled.forEach(function (f, i) {
+        setTimeout(function () {
+          var el = cellEl(f.pi, f.di);
+          if (el && step > 0) {
+            el.classList.add('is-leaving');
+            setTimeout(function () {
+              grid[f.pi][f.di] = { state: '', ai: false };
+              el.classList.remove('is-leaving');
+              paintCell(f.pi, f.di);
+              updateMetrics();
+            }, 160);
+          } else {
+            grid[f.pi][f.di] = { state: '', ai: false };
+            paintCell(f.pi, f.di);
+            updateMetrics();
+          }
+        }, i * step);
+      });
+      if (filled.length === 0) updateMetrics();
+    }
+
+    // ----- Modo ejemplo / libre -----
+    var modeExample = false;
+    function toggleMode() {
+      modeExample = !modeExample;
+      var btn = document.getElementById('btn-mode');
+      btn.setAttribute('aria-pressed', String(modeExample));
+      btn.textContent = modeExample ? 'Modo libre' : 'Modo ejemplo';
+      if (modeExample) {
+        applyExample();
+      } else {
+        emptyGrid();
+      }
+      paintAll();
+      updateMetrics();
+    }
+
+    // ----- Init -----
+    emptyGrid();
+    buildGrid();
+    paintAll();
+    updateMetrics();
+
+    document.getElementById('btn-ai').addEventListener('click', fillWithAI);
+    document.getElementById('btn-reset').addEventListener('click', function () { resetGrid(true); });
+    document.getElementById('btn-mode').addEventListener('click', toggleMode);
+    document.getElementById('btn-publish').addEventListener('click', function () {
+      var btn = this;
+      var orig = btn.textContent;
+      btn.textContent = 'Publicado (demo)';
+      btn.disabled = true;
+      setTimeout(function () { btn.textContent = orig; btn.disabled = false; }, 1800);
+    });
+  })();
+  </script>
+</body>
+</html>

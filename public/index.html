@@ -4053,14 +4053,16 @@ section.centered p,
       <div class="hero-trial-badge" data-i18n="hero_trial">Garantia de devolucion de 30 dias</div>
     </div>
     <div class="hero-visual">
-      <!-- Mockup SVG del producto SARA — basado en la app real shiftia.es.
-           Reemplaza el cuadrante CSS legacy por una ilustración pulida que
-           se mantiene crisp en cualquier resolución y acelera el render. -->
+      <!-- Mockup SVG del producto SARA. Se renderiza primero como <img> (rápido,
+           cacheable) y un script ligero al final del body lo intercambia por el
+           SVG inline para activar las animaciones de stagger sobre los slots. -->
       <img src="/product-mockup.svg"
            alt="Vista del cuadrante semanal de Shiftia mostrando turnos asignados automáticamente por la IA SARA"
            class="hero-product-svg"
+           id="heroProductMockup"
            width="1280" height="880"
-           loading="eager" decoding="async">
+           loading="eager" decoding="async"
+           data-animate="true">
     </div>
   </div>
   <div class="scroll-hint">
@@ -6649,6 +6651,131 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   }
 
   window.dsToast = dsToast;
+})();
+</script>
+
+<!-- Hero mockup animado: stagger de slots + AI badge + métricas que cuentan -->
+<style>
+/* Cuando el SVG es inline, sus elementos pueden recibir clases CSS */
+.hero-product-svg.is-inline { display: block; }
+.hero-product-svg.is-inline g[data-row] g[data-slot] rect,
+.hero-product-svg.is-inline g[data-row] g[data-slot] text {
+  opacity: 0;
+  transform-origin: 50% 50%;
+}
+.hero-product-svg.is-inline.is-animating g[data-row] g[data-slot] rect,
+.hero-product-svg.is-inline.is-animating g[data-row] g[data-slot] text {
+  animation: heroSlotIn 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes heroSlotIn {
+  0%   { opacity: 0; transform: translateY(4px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-product-svg.is-inline g[data-row] g[data-slot] rect,
+  .hero-product-svg.is-inline g[data-row] g[data-slot] text {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+}
+/* AI badge sólo aparece tras el stagger (delay grande) */
+.hero-product-svg.is-inline .ai-badge { opacity: 0; }
+.hero-product-svg.is-inline.is-animating .ai-badge {
+  animation: aiBadgeIn 420ms cubic-bezier(0.16, 1, 0.3, 1) 1800ms forwards;
+}
+@keyframes aiBadgeIn {
+  0%   { opacity: 0; transform: scale(0.4); }
+  60%  { transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+</style>
+
+<!-- Hero mockup animator: convierte el <img> en SVG inline y reparte stagger -->
+<script>
+(function () {
+  if (typeof window === 'undefined') return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const img = document.getElementById('heroProductMockup');
+  if (!img || !img.dataset.animate) return;
+
+  // Fetch the SVG file and inline it for per-element animation control.
+  fetch(img.getAttribute('src'))
+    .then(r => r.text())
+    .then(svgText => {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = svgText.trim();
+      const svg = wrapper.querySelector('svg');
+      if (!svg) return;
+
+      // Mantener atributos críticos del original
+      svg.setAttribute('class', img.className + ' is-inline');
+      svg.setAttribute('width', img.getAttribute('width') || '1280');
+      svg.setAttribute('height', img.getAttribute('height') || '880');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', img.getAttribute('alt') || '');
+      svg.style.maxWidth = '100%';
+      svg.style.height = 'auto';
+
+      img.parentNode.replaceChild(svg, img);
+
+      // Marcar las filas (cada <g transform="translate(0, X)"> dentro del cuadrante)
+      // y sus slots (cada <rect> con clase de fill detectable). El SVG legacy no
+      // tiene atributos data-row/data-slot, así que los detectamos heurísticamente.
+      const grid = svg.querySelector('g[transform*="translate(80, 300)"]');
+      if (!grid) {
+        // Fallback: si no encontramos la estructura, mostramos todo y salimos.
+        svg.classList.add('is-animating');
+        return;
+      }
+      const rows = Array.from(grid.querySelectorAll('g[transform^="translate(0, "]'));
+      let totalDelay = 0;
+      const STEP = 60; // ms entre slots
+      rows.forEach((row, rowIdx) => {
+        row.setAttribute('data-row', rowIdx);
+        const slotsContainer = row.querySelector('g[font-family*="Geist Mono"]');
+        if (!slotsContainer) return;
+        // Pares (rect, text) representan cada slot. Los agrupamos en data-slot.
+        const children = Array.from(slotsContainer.children);
+        for (let i = 0; i < children.length; i += 2) {
+          const rect = children[i];
+          const text = children[i + 1];
+          if (!rect || !text) continue;
+          const slotG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          slotG.setAttribute('data-slot', String(i / 2));
+          slotsContainer.insertBefore(slotG, rect);
+          slotG.appendChild(rect);
+          slotG.appendChild(text);
+          slotG.style.animationDelay = totalDelay + 'ms';
+          totalDelay += STEP;
+        }
+      });
+
+      // Marcar el AI badge (circle con fill teal accent) — está en la fila 3 (Ana G.)
+      const aiCircle = svg.querySelector('circle[cx="560"][cy="10"]');
+      const aiText = svg.querySelector('text[x="560"][y="13.5"]');
+      if (aiCircle) aiCircle.classList.add('ai-badge');
+      if (aiText)   aiText.classList.add('ai-badge');
+
+      // Activar animación tras un frame para que el navegador registre los inline-styles
+      if (reduceMotion) {
+        svg.classList.add('is-animating'); // las reglas reduced-motion ponen opacity 1
+      } else {
+        // IntersectionObserver: solo cuando el hero entra al viewport, activamos
+        const startAnim = () => svg.classList.add('is-animating');
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+              if (e.isIntersecting) { startAnim(); io.disconnect(); }
+            });
+          }, { threshold: 0.2 });
+          io.observe(svg);
+        } else {
+          requestAnimationFrame(startAnim);
+        }
+      }
+    })
+    .catch(() => { /* si el fetch falla, queda el <img> tal cual */ });
 })();
 </script>
 

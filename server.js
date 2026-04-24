@@ -2118,6 +2118,7 @@ app.get('/docs', (req, res) => {
 app.get('/privacidad', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacidad.html')));
 app.get('/terminos',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'terminos.html')));
 app.get('/cookies',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));
+app.get('/demo', (req, res) => res.sendFile(path.join(__dirname, 'public', 'demo.html')));
 app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'public', 'forgot-password.html')));
 
 // Health check público — minimalista, no expone diagnóstico interno
