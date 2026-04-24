@@ -2230,7 +2230,9 @@
 
         function downloadInvoice(invoiceId) {
             if (!window.jspdf) {
-                alert('Cargando librería de PDF… Inténtalo de nuevo en unos segundos.');
+                // Toast en lugar de alert nativo
+                if (window.dsToast) dsToast('Inténtalo de nuevo en unos segundos.', { variant: 'info', title: 'Cargando librería de PDF' });
+                else alert('Cargando librería de PDF… Inténtalo de nuevo en unos segundos.');
                 const s = document.createElement('script');
                 s.src = 'https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js';
                 document.head.appendChild(s);
@@ -2695,11 +2697,23 @@
             setTimeout(() => document.getElementById('supportSubject').focus(), 500);
         }
 
+        // Refactor: delega en window.dsToast (toast premium global). Mantiene
+        // la firma original para no romper el resto del dashboard. El primer
+        // argumento (containerId) se usa solo como pista del contexto y para
+        // poder vaciar el contenedor inline legacy si existe.
         function showAlert(containerId, type, message) {
+            const variantMap = { success: 'success', error: 'error', info: 'info' };
+            const variant = variantMap[type] || 'info';
+            // Limpia la caja inline legacy (si la hay) por compatibilidad con DOM existente.
             const el = document.getElementById(containerId);
-            if (!el) return;
-            el.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => { el.innerHTML = ''; }, 6000);
+            if (el) el.innerHTML = '';
+            if (window.dsToast) {
+                window.dsToast(message, { variant });
+            } else if (el) {
+                // Fallback si dsToast no está disponible aún
+                el.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                setTimeout(() => { el.innerHTML = ''; }, 6000);
+            }
         }
 
         async function handleSupportSubmit(e) {
@@ -2911,6 +2925,260 @@
                 </div>
             `).join('');
         }
+
+        // ===================================================================
+        // ds-toast helper (window.dsToast)
+        // -------------------------------------------------------------------
+        // IIFE pequeña para mostrar toasts apilados bottom-right.
+        // API: dsToast(message, { variant='success'|'error'|'info', title?, duration? })
+        // Auto-dismiss: 4s (success/info), 6s (error). Override con `duration` (ms).
+        // ===================================================================
+        (function () {
+            if (window.dsToast) return; // idempotente
+            const ICONS = {
+                success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',
+                error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+                info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+            };
+            const CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+            function getContainer() {
+                let c = document.querySelector('.ds-toast-container');
+                if (!c) {
+                    c = document.createElement('div');
+                    c.className = 'ds-toast-container';
+                    c.setAttribute('aria-live', 'polite');
+                    c.setAttribute('aria-atomic', 'false');
+                    document.body.appendChild(c);
+                }
+                return c;
+            }
+
+            function dismiss(toast) {
+                if (!toast || toast.classList.contains('is-leaving')) return;
+                toast.classList.add('is-leaving');
+                const ms = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220;
+                setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, ms);
+            }
+
+            function escapeHtmlLocal(s) {
+                return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]);
+            }
+
+            function dsToast(message, opts) {
+                opts = opts || {};
+                let variant = opts.variant || 'success';
+                if (!ICONS[variant]) variant = 'info';
+                const title = opts.title || '';
+                const duration = typeof opts.duration === 'number' ? opts.duration : (variant === 'error' ? 6000 : 4000);
+
+                const container = getContainer();
+                const toast = document.createElement('div');
+                toast.className = 'ds-toast ds-toast--' + variant;
+                toast.setAttribute('role', variant === 'error' ? 'alert' : 'status');
+
+                const bodyClass = title ? 'ds-toast__body' : 'ds-toast__body ds-toast__body--single';
+                const titleHtml = title ? `<div class="ds-toast__title">${escapeHtmlLocal(title)}</div>` : '';
+                toast.innerHTML =
+                    `<span class="ds-toast__icon">${ICONS[variant]}</span>` +
+                    `<div class="${bodyClass}">${titleHtml}<div class="ds-toast__msg">${escapeHtmlLocal(message || '')}</div></div>` +
+                    `<button type="button" class="ds-toast__close" aria-label="Cerrar notificación">${CLOSE_ICON}</button>`;
+
+                toast.querySelector('.ds-toast__close').addEventListener('click', () => dismiss(toast));
+                container.appendChild(toast);
+                if (duration > 0) setTimeout(() => dismiss(toast), duration);
+                return toast;
+            }
+
+            window.dsToast = dsToast;
+        })();
+
+        // ===================================================================
+        // Onboarding tour (4 pasos) — primera vez que el usuario entra
+        // -------------------------------------------------------------------
+        // Persistencia: localStorage 'shiftia-onboarding-seen' = '1'
+        // Componentes: overlay + spotlight (cutout) + card flotante.
+        // Si el usuario ya lo ha visto, no se muestra. Botón "Saltar tour"
+        // y el último "Entendido" persisten el flag.
+        // ===================================================================
+        (function () {
+            const SEEN_KEY = 'shiftia-onboarding-seen';
+            // Si ya se ha visto, no hacer nada.
+            try { if (localStorage.getItem(SEEN_KEY)) return; } catch (e) { return; }
+
+            // Definición de los 4 pasos. Cada uno apunta a un selector del DOM.
+            const STEPS = [
+                {
+                    target: '.aside-card-product',
+                    title: 'Tu acceso a Shiftia',
+                    desc: 'Desde aquí abrirás tu producto. La luz roja indica que aún no está activado para ti; pasará a verde cuando lo entreguemos.'
+                },
+                {
+                    // Suscripción: primera card del main column (col 1)
+                    target: '.dash-grid .dash-col:first-child .card:first-child',
+                    title: 'Tu suscripción',
+                    desc: 'Aquí ves tu plan, próxima factura y trabajadores. Puedes cambiar de plan cuando quieras.'
+                },
+                {
+                    target: '#supportCardBtn',
+                    title: 'Soporte 24h',
+                    desc: 'Cualquier duda, abre un ticket o escríbenos directamente. Respondemos en menos de 24h.'
+                },
+                {
+                    target: '#userMenuTrigger',
+                    title: 'Tu cuenta',
+                    desc: 'Aquí gestionas tu cuenta, contraseña y cierre de sesión.'
+                }
+            ];
+
+            let current = 0;
+            let overlay, spotlight, card;
+
+            function persistSeen() {
+                try { localStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+            }
+
+            function buildDom() {
+                overlay   = document.createElement('div');  overlay.className = 'ds-tour-overlay';
+                spotlight = document.createElement('div');  spotlight.className = 'ds-tour-spotlight';
+                card      = document.createElement('div');  card.className = 'ds-tour-card';
+                document.body.appendChild(overlay);
+                document.body.appendChild(spotlight);
+                document.body.appendChild(card);
+                // Close on overlay click → equivale a "Saltar"
+                overlay.addEventListener('click', endTour);
+                // Esc para cerrar
+                document.addEventListener('keydown', onKey);
+            }
+
+            function onKey(e) {
+                if (e.key === 'Escape') endTour();
+                else if (e.key === 'ArrowRight') next();
+                else if (e.key === 'ArrowLeft') prev();
+            }
+
+            // Posiciona spotlight + card alrededor del target. Detecta bordes de viewport.
+            function positionStep(step) {
+                const target = document.querySelector(step.target);
+                const vw = window.innerWidth, vh = window.innerHeight;
+                let rect;
+                if (target) {
+                    // Scroll suave al target si está fuera del viewport
+                    const r = target.getBoundingClientRect();
+                    if (r.top < 60 || r.bottom > vh - 60) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Reintenta tras el scroll
+                        setTimeout(() => positionStep(step), 320);
+                        return;
+                    }
+                    rect = target.getBoundingClientRect();
+                } else {
+                    // Si no encontramos el target, centra el spotlight como fallback
+                    rect = { left: vw / 2 - 60, top: vh / 2 - 60, width: 120, height: 120, right: vw/2+60, bottom: vh/2+60 };
+                }
+
+                // Padding alrededor del target para que el spotlight respire
+                const pad = 8;
+                const sLeft   = Math.max(8, rect.left - pad);
+                const sTop    = Math.max(8, rect.top - pad);
+                const sWidth  = rect.width + pad * 2;
+                const sHeight = rect.height + pad * 2;
+                spotlight.style.left   = sLeft + 'px';
+                spotlight.style.top    = sTop + 'px';
+                spotlight.style.width  = sWidth + 'px';
+                spotlight.style.height = sHeight + 'px';
+
+                // Posiciona la card: por defecto debajo, fallback arriba o lateral según espacio.
+                const CARD_W = 320, CARD_H = card.offsetHeight || 200, GAP = 14;
+                let cLeft, cTop;
+                const spaceBelow = vh - (sTop + sHeight);
+                const spaceAbove = sTop;
+                if (spaceBelow > CARD_H + GAP + 16) {
+                    cTop  = sTop + sHeight + GAP;
+                    cLeft = Math.min(Math.max(8, sLeft), vw - CARD_W - 8);
+                } else if (spaceAbove > CARD_H + GAP + 16) {
+                    cTop  = sTop - GAP - CARD_H;
+                    cLeft = Math.min(Math.max(8, sLeft), vw - CARD_W - 8);
+                } else {
+                    // Lado derecho/izquierdo
+                    if (vw - (sLeft + sWidth) > CARD_W + GAP + 16) {
+                        cLeft = sLeft + sWidth + GAP;
+                        cTop  = Math.min(Math.max(8, sTop), vh - CARD_H - 8);
+                    } else {
+                        cLeft = Math.max(8, sLeft - CARD_W - GAP);
+                        cTop  = Math.min(Math.max(8, sTop), vh - CARD_H - 8);
+                    }
+                }
+                card.style.left = cLeft + 'px';
+                card.style.top  = cTop + 'px';
+            }
+
+            // Renderiza el contenido de la card según el paso actual
+            function renderCard() {
+                const step = STEPS[current];
+                const isLast = current === STEPS.length - 1;
+                const dotsHtml = STEPS.map((_, i) =>
+                    `<span class="ds-tour-card__dot${i === current ? ' is-active' : ''}"></span>`
+                ).join('');
+                card.innerHTML = `
+                    <button type="button" class="ds-tour-card__skip" id="dsTourSkip">Saltar tour</button>
+                    <p class="ds-tour-card__eyebrow">Paso ${current + 1} de ${STEPS.length}</p>
+                    <h3 class="ds-tour-card__title">${step.title}</h3>
+                    <p class="ds-tour-card__desc">${step.desc}</p>
+                    <div class="ds-tour-card__actions">
+                        <span class="ds-tour-card__dots">${dotsHtml}</span>
+                        <span class="ds-tour-card__btns">
+                            <button type="button" class="ds-tour-btn ds-tour-btn--ghost" id="dsTourPrev"${current === 0 ? ' disabled' : ''}>Anterior</button>
+                            <button type="button" class="ds-tour-btn ds-tour-btn--primary" id="dsTourNext">${isLast ? 'Entendido' : 'Siguiente'}</button>
+                        </span>
+                    </div>
+                `;
+                card.querySelector('#dsTourSkip').addEventListener('click', endTour);
+                card.querySelector('#dsTourPrev').addEventListener('click', prev);
+                card.querySelector('#dsTourNext').addEventListener('click', next);
+                // Anima entrada de la card
+                requestAnimationFrame(() => card.classList.add('is-visible'));
+                // Posiciona spotlight + card tras render (espera a layout)
+                requestAnimationFrame(() => positionStep(step));
+            }
+
+            function next() {
+                if (current >= STEPS.length - 1) { endTour(); return; }
+                current++;
+                renderCard();
+            }
+            function prev() {
+                if (current <= 0) return;
+                current--;
+                renderCard();
+            }
+
+            function endTour() {
+                persistSeen();
+                document.removeEventListener('keydown', onKey);
+                window.removeEventListener('resize', onResize);
+                if (overlay) overlay.classList.remove('is-active');
+                // Fade out y remove
+                setTimeout(() => {
+                    [overlay, spotlight, card].forEach(el => { if (el && el.parentNode) el.parentNode.removeChild(el); });
+                }, 250);
+            }
+
+            function onResize() {
+                if (!card) return;
+                positionStep(STEPS[current]);
+            }
+
+            // Espera 800ms para que el dashboard renderice (cards reveal, etc.)
+            setTimeout(() => {
+                // Re-check por si abrió tour en otra pestaña
+                try { if (localStorage.getItem(SEEN_KEY)) return; } catch (e) { return; }
+                buildDom();
+                renderCard();
+                requestAnimationFrame(() => overlay.classList.add('is-active'));
+                window.addEventListener('resize', onResize);
+            }, 800);
+        })();
     </script>
 </body>
 </html>

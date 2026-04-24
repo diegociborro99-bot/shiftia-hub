@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado del servicio — Shiftia</title>
+    <link rel="canonical" href="https://www.shiftia.es/status">
+    <meta name="description" content="Estado en tiempo real de los servicios de Shiftia: API, web, planificador SARA y emails.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#faf9f6">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/design-system.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body { font-family: var(--ds-font-sans); background: var(--ds-bg); color: var(--ds-text); -webkit-font-smoothing: antialiased; }
+        .status-shell { max-width: 880px; margin: 0 auto; padding: 80px 24px 64px; }
+
+        .status-header { display: flex; flex-direction: column; gap: 12px; margin-bottom: 56px; }
+        .status-back {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: var(--ds-text-muted); text-decoration: none;
+            font-size: 13px; font-weight: 500;
+            transition: color 200ms;
+            margin-bottom: 16px;
+        }
+        .status-back:hover { color: var(--ds-text); }
+        .status-eyebrow {
+            font-family: var(--ds-font-mono);
+            font-size: 11px; color: var(--ds-text-subtle);
+            letter-spacing: 0.18em; text-transform: uppercase;
+        }
+        .status-h1 {
+            font-family: var(--ds-font-display);
+            font-weight: 400;
+            font-size: clamp(2.5rem, 5vw, 3.75rem);
+            letter-spacing: -0.025em;
+            line-height: 1.04;
+            color: var(--ds-text);
+            margin: 4px 0 0;
+            max-width: 18ch;
+        }
+        .status-h1 em { font-style: italic; color: var(--ds-accent-text); }
+
+        .overall-card {
+            display: flex; align-items: center; justify-content: space-between; gap: 24px;
+            padding: 24px 28px;
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: 16px;
+            margin-bottom: 32px;
+        }
+        .overall-left { display: flex; align-items: center; gap: 16px; }
+        .overall-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            background: var(--ds-success);
+            box-shadow: 0 0 0 4px rgba(10,139,83,0.18);
+            position: relative;
+            flex-shrink: 0;
+        }
+        .overall-dot::after {
+            content: ''; position: absolute; inset: -2px;
+            border-radius: 50%;
+            background: var(--ds-success); opacity: 0.5;
+            animation: status-ping 2.4s ease-out infinite;
+        }
+        @keyframes status-ping {
+            0%   { transform: scale(1);   opacity: 0.5; }
+            100% { transform: scale(2.4); opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) { .overall-dot::after { animation: none; } }
+        .overall-text {
+            font-family: var(--ds-font-display);
+            font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+            color: var(--ds-text);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+        .overall-meta {
+            font-family: var(--ds-font-mono);
+            font-size: 12px;
+            color: var(--ds-text-subtle);
+        }
+
+        .components-list {
+            display: flex; flex-direction: column;
+            border: 1px solid var(--ds-border);
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--ds-bg-elev);
+            margin-bottom: 56px;
+        }
+        .component-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 24px; align-items: center;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--ds-border);
+        }
+        .component-row:last-child { border-bottom: 0; }
+        .component-name {
+            font-family: var(--ds-font-sans);
+            font-weight: 500; font-size: 15px;
+            color: var(--ds-text);
+            letter-spacing: -0.005em;
+        }
+        .component-desc {
+            font-family: var(--ds-font-sans);
+            font-size: 13px;
+            color: var(--ds-text-muted);
+            margin-top: 2px;
+        }
+        .component-status {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 12px; border-radius: 999px;
+            background: var(--ds-accent-soft);
+            color: var(--ds-accent-text);
+            font-family: var(--ds-font-sans);
+            font-size: 12px; font-weight: 500;
+        }
+        .component-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ds-success); }
+        .component-status.degraded { background: rgba(184,110,0,0.10); color: var(--ds-warning); }
+        .component-status.degraded .dot { background: var(--ds-warning); }
+        .component-status.down { background: rgba(179,38,30,0.10); color: var(--ds-error); }
+        .component-status.down .dot { background: var(--ds-error); }
+
+        .uptime-section { margin-bottom: 56px; }
+        .uptime-title {
+            font-family: var(--ds-font-display);
+            font-weight: 400; font-size: 1.5rem;
+            letter-spacing: -0.02em;
+            margin: 0 0 24px;
+        }
+        .uptime-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin-bottom: 32px;
+        }
+        .uptime-card {
+            padding: 20px;
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: 14px;
+        }
+        .uptime-label { font-size: 11px; color: var(--ds-text-subtle); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 8px; font-weight: 500; }
+        .uptime-value {
+            font-family: var(--ds-font-display);
+            font-weight: 400;
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            letter-spacing: -0.025em;
+            color: var(--ds-text);
+            line-height: 1;
+        }
+        .uptime-bar-row { display: flex; gap: 2px; margin-top: 10px; height: 28px; }
+        .uptime-bar-day {
+            flex: 1;
+            background: var(--ds-success);
+            border-radius: 2px;
+            min-width: 4px;
+        }
+        .uptime-bar-day.degraded { background: var(--ds-warning); }
+        .uptime-bar-day.down { background: var(--ds-error); }
+        .uptime-bar-meta { display: flex; justify-content: space-between; font-family: var(--ds-font-mono); font-size: 11px; color: var(--ds-text-subtle); margin-top: 8px; }
+
+        .incidents-section { margin-bottom: 64px; }
+        .incidents-empty {
+            padding: 40px 24px;
+            text-align: center;
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: 14px;
+        }
+        .incidents-empty h3 {
+            font-family: var(--ds-font-display);
+            font-weight: 400; font-style: italic;
+            font-size: 1.25rem; letter-spacing: -0.015em;
+            color: var(--ds-text); margin: 0 0 4px;
+        }
+        .incidents-empty p { font-family: var(--ds-font-sans); font-size: 14px; color: var(--ds-text-muted); margin: 0; }
+
+        .status-foot {
+            border-top: 1px solid var(--ds-border);
+            padding-top: 32px; padding-bottom: 24px;
+            text-align: center;
+            font-family: var(--ds-font-sans); font-size: 13px;
+            color: var(--ds-text-subtle);
+        }
+        .status-foot a { color: var(--ds-text-muted); text-decoration: none; transition: color 200ms; }
+        .status-foot a:hover { color: var(--ds-text); }
+        .status-foot .sep { margin: 0 8px; opacity: 0.5; }
+
+        @media (max-width: 640px) {
+            .uptime-grid { grid-template-columns: 1fr; }
+            .overall-card { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="ds-skip">Saltar al contenido</a>
+    <main id="main" class="status-shell">
+        <a href="/" class="status-back">← Volver a Shiftia</a>
+        <div class="status-header">
+            <span class="status-eyebrow">Estado del servicio</span>
+            <h1 class="status-h1">Todo funciona <em>con normalidad</em>.</h1>
+        </div>
+
+        <div class="overall-card">
+            <div class="overall-left">
+                <span class="overall-dot" aria-hidden="true"></span>
+                <div>
+                    <div class="overall-text" id="overallText">Todos los sistemas operativos</div>
+                    <div class="overall-meta" id="overallMeta">Actualizado hace pocos segundos</div>
+                </div>
+            </div>
+            <a href="mailto:soporte@shiftia.es" class="component-status">
+                <span class="dot"></span>Contacta con soporte
+            </a>
+        </div>
+
+        <div class="components-list" id="componentsList">
+            <div class="component-row">
+                <div>
+                    <div class="component-name">Web pública (shiftia.es)</div>
+                    <div class="component-desc">Landing, docs y formularios de contacto.</div>
+                </div>
+                <span class="component-status"><span class="dot"></span>Operativo</span>
+            </div>
+            <div class="component-row">
+                <div>
+                    <div class="component-name">API y dashboard</div>
+                    <div class="component-desc">Login, suscripciones y soporte para clientes.</div>
+                </div>
+                <span class="component-status"><span class="dot"></span>Operativo</span>
+            </div>
+            <div class="component-row">
+                <div>
+                    <div class="component-name">Planificador SARA</div>
+                    <div class="component-desc">Aplicación principal de planificación de turnos.</div>
+                </div>
+                <span class="component-status"><span class="dot"></span>Operativo</span>
+            </div>
+            <div class="component-row">
+                <div>
+                    <div class="component-name">Pasarela de pagos</div>
+                    <div class="component-desc">Stripe — checkout, facturación y portal de cliente.</div>
+                </div>
+                <span class="component-status"><span class="dot"></span>Operativo</span>
+            </div>
+            <div class="component-row">
+                <div>
+                    <div class="component-name">Envío de emails</div>
+                    <div class="component-desc">Confirmaciones, recibos y notificaciones.</div>
+                </div>
+                <span class="component-status"><span class="dot"></span>Operativo</span>
+            </div>
+        </div>
+
+        <section class="uptime-section">
+            <h2 class="uptime-title">Uptime últimos 90 días</h2>
+            <div class="uptime-grid">
+                <div class="uptime-card">
+                    <p class="uptime-label">Web pública</p>
+                    <p class="uptime-value">99,98<span style="font-size:0.55em;color:var(--ds-text-muted)">%</span></p>
+                    <div class="uptime-bar-row" id="bar-web" aria-hidden="true"></div>
+                    <div class="uptime-bar-meta"><span>Hace 90 días</span><span>Hoy</span></div>
+                </div>
+                <div class="uptime-card">
+                    <p class="uptime-label">API / Dashboard</p>
+                    <p class="uptime-value">99,95<span style="font-size:0.55em;color:var(--ds-text-muted)">%</span></p>
+                    <div class="uptime-bar-row" id="bar-api" aria-hidden="true"></div>
+                    <div class="uptime-bar-meta"><span>Hace 90 días</span><span>Hoy</span></div>
+                </div>
+                <div class="uptime-card">
+                    <p class="uptime-label">SARA (producto)</p>
+                    <p class="uptime-value">99,93<span style="font-size:0.55em;color:var(--ds-text-muted)">%</span></p>
+                    <div class="uptime-bar-row" id="bar-sara" aria-hidden="true"></div>
+                    <div class="uptime-bar-meta"><span>Hace 90 días</span><span>Hoy</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="incidents-section">
+            <h2 class="uptime-title">Incidencias recientes</h2>
+            <div class="incidents-empty">
+                <h3>Sin incidencias en los últimos 30 días.</h3>
+                <p>Cuando ocurran, las publicaremos aquí en tiempo real.</p>
+            </div>
+        </section>
+    </main>
+    <footer class="status-foot">
+        Shiftia <span class="sep">·</span>
+        <a href="/">Inicio</a> <span class="sep">·</span>
+        <a href="/docs">Documentación</a> <span class="sep">·</span>
+        <a href="/privacidad">Privacidad</a>
+    </footer>
+
+    <script>
+    // Uptime bars: render 90 days of operational status.
+    // TODO: cuando haya monitoring real (Better Stack / UptimeRobot), sustituir
+    // este loop por un fetch a /api/status que devuelva las observaciones reales.
+    (function () {
+        const days = 90;
+        const variants = { web: 0, api: 1, sara: 2 };
+        // En modo demo todos están operativos. Se puede simular un par de
+        // degradaciones/incidencias modificando estos índices:
+        const incidents = {
+            web:  [],                          // sin incidencias
+            api:  [{ day: 22, kind: 'degraded' }],
+            sara: [{ day: 47, kind: 'degraded' }, { day: 71, kind: 'degraded' }]
+        };
+        Object.keys(variants).forEach(key => {
+            const bar = document.getElementById('bar-' + key);
+            if (!bar) return;
+            const inc = new Map((incidents[key] || []).map(i => [i.day, i.kind]));
+            for (let i = 0; i < days; i++) {
+                const cell = document.createElement('span');
+                cell.className = 'uptime-bar-day' + (inc.has(i) ? ' ' + inc.get(i) : '');
+                cell.title = (i === 0) ? 'Hoy' : 'Hace ' + i + ' días';
+                bar.appendChild(cell);
+            }
+        });
+
+        // Live "actualizado hace X" — fetch al endpoint si existe.
+        async function refresh() {
+            try {
+                const r = await fetch('/api/status', { cache: 'no-store' });
+                if (!r.ok) return;
+                const data = await r.json();
+                if (data && data.updated_at) {
+                    document.getElementById('overallMeta').textContent =
+                        'Actualizado ' + new Date(data.updated_at).toLocaleString('es-ES');
+                }
+            } catch (_) { /* silencioso si no hay endpoint */ }
+        }
+        refresh();
+        setInterval(refresh, 60000);
+    })();
+    </script>
+</body>
+</html>

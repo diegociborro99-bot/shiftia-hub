@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algo ha fallado — Shiftia</title>
+    <link rel="canonical" href="https://www.shiftia.es/">
+    <meta name="description" content="Algo ha fallado en Shiftia. Estamos trabajando en ello.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#faf9f6">
+    <meta name="robots" content="noindex,follow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/design-system.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            font-family: var(--ds-font-sans);
+            background: var(--ds-bg);
+            color: var(--ds-text);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+        .err-shell { flex: 1; display: flex; align-items: center; justify-content: center; padding: 64px 24px; }
+        .err-card { max-width: 560px; text-align: center; }
+        .err-eyebrow {
+            font-family: var(--ds-font-mono);
+            font-size: 11px; color: var(--ds-text-subtle);
+            letter-spacing: 0.18em; text-transform: uppercase;
+            margin: 0 0 24px;
+        }
+        .err-code {
+            font-family: var(--ds-font-display);
+            font-weight: 400;
+            font-size: clamp(7rem, 22vw, 11rem);
+            letter-spacing: -0.05em;
+            line-height: 0.85;
+            color: var(--ds-text);
+            margin: 0;
+        }
+        .err-code em { font-style: italic; color: var(--ds-error); }
+        .err-title {
+            font-family: var(--ds-font-display);
+            font-weight: 400;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin: 24px 0 12px;
+        }
+        .err-sub {
+            font-family: var(--ds-font-sans);
+            font-size: 16px; line-height: 1.6;
+            color: var(--ds-text-muted);
+            max-width: 40ch; margin: 0 auto 32px;
+        }
+        .err-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .err-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 14px 24px; min-height: 48px; border-radius: 10px;
+            font-family: var(--ds-font-sans); font-size: 14px; font-weight: 500;
+            letter-spacing: -0.005em; text-decoration: none;
+            transition: transform 200ms var(--ds-ease), box-shadow 200ms var(--ds-ease), background 200ms;
+        }
+        .err-btn-primary { background: var(--ds-bg-inverse); color: var(--ds-bg); border: 1px solid var(--ds-bg-inverse); }
+        .err-btn-primary:hover { transform: translateY(-1px); box-shadow: var(--ds-shadow-md); }
+        .err-btn-ghost { background: transparent; color: var(--ds-text); border: 1px solid var(--ds-border-strong); }
+        .err-btn-ghost:hover { background: var(--ds-bg-subtle); border-color: var(--ds-text); }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 999px;
+            background: var(--ds-bg-elev); border: 1px solid var(--ds-border);
+            font-family: var(--ds-font-sans); font-size: 12px; color: var(--ds-text-muted);
+            margin-bottom: 24px;
+        }
+        .status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ds-error); animation: pulse 2s ease-out infinite; }
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(179,38,30,0.5); }
+            100% { box-shadow: 0 0 0 8px rgba(179,38,30,0); }
+        }
+        @media (prefers-reduced-motion: reduce) { .status-pill .dot { animation: none; } }
+
+        .err-foot {
+            padding: 24px; text-align: center;
+            font-family: var(--ds-font-sans); font-size: 13px;
+            color: var(--ds-text-subtle);
+            border-top: 1px solid var(--ds-border);
+        }
+        .err-foot a { color: var(--ds-text-muted); text-decoration: none; transition: color 200ms; }
+        .err-foot a:hover { color: var(--ds-text); }
+        .err-foot .sep { margin: 0 8px; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <a href="#main" class="ds-skip">Saltar al contenido</a>
+    <main id="main" class="err-shell">
+        <div class="err-card">
+            <p class="err-eyebrow">Error 500</p>
+            <span class="status-pill"><span class="dot"></span>Incidencia detectada</span>
+            <h1 class="err-code">5<em>0</em>0</h1>
+            <h2 class="err-title">Algo ha fallado por nuestra parte.</h2>
+            <p class="err-sub">Hemos recibido el aviso y lo estamos investigando. Vuelve a intentarlo en unos minutos. Si la cosa persiste, escríbenos a <a href="mailto:soporte@shiftia.es" style="color:var(--ds-accent-text);">soporte@shiftia.es</a>.</p>
+            <div class="err-actions">
+                <a href="/" class="err-btn err-btn-primary">Volver al inicio</a>
+                <a href="/status" class="err-btn err-btn-ghost">Ver estado del servicio</a>
+            </div>
+        </div>
+    </main>
+    <footer class="err-foot">
+        Shiftia <span class="sep">·</span>
+        <a href="/">Inicio</a> <span class="sep">·</span>
+        <a href="/status">Estado</a> <span class="sep">·</span>
+        <a href="/privacidad">Privacidad</a>
+    </footer>
+</body>
+</html>

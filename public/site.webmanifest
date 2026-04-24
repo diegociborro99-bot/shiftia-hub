@@ -1,1 +1,22 @@
-{"name":"Shiftia","short_name":"Shiftia","description":"Planificación inteligente de turnos","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#2980b9","icons":[{"src":"/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{
+  "name": "Shiftia — Planificación inteligente de turnos",
+  "short_name": "Shiftia",
+  "description": "Planificación inteligente de turnos y planillas con IA. Para hospitales, residencias, fábricas y cualquier negocio con turnos.",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#faf9f6",
+  "theme_color": "#0e0f0f",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "medical"],
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/apple-touch-icon.svg", "sizes": "180x180", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Pedir demo", "short_name": "Demo", "url": "/#contact", "description": "Agenda una llamada con el equipo" },
+    { "name": "Dashboard", "short_name": "Panel", "url": "/dashboard", "description": "Tu cuenta y suscripción" }
+  ]
+}

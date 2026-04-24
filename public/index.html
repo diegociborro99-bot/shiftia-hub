@@ -2072,30 +2072,40 @@ body.dark .dark-toggle .dt-moon { display: none; }
 .price-card { overflow: visible !important; }
 .price-list li[data-tip] {
   cursor: help;
+  position: relative;          /* ANCLA del tooltip — sin esto el .tooltip se estiraba a toda la card */
 }
 .price-list li[data-tip]::after {
   content: 'i'; display: inline-flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: #0f7a6d;             /* accent teal sólido (anti AI-slop) */
   color: white; font-size: 0.6rem; font-weight: 700; font-style: italic;
   margin-left: 8px; cursor: help; vertical-align: middle;
-  transition: all 0.3s; flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s; flex-shrink: 0;
 }
-.price-list li[data-tip]:hover::after { transform: scale(1.15); box-shadow: 0 0 8px rgba(78,205,196,0.4); }
+.price-list li[data-tip]:hover::after { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(15,122,109,0.18); }
 .price-list li[data-tip] .tooltip {
-  position: absolute; bottom: calc(100% + 12px); left: 0; right: 0;
-  background: #1a1d2e; color: #f0f0f5; font-size: 0.78rem; font-weight: 500;
-  padding: 10px 16px; border-radius: 10px; text-align: center;
-  pointer-events: none; white-space: normal; line-height: 1.4;
-  opacity: 0; transform: translateY(6px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  background: #0e0f0f; color: #faf9f6;
+  font-size: 0.78rem; font-weight: 500;
+  padding: 8px 12px; border-radius: 8px;
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;             /* evitar wrap raro y ancho infinito */
+  width: max-content; max-width: 240px;
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.16,1,0.3,1), transform 0.2s cubic-bezier(0.16,1,0.3,1);
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(15,15,15,0.18);
+  font-family: 'Geist', system-ui, sans-serif;
 }
 .price-list li[data-tip] .tooltip::after {
   content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-  border: 6px solid transparent; border-top-color: #1a1d2e;
+  border: 5px solid transparent; border-top-color: #0e0f0f;
 }
-.price-list li[data-tip]:hover .tooltip { opacity: 1; transform: translateY(0); }
+.price-list li[data-tip]:hover .tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ====== 5. COOKIE/GDPR CONSENT BANNER ====== */
 .cookie-banner {
@@ -2629,37 +2639,444 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
    ============================================================================ */
 .trust-logo-band {
   background: var(--ds-bg, #faf9f6);
-  padding: 56px 0 64px;
+  padding: 72px 0 80px;
   border-top: 1px solid var(--ds-border, #e8e6df);
 }
 .tlb-eyebrow {
   text-align: center;
   font-family: var(--ds-font-sans, 'Geist', sans-serif);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ds-text-subtle, #8a8a85);
-  margin-bottom: 28px;
+  margin-bottom: 44px;
 }
 .tlb-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 20px 32px;
-  align-items: center;
-  justify-items: center;
+  gap: 24px 16px;
+  align-items: stretch;
+  justify-items: stretch;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 .tlb-item {
-  color: var(--ds-text-subtle, #8a8a85);
-  opacity: 0.65;
-  filter: grayscale(100%);
-  transition: opacity 280ms cubic-bezier(0.16, 1, 0.3, 1), filter 280ms cubic-bezier(0.16, 1, 0.3, 1), color 280ms;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 12px;
+  border-radius: 14px;
+  background: var(--ds-bg-elev, #fff);
+  border: 1px solid var(--ds-border, #e8e6df);
+  color: var(--ds-text-muted, #4a4a47);
+  text-align: center;
+  transition: transform 280ms cubic-bezier(0.16,1,0.3,1), border-color 280ms, color 280ms, box-shadow 280ms;
+  cursor: default;
+  min-height: 96px;
 }
-.tlb-item svg { height: 28px; width: auto; max-width: 130px; }
-.tlb-item:hover { opacity: 1; filter: grayscale(0%); color: var(--ds-text, #0e0f0f); }
-@media (max-width: 920px) { .tlb-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
-@media (max-width: 540px) { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } .tlb-item svg { height: 24px; } }
+.tlb-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--ds-accent, #0f7a6d);
+  color: var(--ds-text, #0e0f0f);
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 8px 22px rgba(15,122,109,0.08);
+}
+.tlb-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--ds-bg-subtle, #f4f2ec);
+  color: var(--ds-accent-text, #0a5950);
+  transition: background 280ms, color 280ms, transform 280ms cubic-bezier(0.16,1,0.3,1);
+}
+.tlb-item:hover .tlb-icon {
+  background: var(--ds-accent-soft, #e9f5f2);
+  transform: scale(1.06);
+}
+.tlb-icon svg { width: 22px; height: 22px; display: block; }
+.tlb-label {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: inherit;
+  white-space: nowrap;
+}
+@media (max-width: 1100px) { .tlb-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+@media (max-width: 600px)  { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .tlb-item { padding: 16px 8px; min-height: 88px; } .tlb-icon { width: 36px; height: 36px; } .tlb-label { font-size: 13px; } }
+
+/* ============================================================================
+   v3.1 — Flow diagram fluido + proof testimonios luminoso y creíble
+   ============================================================================ */
+
+/* ----- Flow diagram premium ----- */
+.steps-flow {
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr !important;
+  gap: 0 !important;
+  align-items: stretch !important;
+  max-width: 1180px !important;
+  margin: 56px auto 0 !important;
+  padding: 0 24px !important;
+}
+.step-flow {
+  background: var(--ds-bg-elev, #fff) !important;
+  border: 1px solid var(--ds-border, #e8e6df) !important;
+  border-radius: 18px !important;
+  padding: 32px 24px 28px !important;
+  text-align: center !important;
+  transition: transform 350ms cubic-bezier(0.16,1,0.3,1), border-color 350ms, box-shadow 350ms !important;
+  position: relative !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+.step-flow:hover {
+  transform: translateY(-4px) !important;
+  border-color: var(--ds-accent, #0f7a6d) !important;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 14px 32px rgba(15,122,109,0.10) !important;
+}
+.step-flow .step-num {
+  width: 64px !important; height: 64px !important;
+  border-radius: 50% !important;
+  background: var(--ds-bg-inverse, #0e0f0f) !important;
+  color: var(--ds-bg, #faf9f6) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 18px !important;
+  position: relative !important;
+  font-size: 28px !important;
+  border: none !important;
+  box-shadow: 0 6px 18px rgba(15,15,15,0.12) !important;
+}
+.step-flow .step-num svg {
+  width: 28px !important; height: 28px !important;
+  stroke: var(--ds-bg, #faf9f6) !important;
+}
+.step-flow .step-num-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ds-accent, #0f7a6d);
+  opacity: 0;
+  animation: stepRingPulse 3s ease-out infinite;
+}
+.step-flow:nth-child(3) .step-num-ring { animation-delay: 0.5s; }
+.step-flow:nth-child(5) .step-num-ring { animation-delay: 1s; }
+.step-flow:nth-child(7) .step-num-ring { animation-delay: 1.5s; }
+@keyframes stepRingPulse {
+  0%   { transform: scale(0.95); opacity: 0;   }
+  40%  { transform: scale(1.08); opacity: 0.6; }
+  100% { transform: scale(1.4);  opacity: 0;   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .step-flow .step-num-ring { animation: none; opacity: 0; }
+}
+.step-flow h3 {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-weight: 400 !important;
+  font-size: 1.45rem !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 0 10px !important;
+  color: var(--ds-text, #0e0f0f) !important;
+}
+.step-flow p {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  color: var(--ds-text-muted, #4a4a47) !important;
+  text-align: center !important;
+  margin: 0 !important;
+  max-width: 28ch !important;
+}
+
+/* Pipes entre pasos: línea hairline + dot que viaja en loop */
+.flow-pipe {
+  align-self: center;
+  width: 100%;
+  min-width: 60px;
+  height: 4px;
+  position: relative;
+  margin: 0 -2px;
+}
+.flow-pipe-line {
+  position: relative;
+  height: 2px;
+  background: var(--ds-border, #e8e6df);
+  border-radius: 2px;
+  overflow: visible;
+}
+.flow-pipe-fill {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--ds-accent, #0f7a6d) 50%, transparent 100%);
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: flowPipeFill 3.4s cubic-bezier(0.4,0,0.2,1) infinite;
+  border-radius: 2px;
+}
+.flow-pipe:nth-of-type(4) .flow-pipe-fill { animation-delay: 0.4s; }
+.flow-pipe:nth-of-type(6) .flow-pipe-fill { animation-delay: 0.8s; }
+@keyframes flowPipeFill {
+  0%   { background-position: -100% 0; }
+  60%  { background-position: 200% 0; }
+  100% { background-position: 200% 0; }
+}
+.flow-pipe-dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--ds-accent, #0f7a6d);
+  box-shadow: 0 0 0 4px rgba(15,122,109,0.18);
+  transform: translate(-50%, -50%);
+  animation: flowPipeDot 3.4s cubic-bezier(0.4,0,0.2,1) infinite;
+}
+.flow-pipe:nth-of-type(4) .flow-pipe-dot { animation-delay: 0.4s; }
+.flow-pipe:nth-of-type(6) .flow-pipe-dot { animation-delay: 0.8s; }
+@keyframes flowPipeDot {
+  0%   { left: 0;    opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+.flow-pipe-arrow {
+  position: absolute;
+  right: -10px; top: 50%;
+  width: 0; height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--ds-border, #e8e6df);
+  transform: translateY(-50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-pipe-fill, .flow-pipe-dot { animation: none; }
+}
+
+/* Mobile: stack vertical y pipes a vertical */
+@media (max-width: 900px) {
+  .steps-flow {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    max-width: 480px !important;
+  }
+  .flow-pipe {
+    width: 2px !important;
+    height: 36px !important;
+    margin: -2px auto !important;
+    min-width: auto !important;
+  }
+  .flow-pipe-line {
+    width: 2px;
+    height: 100%;
+    background: var(--ds-border, #e8e6df);
+  }
+  .flow-pipe-fill {
+    background: linear-gradient(180deg, transparent 0%, var(--ds-accent, #0f7a6d) 50%, transparent 100%) !important;
+    background-size: 100% 50% !important;
+    background-repeat: no-repeat !important;
+    animation-name: flowPipeFillV !important;
+  }
+  @keyframes flowPipeFillV {
+    0%   { background-position: 0 -100%; }
+    60%  { background-position: 0 200%; }
+    100% { background-position: 0 200%; }
+  }
+  .flow-pipe-dot {
+    left: 50% !important;
+    top: 0 !important;
+    animation-name: flowPipeDotV !important;
+  }
+  @keyframes flowPipeDotV {
+    0%   { top: 0;    opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .flow-pipe-arrow {
+    right: 50% !important; top: auto !important; bottom: -8px !important;
+    transform: translateX(50%) !important;
+    border-top: 8px solid var(--ds-border, #e8e6df) !important;
+    border-left: 5px solid transparent !important;
+    border-right: 5px solid transparent !important;
+    border-bottom: 0 !important;
+  }
+}
+
+/* ============================================================================
+   v3.1 — PROOF testimonios luminoso (era oscuro y genérico)
+   ============================================================================ */
+.proof {
+  background: var(--ds-bg, #faf9f6) !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  padding: 96px 0 !important;
+  position: relative;
+}
+.proof::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(700px circle at 50% 0%, rgba(15,122,109,0.05), transparent 60%);
+  pointer-events: none;
+}
+.proof .container { position: relative; z-index: 1; }
+.proof .section-eyebrow {
+  color: var(--ds-text-subtle, #8a8a85) !important;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.proof .section-eyebrow::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: currentColor; opacity: 0.55;
+}
+.proof .section-h2 {
+  color: var(--ds-text, #0e0f0f) !important;
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-weight: 400 !important;
+}
+.proof .section-p {
+  color: var(--ds-text-muted, #4a4a47) !important;
+}
+
+.proof-carousel { padding-top: 24px; }
+.proof-card {
+  background: var(--ds-bg-elev, #fff) !important;
+  border: 1px solid var(--ds-border, #e8e6df) !important;
+  border-radius: 20px !important;
+  padding: 36px 32px !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 12px 36px rgba(15,15,15,0.05) !important;
+  position: relative;
+  transform-style: flat !important;
+}
+.proof-card::before {
+  content: '\201C';
+  position: absolute;
+  top: 16px; left: 24px;
+  font-family: var(--ds-font-display, 'Instrument Serif', serif);
+  font-size: 96px;
+  line-height: 1;
+  color: var(--ds-accent, #0f7a6d);
+  opacity: 0.18;
+  pointer-events: none;
+}
+.proof-stars {
+  color: #f5b301 !important;
+  font-size: 16px !important;
+  letter-spacing: 2px !important;
+  margin-bottom: 16px !important;
+  position: relative; z-index: 1;
+}
+.proof-text {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-size: clamp(1.35rem, 2.4vw, 1.65rem) !important;
+  line-height: 1.4 !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  letter-spacing: -0.015em !important;
+  margin-bottom: 24px !important;
+  text-align: left !important;
+  font-weight: 400 !important;
+  position: relative; z-index: 1;
+  font-style: italic;
+}
+.proof-author {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid var(--ds-border, #e8e6df) !important;
+}
+.proof-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--ds-accent-soft, #e9f5f2);
+  color: var(--ds-accent-text, #0a5950);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  border: 1px solid rgba(15,122,109,0.18);
+  flex-shrink: 0;
+}
+.proof-name {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-weight: 600 !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  font-size: 15px !important;
+  margin-bottom: 2px !important;
+}
+.proof-role {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 13px !important;
+  color: var(--ds-text-subtle, #8a8a85) !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.proof-role::after {
+  content: 'verificado';
+  font-family: var(--ds-font-mono, 'Geist Mono', monospace);
+  font-size: 10px;
+  color: var(--ds-accent-text, #0a5950);
+  background: var(--ds-accent-soft, #e9f5f2);
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  margin-left: 4px;
+}
+.proof-dots {
+  display: flex; gap: 8px; justify-content: center; margin-top: 28px;
+}
+.proof-dot {
+  width: 32px !important; height: 4px !important;
+  border-radius: 2px !important;
+  border: 0 !important;
+  background: var(--ds-border, #e8e6df) !important;
+  cursor: pointer;
+  transition: background 220ms cubic-bezier(0.4,0,0.2,1), width 220ms;
+  padding: 0 !important;
+  min-height: auto !important;
+}
+.proof-dot.active {
+  background: var(--ds-accent, #0f7a6d) !important;
+  width: 56px !important;
+}
+.proof-arrows { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+.proof-arrow {
+  width: 40px !important; height: 40px !important;
+  border-radius: 50% !important;
+  background: var(--ds-bg-elev, #fff) !important;
+  border: 1px solid var(--ds-border, #e8e6df) !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  font-size: 18px !important;
+  cursor: pointer;
+  transition: background 200ms, border-color 200ms, transform 200ms cubic-bezier(0.16,1,0.3,1);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.proof-arrow:hover { background: var(--ds-bg-subtle, #f4f2ec) !important; border-color: var(--ds-text, #0e0f0f) !important; transform: scale(1.05); }
+
+/* Override del wave-divider que apuntaba a --text1 oscuro: ahora va a bg principal */
+.proof + .wave-divider svg path { fill: var(--ds-bg, #faf9f6) !important; }
 
 /* ============================================================================
    v2.8 — ROI CALCULATOR
@@ -3329,23 +3746,41 @@ section.centered p,
   <div class="container">
     <div class="tlb-eyebrow">Confiado por equipos en sectores con turnos exigentes</div>
     <div class="tlb-grid">
-      <div class="tlb-item" title="Hospitales">
-        <svg viewBox="0 0 64 32" aria-hidden="true"><rect x="6" y="8" width="14" height="20" rx="1.5" fill="currentColor"/><path d="M11 14h4M13 12v4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Hospitales</text></svg>
+      <div class="tlb-item">
+        <span class="tlb-icon" aria-hidden="true">
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="20" height="18" rx="2.5"/><path d="M14 11v8M10 15h8"/><circle cx="9" cy="9.5" r="0.7" fill="currentColor"/></svg>
+        </span>
+        <span class="tlb-label">Hospitales</span>
       </div>
-      <div class="tlb-item" title="Residencias">
-        <svg viewBox="0 0 76 32" aria-hidden="true"><path d="M6 22 L14 12 L22 22 Z M9 22 V28 H19 V22" fill="currentColor"/><text x="28" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Residencias</text></svg>
+      <div class="tlb-item">
+        <span class="tlb-icon" aria-hidden="true">
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 25V13l10-7 10 7v12"/><path d="M11 25v-7h6v7"/><path d="M4 25h20"/></svg>
+        </span>
+        <span class="tlb-label">Residencias</span>
       </div>
-      <div class="tlb-item" title="Clínicas">
-        <svg viewBox="0 0 60 32" aria-hidden="true"><circle cx="14" cy="18" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 14v8M10 18h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Clínicas</text></svg>
+      <div class="tlb-item">
+        <span class="tlb-icon" aria-hidden="true">
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="9"/><path d="M14 9v10M9 14h10"/></svg>
+        </span>
+        <span class="tlb-label">Clínicas</span>
       </div>
-      <div class="tlb-item" title="Fábricas">
-        <svg viewBox="0 0 56 32" aria-hidden="true"><path d="M6 26 V14 L13 18 V14 L20 18 V14 L27 18 V26 Z" fill="currentColor"/><text x="32" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Fábricas</text></svg>
+      <div class="tlb-item">
+        <span class="tlb-icon" aria-hidden="true">
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 24V11l6 4V11l6 4V11l6 4v9z"/><path d="M3 24h22"/><circle cx="9" cy="20" r="0.8" fill="currentColor"/><circle cx="14" cy="20" r="0.8" fill="currentColor"/><circle cx="19" cy="20" r="0.8" fill="currentColor"/></svg>
+        </span>
+        <span class="tlb-label">Fábricas</span>
       </div>
-      <div class="tlb-item" title="Hostelería">
-        <svg viewBox="0 0 76 32" aria-hidden="true"><path d="M8 22 L14 8 L20 22 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="14" cy="20" r="2" fill="currentColor"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Hostelería</text></svg>
+      <div class="tlb-item">
+        <span class="tlb-icon" aria-hidden="true">
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v18M5 5c4 0 4 6 0 6"/><path d="M11 5l4 6h6L17 5z" fill="none"/><path d="M11 11v12"/><path d="M21 11v12"/></svg>
+        </span>
+        <span class="tlb-label">Hostelería</span>
       </div>
-      <div class="tlb-item" title="Seguridad 24/7">
-        <svg viewBox="0 0 80 32" aria-hidden="true"><path d="M14 8 L20 12 V20 L14 26 L8 20 V12 Z" fill="currentColor"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Seguridad 24/7</text></svg>
+      <div class="tlb-item">
+        <span class="tlb-icon" aria-hidden="true">
+          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l9 4v6c0 5.5-3.8 9.5-9 11-5.2-1.5-9-5.5-9-11V8z"/><path d="M10.5 14.5l2.5 2.5L18 12.5"/></svg>
+        </span>
+        <span class="tlb-label">Seguridad</span>
       </div>
     </div>
   </div>
@@ -3790,7 +4225,7 @@ section.centered p,
         <svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M9 15h6M9 19h6" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
       </div>
       <h3 data-i18n="s2_t">Importa planilla</h3>
-      <p data-i18n="s2_d">Sube el cuadrante en PDF o crealo desde cero. Shiftia extrae los datos automaticamente.</p>
+      <p data-i18n="s2_d">Sube tu cuadrante en PDF y Shiftia extrae los datos automáticamente. Si no la importas, Shiftia la crea desde cero de forma segura y ergonómica.</p>
     </div>
     <!-- Pipe 2→3 -->
     <div class="flow-pipe">
@@ -3959,7 +4394,7 @@ section.centered p,
     <div class="faq-list">
       <div class="faq-item reveal">
         <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq1_q">¿Puedo importar mi Excel o cuadrante actual?</div>
-        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq1_a">Si. Puedes importar tu planilla actual en PDF y Shiftia extrae los datos automaticamente. Tambien puedes crear la planilla desde cero en minutos añadiendo tu equipo y configurando los turnos.</div></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq1_a">Sí. Puedes importar tu planilla actual en PDF y Shiftia extrae los datos automáticamente. También puedes crear la planilla desde cero en minutos añadiendo tu equipo y configurando los turnos, o Shiftia lo hace por ti.</div></div>
       </div>
       <div class="faq-item reveal d1">
         <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq2_q">¿Funciona sin conexion a internet?</div>
@@ -4153,10 +4588,9 @@ section.centered p,
       <div class="price-desc" data-i18n="p3_d">Trabajadores ilimitados</div>
       <ul class="price-list">
         <li data-i18n="p3_f1">Todo del plan Pro</li>
-        <li data-i18n="p3_f2">Multiples servicios / sedes</li>
-        <li data-i18n="p3_f3" data-tip>Integracion con RRHH<span class="tooltip">API REST + webhooks para tu ERP</span></li>
+        <li data-i18n="p3_f2">Múltiples servicios / sedes</li>
         <li data-i18n="p3_f4">Soporte prioritario</li>
-        <li data-i18n="p3_f5" data-tip>Despliegue on-premise<span class="tooltip">Instalacion en tus propios servidores</span></li>
+        <li data-i18n="p3_f5" data-tip>Despliegue on-premise<span class="tooltip">Instalación en tus propios servidores</span></li>
       </ul>
       <button class="price-btn outline" data-i18n="price_btn" onclick="goToCheckout('business')">Contratar Business</button>
     </div>
@@ -4702,11 +5136,14 @@ async function handleSubmit(e) {
   const consentEl = document.getElementById('cf-consent');
 
   if (!date || !time) {
-    alert('Por favor, selecciona un día y una hora para la llamada.');
+    // Reemplazo de alert() nativo por toast premium.
+    if (window.dsToast) dsToast('Por favor, selecciona un día y una hora para la llamada.', { variant: 'error', title: 'Faltan datos' });
+    else alert('Por favor, selecciona un día y una hora para la llamada.');
     return;
   }
   if (consentEl && !consentEl.checked) {
-    alert('Debes aceptar la Política de Privacidad para continuar.');
+    if (window.dsToast) dsToast('Debes aceptar la Política de Privacidad para continuar.', { variant: 'error', title: 'Consentimiento requerido' });
+    else alert('Debes aceptar la Política de Privacidad para continuar.');
     return;
   }
 
@@ -4746,7 +5183,8 @@ async function handleSubmit(e) {
   } catch (err) {
     btn.textContent = 'Agendar llamada';
     btn.disabled = false;
-    alert(err.message || 'Error al agendar. Inténtalo de nuevo.');
+    if (window.dsToast) dsToast(err.message || 'Error al agendar. Inténtalo de nuevo.', { variant: 'error', title: 'No se ha podido agendar' });
+    else alert(err.message || 'Error al agendar. Inténtalo de nuevo.');
   }
 }
 
@@ -4813,7 +5251,7 @@ const translations = {
     how_eyebrow: 'Proceso', how_title: 'Empieza en minutos, no en semanas',
     how_desc: 'Sin migraciones complejas. Configura tu equipo y empieza a planificar.',
     s1_t: 'Configura equipo', s1_d: 'Añade trabajadores, roles y reglas: conciliacion, restricciones, jornadas reducidas.',
-    s2_t: 'Importa planilla', s2_d: 'Sube el cuadrante en PDF o crealo desde cero. Shiftia extrae los datos automaticamente.',
+    s2_t: 'Importa planilla', s2_d: 'Sube tu cuadrante en PDF y Shiftia extrae los datos automáticamente. Si no la importas, Shiftia la crea desde cero de forma segura y ergonómica.',
     s3_t: 'Gestiona el dia a dia', s3_d: 'Ante una ausencia, la IA propone candidatos ordenados. Tu apruebas con un clic.',
     s4_t: 'Analiza y mejora', s4_d: 'Dashboard de equidad, sobrecargas, tendencias. Datos para tomar mejores decisiones.',
     uc_eyebrow: 'Uso', uc_title: 'Diseñado para cualquier sector con turnos',
@@ -4831,7 +5269,7 @@ const translations = {
     t3: '"Lo mejor es que respeta las conciliaciones automaticamente. No tengo que estar pendiente de quien tiene reduccion. Shiftia lo sabe."',
     t3_role: 'Coordinadora Laboratorio',
     faq_eyebrow: 'Preguntas frecuentes', faq_title: 'Resolvemos tus dudas',
-    faq1_q: '¿Puedo importar mi Excel o cuadrante actual?', faq1_a: 'Si. Puedes importar tu planilla actual en PDF y Shiftia extrae los datos automaticamente. Tambien puedes crear la planilla desde cero en minutos.',
+    faq1_q: '¿Puedo importar mi Excel o cuadrante actual?', faq1_a: 'Sí. Puedes importar tu planilla actual en PDF y Shiftia extrae los datos automáticamente. También puedes crear la planilla desde cero en minutos, o Shiftia lo hace por ti.',
     faq2_q: '¿Funciona sin conexion a internet?', faq2_a: 'Shiftia es una app web que requiere conexion. Una vez cargada, puedes trabajar temporalmente offline y los cambios se sincronizaran al reconectar.',
     faq3_q: '¿Cuanto tiempo tarda la implantacion?', faq3_a: 'El plazo de implantacion es de 1 a 5 dias desde la contratacion. Configuramos tu equipo, importamos la planilla y te acompañamos en todo el proceso.',
     faq4_q: '¿La IA sustituye al supervisor?', faq4_a: 'No. Shiftia asiste sugiriendo candidatos, pero la decision final siempre es humana.',
@@ -4846,7 +5284,7 @@ const translations = {
     p2_n: 'Pro', p2_d: 'Hasta 40 trabajadores',
     p2_f1: 'Todo del plan Starter', p2_f2: 'Motor IA de coberturas', p2_f3: 'Equidad nocturna avanzada', p2_f4: 'Importacion PDF automatica', p2_f5: 'Historial de cambios',
     p3_n: 'Business', p3_d: 'Trabajadores ilimitados',
-    p3_f1: 'Todo del plan Pro', p3_f2: 'Multiples servicios / sedes', p3_f3: 'Integracion con RRHH', p3_f4: 'Soporte prioritario', p3_f5: 'Despliegue on-premise',
+    p3_f1: 'Todo del plan Pro', p3_f2: 'Múltiples servicios / sedes', p3_f4: 'Soporte prioritario', p3_f5: 'Despliegue on-premise',
     price_btn: 'Comprar ahora',
     contact_title: 'Cuentanos tu caso y agenda una llamada',
     contact_desc: 'Cada empresa es diferente. Explicanos tu situacion y te hacemos una propuesta personalizada con demo incluida.',
@@ -4937,7 +5375,7 @@ const translations = {
     p2_n: 'Pro', p2_d: 'Up to 40 workers',
     p2_f1: 'Everything in Starter', p2_f2: 'AI Coverage Engine', p2_f3: 'Advanced night equity', p2_f4: 'Auto PDF import', p2_f5: 'Change history',
     p3_n: 'Business', p3_d: 'Unlimited workers',
-    p3_f1: 'Everything in Pro', p3_f2: 'Multiple services / sites', p3_f3: 'HR integration', p3_f4: 'Priority support', p3_f5: 'On-premise deployment',
+    p3_f1: 'Everything in Pro', p3_f2: 'Multiple services / sites', p3_f4: 'Priority support', p3_f5: 'On-premise deployment',
     price_btn: 'Buy now',
     contact_title: 'Tell us about your case and schedule a call',
     contact_desc: 'Every workplace is different. Explain your situation and we\'ll create a personalized proposal with a demo included.',
@@ -5028,7 +5466,7 @@ const translations = {
     p2_n: 'Pro', p2_d: 'Bis 40 Mitarbeiter',
     p2_f1: 'Alles aus Starter', p2_f2: 'KI-Vertretungsmotor', p2_f3: 'Erweiterte Nachtgleichheit', p2_f4: 'Auto PDF-Import', p2_f5: 'Anderungsverlauf',
     p3_n: 'Business', p3_d: 'Unbegrenzte Mitarbeiter',
-    p3_f1: 'Alles aus Pro', p3_f2: 'Mehrere Standorte', p3_f3: 'HR-Integration', p3_f4: 'Priority Support', p3_f5: 'On-Premise Deployment',
+    p3_f1: 'Alles aus Pro', p3_f2: 'Mehrere Standorte', p3_f4: 'Priority Support', p3_f5: 'On-Premise Deployment',
     price_btn: 'Kostenlos starten',
     contact_title: 'Erzahlen Sie uns Ihren Fall und vereinbaren Sie einen Anruf',
     contact_desc: 'Jeder Betrieb ist anders. Beschreiben Sie Ihre Situation und wir erstellen ein personalisiertes Angebot mit Demo.',
@@ -5119,7 +5557,7 @@ const translations = {
     p2_n: 'Pro', p2_d: 'Jusqu\'a 40 agents',
     p2_f1: 'Tout du plan Starter', p2_f2: 'Moteur IA couverture', p2_f3: 'Equite nocturne avancee', p2_f4: 'Import PDF automatique', p2_f5: 'Historique des modifications',
     p3_n: 'Business', p3_d: 'Agents illimites',
-    p3_f1: 'Tout du plan Pro', p3_f2: 'Plusieurs services / sites', p3_f3: 'Integration RH', p3_f4: 'Support prioritaire', p3_f5: 'Deploiement on-premise',
+    p3_f1: 'Tout du plan Pro', p3_f2: 'Plusieurs services / sites', p3_f4: 'Support prioritaire', p3_f5: 'Deploiement on-premise',
     price_btn: 'Commencer gratuitement',
     contact_title: 'Decrivez votre cas et planifiez un appel',
     contact_desc: 'Chaque etablissement est different. Expliquez votre situation et nous ferons une proposition personnalisee avec demo.',
@@ -5797,6 +6235,88 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
     slider.addEventListener('input', recalc);
     recalc();
   }
+})();
+</script>
+
+<!-- ===========================================================================
+     ds-toast helper (window.dsToast)
+     IIFE pequeña para mostrar toasts apilados bottom-right.
+     API: dsToast(message, { variant='success'|'error'|'info', title?, duration? })
+     Auto-dismiss: 4s (success/info), 6s (error). Override con duration (ms).
+     Click en x o auto-dismiss -> animación de salida y remove() del DOM.
+     =========================================================================== -->
+<script>
+(function () {
+  if (window.dsToast) return; // idempotente
+  // SVGs inline para los iconos de cada variante
+  var ICONS = {
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',
+    error:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+  };
+  var CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+  // El container se crea on-demand y se reutiliza. Maneja queue/stacking nativo via flex-column.
+  function getContainer() {
+    var c = document.querySelector('.ds-toast-container');
+    if (!c) {
+      c = document.createElement('div');
+      c.className = 'ds-toast-container';
+      c.setAttribute('aria-live', 'polite');
+      c.setAttribute('aria-atomic', 'false');
+      document.body.appendChild(c);
+    }
+    return c;
+  }
+
+  function dismiss(toast) {
+    if (!toast || toast.classList.contains('is-leaving')) return;
+    toast.classList.add('is-leaving');
+    // Tras la animación de salida, remove. Si reduced-motion, removemos casi inmediato.
+    var ms = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 220;
+    setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, ms);
+  }
+
+  function dsToast(message, opts) {
+    opts = opts || {};
+    var variant = opts.variant || 'success';
+    if (!ICONS[variant]) variant = 'info';
+    var title = opts.title || '';
+    // Default duration por variante (error es más persistente)
+    var duration = typeof opts.duration === 'number' ? opts.duration : (variant === 'error' ? 6000 : 4000);
+
+    var container = getContainer();
+    var toast = document.createElement('div');
+    toast.className = 'ds-toast ds-toast--' + variant;
+    toast.setAttribute('role', variant === 'error' ? 'alert' : 'status');
+
+    // Estructura: icon | body (title + msg) | close
+    var bodyClass = title ? 'ds-toast__body' : 'ds-toast__body ds-toast__body--single';
+    var titleHtml = title ? '<div class="ds-toast__title">' + escapeHtml(title) + '</div>' : '';
+    toast.innerHTML =
+      '<span class="ds-toast__icon">' + ICONS[variant] + '</span>' +
+      '<div class="' + bodyClass + '">' +
+        titleHtml +
+        '<div class="ds-toast__msg">' + escapeHtml(String(message || '')) + '</div>' +
+      '</div>' +
+      '<button type="button" class="ds-toast__close" aria-label="Cerrar notificación">' + CLOSE_ICON + '</button>';
+
+    toast.querySelector('.ds-toast__close').addEventListener('click', function () { dismiss(toast); });
+    container.appendChild(toast);
+
+    // Auto-dismiss tras `duration`. Si el user pasa duration:0 → persiste.
+    if (duration > 0) setTimeout(function () { dismiss(toast); }, duration);
+
+    return toast;
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c];
+    });
+  }
+
+  window.dsToast = dsToast;
 })();
 </script>
 

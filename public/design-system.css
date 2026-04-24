@@ -297,3 +297,320 @@
   font-family: var(--ds-font-sans); font-weight: 500; font-size: var(--ds-text-sm);
 }
 .ds-skip:focus { left: 0 !important; }
+
+/* ===========================================================================
+   Toast notifications (ds-toast)
+   ---
+   Sistema de notificaciones premium minimal. Stackable bottom-right.
+   Activación via JS helper window.dsToast(message, opts) — ver IIFE en cada
+   página (no se incluye aquí porque este archivo es solo CSS).
+   =========================================================================== */
+
+/* Container fijo bottom-right que apila los toasts en columna */
+.ds-toast-container {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: var(--ds-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none; /* el container no captura clicks; los toasts sí */
+  max-width: calc(100vw - 32px);
+}
+
+/* Toast base — bg blanco, hairline, sombra suave */
+.ds-toast {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--ds-bg-elev);
+  border: 1px solid var(--ds-border);
+  border-left: 3px solid var(--ds-border-strong);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: var(--ds-shadow-md);
+  max-width: 360px;
+  min-width: 240px;
+  font-family: var(--ds-font-sans);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ds-text);
+  pointer-events: auto;
+  /* Animación entrada: slide-from-right + fade en 250ms */
+  animation: ds-toast-in 250ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+/* Variantes por color del border-left */
+.ds-toast--success { border-left-color: var(--ds-accent); }
+.ds-toast--error   { border-left-color: #b3261e; }
+.ds-toast--info    { border-left-color: #4a4a47; }
+
+/* Icon a la izquierda — color asociado a la variante */
+.ds-toast__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds-toast--success .ds-toast__icon { color: var(--ds-accent); }
+.ds-toast--error   .ds-toast__icon { color: #b3261e; }
+.ds-toast--info    .ds-toast__icon { color: #4a4a47; }
+.ds-toast__icon svg { width: 100%; height: 100%; display: block; }
+
+/* Cuerpo del mensaje (titulo Geist 500 + body opcional muted) */
+.ds-toast__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ds-toast__title {
+  font-family: var(--ds-font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--ds-text);
+  letter-spacing: -0.005em;
+}
+.ds-toast__msg {
+  font-family: var(--ds-font-sans);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ds-text-muted);
+}
+/* Si solo hay mensaje sin título, hereda peso del título */
+.ds-toast__body--single .ds-toast__msg {
+  font-weight: 500;
+  color: var(--ds-text);
+  font-size: 14px;
+}
+
+/* Botón cerrar × en la esquina sup der */
+.ds-toast__close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 2px;
+  margin: -2px -4px -2px 0;
+  cursor: pointer;
+  color: var(--ds-text-subtle);
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color var(--ds-dur-fast) var(--ds-ease), background var(--ds-dur-fast) var(--ds-ease);
+}
+.ds-toast__close:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+.ds-toast__close:focus-visible { outline: 2px solid var(--ds-accent); outline-offset: 1px; }
+.ds-toast__close svg { width: 14px; height: 14px; }
+
+/* Estado salida — añadido por JS antes de remove() */
+.ds-toast.is-leaving {
+  animation: ds-toast-out 200ms var(--ds-ease) both;
+}
+
+@keyframes ds-toast-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ds-toast-out {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(24px); }
+}
+
+/* Respeta prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .ds-toast,
+  .ds-toast.is-leaving {
+    animation: none;
+  }
+}
+
+/* Responsive: full width en móvil (con margen 12px) */
+@media (max-width: 480px) {
+  .ds-toast-container {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    max-width: none;
+  }
+  .ds-toast { max-width: none; }
+}
+
+/* ===========================================================================
+   Onboarding tour (ds-tour)
+   ---
+   Overlay + spotlight + card flotante. Solo CSS; lógica via JS en página.
+   =========================================================================== */
+
+/* Overlay full-screen semitransparente */
+.ds-tour-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 15, 0.55);
+  z-index: var(--ds-z-modal);
+  pointer-events: auto;
+  /* Cutout via box-shadow inset gigante en el spotlight (más reliable que clip-path) */
+  opacity: 0;
+  transition: opacity 250ms var(--ds-ease);
+}
+.ds-tour-overlay.is-active { opacity: 1; }
+
+/* Spotlight: rectángulo absoluto colocado sobre el target.
+   Cortamos el overlay con un huge box-shadow inset desde el spotlight,
+   creando el efecto "agujero" sin tocar clip-path (mejor compat). */
+.ds-tour-spotlight {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(15, 15, 15, 0.55);
+  pointer-events: none;
+  z-index: calc(var(--ds-z-modal) + 1);
+  transition: top 280ms var(--ds-ease), left 280ms var(--ds-ease),
+              width 280ms var(--ds-ease), height 280ms var(--ds-ease);
+  /* Halo accent muy sutil sobre el target */
+  outline: 2px solid rgba(15, 122, 109, 0.35);
+  outline-offset: 4px;
+}
+
+/* Card flotante con info del paso */
+.ds-tour-card {
+  position: fixed;
+  background: var(--ds-bg-elev);
+  border: 1px solid var(--ds-border);
+  border-radius: 14px;
+  padding: 20px 24px 18px;
+  box-shadow: var(--ds-shadow-lg);
+  max-width: 320px;
+  width: calc(100vw - 32px);
+  z-index: calc(var(--ds-z-modal) + 2);
+  font-family: var(--ds-font-sans);
+  /* Animación entrada */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 220ms var(--ds-ease), transform 220ms var(--ds-ease),
+              top 280ms var(--ds-ease), left 280ms var(--ds-ease);
+}
+.ds-tour-card.is-visible { opacity: 1; transform: translateY(0); }
+
+.ds-tour-card__skip {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  font-family: var(--ds-font-sans);
+  font-size: 12px;
+  color: var(--ds-text-subtle);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color var(--ds-dur-fast) var(--ds-ease), background var(--ds-dur-fast) var(--ds-ease);
+}
+.ds-tour-card__skip:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+
+.ds-tour-card__eyebrow {
+  font-family: var(--ds-font-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ds-text-subtle);
+  margin: 0 0 10px;
+}
+
+.ds-tour-card__title {
+  font-family: var(--ds-font-display);
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ds-text);
+  margin: 0 0 8px;
+}
+
+.ds-tour-card__desc {
+  font-family: var(--ds-font-sans);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ds-text-muted);
+  margin: 0 0 18px;
+}
+
+.ds-tour-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ds-tour-card__dots {
+  display: inline-flex;
+  gap: 6px;
+}
+.ds-tour-card__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ds-border-strong);
+  transition: background var(--ds-dur-fast) var(--ds-ease), transform var(--ds-dur-fast) var(--ds-ease);
+}
+.ds-tour-card__dot.is-active { background: var(--ds-text); transform: scale(1.15); }
+
+.ds-tour-card__btns { display: inline-flex; gap: 6px; }
+
+.ds-tour-btn {
+  appearance: none;
+  font-family: var(--ds-font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--ds-dur-fast) var(--ds-ease), color var(--ds-dur-fast) var(--ds-ease), border-color var(--ds-dur-fast) var(--ds-ease);
+}
+.ds-tour-btn--ghost {
+  background: transparent;
+  color: var(--ds-text-muted);
+}
+.ds-tour-btn--ghost:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+.ds-tour-btn--ghost:disabled { opacity: 0.45; cursor: not-allowed; }
+.ds-tour-btn--primary {
+  background: var(--ds-bg-inverse);
+  color: var(--ds-bg);
+  border-color: var(--ds-bg-inverse);
+}
+.ds-tour-btn--primary:hover { background: var(--ds-text-strong); }
+
+/* Respeta prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .ds-tour-overlay,
+  .ds-tour-spotlight,
+  .ds-tour-card {
+    transition: none;
+  }
+}
+
+/* Mobile: card centrada abajo, ocupa casi todo */
+@media (max-width: 600px) {
+  .ds-tour-card {
+    left: 16px !important;
+    right: 16px;
+    bottom: 16px !important;
+    top: auto !important;
+    max-width: none;
+    width: auto;
+  }
+}
