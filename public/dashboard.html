@@ -2,10 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#2980b9" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Shiftia</title>
+    <link rel="canonical" href="https://www.shiftia.es/dashboard">
+    <meta name="description" content="Panel de control de Shiftia: gestiona tu cuenta, suscripción, equipo y planificación inteligente de turnos.">
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#2980b9">
     <script>
         // Apply dark mode BEFORE render to prevent flash
         (function() {
@@ -73,6 +79,9 @@
             line-height: 1.6;
         }
 
+        /* Accessibility: skip link */
+        .skip-link { position: absolute; left: -9999px; top: 0; background: #2980b9; color: #fff; padding: 8px 16px; z-index: 9999; text-decoration: none; border-radius: 0 0 8px 0; }
+        .skip-link:focus { left: 0 !important; }
         /* Accessibility: focus-visible for keyboard nav */
         a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
             outline: 2px solid var(--primary);
@@ -1131,6 +1140,7 @@
     </style>
 </head>
 <body>
+    <a href="#main" class="skip-link">Saltar al contenido principal</a>
     <!-- Loading overlay with skeleton screens -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="skeleton-container">
@@ -1209,7 +1219,7 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container">
+    <main id="main" class="container">
         <!-- Welcome Section -->
         <section class="welcome-section">
             <h1 class="welcome-title" id="welcomeMessage">Bienvenido</h1>
@@ -1501,10 +1511,10 @@
             </div>
 
             <button class="plan-checkout-btn" id="planCheckoutBtn" disabled>Selecciona un plan</button>
-            <span class="plan-manage-link" id="manageSubLink" style="display:none;" onclick="openBillingPortal()">Gestionar suscripcion actual</span>
-            <p style="color: var(--text3); font-size: 0.82rem; margin-top: 1rem; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 dias.</p>
+            <span class="plan-manage-link" id="manageSubLink" style="display:none;" onclick="openBillingPortal()">Gestionar suscripción actual</span>
+            <p style="color: var(--text3); font-size: 0.82rem; margin-top: 1rem; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 días.</p>
         </div>
-    </div>
+    </main>
 
     <script>
         // ===== STATE =====

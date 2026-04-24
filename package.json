@@ -1,7 +1,7 @@
 {
   "name": "shiftia-hub",
-  "version": "2.4.0",
-  "description": "Shiftia HUB — Landing page",
+  "version": "2.5.0",
+  "description": "Shiftia HUB — Landing + back-office (Express + Stripe + Postgres)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -17,5 +17,6 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "engineStrict": true
 }

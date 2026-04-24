@@ -11,10 +11,34 @@ const compression = require('compression');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'shiftia-fallback-change-me-in-production';
-if (!process.env.JWT_SECRET) {
-  console.warn('WARNING: JWT_SECRET env var not set — using insecure fallback. Set it in Railway for production.');
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+// ====== STARTUP SECRETS HARDENING ======
+// JWT_SECRET: en producción es OBLIGATORIO. En dev permitimos un fallback dev-only.
+let JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  if (IS_PRODUCTION) {
+    console.error('FATAL: JWT_SECRET env var not set in production — refusing to start.');
+    process.exit(1);
+  }
+  JWT_SECRET = 'shiftia-dev-only-secret-not-for-prod-' + crypto.randomBytes(8).toString('hex');
+  console.warn('WARNING: JWT_SECRET not set — using ephemeral dev secret. Sessions will reset on restart.');
 }
+
+// Express está detrás de proxy en Railway/Heroku/Fly — sin esto req.ip = IP del proxy y
+// el rate limiter agrupa todo el tráfico bajo una sola IP.
+app.set('trust proxy', 1);
+
+// ====== TIMEZONE BOOKING ======
+// Toda la aplicación de booking opera en horario de Madrid (Europe/Madrid).
+const BOOKING_TIMEZONE = process.env.BOOKING_TIMEZONE || 'Europe/Madrid';
+const BOOKING_MIN_LEAD_HOURS = Number(process.env.BOOKING_MIN_LEAD_HOURS || 4);
+const BOOKING_HORIZON_DAYS = Number(process.env.BOOKING_HORIZON_DAYS || 60);
+const BOOKING_LUNCH_BLOCK = (process.env.BOOKING_LUNCH_BLOCK || '14:00,14:30,15:00').split(',').map(s => s.trim()).filter(Boolean);
+const BOOKING_SLOT_MINUTES = Number(process.env.BOOKING_SLOT_MINUTES || 30); // 30 → :00 y :30; 60 → solo :00
+const BOOKING_HOUR_START = Number(process.env.BOOKING_HOUR_START || 9);
+const BOOKING_HOUR_END = Number(process.env.BOOKING_HOUR_END || 18);
+const BOOKING_CANCEL_SECRET = process.env.BOOKING_CANCEL_SECRET || JWT_SECRET; // HMAC para tokens de cancelar
 
 // ====== STRIPE CONFIG ======
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
@@ -33,26 +57,43 @@ const STRIPE_PRICES = {
 
 // Stripe webhook MUST receive raw body — register BEFORE express.json()
 app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  if (!stripe) return res.status(400).json({ error: 'Stripe not configured' });
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+  // Requerimos firma SIEMPRE — sin excepción dev, para evitar que el webhook
+  // se convierta en un panel de admin abierto en cualquier entorno.
+  if (!STRIPE_WEBHOOK_SECRET) {
+    console.error('Stripe webhook rejected: STRIPE_WEBHOOK_SECRET not configured');
+    return res.status(503).json({ error: 'Webhook secret not configured' });
+  }
 
   let event;
   try {
-    if (STRIPE_WEBHOOK_SECRET) {
-      event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
-    } else {
-      console.warn('WARNING: Stripe webhook received without STRIPE_WEBHOOK_SECRET — signature not verified');
-      event = JSON.parse(req.body);
-      // In production, reject unverified webhooks
-      if (process.env.NODE_ENV === 'production') {
-        return res.status(400).json({ error: 'Webhook secret not configured' });
-      }
-    }
+    event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('Stripe webhook signature failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log('Stripe webhook:', event.type);
+  // Idempotencia: si ya procesamos este event.id, ack inmediato.
+  // Stripe reintenta hasta 3 días si no devolvemos 2xx — sin esto, cada retry
+  // duplicaba updates de plan y emails de confirmación.
+  try {
+    const ins = await pool.query(
+      'INSERT INTO stripe_processed_events (event_id, event_type) VALUES ($1, $2) ON CONFLICT (event_id) DO NOTHING RETURNING event_id',
+      [event.id, event.type]
+    );
+    if (ins.rowCount === 0) {
+      console.log('Stripe webhook duplicate (already processed):', event.id, event.type);
+      return res.json({ received: true, duplicate: true });
+    }
+  } catch (dedupErr) {
+    // Si la tabla aún no existe (primer arranque), seguimos — initializeDatabase la creará.
+    if (!/does not exist/i.test(dedupErr.message)) {
+      console.error('Stripe dedup error:', dedupErr.message);
+      return res.status(500).json({ error: 'dedup' }); // Stripe reintentará
+    }
+  }
+
+  console.log('Stripe webhook:', event.type, event.id);
 
   try {
     switch (event.type) {
@@ -222,13 +263,54 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
       case 'customer.subscription.updated': {
         const sub = event.data.object;
         const status = sub.status; // active, past_due, canceled, unpaid
-        if (sub.metadata?.user_id) {
-          const planStatus = status === 'active' ? 'active' : (status === 'canceled' ? 'cancelled' : 'past_due');
+        const planStatus = status === 'active' ? 'active' : (status === 'canceled' ? 'cancelled' : 'past_due');
+
+        // C6: Refresh plan / workers_limit / billing_cycle / next_billing_date from price.id.
+        // Stripe sends this event on plan upgrades, downgrades, and renewal cycles.
+        const priceId = sub.items?.data?.[0]?.price?.id;
+        let matched = null; // { plan, billing }
+        if (priceId) {
+          for (const [key, val] of Object.entries(STRIPE_PRICES)) {
+            if (val && val === priceId) {
+              const idx = key.lastIndexOf('_');
+              if (idx > 0) {
+                matched = { plan: key.slice(0, idx), billing: key.slice(idx + 1) };
+              }
+              break;
+            }
+          }
+        }
+
+        if (matched) {
+          const workersMap = { starter: 15, pro: 40, business: -1 };
+          const workersLimit = workersMap[matched.plan] != null ? workersMap[matched.plan] : 15;
+          // Use parameterized UPDATE; match by stripe_subscription_id (reliable) instead of metadata.user_id.
           await pool.query(
-            `UPDATE users SET plan_status = $1 WHERE id = $2`,
-            [planStatus, sub.metadata.user_id]
+            `UPDATE users
+               SET plan = $1,
+                   workers_limit = $2,
+                   billing_cycle = $3,
+                   plan_status = $4,
+                   next_billing_date = ${sub.current_period_end ? 'TO_TIMESTAMP($6)' : 'next_billing_date'}
+             WHERE stripe_subscription_id = $5`,
+            sub.current_period_end
+              ? [matched.plan, workersLimit, matched.billing, planStatus, sub.id, Number(sub.current_period_end)]
+              : [matched.plan, workersLimit, matched.billing, planStatus, sub.id]
           );
-          console.log(`Subscription ${status} for user ${sub.metadata.user_id}`);
+          console.log(`Subscription updated → ${matched.plan} (${matched.billing}) status=${status} sub=${sub.id}`);
+        } else {
+          // Fallback: only refresh plan_status (previous behaviour). Match by sub id (more reliable than metadata).
+          await pool.query(
+            `UPDATE users SET plan_status = $1 WHERE stripe_subscription_id = $2`,
+            [planStatus, sub.id]
+          );
+          if (sub.metadata?.user_id) {
+            await pool.query(
+              `UPDATE users SET plan_status = $1 WHERE id = $2`,
+              [planStatus, sub.metadata.user_id]
+            );
+          }
+          console.log(`Subscription ${status} (no price match) for sub ${sub.id}`);
         }
         break;
       }
@@ -423,7 +505,14 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
       }
     }
   } catch (err) {
-    console.error('Webhook handler error:', err.message);
+    console.error('Webhook handler error:', event && event.id, event && event.type, err.message);
+    // Devolver 500 → Stripe reintentará. Y borramos la fila de dedup para que el
+    // retry se procese (en caso contrario el siguiente intento pensaría que ya
+    // fue procesado).
+    try {
+      await pool.query('DELETE FROM stripe_processed_events WHERE event_id = $1', [event.id]);
+    } catch (_) { /* swallow */ }
+    return res.status(500).json({ error: 'Internal webhook error' });
   }
 
   res.json({ received: true });
@@ -437,17 +526,20 @@ app.use(compression());
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
+  // X-XSS-Protection removed: legacy header, deprecated by all major browsers and may
+  // introduce vulnerabilities. Modern protection comes via the Content-Security-Policy below.
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  // Strict Transport Security (HTTPS only)
-  if (process.env.NODE_ENV === 'production') {
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  // M3: Content Security Policy — restricts script/style/connect/frame sources.
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self';");
+  // Strict Transport Security (HTTPS only) — reinforced: 2-year max-age + preload
+  if (IS_PRODUCTION) {
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
   next();
 });
 
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '50kb' }));
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
   etag: true,
@@ -554,7 +646,7 @@ async function initializeDatabase() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS password_reset_tokens (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id),
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         token VARCHAR(255) UNIQUE NOT NULL,
         expires_at TIMESTAMP NOT NULL,
         used BOOLEAN DEFAULT false,
@@ -562,7 +654,91 @@ async function initializeDatabase() {
       );
     `);
 
-    console.log('Database initialized: all tables created');
+    // Idempotencia de webhooks Stripe — sin esto, los retries duplican efectos.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS stripe_processed_events (
+        event_id VARCHAR(255) PRIMARY KEY,
+        event_type VARCHAR(100),
+        processed_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    // Calendar slots bloqueados por el admin (festivos, vacaciones, etc.)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS blocked_dates (
+        id SERIAL PRIMARY KEY,
+        block_date DATE UNIQUE NOT NULL,
+        reason VARCHAR(255),
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    // ===== Migraciones bookings (Fase 12 booking overhaul) =====
+    // 1. Añadir booking_at TIMESTAMPTZ + cancel_token + email_status + audit fields
+    const bookingCols = [
+      { name: 'booking_at',      type: 'TIMESTAMPTZ' },
+      { name: 'cancel_token',    type: 'VARCHAR(64)' },
+      { name: 'email_status',    type: "VARCHAR(20) DEFAULT 'pending'" },
+      { name: 'email_error',     type: 'TEXT' },
+      { name: 'cancelled_at',    type: 'TIMESTAMPTZ' },
+      { name: 'cancellation_reason', type: 'TEXT' },
+      { name: 'updated_at',      type: 'TIMESTAMPTZ DEFAULT NOW()' },
+      { name: 'ip',              type: 'VARCHAR(64)' },
+      { name: 'user_agent',      type: 'VARCHAR(255)' }
+    ];
+    for (const col of bookingCols) {
+      await client.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS ${col.name} ${col.type}`).catch(() => {});
+    }
+    // Backfill booking_at desde booking_date+booking_time si está vacío
+    await client.query(`
+      UPDATE bookings
+      SET booking_at = ((booking_date::text || ' ' || booking_time)::timestamp AT TIME ZONE 'Europe/Madrid')
+      WHERE booking_at IS NULL AND booking_date IS NOT NULL AND booking_time IS NOT NULL
+    `).catch(err => console.warn('Booking backfill skipped:', err.message));
+
+    // 2. UNIQUE PARTIAL index — evita doble-booking del mismo slot
+    await client.query(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_bookings_slot_unique
+      ON bookings(booking_at)
+      WHERE status != 'cancelled' AND booking_at IS NOT NULL
+    `).catch(err => console.warn('Booking unique index skipped:', err.message));
+
+    // 3. Índices auxiliares (Stripe customer, lookups frecuentes)
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_users_stripe_customer ON users(stripe_customer_id)`).catch(() => {});
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_users_email_lower ON users(LOWER(email))`).catch(() => {});
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_prt_token ON password_reset_tokens(token) WHERE used = false`).catch(() => {});
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_bookings_email ON bookings(email)`).catch(() => {});
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_bookings_status_date ON bookings(status, booking_at)`).catch(() => {});
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_contact_leads_created ON contact_leads(created_at DESC)`).catch(() => {});
+
+    // Seed de festivos nacionales ES — solo si la tabla está vacía
+    try {
+      const c = await client.query('SELECT COUNT(*)::int AS n FROM blocked_dates');
+      if (c.rows[0].n === 0) {
+        const festivos = [
+          // 2026
+          ['2026-01-01', 'Año Nuevo'], ['2026-01-06', 'Reyes'],
+          ['2026-04-03', 'Viernes Santo'], ['2026-05-01', 'Día del Trabajo'],
+          ['2026-08-15', 'Asunción'], ['2026-10-12', 'Fiesta Nacional'],
+          ['2026-11-02', 'Todos los Santos (trasladado)'], ['2026-12-07', 'Constitución (trasladado)'],
+          ['2026-12-08', 'Inmaculada'], ['2026-12-25', 'Navidad'],
+          // 2027
+          ['2027-01-01', 'Año Nuevo'], ['2027-01-06', 'Reyes'],
+          ['2027-03-26', 'Viernes Santo'],
+          ['2027-08-16', 'Asunción (trasladado)'], ['2027-10-12', 'Fiesta Nacional'],
+          ['2027-11-01', 'Todos los Santos'], ['2027-12-06', 'Constitución'],
+          ['2027-12-08', 'Inmaculada'], ['2027-12-25', 'Navidad']
+        ];
+        for (const [d, reason] of festivos) {
+          await client.query('INSERT INTO blocked_dates (block_date, reason) VALUES ($1, $2) ON CONFLICT DO NOTHING', [d, reason]);
+        }
+        console.log(`Seeded ${festivos.length} festivos nacionales ES en blocked_dates`);
+      }
+    } catch (seedErr) {
+      console.warn('Festivos seed skipped:', seedErr.message);
+    }
+
+    console.log('Database initialized: all tables, indexes and migrations applied');
 
     // Seed admin user (password from env var — never hardcoded)
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@shiftia.es';
@@ -614,6 +790,9 @@ function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
+
+// A10: server-side length cap helper (used across auth, contact, support, booking)
+function cap(s, n) { return String(s == null ? '' : s).slice(0, n); }
 
 // ====== EMAIL CONFIG ======
 const GMAIL_USER = process.env.GMAIL_USER || 'highkeycvsender@gmail.com';
@@ -728,12 +907,20 @@ function authRateLimit(req, res, next) {
 // POST /api/auth/register
 app.post('/api/auth/register', authRateLimit, async (req, res) => {
   try {
-    const { email, password, name, company } = req.body;
+    let { email, password, name, company } = req.body;
 
     // Validate required fields
     if (!email || !password || !name) {
       return res.status(400).json({ error: 'Email, password, and name are required' });
     }
+
+    // A10 + B12: normalize and cap inputs before any validation / DB
+    email = String(email || '').trim().toLowerCase();
+    if (email.length > 254) {
+      return res.status(400).json({ error: 'Email demasiado largo' });
+    }
+    name    = cap(String(name).trim(), 120);
+    company = cap(String(company || '').trim(), 160);
 
     // Validate email format
     if (!isValidEmail(email)) {
@@ -745,8 +932,8 @@ app.post('/api/auth/register', authRateLimit, async (req, res) => {
       return res.status(400).json({ error: 'La contrasena debe tener al menos 8 caracteres' });
     }
 
-    // Check if email already exists
-    const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
+    // Check if email already exists (case-insensitive via idx_users_email_lower)
+    const existingUser = await pool.query('SELECT id FROM users WHERE LOWER(email) = $1', [email]);
     if (existingUser.rows.length > 0) {
       return res.status(409).json({ error: 'Email already exists' });
     }
@@ -759,7 +946,7 @@ app.post('/api/auth/register', authRateLimit, async (req, res) => {
       `INSERT INTO users (email, password_hash, name, company, plan, plan_status, workers_limit)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING id, email, name, company, plan, plan_status, workers_limit, created_at`,
-      [email.toLowerCase(), passwordHash, name, company || null, 'trial', 'active', 25]
+      [email, passwordHash, name, company || null, 'trial', 'active', 25]
     );
 
     const user = result.rows[0];
@@ -938,10 +1125,13 @@ app.post('/api/auth/login', authRateLimit, async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Find user by email
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.toLowerCase()]);
+    // Find user by email (case-insensitive via index idx_users_email_lower)
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    const result = await pool.query('SELECT * FROM users WHERE LOWER(email) = $1', [normalizedEmail]);
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      // A4: Timing-safe — run a dummy bcrypt compare so response time does not leak email existence
+      await bcrypt.compare(password, '$2a$10$abcdefghijklmnopqrstuv.................................').catch(() => {});
+      return res.status(401).json({ error: 'Email o contraseña incorrectos' });
     }
 
     const user = result.rows[0];
@@ -972,14 +1162,21 @@ app.post('/api/auth/login', authRateLimit, async (req, res) => {
 // POST /api/auth/forgot-password
 app.post('/api/auth/forgot-password', authRateLimit, async (req, res) => {
   try {
-    const { email } = req.body;
+    let { email } = req.body;
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    // Look up user by email (case-insensitive)
-    const userResult = await pool.query('SELECT id, email, name FROM users WHERE LOWER(email) = LOWER($1)', [email]);
+    // B12: normalize before query
+    email = String(email || '').trim().toLowerCase();
+    if (email.length > 254) {
+      // Same generic response — don't leak length-based info
+      return res.json({ message: 'Si el correo existe en nuestro sistema, recibirás instrucciones para restablecer tu contraseña en breve.' });
+    }
+
+    // Look up user by email (case-insensitive via idx_users_email_lower)
+    const userResult = await pool.query('SELECT id, email, name FROM users WHERE LOWER(email) = $1', [email]);
     const userExists = userResult.rows.length > 0;
 
     // Always respond with same success message (don't reveal if email exists)
@@ -989,6 +1186,9 @@ app.post('/api/auth/forgot-password', authRateLimit, async (req, res) => {
       // Generate reset token
       const resetToken = crypto.randomBytes(32).toString('hex');
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+      // A2: Invalidate any previous unused tokens for this user before issuing a new one
+      await pool.query("UPDATE password_reset_tokens SET used = true WHERE user_id = $1 AND used = false", [user.id]);
 
       // Store token in database
       await pool.query(
@@ -1083,6 +1283,9 @@ app.post('/api/auth/reset-password', authRateLimit, async (req, res) => {
     // Mark token as used
     await pool.query('UPDATE password_reset_tokens SET used = true WHERE id = $1', [tokenId]);
 
+    // A3: Invalidate ALL remaining tokens for this user (defence in depth)
+    await pool.query("UPDATE password_reset_tokens SET used = true WHERE user_id = $1", [userId]);
+
     console.log(`Password reset for user ${userId}`);
     res.json({ message: 'Tu contraseña ha sido restablecida exitosamente' });
   } catch (err) {
@@ -1110,15 +1313,29 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
   }
 });
 
+// POST /api/auth/logout (B9) — JWT is stateless; client should drop the token.
+// Endpoint exists so the client has a stable ack contract.
+app.post('/api/auth/logout', authMiddleware, (req, res) => {
+  res.json({ ok: true });
+});
+
 // PUT /api/auth/update (protected)
 app.put('/api/auth/update', authMiddleware, async (req, res) => {
   try {
-    const { name, email, company, password } = req.body;
+    let { name, email, company, password, currentPassword } = req.body;
     const userId = req.user.id;
 
     // Validate at least one field
     if (!name && !email && !company && !password) {
       return res.status(400).json({ error: 'At least one field is required' });
+    }
+
+    // A10: server-side caps on inputs
+    if (name) name = cap(String(name).trim(), 120);
+    if (company) company = cap(String(company).trim(), 160);
+    if (email) {
+      email = String(email).trim().toLowerCase();
+      if (email.length > 254) return res.status(400).json({ error: 'Email demasiado largo' });
     }
 
     // Start building the update query
@@ -1136,13 +1353,13 @@ app.put('/api/auth/update', authMiddleware, async (req, res) => {
       if (!isValidEmail(email)) {
         return res.status(400).json({ error: 'Invalid email format' });
       }
-      // Check if email is already taken by another user
-      const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 AND id != $2', [email.toLowerCase(), userId]);
+      // Check if email is already taken by another user (case-insensitive)
+      const existingUser = await pool.query('SELECT id FROM users WHERE LOWER(email) = $1 AND id != $2', [email, userId]);
       if (existingUser.rows.length > 0) {
         return res.status(409).json({ error: 'Email already in use' });
       }
       updates.push(`email = $${paramCount}`);
-      values.push(email.toLowerCase());
+      values.push(email);
       paramCount++;
     }
 
@@ -1155,6 +1372,18 @@ app.put('/api/auth/update', authMiddleware, async (req, res) => {
     if (password) {
       if (password.length < 8) {
         return res.status(400).json({ error: 'Password must be at least 8 characters' });
+      }
+      // A9: require currentPassword to change password — verify against stored hash
+      if (!currentPassword) {
+        return res.status(403).json({ error: 'Debes proporcionar tu contraseña actual para cambiarla' });
+      }
+      const currentRow = await pool.query('SELECT password_hash FROM users WHERE id = $1', [userId]);
+      if (currentRow.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      const currentMatch = await bcrypt.compare(currentPassword, currentRow.rows[0].password_hash);
+      if (!currentMatch) {
+        return res.status(403).json({ error: 'La contraseña actual es incorrecta' });
       }
       const passwordHash = await bcrypt.hash(password, 10);
       updates.push(`password_hash = $${paramCount}`);
@@ -1189,12 +1418,16 @@ app.put('/api/auth/update', authMiddleware, async (req, res) => {
 // POST /api/support (protected)
 app.post('/api/support', authMiddleware, async (req, res) => {
   try {
-    const { category, subject, message } = req.body;
+    let { category, subject, message } = req.body;
 
     // Validate required fields
     if (!subject || !message) {
       return res.status(400).json({ error: 'Subject and message are required' });
     }
+
+    // A10: server-side caps
+    subject = cap(String(subject).trim(), 200);
+    message = cap(String(message).trim(), 5000);
 
     // Get user details
     const userResult = await pool.query(
@@ -1405,12 +1638,21 @@ app.post('/api/contact', async (req, res) => {
       return res.status(429).json({ error: 'Demasiadas solicitudes. Espera un momento.' });
     }
 
-    const { name, email, company, workers, department, message } = req.body;
+    let { name, email, company, workers, department, message } = req.body;
 
     // Validate required fields
     if (!name || !email) {
       return res.status(400).json({ error: 'Nombre y email son obligatorios' });
     }
+
+    // A10: server-side caps
+    name       = cap(String(name).trim(), 120);
+    email      = String(email || '').trim().toLowerCase();
+    if (email.length > 254) return res.status(400).json({ error: 'Email demasiado largo' });
+    company    = cap(String(company || '').trim(), 160);
+    workers    = cap(String(workers || '').trim(), 32);
+    department = cap(String(department || '').trim(), 120);
+    message    = cap(String(message || '').trim(), 5000);
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1519,23 +1761,163 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-// ====== CALL BOOKING API ======
-// GET booked slots for a date (so frontend can disable them)
+// ====== CALL BOOKING API (v2 — TIMESTAMPTZ + integridad + .ics + cancel) ======
+// Helpers de booking — todos en zona Europe/Madrid.
+const ESC_HTML = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+// `cap` is defined globally in HELPER FUNCTIONS section above.
+
+// Genera lista de slots HH:MM válidos del día según BOOKING_HOUR_START/END/SLOT_MINUTES
+// y excluye los del bloque de comida.
+function generateDaySlots() {
+  const slots = [];
+  const stepMin = BOOKING_SLOT_MINUTES;
+  for (let h = BOOKING_HOUR_START; h < BOOKING_HOUR_END; h++) {
+    for (let m = 0; m < 60; m += stepMin) {
+      const t = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      if (!BOOKING_LUNCH_BLOCK.includes(t)) slots.push(t);
+    }
+  }
+  return slots;
+}
+
+// Construye un ISO con offset correcto para Europe/Madrid en una fecha/hora dada.
+// Maneja DST sin libs externas usando Intl.DateTimeFormat.
+function madridIsoFromLocal(dateStr /* YYYY-MM-DD */, timeStr /* HH:MM */) {
+  // Construir Date como si fuera UTC, luego corregir el offset que Madrid tendría a esa fecha
+  const utcGuess = new Date(dateStr + 'T' + timeStr + ':00Z');
+  // Calcular offset (en minutos) que Europe/Madrid tiene en ese momento
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: BOOKING_TIMEZONE,
+    timeZoneName: 'shortOffset',
+    year: 'numeric'
+  });
+  const parts = fmt.formatToParts(utcGuess);
+  const offTok = parts.find(p => p.type === 'timeZoneName').value; // e.g. "GMT+2"
+  const m = offTok.match(/GMT([+-])(\d+)(?::(\d+))?/);
+  const sign = m && m[1] === '-' ? -1 : 1;
+  const hh = m ? Number(m[2]) : 0;
+  const mm = m && m[3] ? Number(m[3]) : 0;
+  const offMin = sign * (hh * 60 + mm);
+  // El instante real en UTC es: localGuess - offset
+  return new Date(utcGuess.getTime() - offMin * 60000);
+}
+
+function prettyDateMadrid(d) {
+  return new Intl.DateTimeFormat('es-ES', {
+    timeZone: BOOKING_TIMEZONE,
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  }).format(d);
+}
+function prettyTimeMadrid(d) {
+  return new Intl.DateTimeFormat('es-ES', {
+    timeZone: BOOKING_TIMEZONE, hour: '2-digit', minute: '2-digit', hour12: false
+  }).format(d);
+}
+
+// Token de cancelación HMAC firmado — sin guardarlo, validable on-demand.
+function makeCancelToken(bookingId, email) {
+  const payload = `${bookingId}.${email}`;
+  return crypto.createHmac('sha256', BOOKING_CANCEL_SECRET).update(payload).digest('hex').slice(0, 32);
+}
+function verifyCancelToken(bookingId, email, token) {
+  if (!token) return false;
+  const expected = makeCancelToken(bookingId, email);
+  return crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expected));
+}
+
+// .ics para Google/Outlook/Apple
+function buildIcs({ uid, startUtc, endUtc, summary, description, location, organizerEmail, attendeeEmail }) {
+  const fmt = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Shiftia//Booking//ES',
+    'CALSCALE:GREGORIAN',
+    'METHOD:REQUEST',
+    'BEGIN:VEVENT',
+    `UID:${uid}@shiftia.es`,
+    `DTSTAMP:${fmt(new Date())}`,
+    `DTSTART:${fmt(startUtc)}`,
+    `DTEND:${fmt(endUtc)}`,
+    `SUMMARY:${summary.replace(/[\n,;]/g, ' ')}`,
+    `DESCRIPTION:${(description || '').replace(/\n/g, '\\n').replace(/[,;]/g, ' ')}`,
+    `LOCATION:${(location || '').replace(/[,;]/g, ' ')}`,
+    `ORGANIZER;CN=Shiftia:mailto:${organizerEmail}`,
+    `ATTENDEE;CN=${attendeeEmail};RSVP=TRUE:mailto:${attendeeEmail}`,
+    'STATUS:CONFIRMED',
+    'BEGIN:VALARM',
+    'TRIGGER:-PT15M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Recordatorio',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ];
+  return lines.join('\r\n');
+}
+
+// GET slots — devuelve disponibilidad real de un día
 app.get('/api/booking/slots', async (req, res) => {
   try {
     const { date } = req.query;
-    if (!date) return res.json({ booked: [] });
-    const result = await pool.query(
-      "SELECT booking_time FROM bookings WHERE booking_date = $1 AND status != 'cancelled'",
-      [date]
-    );
-    res.json({ booked: result.rows.map(r => r.booking_time) });
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '')) {
+      return res.status(400).json({ error: 'date inválido' });
+    }
+    // Slots posibles del día
+    const allSlots = generateDaySlots();
+
+    // Slots ya reservados (consulta sobre booking_at extrayendo HH:MM en Europe/Madrid)
+    let bookedRows = { rows: [] };
+    try {
+      bookedRows = await pool.query(
+        `SELECT to_char(booking_at AT TIME ZONE $2, 'HH24:MI') AS hhmm
+         FROM bookings
+         WHERE (booking_at AT TIME ZONE $2)::date = $1::date
+           AND status != 'cancelled'`,
+        [date, BOOKING_TIMEZONE]
+      );
+    } catch (e) {
+      if (!/does not exist/i.test(e.message)) console.error('slots query err:', e.message);
+    }
+    const booked = new Set(bookedRows.rows.map(r => r.hhmm));
+
+    // Día bloqueado por admin?
+    let blocked = false;
+    let blockedReason = null;
+    try {
+      const b = await pool.query('SELECT reason FROM blocked_dates WHERE block_date = $1 LIMIT 1', [date]);
+      if (b.rows.length > 0) { blocked = true; blockedReason = b.rows[0].reason; }
+    } catch (_) {}
+
+    // Lead-time mínimo (no permitimos reservar el mismo día con < BOOKING_MIN_LEAD_HOURS)
+    const now = new Date();
+    const available = allSlots.map(t => {
+      const slotInstant = madridIsoFromLocal(date, t);
+      const tooSoon = (slotInstant.getTime() - now.getTime()) < BOOKING_MIN_LEAD_HOURS * 3600 * 1000;
+      return {
+        time: t,
+        booked: booked.has(t),
+        tooSoon,
+        available: !blocked && !booked.has(t) && !tooSoon
+      };
+    });
+
+    res.json({
+      date,
+      timezone: BOOKING_TIMEZONE,
+      blocked,
+      blockedReason,
+      slots: available,
+      // backward-compat con el frontend antiguo
+      booked: Array.from(booked)
+    });
   } catch (err) {
-    // Table might not exist
-    res.json({ booked: [] });
+    console.error('booking/slots error:', err.message);
+    res.json({ booked: [], slots: [] });
   }
 });
 
+// POST booking — la cita real
 app.post('/api/booking', async (req, res) => {
   try {
     // Rate limiting
@@ -1544,162 +1926,218 @@ app.post('/api/booking', async (req, res) => {
       return res.status(429).json({ error: 'Demasiadas solicitudes. Espera un momento.' });
     }
 
-    const { name, email, phone, company, workers, department, message, date, time } = req.body;
+    const body = req.body || {};
 
-    // Validate required fields
+    // Honeypot anti-bot — campo invisible que solo bots rellenan
+    if (body.website && String(body.website).trim() !== '') {
+      console.log('Booking honeypot triggered from', clientIP);
+      return res.json({ ok: true }); // fingimos OK para no señalar al bot
+    }
+
+    let { name, email, phone, company, workers, department, message, date, time } = body;
+
+    // Required
     if (!name || !email || !phone || !date || !time) {
       return res.status(400).json({ error: 'Nombre, email, teléfono, fecha y hora son obligatorios' });
     }
 
-    // Validate email
+    // Caps de longitud (defensivos)
+    name       = cap(String(name).trim(), 120);
+    email      = cap(String(email).trim().toLowerCase(), 254);
+    phone      = cap(String(phone).trim(), 32);
+    company    = cap(String(company || '').trim(), 160);
+    workers    = cap(String(workers || '').trim(), 20);
+    department = cap(String(department || '').trim(), 120);
+    message    = cap(String(message || '').trim(), 2000);
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Email no válido' });
     }
-
-    // Validate date format (YYYY-MM-DD)
+    // Phone: validación tolerante (dígitos + opcional + - espacios paréntesis), 7-20 dígitos
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length < 7 || digits.length > 18) {
+      return res.status(400).json({ error: 'Teléfono no válido' });
+    }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({ error: 'Formato de fecha no válido' });
     }
-
-    // Validate time format (HH:MM)
-    if (!/^\d{2}:\d{2}$/.test(time)) {
-      return res.status(400).json({ error: 'Formato de hora no válido' });
+    if (!/^\d{2}:(00|30)$/.test(time)) {
+      return res.status(400).json({ error: 'Hora inválida (sólo en :00 o :30)' });
+    }
+    const [hh, mm] = time.split(':').map(Number);
+    if (hh < BOOKING_HOUR_START || hh >= BOOKING_HOUR_END) {
+      return res.status(400).json({ error: `Horario disponible: ${BOOKING_HOUR_START}:00–${BOOKING_HOUR_END}:00 (Europe/Madrid)` });
+    }
+    if (BOOKING_LUNCH_BLOCK.includes(time)) {
+      return res.status(400).json({ error: 'Esa franja está bloqueada (pausa de comida)' });
     }
 
-    // Validate date is weekday and not in the past
-    const bookingDate = new Date(date + 'T00:00:00');
-    if (isNaN(bookingDate.getTime())) {
-      return res.status(400).json({ error: 'Fecha no válida' });
-    }
-    const dow = bookingDate.getDay();
-    if (dow === 0 || dow === 6) {
+    // Fin de semana — usamos getDay() en UTC sobre el instante Madrid 12:00
+    const probe = madridIsoFromLocal(date, '12:00');
+    const dowMadrid = new Intl.DateTimeFormat('en-US', {
+      timeZone: BOOKING_TIMEZONE, weekday: 'short'
+    }).format(probe);
+    if (dowMadrid === 'Sat' || dowMadrid === 'Sun') {
       return res.status(400).json({ error: 'Solo se puede agendar de lunes a viernes' });
     }
 
-    // Check date is not in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (bookingDate < today) {
-      return res.status(400).json({ error: 'No se puede agendar en una fecha pasada' });
-    }
-
-    // Validate time is 8-18
-    const hour = parseInt(time.split(':')[0], 10);
-    if (hour < 8 || hour > 18) {
-      return res.status(400).json({ error: 'Horario disponible: 8:00 - 18:00' });
-    }
-
-    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-    // Check for conflicting booking (same day + same hour)
+    // Día bloqueado por admin (vacaciones, festivo)
     try {
-      const conflict = await pool.query(
-        'SELECT id FROM bookings WHERE booking_date = $1 AND booking_time = $2 AND status != $3 LIMIT 1',
-        [date, time, 'cancelled']
-      );
-      if (conflict.rows.length > 0) {
-        return res.status(409).json({ error: 'Esa hora ya está reservada. Por favor, elige otra.' });
+      const b = await pool.query('SELECT reason FROM blocked_dates WHERE block_date = $1 LIMIT 1', [date]);
+      if (b.rows.length > 0) {
+        return res.status(400).json({ error: 'Ese día no está disponible. Por favor, elige otro.' });
       }
-    } catch (conflictErr) {
-      // Table might not exist yet — that's fine, no conflict possible
-      if (!conflictErr.message.includes('does not exist')) {
-        console.error('Conflict check failed:', conflictErr.message);
-        return res.status(500).json({ error: 'Error al verificar disponibilidad. Inténtalo de nuevo.' });
-      }
+    } catch (_) {}
+
+    // Lead-time mínimo
+    const slotInstant = madridIsoFromLocal(date, time);
+    const now = new Date();
+    if (slotInstant.getTime() - now.getTime() < BOOKING_MIN_LEAD_HOURS * 3600 * 1000) {
+      return res.status(400).json({ error: `Reserva con al menos ${BOOKING_MIN_LEAD_HOURS}h de antelación.` });
+    }
+    // Horizonte máximo
+    if (slotInstant.getTime() - now.getTime() > BOOKING_HORIZON_DAYS * 86400 * 1000) {
+      return res.status(400).json({ error: `Solo se puede reservar hasta ${BOOKING_HORIZON_DAYS} días en el futuro.` });
     }
 
-    // Save booking to database
+    // INSERT atómico — la UNIQUE INDEX captura el conflicto
+    let inserted;
     try {
-      await pool.query(
-        'INSERT INTO bookings (name, email, phone, company, workers, department, message, booking_date, booking_time) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-        [name, email, phone, company || null, workers || null, department || null, message || null, date, time]
+      inserted = await pool.query(
+        `INSERT INTO bookings (
+           name, email, phone, company, workers, department, message,
+           booking_date, booking_time, booking_at, ip, user_agent, status, email_status
+         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pending','pending') RETURNING id`,
+        [
+          name, email, phone, company || null, workers || null, department || null, message || null,
+          date, time, slotInstant,
+          clientIP || null,
+          cap(req.headers['user-agent'] || '', 255)
+        ]
       );
     } catch (dbErr) {
-      if (dbErr.message.includes('does not exist')) {
-        await pool.query(`
-          CREATE TABLE IF NOT EXISTS bookings (
-            id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL,
-            phone VARCHAR(50) NOT NULL, company VARCHAR(255), workers VARCHAR(50),
-            department VARCHAR(255), message TEXT, booking_date DATE NOT NULL,
-            booking_time VARCHAR(10) NOT NULL, status VARCHAR(50) DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT NOW()
-          );
-        `);
-        await pool.query(
-          'INSERT INTO bookings (name, email, phone, company, workers, department, message, booking_date, booking_time) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-          [name, email, phone, company || null, workers || null, department || null, message || null, date, time]
-        );
-      } else {
-        console.warn('DB insert booking failed:', dbErr.message);
+      // 23505 = unique_violation — slot ya reservado (race condition resuelta por DB)
+      if (dbErr.code === '23505') {
+        return res.status(409).json({ error: 'Esa hora ya ha sido reservada por otra persona. Por favor, elige otra.' });
       }
+      console.error('Booking INSERT failed:', dbErr.code, dbErr.message);
+      return res.status(500).json({ error: 'Error guardando la reserva. Inténtalo de nuevo.' });
     }
 
-    // Format date for emails
-    const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-    const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-    const prettyDate = `${dayNames[bookingDate.getDay()]} ${bookingDate.getDate()} de ${monthNames[bookingDate.getMonth()]} de ${bookingDate.getFullYear()}`;
+    if (!inserted || inserted.rowCount !== 1 || !inserted.rows[0] || !inserted.rows[0].id) {
+      console.error('Booking INSERT returned no row');
+      return res.status(500).json({ error: 'Error guardando la reserva. Inténtalo de nuevo.' });
+    }
+    const bookingId = inserted.rows[0].id;
 
-    // Respond immediately — don't wait for emails
-    console.log(`Booking: ${name} <${email}> tel:${phone} — ${date} ${time}`);
-    res.json({ ok: true });
+    // Generar y guardar token de cancelación
+    const cancelToken = makeCancelToken(bookingId, email);
+    await pool.query('UPDATE bookings SET cancel_token = $1 WHERE id = $2', [cancelToken, bookingId]).catch(() => {});
 
-    // Fire-and-forget email notifications (don't block the response)
-    // 1. Notification to Diego
-    sendMail({
-          from: `"Shiftia Booking" <${GMAIL_USER}>`,
-          to: process.env.SUPPORT_EMAIL || GMAIL_USER,
-          subject: `📞 Nueva llamada agendada — ${esc(name)} (${esc(company || 'N/A')}) — ${prettyDate} ${time}h`,
-          html: `
-            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 1.3rem;">📞 Llamada agendada</h1>
-              </div>
-              <div style="background: #f8fafc; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-                <div style="background: #f0fdf9; padding: 20px; border-radius: 10px; border-left: 4px solid #4ecdc4; margin-bottom: 24px;">
-                  <p style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">📅 ${prettyDate} a las ${time}h</p>
-                </div>
-                <table style="width: 100%; border-collapse: collapse;">
-                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600; width: 130px;">Nombre</td><td style="padding: 10px 0; color: #1e293b;">${esc(name)}</td></tr>
-                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Email</td><td style="padding: 10px 0;"><a href="mailto:${esc(email)}" style="color: #2980b9;">${esc(email)}</a></td></tr>
-                  <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Teléfono</td><td style="padding: 10px 0; color: #1e293b; font-weight: 700;"><a href="tel:${esc(phone)}" style="color: #2980b9;">${esc(phone)}</a></td></tr>
-                  ${company ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Empresa</td><td style="padding: 10px 0; color: #1e293b;">${esc(company)}</td></tr>` : ''}
-                  ${workers ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Trabajadores</td><td style="padding: 10px 0; color: #1e293b;">${esc(workers)}</td></tr>` : ''}
-                  ${department ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Departamento</td><td style="padding: 10px 0; color: #1e293b;">${esc(department)}</td></tr>` : ''}
-                </table>
-                ${message ? `<div style="margin-top: 20px; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;"><p style="color: #64748b; font-weight: 600; margin: 0 0 8px 0;">Mensaje:</p><p style="color: #1e293b; line-height: 1.6; margin: 0;">${esc(message)}</p></div>` : ''}
-                <p style="color: #94a3b8; font-size: 0.82rem; margin-top: 24px;">Reservado desde shiftia.es — ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}</p>
-              </div>
+    // Construir strings legibles en TZ Madrid
+    const prettyDate = prettyDateMadrid(slotInstant);
+    const prettyTime = prettyTimeMadrid(slotInstant);
+
+    // .ics adjunto (30 min de duración)
+    const slotEnd = new Date(slotInstant.getTime() + 30 * 60 * 1000);
+    const icsContent = buildIcs({
+      uid: `booking-${bookingId}`,
+      startUtc: slotInstant,
+      endUtc: slotEnd,
+      summary: `Llamada con Shiftia — ${name}${company ? ' (' + company + ')' : ''}`,
+      description: `Demo personalizada de Shiftia.\n\nContacto: ${name}\nEmpresa: ${company || '-'}\nTeléfono: ${phone}\n${message ? 'Mensaje: ' + message : ''}`,
+      location: 'Llamada por teléfono',
+      organizerEmail: process.env.SUPPORT_EMAIL || GMAIL_USER,
+      attendeeEmail: email
+    });
+    const icsAttachment = {
+      filename: 'shiftia-llamada.ics',
+      content: icsContent,
+      contentType: 'text/calendar; method=REQUEST; charset=UTF-8'
+    };
+
+    const cancelUrl = `${APP_URL}/booking/cancel?id=${bookingId}&token=${cancelToken}`;
+    const supportEmail = process.env.SUPPORT_EMAIL || GMAIL_USER;
+
+    // Responder OK al cliente DESPUÉS de confirmar la fila en BD
+    console.log(`Booking #${bookingId} OK: ${email} ${digits} — ${date} ${time} (Madrid)`);
+    res.json({
+      ok: true,
+      bookingId,
+      cancelUrl,
+      prettyDate,
+      prettyTime,
+      timezone: BOOKING_TIMEZONE
+    });
+
+    // Emails fire-and-forget DESPUÉS de responder, pero registramos su estado
+    // 1. Notificación interna
+    Promise.resolve(sendMail({
+      from: `"Shiftia Booking" <${GMAIL_USER}>`,
+      to: supportEmail,
+      replyTo: email,
+      subject: `Nueva llamada agendada — ${ESC_HTML(name)} (${ESC_HTML(company || 'N/A')}) — ${prettyDate} ${prettyTime}`,
+      attachments: [icsAttachment],
+      html: `
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;">
+          <div style="background:linear-gradient(135deg,#4ecdc4,#2980b9);padding:24px 32px;border-radius:12px 12px 0 0;">
+            <h1 style="color:white;margin:0;font-size:1.3rem;">Nueva llamada agendada</h1>
+          </div>
+          <div style="background:#f8fafc;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+            <div style="background:#f0fdf9;padding:20px;border-radius:10px;border-left:4px solid #4ecdc4;margin-bottom:24px;">
+              <p style="margin:0;font-size:1.1rem;font-weight:700;color:#1e293b;">${prettyDate} a las ${prettyTime} (Europe/Madrid)</p>
             </div>
-          `
-        });
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><td style="padding:10px 0;color:#64748b;font-weight:600;width:130px;">Nombre</td><td style="padding:10px 0;color:#1e293b;">${ESC_HTML(name)}</td></tr>
+              <tr><td style="padding:10px 0;color:#64748b;font-weight:600;">Email</td><td style="padding:10px 0;"><a href="mailto:${ESC_HTML(email)}" style="color:#2980b9;">${ESC_HTML(email)}</a></td></tr>
+              <tr><td style="padding:10px 0;color:#64748b;font-weight:600;">Teléfono</td><td style="padding:10px 0;color:#1e293b;font-weight:700;"><a href="tel:${ESC_HTML(phone)}" style="color:#2980b9;">${ESC_HTML(phone)}</a></td></tr>
+              ${company ? `<tr><td style="padding:10px 0;color:#64748b;font-weight:600;">Empresa</td><td style="padding:10px 0;color:#1e293b;">${ESC_HTML(company)}</td></tr>` : ''}
+              ${workers ? `<tr><td style="padding:10px 0;color:#64748b;font-weight:600;">Trabajadores</td><td style="padding:10px 0;color:#1e293b;">${ESC_HTML(workers)}</td></tr>` : ''}
+              ${department ? `<tr><td style="padding:10px 0;color:#64748b;font-weight:600;">Departamento</td><td style="padding:10px 0;color:#1e293b;">${ESC_HTML(department)}</td></tr>` : ''}
+            </table>
+            ${message ? `<div style="margin-top:20px;padding:16px;background:white;border-radius:8px;border:1px solid #e2e8f0;"><p style="color:#64748b;font-weight:600;margin:0 0 8px 0;">Mensaje:</p><p style="color:#1e293b;line-height:1.6;margin:0;">${ESC_HTML(message)}</p></div>` : ''}
+            <p style="color:#94a3b8;font-size:0.82rem;margin-top:24px;">Booking #${bookingId} · IP ${ESC_HTML(clientIP || '-')} · ${new Date().toLocaleString('es-ES', { timeZone: BOOKING_TIMEZONE })}</p>
+          </div>
+        </div>
+      `
+    })).then(() => {
+      pool.query("UPDATE bookings SET email_status='sent' WHERE id=$1", [bookingId]).catch(() => {});
+    }).catch((err) => {
+      console.error('Internal notif email failed for booking', bookingId, err.message);
+      pool.query("UPDATE bookings SET email_status='failed', email_error=$2 WHERE id=$1", [bookingId, cap(err.message, 500)]).catch(() => {});
+    });
 
-    // 2. Confirmation to client
+    // 2. Confirmación al cliente
     sendMail({
-          from: `"Shiftia" <${GMAIL_USER}>`,
-          replyTo: process.env.SUPPORT_EMAIL || GMAIL_USER,
-          to: email,
-          subject: `Llamada confirmada — ${prettyDate} a las ${time}h — Shiftia`,
-          html: `
-            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto;">
-              <div style="background: linear-gradient(135deg, #4ecdc4, #2980b9); padding: 24px 32px; border-radius: 12px 12px 0 0; text-align: center;">
-                <h1 style="color: white; margin: 0; font-size: 1.5rem;">Shiftia</h1>
-              </div>
-              <div style="background: #ffffff; padding: 32px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-                <h2 style="color: #1e293b; margin-top: 0;">Hola ${esc(name).split(' ')[0]},</h2>
-                <p style="color: #475569; line-height: 1.7;">Tu llamada ha sido agendada correctamente. Aquí tienes los detalles:</p>
-                <div style="margin: 24px 0; padding: 24px; background: linear-gradient(135deg, rgba(78,205,196,0.08), rgba(41,128,185,0.08)); border-radius: 12px; border: 1px solid rgba(78,205,196,0.2); text-align: center;">
-                  <p style="margin: 0 0 4px 0; font-size: 0.85rem; color: #64748b;">Fecha y hora</p>
-                  <p style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #2980b9;">${prettyDate}</p>
-                  <p style="margin: 4px 0 0 0; font-size: 1.5rem; font-weight: 800; color: #4ecdc4;">${time}h</p>
-                </div>
-                <p style="color: #475569; line-height: 1.7;">Nos pondremos en contacto contigo al teléfono <strong>${esc(phone)}</strong> o por email para coordinar los detalles de la reunión.</p>
-                <p style="color: #475569; line-height: 1.7;">Si necesitas cancelar o cambiar la hora, responde a este email.</p>
-                <p style="color: #475569; margin-top: 24px;">Un saludo,<br><strong>El equipo de Shiftia</strong></p>
-              </div>
-              <p style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 20px;">www.shiftia.es</p>
+      from: `"Shiftia" <${GMAIL_USER}>`,
+      replyTo: supportEmail,
+      to: email,
+      subject: `Llamada confirmada — ${prettyDate} a las ${prettyTime} — Shiftia`,
+      attachments: [icsAttachment],
+      html: `
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;">
+          <div style="background:linear-gradient(135deg,#4ecdc4,#2980b9);padding:24px 32px;border-radius:12px 12px 0 0;text-align:center;">
+            <h1 style="color:white;margin:0;font-size:1.5rem;">Shiftia</h1>
+          </div>
+          <div style="background:#ffffff;padding:32px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
+            <h2 style="color:#1e293b;margin-top:0;">Hola ${ESC_HTML(name).split(' ')[0]},</h2>
+            <p style="color:#475569;line-height:1.7;">Tu llamada con el equipo de Shiftia ha quedado confirmada.</p>
+            <div style="margin:24px 0;padding:24px;background:linear-gradient(135deg,rgba(78,205,196,0.08),rgba(41,128,185,0.08));border-radius:12px;border:1px solid rgba(78,205,196,0.2);text-align:center;">
+              <p style="margin:0 0 4px 0;font-size:0.85rem;color:#64748b;">Fecha y hora</p>
+              <p style="margin:0;font-size:1.25rem;font-weight:700;color:#2980b9;">${prettyDate}</p>
+              <p style="margin:4px 0 0 0;font-size:1.5rem;font-weight:800;color:#4ecdc4;">${prettyTime}</p>
+              <p style="margin:8px 0 0 0;font-size:0.78rem;color:#94a3b8;">Hora de Madrid (Europe/Madrid)</p>
             </div>
-          `
-        });
+            <p style="color:#475569;line-height:1.7;">Te llamaremos al teléfono <strong>${ESC_HTML(phone)}</strong>. Adjuntamos un evento de calendario para que lo añadas a Google, Outlook o Apple en un clic.</p>
+            <div style="text-align:center;margin:28px 0;">
+              <a href="${cancelUrl}" style="display:inline-block;padding:10px 20px;background:#ffffff;border:1px solid #e2e8f0;color:#475569;border-radius:8px;text-decoration:none;font-size:0.9rem;">Cancelar o reagendar</a>
+            </div>
+            <p style="color:#475569;margin-top:24px;">Un saludo,<br><strong>El equipo de Shiftia</strong></p>
+          </div>
+          <p style="text-align:center;color:#94a3b8;font-size:0.78rem;margin-top:20px;">www.shiftia.es</p>
+        </div>
+      `
+    });
 
   } catch (err) {
     console.error('Booking error:', err.message);
@@ -1708,6 +2146,169 @@ app.post('/api/booking', async (req, res) => {
     }
   }
 });
+
+// Cancelación de booking via link firmado HMAC. Página HTML simple (no API).
+app.get('/booking/cancel', async (req, res) => {
+  const id = parseInt(req.query.id, 10);
+  const token = String(req.query.token || '');
+  if (!id || !token) return res.status(400).send('Parámetros inválidos.');
+
+  try {
+    const r = await pool.query('SELECT id, email, name, status, cancel_token, booking_at FROM bookings WHERE id = $1', [id]);
+    if (r.rows.length === 0) return res.status(404).send('Reserva no encontrada.');
+    const b = r.rows[0];
+
+    if (!b.cancel_token || b.cancel_token.length !== token.length ||
+        !crypto.timingSafeEqual(Buffer.from(b.cancel_token), Buffer.from(token))) {
+      return res.status(403).send('Token no válido.');
+    }
+
+    if (b.status === 'cancelled') {
+      return res.status(200).send(htmlPage('Reserva ya cancelada', 'Esta reserva ya estaba cancelada.'));
+    }
+
+    await pool.query(
+      "UPDATE bookings SET status='cancelled', cancelled_at=NOW(), updated_at=NOW(), cancellation_reason='client_link' WHERE id=$1",
+      [id]
+    );
+
+    // Notificación interna de cancelación
+    sendMail({
+      from: `"Shiftia Booking" <${GMAIL_USER}>`,
+      to: process.env.SUPPORT_EMAIL || GMAIL_USER,
+      subject: `Cancelación de llamada #${id} — ${b.email}`,
+      html: `<p>El cliente <strong>${ESC_HTML(b.name)}</strong> &lt;${ESC_HTML(b.email)}&gt; ha cancelado su llamada del ${prettyDateMadrid(b.booking_at)} a las ${prettyTimeMadrid(b.booking_at)}.</p>`
+    }).catch(() => {});
+
+    return res.status(200).send(htmlPage('Reserva cancelada', `Tu llamada del ${ESC_HTML(prettyDateMadrid(b.booking_at))} a las ${ESC_HTML(prettyTimeMadrid(b.booking_at))} ha quedado cancelada. Si lo deseas, <a href="${APP_URL}/#contact">reserva otra fecha</a>.`));
+  } catch (err) {
+    console.error('Booking cancel error:', err.message);
+    return res.status(500).send('Error procesando la cancelación.');
+  }
+});
+
+// ====== ADMIN BOOKING ENDPOINTS ======
+// Protegidos por ADMIN_API_KEY (no JWT, son endpoints de owner). Sin la key
+// devuelven 404 para no leak de su existencia.
+function requireAdminKey(req, res) {
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey || (req.query.key !== adminKey && req.headers['x-admin-key'] !== adminKey)) {
+    res.status(404).end();
+    return false;
+  }
+  return true;
+}
+
+// Listar bookings (próximos primero)
+app.get('/api/admin/bookings', async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  try {
+    const limit = Math.min(parseInt(req.query.limit, 10) || 100, 500);
+    const status = req.query.status; // 'pending' | 'completed' | 'cancelled' | 'no_show' | undefined
+    const params = [];
+    let where = '';
+    if (status) { params.push(status); where = `WHERE status = $${params.length}`; }
+    const r = await pool.query(
+      `SELECT id, name, email, phone, company, workers, department, message,
+              booking_at, status, email_status, email_error, created_at,
+              cancelled_at, cancellation_reason, ip
+       FROM bookings ${where}
+       ORDER BY booking_at DESC NULLS LAST
+       LIMIT ${limit}`,
+      params
+    );
+    res.json({ count: r.rowCount, bookings: r.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Cambiar status de una booking
+app.post('/api/admin/bookings/:id/status', express.json(), async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  const id = parseInt(req.params.id, 10);
+  const status = String((req.body && req.body.status) || '').toLowerCase();
+  const reason = String((req.body && req.body.reason) || '').slice(0, 500);
+  const allowed = ['pending', 'confirmed', 'completed', 'cancelled', 'no_show'];
+  if (!allowed.includes(status)) return res.status(400).json({ error: 'status inválido' });
+  try {
+    const setExtra = status === 'cancelled'
+      ? ", cancelled_at = NOW(), cancellation_reason = $3"
+      : '';
+    const params = setExtra ? [status, id, reason] : [status, id];
+    const r = await pool.query(
+      `UPDATE bookings SET status = $1, updated_at = NOW() ${setExtra} WHERE id = $2 RETURNING id`,
+      params
+    );
+    if (r.rowCount === 0) return res.status(404).json({ error: 'No encontrada' });
+    res.json({ ok: true, id, status });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Bloquear/desbloquear un día completo (vacaciones, conferencia, etc.)
+app.post('/api/admin/blocked-dates', express.json(), async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  const date = String((req.body && req.body.date) || '');
+  const reason = String((req.body && req.body.reason) || '').slice(0, 200);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'date YYYY-MM-DD' });
+  try {
+    await pool.query(
+      'INSERT INTO blocked_dates (block_date, reason) VALUES ($1, $2) ON CONFLICT (block_date) DO UPDATE SET reason = EXCLUDED.reason',
+      [date, reason || null]
+    );
+    res.json({ ok: true, date, reason });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/admin/blocked-dates/:date', async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  const date = req.params.date;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return res.status(400).json({ error: 'date YYYY-MM-DD' });
+  try {
+    await pool.query('DELETE FROM blocked_dates WHERE block_date = $1', [date]);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Listar días bloqueados
+app.get('/api/admin/blocked-dates', async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  try {
+    const r = await pool.query("SELECT block_date, reason FROM blocked_dates WHERE block_date >= CURRENT_DATE ORDER BY block_date ASC");
+    res.json({ blocked: r.rows });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Export CSV de bookings
+app.get('/api/admin/bookings.csv', async (req, res) => {
+  if (!requireAdminKey(req, res)) return;
+  try {
+    const r = await pool.query(
+      `SELECT id, name, email, phone, company, workers, department, message,
+              to_char(booking_at AT TIME ZONE 'Europe/Madrid', 'YYYY-MM-DD HH24:MI') AS booking_at_madrid,
+              status, email_status, created_at
+       FROM bookings ORDER BY booking_at DESC NULLS LAST LIMIT 5000`
+    );
+    const esc = (v) => v == null ? '' : '"' + String(v).replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"';
+    const header = 'id,name,email,phone,company,workers,department,message,booking_at_madrid,status,email_status,created_at\n';
+    const body = r.rows.map(row =>
+      [row.id, esc(row.name), esc(row.email), esc(row.phone), esc(row.company), esc(row.workers),
+       esc(row.department), esc(row.message), esc(row.booking_at_madrid), esc(row.status),
+       esc(row.email_status), esc(row.created_at && row.created_at.toISOString())].join(',')
+    ).join('\n');
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="bookings-${new Date().toISOString().slice(0,10)}.csv"`);
+    res.send(header + body);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+function htmlPage(title, body) {
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} — Shiftia</title>
+  <style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#f0fdf9,#eff6ff);min-height:100vh;display:flex;align-items:center;justify-content:center;margin:0;padding:24px;color:#1e293b}main{background:#fff;padding:40px;border-radius:16px;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,0.06);text-align:center}h1{margin:0 0 12px;color:#2980b9}p{color:#475569;line-height:1.6}a{color:#4ecdc4}</style>
+  </head><body><main><h1>${title}</h1><p>${body}</p><p><a href="${APP_URL}/">Volver a Shiftia</a></p></main></body></html>`;
+}
 
 // ====== STATIC ROUTES ======
 // Serve login.html
@@ -1730,25 +2331,45 @@ app.get('/docs', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'docs.html'));
 });
 
-// Health check with email diagnostics
+// Serve legal pages
+app.get('/privacidad', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacidad.html')));
+app.get('/terminos',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'terminos.html')));
+app.get('/cookies',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));
+app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'public', 'forgot-password.html')));
+
+// Health check público — minimalista, no expone diagnóstico interno
 app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// Health check completo — solo con ADMIN_API_KEY
+app.get('/api/health/full', (req, res) => {
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey || req.query.key !== adminKey) return res.status(404).end();
   res.json({
     status: 'ok',
-    version: '2.3.0',
+    version: require('./package.json').version,
     auth: 'enabled',
     email: {
       provider: RESEND_KEY ? 'resend' : (GMAIL_PASS ? 'gmail-smtp' : 'none'),
       from: RESEND_KEY ? RESEND_FROM : GMAIL_USER,
       ready: emailReady,
-      error: emailError,
-      user: GMAIL_USER
+      error: emailError ? '(set)' : null
     }
   });
 });
 
-// Test email endpoint — send a test to verify delivery
+// Test email endpoint — protegido contra abuso. Requiere ADMIN_API_KEY que solo el
+// owner conoce. Sin esa key el endpoint devuelve 404 (no leak de su existencia).
 app.get('/api/test-email', async (req, res) => {
-  const to = req.query.to || process.env.SUPPORT_EMAIL || GMAIL_USER;
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey) return res.status(404).end();
+  if (req.query.key !== adminKey) return res.status(404).end();
+
+  const to = req.query.to;
+  if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to) || to.length > 254) {
+    return res.status(400).json({ ok: false, error: 'Param "to" inválido' });
+  }
   try {
     const result = await sendMail({
       from: `"Shiftia Test" <${GMAIL_USER}>`,
@@ -1762,7 +2383,13 @@ app.get('/api/test-email', async (req, res) => {
   }
 });
 
-// SPA fallback
+// API 404 — sin esto, una /api/typo cae en el SPA fallback y devuelve HTML
+// rompiendo el JSON.parse() del cliente.
+app.use('/api', (req, res) => {
+  res.status(404).json({ error: 'Endpoint no encontrado' });
+});
+
+// SPA fallback (solo para rutas no-API)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
