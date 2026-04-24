@@ -1558,46 +1558,9 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
   .nav-links { height: 100dvh; overflow-y: auto; }
 }
 
-/* ====== DARK MODE ====== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1117; --bg-warm: #141620; --bg-card: #1a1d2e;
-    --text1: #f0f0f5; --text2: #a0a3b5; --text3: #6b6f85;
-    --border: #2a2d40; --border-light: #232638;
-  }
-  .nav { background: rgba(15,17,23,0.85); }
-  .nav.scrolled { background: rgba(15,17,23,0.92); box-shadow: 0 1px 20px rgba(0,0,0,0.3); }
-  .proof { background: #0a0c12; }
-  .demo-worker-row, .demo-chart-card, .demo-kpi { background: #1a1d2e; }
-  .form-card, .price-card { background: #1a1d2e; }
-  .hamburger span { background: var(--text1); }
-  .feat-modal { background: #1a1d2e; }
-  .feat-modal-close { background: #2a2d40; }
-  .feat-modal-preview { background: #141620; }
-  .back-top { background: #1a1d2e; color: var(--text2); }
-  #preloader { background: #0f1117; }
-  .faq-item { background: #1a1d2e; }
-  .feat-card { background: #1a1d2e; }
-  .bento-card { background: #1a1d2e; }
-  .step, .step-flow { background: #1a1d2e; }
-  .orbit-center { box-shadow: 0 0 40px rgba(78,205,196,0.2), 0 0 80px rgba(41,128,185,0.12); }
-  .orbit-emoji { background: linear-gradient(135deg, rgba(78,205,196,0.15), rgba(41,128,185,0.2)); border-color: rgba(78,205,196,0.4); }
-  .orbit-label { background: rgba(26,29,46,0.9); color: var(--text2); }
-  .orbit-ring { border-color: rgba(78,205,196,0.12); }
-  .hero::before { opacity: 0.5; }
-  .compare-card.before { background: #2a1a1a; border-color: #4a2a2a; }
-  .compare-card.after { background: #1a2a24; border-color: #2a4a3a; }
-  .chat-window { background: #1a1d2e; }
-  .chat-body { background: #141620; }
-  .chat-suggestions { background: #141620; }
-  .chat-input-area { background: #1a1d2e; border-color: var(--border); }
-  .chat-input { background: #232638; color: var(--text1); border-color: var(--border); }
-  .chat-msg.bot .chat-msg-bubble, .chat-msg.bot .chat-msg-text { background: #232638; border-color: var(--border); }
-  .chat-suggestion { background: #232638; border-color: var(--border); }
-  .fg input, .fg select, .fg textarea { background: #232638; border-color: var(--border); color: var(--text1); }
-  .price-toggle-knob { background: #232638; }
-  .demo-kpi-bar { background: #232638; }
-}
+/* ====== DARK MODE — ELIMINADO v3.5.2 ======
+   Bloque @media (prefers-color-scheme: dark) borrado entero.
+   La web es light-only. El SO en modo oscuro NO debe afectar al sitio. */
 
 /* ====== PREMIUM VISUAL EFFECTS ====== */
 
@@ -3490,6 +3453,25 @@ body.dark .orbit-label {
     color-scheme: light only !important;
   }
   body.dark, body { background: #faf9f6 !important; color: #0e0f0f !important; }
+  /* v3.5.2 — RESET DE TOKENS CSS A LIGHT cuando el SO está en dark.
+     Sin esto, var(--bg-warm) en .hero/.section coge un fallback oscuro. */
+  :root {
+    --bg: #ffffff !important;
+    --bg-warm: #faf8f5 !important;
+    --bg-card: #ffffff !important;
+    --text1: #0a0e1f !important;
+    --text2: #4a5269 !important;
+    --text3: #8a92a6 !important;
+    --border: #e8eaf0 !important;
+    --border-light: #f0f2f7 !important;
+  }
+}
+/* v3.5.2 — Refuerzo final: forzar los tokens a light SIEMPRE, fuera del media query,
+   por si algún script o estilo viejo intenta reasignarlos a oscuro en runtime. */
+:root {
+  --bg: #ffffff;
+  --bg-warm: #faf8f5;
+  --bg-card: #ffffff;
 }
 /* Script-side: nada más cargar, eliminamos body.dark si existe (ataque defensivo) */
 
