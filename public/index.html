@@ -51,6 +51,8 @@
 <title>Shiftia — Planificación inteligente de turnos y planillas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="/product-mockup.svg" type="image/svg+xml">
+<link rel="preload" as="style" href="/design-system.css">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/design-system.css">
 <style>
@@ -2622,6 +2624,222 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   pointer-events: none;
 }
 
+/* ============================================================================
+   v2.8 — TRUST LOGO BAND
+   ============================================================================ */
+.trust-logo-band {
+  background: var(--ds-bg, #faf9f6);
+  padding: 56px 0 64px;
+  border-top: 1px solid var(--ds-border, #e8e6df);
+}
+.tlb-eyebrow {
+  text-align: center;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ds-text-subtle, #8a8a85);
+  margin-bottom: 28px;
+}
+.tlb-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px 32px;
+  align-items: center;
+  justify-items: center;
+}
+.tlb-item {
+  color: var(--ds-text-subtle, #8a8a85);
+  opacity: 0.65;
+  filter: grayscale(100%);
+  transition: opacity 280ms cubic-bezier(0.16, 1, 0.3, 1), filter 280ms cubic-bezier(0.16, 1, 0.3, 1), color 280ms;
+  display: flex; align-items: center; justify-content: center;
+}
+.tlb-item svg { height: 28px; width: auto; max-width: 130px; }
+.tlb-item:hover { opacity: 1; filter: grayscale(0%); color: var(--ds-text, #0e0f0f); }
+@media (max-width: 920px) { .tlb-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+@media (max-width: 540px) { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } .tlb-item svg { height: 24px; } }
+
+/* ============================================================================
+   v2.8 — ROI CALCULATOR
+   ============================================================================ */
+.roi-section {
+  padding: 96px 0;
+  background: var(--ds-bg-subtle, #f4f2ec);
+}
+.roi-shell {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 64px;
+  align-items: center;
+}
+.roi-intro .section-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ds-text-subtle, #8a8a85); font-weight: 500; margin-bottom: 16px;
+}
+.roi-intro .section-eyebrow::before {
+  content: ''; width: 24px; height: 1px; background: currentColor; opacity: 0.6;
+}
+.roi-intro .section-h2 {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-weight: 400 !important;
+  font-size: clamp(2rem, 4.2vw, 3rem) !important;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+  color: var(--ds-text, #0e0f0f);
+  margin-bottom: 16px;
+}
+.roi-intro .section-p {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 16px; line-height: 1.6; color: var(--ds-text-muted, #4a4a47);
+  margin-bottom: 20px; max-width: 38em;
+}
+.roi-assumptions { display: flex; gap: 8px; flex-wrap: wrap; }
+.roi-card {
+  background: var(--ds-bg-elev, #fff);
+  border: 1px solid var(--ds-border, #e8e6df);
+  border-radius: 20px;
+  padding: 32px 36px;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 12px 32px rgba(15,15,15,0.06);
+}
+.roi-input-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+.roi-input-label {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 13px; font-weight: 500; color: var(--ds-text, #0e0f0f);
+  letter-spacing: -0.005em;
+}
+.roi-input-value {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif);
+  font-size: 26px; color: var(--ds-text, #0e0f0f); letter-spacing: -0.02em;
+}
+.roi-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px;
+  background: var(--ds-border, #e8e6df);
+  border-radius: 999px; outline: none;
+  margin: 4px 0 8px;
+}
+.roi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ds-bg-inverse, #0e0f0f);
+  cursor: grab;
+  box-shadow: 0 0 0 5px var(--ds-accent-soft, rgba(15,122,109,0.10)), 0 2px 6px rgba(15,15,15,0.15);
+  transition: transform 160ms cubic-bezier(0.16,1,0.3,1);
+}
+.roi-slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+.roi-slider::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ds-bg-inverse, #0e0f0f);
+  border: 0; cursor: grab;
+  box-shadow: 0 0 0 5px var(--ds-accent-soft, rgba(15,122,109,0.10)), 0 2px 6px rgba(15,15,15,0.15);
+}
+.roi-slider-marks {
+  display: flex; justify-content: space-between;
+  font-family: var(--ds-font-mono, 'Geist Mono', monospace);
+  font-size: 11px; color: var(--ds-text-subtle, #8a8a85);
+  margin-bottom: 32px;
+}
+.roi-output-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  padding: 28px 0; border-top: 1px solid var(--ds-border, #e8e6df);
+}
+.roi-output-label {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ds-text-subtle, #8a8a85); font-weight: 500; margin-bottom: 10px;
+}
+.roi-output-value {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif);
+  font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+  letter-spacing: -0.03em; line-height: 1;
+  color: var(--ds-text, #0e0f0f);
+  display: flex; align-items: baseline; gap: 4px;
+}
+.roi-output-unit { font-size: 0.45em; font-family: var(--ds-font-sans, 'Geist', sans-serif); color: var(--ds-text-muted, #4a4a47); font-weight: 400; }
+.roi-output-foot { margin-top: 10px; font-family: var(--ds-font-sans, 'Geist', sans-serif); font-size: 13px; color: var(--ds-text-muted, #4a4a47); line-height: 1.5; }
+.roi-output-foot strong { color: var(--ds-accent-text, #0a5950); font-weight: 600; }
+.roi-cta-row {
+  display: flex; gap: 12px; padding-top: 24px;
+  border-top: 1px solid var(--ds-border, #e8e6df);
+}
+.roi-cta {
+  flex: 1; text-align: center; padding: 14px 24px;
+  background: var(--ds-bg-inverse, #0e0f0f); color: var(--ds-bg, #faf9f6);
+  border-radius: 10px; font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-weight: 500; font-size: 14px; text-decoration: none;
+  transition: transform 200ms cubic-bezier(0.16,1,0.3,1), box-shadow 200ms;
+}
+.roi-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(15,15,15,0.12); }
+.roi-cta-ghost {
+  flex: 1; text-align: center; padding: 14px 24px;
+  background: transparent; color: var(--ds-text, #0e0f0f);
+  border: 1px solid var(--ds-border-strong, #c8c5bb);
+  border-radius: 10px; font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-weight: 500; font-size: 14px; text-decoration: none;
+  transition: background 200ms, border-color 200ms;
+}
+.roi-cta-ghost:hover { background: var(--ds-bg-subtle, #f4f2ec); border-color: var(--ds-text, #0e0f0f); }
+@media (max-width: 920px) {
+  .roi-shell { grid-template-columns: 1fr; gap: 32px; }
+  .roi-card { padding: 24px; }
+  .roi-output-grid { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* ============================================================================
+   v2.8 — COMPARISON TABLE Shiftia vs Excel vs Hojas
+   ============================================================================ */
+.vs-section { padding: 96px 0; background: var(--ds-bg, #faf9f6); }
+.vs-table-wrap { margin-top: 48px; overflow-x: auto; border: 1px solid var(--ds-border, #e8e6df); border-radius: 16px; background: var(--ds-bg-elev, #fff); }
+.vs-table {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  min-width: 720px;
+}
+.vs-table thead th {
+  text-align: left; padding: 18px 24px;
+  font-size: 13px; font-weight: 500;
+  color: var(--ds-text-subtle, #8a8a85);
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--ds-border, #e8e6df);
+  background: var(--ds-bg-subtle, #f4f2ec);
+}
+.vs-table thead th.vs-col-shiftia {
+  background: var(--ds-bg-inverse, #0e0f0f);
+  color: var(--ds-bg, #faf9f6);
+  font-family: var(--ds-font-display, 'Instrument Serif', serif);
+  font-weight: 400; font-size: 17px; letter-spacing: -0.01em;
+  position: relative;
+}
+.vs-table thead th.vs-col-shiftia::after {
+  content: 'Recomendado';
+  position: absolute; top: 8px; right: 16px;
+  background: var(--ds-accent, #0f7a6d); color: #fff;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 9px; padding: 2px 8px; border-radius: 999px;
+  letter-spacing: 0.08em; font-weight: 600;
+}
+.vs-table tbody td {
+  padding: 18px 24px;
+  font-size: 14px;
+  border-top: 1px solid var(--ds-border, #e8e6df);
+  vertical-align: middle;
+}
+.vs-table tbody tr:hover td { background: var(--ds-bg-subtle, #f4f2ec); }
+.vs-table tbody tr:hover td.vs-col-shiftia { background: rgba(15, 122, 109, 0.06); }
+.vs-feature { font-weight: 500; color: var(--ds-text, #0e0f0f); }
+.vs-col { color: var(--ds-text-muted, #4a4a47); }
+.vs-col-shiftia { color: var(--ds-text, #0e0f0f); font-weight: 500; }
+.vs-good { color: var(--ds-accent-text, #0a5950); }
+.vs-mid  { color: var(--ds-text-muted, #4a4a47); }
+.vs-bad  { color: var(--ds-text-muted, #4a4a47); }
+.vs-icon-yes::before { content: ''; display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: -3px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a5950' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat; }
+.vs-icon-no::before  { content: ''; display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: -3px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8c5bb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E") center/contain no-repeat; }
+.vs-foot { margin-top: 24px; text-align: center; font-family: var(--ds-font-sans, 'Geist', sans-serif); font-size: 14px; color: var(--ds-text-subtle, #8a8a85); font-style: italic; }
+
 </style>
 </head>
 <body>
@@ -2637,7 +2855,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 </div>
 
 <div class="scroll-progress" id="scrollProgress"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
 
 <!-- NAV -->
 <nav class="nav" id="nav">
@@ -2715,6 +2932,37 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   <div class="scroll-hint">
     <span>Scroll</span>
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<!-- TRUST LOGO BAND -->
+<!-- TODO: Reemplazar nombres y logos con clientes reales cuando los tengas.
+     Mientras tanto: tipos de organización en grayscale como placeholder elegante.
+     Cuando tengas logos reales, sustituye cada div.tlb-item por <img src="/logos/...">
+     y mantén la estructura grayscale → color en hover. -->
+<section class="trust-logo-band" aria-label="Sectores que confían en Shiftia">
+  <div class="container">
+    <div class="tlb-eyebrow">Confiado por equipos en sectores con turnos exigentes</div>
+    <div class="tlb-grid">
+      <div class="tlb-item" title="Hospitales">
+        <svg viewBox="0 0 64 32" aria-hidden="true"><rect x="6" y="8" width="14" height="20" rx="1.5" fill="currentColor"/><path d="M11 14h4M13 12v4" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Hospitales</text></svg>
+      </div>
+      <div class="tlb-item" title="Residencias">
+        <svg viewBox="0 0 76 32" aria-hidden="true"><path d="M6 22 L14 12 L22 22 Z M9 22 V28 H19 V22" fill="currentColor"/><text x="28" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Residencias</text></svg>
+      </div>
+      <div class="tlb-item" title="Clínicas">
+        <svg viewBox="0 0 60 32" aria-hidden="true"><circle cx="14" cy="18" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 14v8M10 18h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Clínicas</text></svg>
+      </div>
+      <div class="tlb-item" title="Fábricas">
+        <svg viewBox="0 0 56 32" aria-hidden="true"><path d="M6 26 V14 L13 18 V14 L20 18 V14 L27 18 V26 Z" fill="currentColor"/><text x="32" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Fábricas</text></svg>
+      </div>
+      <div class="tlb-item" title="Hostelería">
+        <svg viewBox="0 0 76 32" aria-hidden="true"><path d="M8 22 L14 8 L20 22 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="14" cy="20" r="2" fill="currentColor"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Hostelería</text></svg>
+      </div>
+      <div class="tlb-item" title="Seguridad 24/7">
+        <svg viewBox="0 0 80 32" aria-hidden="true"><path d="M14 8 L20 12 V20 L14 26 L8 20 V12 Z" fill="currentColor"/><text x="26" y="22" font-family="Geist, sans-serif" font-size="11" font-weight="600" fill="currentColor" letter-spacing="-0.02em">Seguridad 24/7</text></svg>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -3352,6 +3600,127 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   </div>
 </section>
 
+<!-- ROI CALCULATOR -->
+<!-- TODO: las constantes de ahorro (HOURS_PER_WORKER_MONTH, COORDINATOR_HOURLY_COST) son
+     estimaciones razonables del sector. Si en el futuro tienes datos reales de tus clientes,
+     ajusta los valores en el JS al final del index.html (busca SHIFTIA_ROI). -->
+<section class="roi-section" id="roi" aria-labelledby="roiTitle">
+  <div class="container">
+    <div class="roi-shell">
+      <div class="roi-intro">
+        <div class="section-eyebrow">CALCULA TU AHORRO</div>
+        <h2 class="section-h2" id="roiTitle">Cuánto te cuesta planificar a mano hoy.</h2>
+        <p class="section-p">Mueve el slider con el tamaño de tu equipo y verás las horas y los euros que recuperas cada mes con Shiftia. Estimado conservador, basado en el coste medio de un coordinador de turnos en España.</p>
+        <div class="roi-assumptions">
+          <span class="ds-pill">Coordinador 22&nbsp;€/h</span>
+          <span class="ds-pill">15&nbsp;min/trabajador/mes</span>
+          <span class="ds-pill">Estimación conservadora</span>
+        </div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-input-row">
+          <label for="roiWorkers" class="roi-input-label">Tu equipo</label>
+          <output id="roiWorkersOut" class="roi-input-value" aria-live="polite">25 trabajadores</output>
+        </div>
+        <input type="range" id="roiWorkers" min="5" max="200" step="1" value="25" class="roi-slider" aria-label="Número de trabajadores en tu equipo">
+        <div class="roi-slider-marks" aria-hidden="true"><span>5</span><span>50</span><span>100</span><span>150</span><span>200+</span></div>
+
+        <div class="roi-output-grid">
+          <div class="roi-output">
+            <div class="roi-output-label">Horas que recuperas al mes</div>
+            <div class="roi-output-value"><span id="roiHours">6,3</span><span class="roi-output-unit">h</span></div>
+            <div class="roi-output-foot">vs. planificación manual en Excel</div>
+          </div>
+          <div class="roi-output">
+            <div class="roi-output-label">Coste de coordinación ahorrado</div>
+            <div class="roi-output-value"><span id="roiEuros">138</span><span class="roi-output-unit">&nbsp;€/mes</span></div>
+            <div class="roi-output-foot">Ahorro neto: <strong id="roiNet">+118 €/mes</strong> tras descontar Shiftia</div>
+          </div>
+        </div>
+
+        <div class="roi-cta-row">
+          <a href="#contact" class="roi-cta">Ver cómo aplica a tu caso</a>
+          <a href="#pricing" class="roi-cta-ghost">Ver planes</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE — Shiftia vs Excel vs Hojas -->
+<section class="vs-section" aria-labelledby="vsTitle">
+  <div class="container centered">
+    <div class="section-eyebrow reveal">Comparativa honesta</div>
+    <h2 class="section-h2 reveal" id="vsTitle">Shiftia vs los métodos que ya conoces</h2>
+    <p class="section-p reveal">Hemos listado los 8 puntos donde se nota la diferencia. Sin marketing.</p>
+  </div>
+  <div class="container">
+    <div class="vs-table-wrap reveal">
+      <table class="vs-table" role="table">
+        <thead>
+          <tr>
+            <th scope="col" class="vs-feature">Capacidad</th>
+            <th scope="col" class="vs-col vs-col-shiftia">Shiftia</th>
+            <th scope="col" class="vs-col">Excel / Sheets</th>
+            <th scope="col" class="vs-col">Hojas en papel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="vs-feature">Tiempo de planificar 25 personas</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good">2 minutos</span></td>
+            <td class="vs-col"><span class="vs-bad">4-6 horas</span></td>
+            <td class="vs-col"><span class="vs-bad">6-8 horas</span></td>
+          </tr>
+          <tr>
+            <td class="vs-feature">Equidad nocturna automática</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good vs-icon-yes" aria-label="Sí">Incluido</span></td>
+            <td class="vs-col"><span class="vs-bad vs-icon-no" aria-label="No">Manual</span></td>
+            <td class="vs-col"><span class="vs-bad vs-icon-no" aria-label="No">Imposible</span></td>
+          </tr>
+          <tr>
+            <td class="vs-feature">Sugerir cobertura de baja en 1s</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good vs-icon-yes">IA con 3 candidatos</span></td>
+            <td class="vs-col"><span class="vs-bad">Llamadas a media plantilla</span></td>
+            <td class="vs-col"><span class="vs-bad">Llamadas a media plantilla</span></td>
+          </tr>
+          <tr>
+            <td class="vs-feature">Detectar conflictos antes de publicar</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good vs-icon-yes">Validación en tiempo real</span></td>
+            <td class="vs-col"><span class="vs-bad">Solo si revisas a mano</span></td>
+            <td class="vs-col"><span class="vs-bad vs-icon-no">No</span></td>
+          </tr>
+          <tr>
+            <td class="vs-feature">Acceso desde móvil del equipo</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good vs-icon-yes">App móvil incluida</span></td>
+            <td class="vs-col"><span class="vs-mid">Reenvío de archivo</span></td>
+            <td class="vs-col"><span class="vs-bad vs-icon-no">No</span></td>
+          </tr>
+          <tr>
+            <td class="vs-feature">Histórico y métricas de equidad</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good vs-icon-yes">Dashboard automático</span></td>
+            <td class="vs-col"><span class="vs-bad">A construir manualmente</span></td>
+            <td class="vs-col"><span class="vs-bad vs-icon-no">No</span></td>
+          </tr>
+          <tr>
+            <td class="vs-feature">Cumplimiento de descansos legales</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good vs-icon-yes">Reglas integradas</span></td>
+            <td class="vs-col"><span class="vs-bad">Tú lo recuerdas</span></td>
+            <td class="vs-col"><span class="vs-bad">Tú lo recuerdas</span></td>
+          </tr>
+          <tr>
+            <td class="vs-feature">Coste mensual</td>
+            <td class="vs-col vs-col-shiftia"><span class="vs-good"><strong>Desde 20&nbsp;€</strong></span></td>
+            <td class="vs-col"><span class="vs-mid">"Gratis" + tu tiempo</span></td>
+            <td class="vs-col"><span class="vs-mid">"Gratis" + tu tiempo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="vs-foot">El coste real de planificar a mano no es el del software, es el de tu tiempo y los errores que llegan a producción.</p>
+  </div>
+</section>
+
 <!-- PRICING -->
 <section class="pricing" id="pricing">
   <div class="floating-orbs"><div class="orb orb-2" style="right:-80px;left:auto;"></div><div class="orb orb-3"></div></div>
@@ -3588,12 +3957,6 @@ window.addEventListener('scroll', () => {
   var nav = document.getElementById('nav'); if(nav) nav.classList.toggle('scrolled', window.scrollY > 40);
 });
 
-// Cursor glow
-document.addEventListener('mousemove', (e) => {
-  const g = document.getElementById('cursorGlow');
-  if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
-});
-
 // Scroll progress
 window.addEventListener('scroll', () => {
   const h = document.documentElement.scrollHeight - window.innerHeight;
@@ -3642,27 +4005,6 @@ setTimeout(() => {
     type();
   }
 }, 800);
-
-// Confetti launcher
-function launchConfetti() {
-  const container = document.createElement('div');
-  container.className = 'confetti-container';
-  document.body.appendChild(container);
-  const colors = ['#4ecdc4', '#2980b9', '#f59e0b', '#ec4899', '#8b5cf6'];
-  for (let i = 0; i < 80; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    piece.style.left = Math.random() * 100 + '%';
-    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-    piece.style.animationDelay = Math.random() * 1.5 + 's';
-    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
-    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-    piece.style.width = (6 + Math.random() * 8) + 'px';
-    piece.style.height = (6 + Math.random() * 8) + 'px';
-    container.appendChild(piece);
-  }
-  setTimeout(() => container.remove(), 4000);
-}
 
 // Reveal on scroll
 const obs = new IntersectionObserver((entries) => {
@@ -4825,17 +5167,6 @@ const navObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.3, rootMargin: '-80px 0px -50% 0px' });
 navSections.forEach(s => navObserver.observe(s));
 
-// Enhanced cursor glow with visibility state
-const cursorGlow = document.getElementById('cursorGlow');
-if (cursorGlow && window.matchMedia('(pointer: fine)').matches) {
-  document.addEventListener('mousemove', (e) => {
-    cursorGlow.style.left = e.clientX + 'px';
-    cursorGlow.style.top = e.clientY + 'px';
-    if (!cursorGlow.classList.contains('visible')) cursorGlow.classList.add('visible');
-  });
-  document.addEventListener('mouseleave', () => cursorGlow.classList.remove('visible'));
-}
-
 // Hero product parallax tilt
 const heroProduct = document.querySelector('.hero-product');
 const heroSection = document.querySelector('.hero');
@@ -4920,23 +5251,6 @@ const stepObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.3 });
 document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.observe(el));
 
-// ====== KONAMI CODE EASTER EGG ======
-const konamiCode = [38,38,40,40,37,39,37,39,66,65];
-let konamiIndex = 0;
-document.addEventListener('keydown', (e) => {
-  if (e.keyCode === konamiCode[konamiIndex]) {
-    konamiIndex++;
-    if (konamiIndex === konamiCode.length) {
-      konamiIndex = 0;
-      launchConfetti(); launchConfetti(); launchConfetti();
-      const egg = document.createElement('div');
-      egg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:linear-gradient(135deg,#4ecdc4,#2980b9);color:white;padding:32px 48px;border-radius:20px;font-size:1.5rem;font-weight:800;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:heroStagger 0.6s forwards;';
-      egg.innerHTML = 'Has desbloqueado el modo Shiftia Pro Max Ultra! 🚀<br><span style="font-size:0.9rem;font-weight:500;opacity:0.8;">Solo bromeamos... pero nos caes bien 😄</span>';
-      document.body.appendChild(egg);
-      setTimeout(() => { egg.style.opacity = '0'; egg.style.transition = 'opacity 0.5s'; setTimeout(() => egg.remove(), 500); }, 4000);
-    }
-  } else { konamiIndex = 0; }
-});
 </script>
 
 <!-- AI Chat Assistant -->
@@ -5087,6 +5401,43 @@ document.addEventListener('keydown', (e) => {
       if (item) item.classList.toggle('open');
     });
   });
+
+  // ----- ROI Calculator -----
+  // Constantes de cálculo: estimación conservadora basada en el coste medio de
+  // un coordinador de turnos en España (2024-2026) y el tiempo medio que se
+  // tarda en planificar manualmente cada trabajador al mes.
+  const SHIFTIA_ROI = {
+    MIN_PER_WORKER_MONTH: 15,    // minutos de coordinador por trabajador / mes
+    COORDINATOR_HOURLY: 22,      // €/hora
+    SHIFTIA_BASE_COST: 20,       // €/mes plan starter
+    SHIFTIA_PER_WORKER: 0.8,     // coste marginal por trabajador adicional
+    EFFICIENCY_FACTOR: 0.85      // % del tiempo que Shiftia ahorra (no 100%)
+  };
+  const slider     = document.getElementById('roiWorkers');
+  const workersOut = document.getElementById('roiWorkersOut');
+  const hoursOut   = document.getElementById('roiHours');
+  const eurosOut   = document.getElementById('roiEuros');
+  const netOut     = document.getElementById('roiNet');
+  function fmt(n) { return new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 }).format(n); }
+  function fmtInt(n) { return new Intl.NumberFormat('es-ES', { maximumFractionDigits: 0 }).format(n); }
+  function recalc() {
+    if (!slider) return;
+    const w = parseInt(slider.value, 10);
+    const minutes = w * SHIFTIA_ROI.MIN_PER_WORKER_MONTH * SHIFTIA_ROI.EFFICIENCY_FACTOR;
+    const hours = minutes / 60;
+    const euros = hours * SHIFTIA_ROI.COORDINATOR_HOURLY;
+    const shiftiaCost = SHIFTIA_ROI.SHIFTIA_BASE_COST + Math.max(0, w - 15) * SHIFTIA_ROI.SHIFTIA_PER_WORKER;
+    const net = euros - shiftiaCost;
+    const wLabel = w >= 200 ? '200+' : w;
+    if (workersOut) workersOut.textContent = wLabel + ' trabajador' + (w === 1 ? '' : 'es');
+    if (hoursOut)   hoursOut.textContent   = fmt(hours);
+    if (eurosOut)   eurosOut.textContent   = fmtInt(euros);
+    if (netOut)     netOut.textContent     = (net >= 0 ? '+' : '') + fmtInt(net) + ' €/mes';
+  }
+  if (slider) {
+    slider.addEventListener('input', recalc);
+    recalc();
+  }
 })();
 </script>
 

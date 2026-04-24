@@ -543,7 +543,25 @@ app.use(express.json({ limit: '50kb' }));
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
   etag: true,
-  lastModified: true
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    // Performance: long-cache (30 días) para assets estáticos críticos de la landing,
+    // 5 min para HTML para permitir invalidar copy rápidamente.
+    const longCacheAssets = new Set([
+      'design-system.css',
+      'favicon.svg',
+      'apple-touch-icon.svg',
+      'og-image.svg',
+      'product-mockup.svg'
+    ]);
+    const base = path.basename(filePath);
+    const ext = path.extname(filePath).toLowerCase();
+    if (longCacheAssets.has(base) || ext === '.woff2') {
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+    } else if (ext === '.html') {
+      res.setHeader('Cache-Control', 'public, max-age=300');
+    }
+  }
 }));
 
 // ====== DATABASE CONFIG ======

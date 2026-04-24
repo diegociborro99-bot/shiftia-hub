@@ -831,6 +831,336 @@
             }
         }
 
+        /* ===================================================================
+           NEW · Premium dashboard enrichments (sparklines, KPIs, timeline)
+           =================================================================== */
+
+        /* ----- KPI / Metric mini cards row ----- */
+        .metric-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+        @media (max-width: 880px) { .metric-row { grid-template-columns: 1fr; } }
+
+        .metric-card {
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md);
+            padding: 22px 22px 18px;
+            display: flex; flex-direction: column;
+            transition: border-color var(--ds-dur) var(--ds-ease);
+        }
+        .metric-card:hover { border-color: var(--ds-border-strong); }
+
+        .metric-eyebrow {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-xs); letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--ds-text-subtle);
+            margin: 0 0 14px;
+        }
+        .metric-headline {
+            display: flex; align-items: baseline; gap: 10px;
+            margin-bottom: 6px;
+        }
+        .metric-number {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: clamp(2rem, 3.4vw, 2.6rem);
+            line-height: 1; letter-spacing: -0.02em; color: var(--ds-text);
+        }
+        .metric-unit {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-subtle);
+        }
+        .metric-delta {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-xs);
+            display: inline-flex; align-items: center; gap: 4px;
+            color: var(--ds-text-subtle); letter-spacing: -0.01em;
+        }
+        .metric-delta.up   { color: var(--ds-success); }
+        .metric-delta.down { color: var(--ds-error); }
+        .metric-delta.flat { color: var(--ds-text-subtle); }
+        .metric-delta svg  { width: 11px; height: 11px; }
+
+        /* Sparkline SVG */
+        .sparkline-wrap {
+            margin-top: 14px; position: relative;
+            height: 64px;
+        }
+        .sparkline-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+        .sparkline-line {
+            fill: none; stroke: var(--ds-accent); stroke-width: 1.4;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+        .sparkline-area {
+            fill: var(--ds-accent); opacity: 0.06;
+        }
+        .sparkline-dot {
+            fill: var(--ds-bg-elev); stroke: var(--ds-accent); stroke-width: 1.4;
+            cursor: pointer; transition: r var(--ds-dur) var(--ds-ease);
+        }
+        .sparkline-dot.last {
+            fill: var(--ds-accent); stroke: var(--ds-accent);
+        }
+        .sparkline-dot:hover { r: 4.5; }
+        .sparkline-tooltip {
+            position: absolute; pointer-events: none;
+            background: var(--ds-bg-inverse); color: var(--ds-bg);
+            font-family: var(--ds-font-mono); font-size: 11px;
+            padding: 5px 9px; border-radius: var(--ds-radius-sm);
+            transform: translate(-50%, -100%); top: 0; left: 0;
+            opacity: 0; transition: opacity var(--ds-dur) var(--ds-ease);
+            white-space: nowrap; z-index: 5;
+        }
+        .sparkline-tooltip.show { opacity: 1; }
+        .sparkline-tooltip::after {
+            content: ''; position: absolute; left: 50%; bottom: -4px;
+            transform: translateX(-50%);
+            border: 4px solid transparent; border-top-color: var(--ds-bg-inverse);
+        }
+
+        /* Donut metric (equidad nocturna) */
+        .donut-card .donut-inner {
+            display: flex; align-items: center; gap: 18px;
+            margin-top: 10px;
+        }
+        .donut-svg { width: 96px; height: 96px; flex-shrink: 0; }
+        .donut-track { fill: none; stroke: var(--ds-bg-subtle); stroke-width: 8; }
+        .donut-fill {
+            fill: none; stroke: var(--ds-accent); stroke-width: 8;
+            stroke-linecap: round;
+            transform: rotate(-90deg); transform-origin: 50% 50%;
+            transition: stroke-dashoffset var(--ds-dur-slow) var(--ds-ease-out);
+        }
+        .donut-center {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: 1.6rem; fill: var(--ds-text);
+            text-anchor: middle; dominant-baseline: central;
+            letter-spacing: -0.02em;
+        }
+        .donut-meta { display: flex; flex-direction: column; gap: 6px; }
+        .donut-label {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-muted); line-height: 1.4;
+        }
+        .donut-sub {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-xs);
+            color: var(--ds-text-subtle);
+        }
+
+        /* ----- Workers progress ring (donut) ----- */
+        .workers-ring-block {
+            margin-top: 28px; padding-top: 24px;
+            border-top: 1px solid var(--ds-border);
+            display: flex; align-items: center; gap: 22px;
+        }
+        .workers-ring-svg { width: 88px; height: 88px; flex-shrink: 0; }
+        .workers-ring-track {
+            fill: none; stroke: var(--ds-bg-subtle); stroke-width: 6;
+        }
+        .workers-ring-fill {
+            fill: none; stroke: var(--ds-text); stroke-width: 6;
+            stroke-linecap: round;
+            transform: rotate(-90deg); transform-origin: 50% 50%;
+            transition: stroke-dashoffset var(--ds-dur-slow) var(--ds-ease-out),
+                        stroke var(--ds-dur) var(--ds-ease);
+        }
+        .workers-ring-fill.high { stroke: var(--ds-warning); }
+        .workers-ring-fill.critical { stroke: var(--ds-error); }
+        .workers-ring-text {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: 1.2rem; fill: var(--ds-text);
+            text-anchor: middle; dominant-baseline: central;
+            letter-spacing: -0.02em;
+        }
+        .workers-ring-meta { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .workers-ring-meta .workers-label { margin: 0; }
+        .workers-ring-meta .workers-count {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-md);
+            color: var(--ds-text); letter-spacing: -0.01em;
+        }
+        .workers-ring-hint {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-xs);
+            color: var(--ds-text-subtle);
+        }
+
+        /* ----- "Lo que pasó esta semana" KPI grid ----- */
+        .week-kpi-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md);
+            overflow: hidden;
+        }
+        @media (max-width: 720px) { .week-kpi-grid { grid-template-columns: 1fr; } }
+
+        .week-kpi-item {
+            padding: 22px 24px;
+            border-right: 1px solid var(--ds-border);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .week-kpi-item:last-child { border-right: 0; }
+        @media (max-width: 720px) {
+            .week-kpi-item { border-right: 0; border-bottom: 1px solid var(--ds-border); }
+            .week-kpi-item:last-child { border-bottom: 0; }
+        }
+
+        .week-kpi-label {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-xs); letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--ds-text-subtle);
+        }
+        .week-kpi-row {
+            display: flex; align-items: baseline; gap: 10px;
+        }
+        .week-kpi-value {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: clamp(2rem, 3vw, 2.4rem);
+            line-height: 1; letter-spacing: -0.02em; color: var(--ds-text);
+        }
+
+        /* ----- Billing summary cards ----- */
+        .billing-summary {
+            display: grid; grid-template-columns: 2fr 1fr;
+            gap: 16px; margin-bottom: 28px;
+        }
+        @media (max-width: 760px) { .billing-summary { grid-template-columns: 1fr; } }
+
+        .billing-summary-card {
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            border-radius: var(--ds-radius-md);
+            padding: 26px 28px;
+            display: flex; flex-direction: column; gap: 6px;
+            transition: border-color var(--ds-dur) var(--ds-ease);
+        }
+        .billing-summary-card:hover { border-color: var(--ds-border-strong); }
+
+        .billing-summary-eyebrow {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-xs); letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--ds-text-subtle);
+        }
+        .billing-summary-amount {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            line-height: 1; letter-spacing: -0.025em; color: var(--ds-text);
+            margin-top: 8px;
+        }
+        .billing-summary-amount .currency {
+            font-size: 0.55em; color: var(--ds-text-muted);
+            margin-right: 4px; vertical-align: top; line-height: 1.6;
+        }
+        .billing-summary-sub {
+            font-family: var(--ds-font-sans); font-size: var(--ds-text-sm);
+            color: var(--ds-text-muted); margin-top: 4px;
+        }
+        .billing-summary-date {
+            font-family: var(--ds-font-mono); font-size: var(--ds-text-sm);
+            color: var(--ds-text-muted);
+        }
+        .billing-summary-amount-sm {
+            font-family: var(--ds-font-display); font-weight: 400;
+            font-size: clamp(1.8rem, 2.5vw, 2.2rem);
+            line-height: 1; letter-spacing: -0.02em; color: var(--ds-text);
+            margin-top: 8px;
+        }
+
+        /* ----- Activity timeline (Linear-style) ----- */
+        .timeline {
+            position: relative;
+            padding: 4px 0;
+        }
+        .timeline::before {
+            content: ''; position: absolute;
+            left: 19px; top: 18px; bottom: 18px;
+            width: 1px; background: var(--ds-border);
+        }
+        .timeline-item {
+            position: relative;
+            display: flex; align-items: flex-start; gap: 18px;
+            padding: 14px 4px;
+        }
+        .timeline-icon {
+            position: relative; z-index: 1;
+            width: 38px; height: 38px;
+            border-radius: var(--ds-radius-sm);
+            background: var(--ds-bg-elev);
+            border: 1px solid var(--ds-border);
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--ds-text); flex-shrink: 0;
+            transition: border-color var(--ds-dur) var(--ds-ease);
+        }
+        .timeline-item:hover .timeline-icon { border-color: var(--ds-border-strong); }
+        .timeline-icon svg { width: 16px; height: 16px; }
+        .timeline-icon.tone-accent { color: var(--ds-accent); border-color: color-mix(in srgb, var(--ds-accent) 30%, var(--ds-border)); }
+        .timeline-icon.tone-success { color: var(--ds-success); border-color: color-mix(in srgb, var(--ds-success) 30%, var(--ds-border)); }
+        .timeline-icon.tone-muted   { color: var(--ds-text-muted); }
+
+        .timeline-body { padding-top: 6px; min-width: 0; flex: 1; }
+        .timeline-title {
+            font-family: var(--ds-font-sans); font-weight: 500;
+            font-size: var(--ds-text-sm); color: var(--ds-text);
+            margin: 0 0 2px; letter-spacing: -0.005em;
+        }
+        .timeline-meta {
+            font-family: var(--ds-font-mono); font-size: 12px;
+            color: var(--ds-text-subtle); letter-spacing: -0.01em;
+        }
+
+        /* ----- Notification dropdown — premium upgrade ----- */
+        .notif-dropdown { min-width: 360px; max-width: 400px; }
+        .notif-header-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--ds-border);
+        }
+        .notif-header-title {
+            font-family: var(--ds-font-sans); font-weight: 600;
+            font-size: var(--ds-text-sm); color: var(--ds-text);
+            letter-spacing: -0.005em;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .notif-header-count {
+            font-family: var(--ds-font-mono); font-size: 11px;
+            color: var(--ds-text-subtle);
+            background: var(--ds-bg-subtle); padding: 1px 6px;
+            border-radius: var(--ds-radius-pill);
+            border: 1px solid var(--ds-border);
+        }
+        .notif-mark-all {
+            background: transparent; border: 0;
+            font-family: var(--ds-font-sans); font-size: 12px;
+            color: var(--ds-text-muted); cursor: pointer;
+            padding: 2px 6px; border-radius: var(--ds-radius-sm);
+            transition: color var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
+        }
+        .notif-mark-all:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
+
+        .notif-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--ds-border);
+            position: relative;
+        }
+        .notif-item-icon {
+            width: 30px; height: 30px; border-radius: var(--ds-radius-sm);
+            background: var(--ds-bg-subtle); border: 1px solid var(--ds-border);
+            display: inline-flex; align-items: center; justify-content: center;
+            color: var(--ds-text-muted); flex-shrink: 0;
+        }
+        .notif-item-icon svg { width: 14px; height: 14px; }
+        .notif-item-body { flex: 1; min-width: 0; }
+        .notif-item-title { font-size: var(--ds-text-sm); color: var(--ds-text); margin-bottom: 2px; line-height: 1.35; }
+        .notif-item-time { font-family: var(--ds-font-mono); font-size: 11px; color: var(--ds-text-subtle); }
+        .notif-item-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--ds-accent); flex-shrink: 0; margin-top: 6px;
+        }
+        .notif-item.read .notif-item-dot { background: transparent; }
+
         /* ----- Footer mini ----- */
         .app-footer {
             border-top: 1px solid var(--ds-border);
@@ -891,9 +1221,15 @@
                         <span class="notif-badge" id="notifBadge" style="display:none;"></span>
                     </button>
                     <div class="notif-dropdown" id="notifDropdown" role="menu">
-                        <div class="notif-header">Notificaciones</div>
+                        <div class="notif-header-row">
+                            <span class="notif-header-title">
+                                Notificaciones
+                                <span class="notif-header-count" id="notifHeaderCount">0</span>
+                            </span>
+                            <button class="notif-mark-all" type="button" id="notifMarkAll">Marcar todo como leído</button>
+                        </div>
                         <div id="notifList">
-                            <div class="notif-empty">Sin novedades</div>
+                            <div class="notif-empty">Sin notificaciones nuevas</div>
                         </div>
                     </div>
                 </div>
@@ -1023,13 +1359,22 @@
                             <a href="#facturacion" class="btn btn-ghost">Ver facturas</a>
                         </div>
 
-                        <!-- Workers usage -->
-                        <div class="workers-block">
-                            <div class="workers-head">
+                        <!-- Workers usage · progress ring -->
+                        <div class="workers-ring-block" id="workersRingBlock">
+                            <svg class="workers-ring-svg" viewBox="0 0 88 88" aria-hidden="true">
+                                <circle class="workers-ring-track" cx="44" cy="44" r="38"/>
+                                <circle class="workers-ring-fill" id="workersRingFill"
+                                        cx="44" cy="44" r="38"
+                                        stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+                                <text class="workers-ring-text" id="workersRingText" x="44" y="44">0%</text>
+                            </svg>
+                            <div class="workers-ring-meta">
                                 <span class="workers-label">Equipo activo</span>
                                 <span class="workers-count" id="workersCountText">0 / 0</span>
+                                <span class="workers-ring-hint" id="workersRingHint">Capacidad disponible</span>
                             </div>
-                            <div class="workers-bar-track">
+                            <!-- Hidden legacy bar — JS escribe aquí por compatibilidad -->
+                            <div class="workers-bar-track" style="display:none;">
                                 <div class="workers-bar-fill" id="workersBarFill" style="width: 0%"></div>
                             </div>
                         </div>
@@ -1073,10 +1418,113 @@
                 </div>
             </div>
 
+            <!-- Sparklines · uso del equipo + equidad nocturna -->
+            <!-- TODO: integrar con endpoint real /api/auth/usage cuando exista -->
+            <div class="metric-row reveal" id="sparklineRow">
+                <article class="metric-card">
+                    <div class="metric-eyebrow">Uso del equipo · últimos 7 días</div>
+                    <div class="metric-headline">
+                        <span class="metric-number" id="sparkUsageAvg">23</span>
+                        <span class="metric-unit">trabajadores activos / día</span>
+                    </div>
+                    <div class="metric-delta up" id="sparkUsageDelta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+                        +3% vs semana pasada
+                    </div>
+                    <div class="sparkline-wrap">
+                        <svg class="sparkline-svg" id="sparkUsageSvg" viewBox="0 0 280 64" preserveAspectRatio="none" aria-hidden="true"></svg>
+                        <div class="sparkline-tooltip" id="sparkUsageTip"></div>
+                    </div>
+                </article>
+
+                <article class="metric-card donut-card">
+                    <div class="metric-eyebrow">Equidad nocturna · este mes</div>
+                    <div class="metric-headline">
+                        <span class="metric-number" style="font-size:1.6rem;">96<span style="font-size:0.55em;color:var(--ds-text-muted);margin-left:2px;">% justo</span></span>
+                    </div>
+                    <div class="metric-delta up">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+                        +2 pts vs mes anterior
+                    </div>
+                    <div class="donut-inner">
+                        <svg class="donut-svg" viewBox="0 0 96 96" aria-hidden="true">
+                            <circle class="donut-track" cx="48" cy="48" r="40"/>
+                            <circle class="donut-fill" id="equityDonut"
+                                    cx="48" cy="48" r="40"
+                                    stroke-dasharray="251.33" stroke-dashoffset="10.05"/>
+                            <text class="donut-center" x="48" y="48">96%</text>
+                        </svg>
+                        <div class="donut-meta">
+                            <span class="donut-label">SARA reparte los turnos nocturnos sin sesgos.</span>
+                            <span class="donut-sub">142 turnos · 18 trabajadores</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- "Lo que pasó esta semana" KPI grid -->
+            <!-- TODO: integrar con endpoint real /api/auth/week-summary cuando exista -->
+            <section class="section-block reveal" aria-labelledby="weekKpiTitle" style="margin-top:48px;">
+                <div class="section-eyebrow">Resumen</div>
+                <h2 class="section-title" id="weekKpiTitle">Lo que pasó esta semana</h2>
+                <div class="week-kpi-grid">
+                    <div class="week-kpi-item">
+                        <span class="week-kpi-label">Turnos asignados</span>
+                        <div class="week-kpi-row">
+                            <span class="week-kpi-value">142</span>
+                            <span class="metric-delta up">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>
+                                +12
+                            </span>
+                        </div>
+                    </div>
+                    <div class="week-kpi-item">
+                        <span class="week-kpi-label">Cambios de turno</span>
+                        <div class="week-kpi-row">
+                            <span class="week-kpi-value">8</span>
+                            <span class="metric-delta flat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                sin cambios
+                            </span>
+                        </div>
+                    </div>
+                    <div class="week-kpi-item">
+                        <span class="week-kpi-label">Ausencias gestionadas</span>
+                        <div class="week-kpi-row">
+                            <span class="week-kpi-value">3</span>
+                            <span class="metric-delta down">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                                +1
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Billing history -->
             <section class="section-block" id="facturacion" aria-labelledby="billingTitle">
                 <div class="section-eyebrow">Facturación</div>
                 <h2 class="section-title" id="billingTitle">Historial de facturas</h2>
+
+                <!-- Billing summary cards -->
+                <!-- TODO: integrar con endpoint real /api/auth/billing-summary cuando exista -->
+                <div class="billing-summary" id="billingSummary" style="display:none;">
+                    <article class="billing-summary-card">
+                        <span class="billing-summary-eyebrow">Total pagado este año</span>
+                        <div class="billing-summary-amount">
+                            <span class="currency">€</span><span id="billingSummaryTotal">0</span>
+                        </div>
+                        <div class="billing-summary-sub" id="billingSummarySub">0 facturas pagadas</div>
+                    </article>
+                    <article class="billing-summary-card">
+                        <span class="billing-summary-eyebrow">Próxima factura</span>
+                        <div class="billing-summary-date" id="billingSummaryNextDate">—</div>
+                        <div class="billing-summary-amount-sm">
+                            <span class="currency" style="font-size:0.6em;color:var(--ds-text-muted);">€</span><span id="billingSummaryNextAmount">0</span>
+                        </div>
+                    </article>
+                </div>
+
                 <article class="card card-flush">
                     <div id="billingContent">
                         <div class="billing-table-wrap">
@@ -1107,6 +1555,16 @@
                             <button class="btn btn-primary" type="button" onclick="openPlanModal()">Ver planes</button>
                         </div>
                     </div>
+                </article>
+            </section>
+
+            <!-- Activity timeline (últimos 30 días) -->
+            <!-- TODO: integrar con endpoint real /api/auth/activity cuando exista -->
+            <section class="section-block reveal" id="actividad" aria-labelledby="activityTitle">
+                <div class="section-eyebrow">Actividad</div>
+                <h2 class="section-title" id="activityTitle">Últimos 30 días</h2>
+                <article class="card">
+                    <div class="timeline" id="activityTimeline"></div>
                 </article>
             </section>
 
@@ -1359,6 +1817,8 @@
             setupEventListeners();
             loadNotifications();
             setFooterYear();
+            renderUsageSparkline();
+            renderActivityTimeline();
 
             const overlay = document.getElementById('loadingOverlay');
             if (overlay) {
@@ -1532,18 +1992,52 @@
         }
 
         function updateWorkersBar(used, limit, isUnlimited) {
+            // Mantengo la barra oculta legacy actualizada por compat con cualquier
+            // consumidor que aún lea su width.
+            const bar = document.getElementById('workersBarFill');
+
             if (isUnlimited) {
                 document.getElementById('workersCountText').textContent = `${used} activos`;
-                document.getElementById('workersBarFill').style.width = '30%';
+                if (bar) bar.style.width = '30%';
+                renderWorkersRing(30, true);
+                const hint = document.getElementById('workersRingHint');
+                if (hint) hint.textContent = 'Plan ilimitado';
                 return;
             }
             const pct = Math.min((used / limit) * 100, 100);
             document.getElementById('workersCountText').textContent = `${used} / ${limit}`;
-            const bar = document.getElementById('workersBarFill');
-            bar.style.width = pct + '%';
-            bar.classList.remove('high', 'critical');
-            if (pct > 90) bar.classList.add('critical');
-            else if (pct > 70) bar.classList.add('high');
+            if (bar) {
+                bar.style.width = pct + '%';
+                bar.classList.remove('high', 'critical');
+                if (pct > 90) bar.classList.add('critical');
+                else if (pct > 70) bar.classList.add('high');
+            }
+            renderWorkersRing(pct, false);
+
+            const hint = document.getElementById('workersRingHint');
+            if (hint) {
+                if (pct > 90)      hint.textContent = 'Capacidad casi al límite';
+                else if (pct > 70) hint.textContent = 'Capacidad alta';
+                else               hint.textContent = `${Math.max(0, limit - used)} plazas libres`;
+            }
+        }
+
+        // ===== WORKERS PROGRESS RING (donut) =====
+        function renderWorkersRing(pct, unlimited) {
+            const fill = document.getElementById('workersRingFill');
+            const txt = document.getElementById('workersRingText');
+            if (!fill || !txt) return;
+            const r = 38;
+            const circumference = 2 * Math.PI * r; // ≈ 238.76
+            fill.setAttribute('stroke-dasharray', circumference.toFixed(2));
+            const offset = circumference * (1 - Math.min(Math.max(pct, 0), 100) / 100);
+            fill.setAttribute('stroke-dashoffset', offset.toFixed(2));
+            fill.classList.remove('high', 'critical');
+            if (!unlimited) {
+                if (pct > 90)      fill.classList.add('critical');
+                else if (pct > 70) fill.classList.add('high');
+            }
+            txt.textContent = unlimited ? '∞' : `${Math.round(pct)}%`;
         }
 
         function populateDefaultData() {
@@ -1599,11 +2093,60 @@
                     <div class="billing-card-row" style="margin-top: 8px;"><span></span><button class="download-btn" onclick="downloadInvoice('${inv.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>
                 </div>
             `).join('');
+
+            // Billing summary cards (total pagado este año + próxima factura)
+            renderBillingSummary(u, info, invoices);
+        }
+
+        // ===== BILLING SUMMARY CARDS =====
+        // TODO: integrar con endpoint real /api/auth/billing-summary cuando exista.
+        // Por ahora se calcula sumando facturas demo del año en curso.
+        function renderBillingSummary(u, info, invoices) {
+            const wrap = document.getElementById('billingSummary');
+            if (!wrap) return;
+            const year = new Date().getFullYear();
+            const paidThisYear = invoices.filter(i => i.status === 'paid' && i.id.includes(String(year)));
+            // Fallback realista si solo hay 2 facturas pagadas: extiende al year-to-date
+            const monthsElapsed = Math.max(1, new Date().getMonth());
+            const totalYear = (info.cost || 0) * Math.max(paidThisYear.length, monthsElapsed - 1);
+
+            const totalEl = document.getElementById('billingSummaryTotal');
+            const subEl   = document.getElementById('billingSummarySub');
+            if (totalEl) totalEl.textContent = totalYear.toFixed(0);
+            if (subEl) {
+                const count = Math.max(paidThisYear.length, monthsElapsed - 1);
+                subEl.textContent = `${count} ${count === 1 ? 'factura pagada' : 'facturas pagadas'} en ${year}`;
+            }
+
+            // Próxima factura
+            const nextDateEl = document.getElementById('billingSummaryNextDate');
+            const nextAmountEl = document.getElementById('billingSummaryNextAmount');
+            let nextDate;
+            if (u.next_billing_date) {
+                nextDate = new Date(u.next_billing_date);
+            } else {
+                const now = new Date();
+                nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            }
+            if (nextDateEl) {
+                nextDateEl.textContent = nextDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+            }
+            if (nextAmountEl) {
+                const isAnnualPlan = (u.billing_cycle || 'monthly') === 'annual';
+                const annualPrices = { starter: 192, pro: 288, business: 480 };
+                const amount = isAnnualPlan
+                    ? Math.round((annualPrices[u.plan] || (info.cost || 0) * 12) / 12)
+                    : (info.cost || 0);
+                nextAmountEl.textContent = amount.toFixed(0);
+            }
+            wrap.style.display = 'grid';
         }
 
         function populateEmptyBilling() {
             document.getElementById('billingTableBody').innerHTML = '<tr><td colspan="5" class="billing-empty">Aún no hay facturas. Activa un plan de pago para ver tu historial.</td></tr>';
             document.getElementById('billingCards').innerHTML = '<div class="billing-empty">Aún no hay facturas.</div>';
+            const summary = document.getElementById('billingSummary');
+            if (summary) summary.style.display = 'none';
         }
 
         function downloadInvoice(invoiceId) {
@@ -1768,37 +2311,73 @@
         }
 
         // ===== NOTIFICATIONS =====
+        // TODO: integrar con endpoint real /api/auth/notifications cuando exista.
+        const NOTIF_ICONS = {
+            info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+            warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+            billing: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+            ai:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 14.39 8.26 21 9.27l-5 4.87L17.18 21 12 17.77 6.82 21 8 14.14l-5-4.87 6.61-1.01L12 2z"/></svg>',
+            team:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+        };
+
         function loadNotifications() {
             const notifs = [];
 
             if (currentUser) {
                 const plan = currentUser.plan || 'trial';
                 if (plan === 'trial') {
-                    notifs.push({ title: 'Tu periodo de prueba está activo', time: 'Hoy', type: 'info' });
+                    notifs.push({ title: 'Tu periodo de prueba está activo', time: 'Hoy', type: 'info', unread: true });
                 }
                 if (currentUser.next_billing_date) {
                     const billing = new Date(currentUser.next_billing_date);
                     const diff = Math.ceil((billing - new Date()) / (1000 * 60 * 60 * 24));
                     if (diff <= 7 && diff > 0) {
-                        notifs.push({ title: `Próxima facturación en ${diff} días`, time: 'Próximamente', type: 'warning' });
+                        notifs.push({ title: `Próxima facturación en ${diff} días`, time: 'Próximamente', type: 'billing', unread: true });
                     }
                 }
             }
 
+            // Demo extra notifications para clientes con plan activo
+            if (currentUser && currentUser.plan && currentUser.plan !== 'trial') {
+                notifs.push(
+                    { title: 'SARA reasignó 3 turnos para equilibrar nocturnos', time: 'hace 2 h', type: 'ai', unread: true },
+                    { title: 'Carmen P. ha sido añadida al equipo', time: 'hace 1 día', type: 'team', unread: false }
+                );
+            }
+
             const badge = document.getElementById('notifBadge');
-            const list = document.getElementById('notifList');
+            const list  = document.getElementById('notifList');
+            const countEl = document.getElementById('notifHeaderCount');
+            const unreadCount = notifs.filter(n => n.unread).length;
+
+            if (countEl) countEl.textContent = String(notifs.length);
 
             if (notifs.length > 0) {
-                badge.style.display = 'block';
-                list.innerHTML = notifs.map(n => `
-                    <div class="notif-item">
-                        <div class="notif-item-title">${n.title}</div>
-                        <div class="notif-item-time">${n.time}</div>
+                if (unreadCount > 0) badge.style.display = 'block';
+                else badge.style.display = 'none';
+                list.innerHTML = notifs.map((n, i) => `
+                    <div class="notif-item ${n.unread ? '' : 'read'}" data-notif-idx="${i}">
+                        <span class="notif-item-icon">${NOTIF_ICONS[n.type] || NOTIF_ICONS.info}</span>
+                        <div class="notif-item-body">
+                            <div class="notif-item-title">${escapeHtml(n.title)}</div>
+                            <div class="notif-item-time">${escapeHtml(n.time)}</div>
+                        </div>
+                        <span class="notif-item-dot" aria-hidden="true"></span>
                     </div>
                 `).join('');
             } else {
                 badge.style.display = 'none';
-                list.innerHTML = '<div class="notif-empty">Sin novedades</div>';
+                list.innerHTML = '<div class="notif-empty">Sin notificaciones nuevas</div>';
+            }
+
+            // Mark all as read
+            const markAll = document.getElementById('notifMarkAll');
+            if (markAll && !markAll.dataset.bound) {
+                markAll.dataset.bound = '1';
+                markAll.addEventListener('click', () => {
+                    document.querySelectorAll('#notifList .notif-item').forEach(el => el.classList.add('read'));
+                    badge.style.display = 'none';
+                });
             }
         }
 
@@ -2138,6 +2717,120 @@
                 console.error('Error:', err);
                 showAlert('accountMsgBox', 'error', err.message || 'Error al guardar los cambios.');
             }
+        }
+
+        // ===================================================================
+        // SPARKLINE · uso del equipo últimos 7 días
+        // TODO: integrar con endpoint real /api/auth/usage cuando exista.
+        // ===================================================================
+        function renderUsageSparkline() {
+            const svg = document.getElementById('sparkUsageSvg');
+            const tip = document.getElementById('sparkUsageTip');
+            const wrap = svg && svg.parentElement;
+            if (!svg || !tip || !wrap) return;
+
+            // Datos demo realistas: 20-25 trabajadores activos por día
+            const data = [22, 21, 24, 23, 22, 25, 23];
+            const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+            const today = new Date();
+            const labels = data.map((_, i) => {
+                const d = new Date(today);
+                d.setDate(today.getDate() - (data.length - 1 - i));
+                return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+            });
+
+            const W = 280, H = 64, padX = 6, padY = 8;
+            const min = Math.min(...data) - 2;
+            const max = Math.max(...data) + 2;
+            const stepX = (W - padX * 2) / (data.length - 1);
+
+            const points = data.map((v, i) => {
+                const x = padX + i * stepX;
+                const y = padY + ((max - v) / (max - min)) * (H - padY * 2);
+                return { x, y, v, label: labels[i] };
+            });
+
+            const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
+            const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(2)} ${(H - padY).toFixed(2)} L ${points[0].x.toFixed(2)} ${(H - padY).toFixed(2)} Z`;
+
+            svg.innerHTML = `
+                <path class="sparkline-area" d="${areaPath}"/>
+                <path class="sparkline-line" d="${linePath}"/>
+                ${points.map((p, i) => `
+                    <circle class="sparkline-dot ${i === points.length - 1 ? 'last' : ''}"
+                            data-idx="${i}" cx="${p.x.toFixed(2)}" cy="${p.y.toFixed(2)}"
+                            r="${i === points.length - 1 ? 3.6 : 2.6}"/>
+                `).join('')}
+            `;
+
+            // Tooltip on hover
+            const dots = svg.querySelectorAll('.sparkline-dot');
+            dots.forEach(dot => {
+                dot.addEventListener('mouseenter', (e) => {
+                    const idx = parseInt(dot.getAttribute('data-idx'));
+                    const p = points[idx];
+                    // Convert SVG coords to wrap-relative pixels
+                    const rect = svg.getBoundingClientRect();
+                    const wrapRect = wrap.getBoundingClientRect();
+                    const xPx = ((p.x / W) * rect.width) + (rect.left - wrapRect.left);
+                    const yPx = ((p.y / H) * rect.height) + (rect.top - wrapRect.top) - 8;
+                    tip.style.left = xPx + 'px';
+                    tip.style.top  = yPx + 'px';
+                    tip.textContent = `${p.label} · ${p.v} activos`;
+                    tip.classList.add('show');
+                });
+                dot.addEventListener('mouseleave', () => tip.classList.remove('show'));
+            });
+
+            // Update headline avg
+            const avg = Math.round(data.reduce((a, b) => a + b, 0) / data.length);
+            const avgEl = document.getElementById('sparkUsageAvg');
+            if (avgEl) avgEl.textContent = avg;
+        }
+
+        // ===================================================================
+        // ACTIVITY TIMELINE · últimos 30 días
+        // TODO: integrar con endpoint real /api/auth/activity cuando exista.
+        // ===================================================================
+        const TIMELINE_ICONS = {
+            plan:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>',
+            invoice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>',
+            team:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+            ai:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>',
+            shift:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+            login:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>'
+        };
+
+        function renderActivityTimeline() {
+            const root = document.getElementById('activityTimeline');
+            if (!root) return;
+
+            // Demo events últimos 30 días — reemplazar por respuesta del endpoint
+            const events = [
+                { type: 'ai',      title: 'SARA reasignó 3 turnos para equilibrar nocturnos', meta: 'hace 5 días · 14:22' },
+                { type: 'shift',   title: 'Planilla de mayo publicada (142 turnos)',          meta: 'hace 7 días' },
+                { type: 'team',    title: 'Carmen P. añadida al equipo',                       meta: 'hace 12 días' },
+                { type: 'plan',    title: 'Plan Pro activado',                                  meta: 'hace 18 días · activado por ti' },
+                { type: 'login',   title: 'Inicio de sesión desde Gijón',                     meta: 'hace 21 días · Safari · macOS' },
+                { type: 'invoice', title: 'Factura INV-2026-03 pagada',                       meta: 'hace 24 días · €30,00' },
+                { type: 'ai',      title: 'SARA detectó conflicto en el cuadrante de fin de semana', meta: 'hace 27 días' },
+                { type: 'invoice', title: 'Factura INV-2026-02 pagada',                       meta: 'hace 28 días · €30,00' }
+            ];
+
+            const toneByType = {
+                plan: 'tone-accent', invoice: 'tone-success',
+                team: '', ai: 'tone-accent', shift: '', login: 'tone-muted'
+            };
+
+            root.innerHTML = events.map(ev => `
+                <div class="timeline-item">
+                    <span class="timeline-icon ${toneByType[ev.type] || ''}">${TIMELINE_ICONS[ev.type] || TIMELINE_ICONS.shift}</span>
+                    <div class="timeline-body">
+                        <p class="timeline-title">${escapeHtml(ev.title)}</p>
+                        <span class="timeline-meta">${escapeHtml(ev.meta)}</span>
+                    </div>
+                </div>
+            `).join('');
         }
     </script>
 </body>
