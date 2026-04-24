@@ -2840,6 +2840,186 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .vs-icon-no::before  { content: ''; display: inline-block; width: 16px; height: 16px; margin-right: 8px; vertical-align: -3px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8c5bb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E") center/contain no-repeat; }
 .vs-foot { margin-top: 24px; text-align: center; font-family: var(--ds-font-sans, 'Geist', sans-serif); font-size: 14px; color: var(--ds-text-subtle, #8a8a85); font-style: italic; }
 
+/* ============================================================================
+   v2.9 HOTFIX — Bug-fixes derivados del overhaul visual
+   - Botones de pricing rotos / azules
+   - Iconos sectoriales (bento) demasiado pequeños
+   - Texto descentrado en secciones .centered
+   - Iconos multi-device primitivos
+   - Limpiar animaciones legacy con gradient AI-slop
+   ============================================================================ */
+
+/* ----- 1. Pricing buttons premium (kill gradient azul) ----- */
+.price-btn {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 14px 18px !important;
+  border-radius: 12px !important;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  letter-spacing: -0.005em !important;
+  cursor: pointer !important;
+  transition: transform 200ms cubic-bezier(0.16,1,0.3,1), box-shadow 200ms cubic-bezier(0.16,1,0.3,1), background 200ms !important;
+  border: 1px solid transparent !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  transform: none !important;   /* matar magnetic legacy que rompía la posición */
+}
+.price-btn.fill {
+  background: var(--ds-bg-inverse, #0e0f0f) !important;
+  color: var(--ds-bg, #faf9f6) !important;
+  border-color: var(--ds-bg-inverse, #0e0f0f) !important;
+}
+.price-btn.fill:hover {
+  background: #000 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 8px 24px rgba(15,15,15,0.12) !important;
+}
+.price-btn.outline {
+  background: transparent !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  border-color: var(--ds-border-strong, #c8c5bb) !important;
+}
+.price-btn.outline:hover {
+  background: var(--ds-bg-subtle, #f4f2ec) !important;
+  border-color: var(--ds-text, #0e0f0f) !important;
+  transform: translateY(-1px) !important;
+}
+/* El span.ripple que el JS legacy inyectaba ya no es necesario; lo neutralizamos */
+.price-btn .ripple { display: none !important; }
+
+/* ----- 2. Pricing card 'pop' (Pro): matar gradient teal→azul rotativo
+       Este animation borderRotate era AI-slop. Reemplazamos por un borde
+       sólido sutil y la badge 'Recomendado' encima como antes. ----- */
+.price-card.pop {
+  border: 1px solid var(--ds-text, #0e0f0f) !important;
+  background: var(--ds-bg-elev, #fff) !important;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 12px 28px rgba(15,15,15,0.08) !important;
+  animation: none !important;
+}
+.price-card.pop::before {
+  content: 'Recomendado' !important;
+  position: absolute !important;
+  top: -13px !important; left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: var(--ds-bg-inverse, #0e0f0f) !important;
+  color: var(--ds-bg, #faf9f6) !important;
+  padding: 5px 14px !important;
+  border-radius: 999px !important;
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 11px !important; font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  background-image: none !important;
+  background-clip: initial !important;
+}
+.price-card.featured::before { display: none !important; }   /* matar gradient AI-slop */
+.price-card.featured { animation: none !important; }
+
+/* La pricing card no debería seguir teniendo overflow:hidden agresivo
+   (el badge 'Recomendado' del .pop sale por arriba con top:-13px y
+   se cortaba). Restauramos overflow visible. */
+.price-card { overflow: visible !important; }
+
+/* ----- 3. Texto centrado en .container.centered (revertir override v2.6) ----- */
+.container.centered, .centered { text-align: center !important; }
+.container.centered h1, .container.centered h2, .container.centered h3,
+.container.centered .section-h2, .container.centered .section-eyebrow,
+.container.centered p, .container.centered .section-p,
+.centered h1, .centered h2, .centered h3, .centered p,
+.centered .section-h2, .centered .section-eyebrow,
+.centered .hero-desc {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.container.centered .section-eyebrow,
+.centered .section-eyebrow { display: inline-flex !important; }
+/* Limitar ancho de los párrafos centrados para que no quede línea infinita */
+.container.centered .section-p,
+.centered .section-p { max-width: 640px !important; }
+.container.centered .section-h2,
+.centered .section-h2 { max-width: 18ch !important; }
+@media (max-width: 720px) {
+  .container.centered .section-h2,
+  .centered .section-h2 { max-width: 100% !important; }
+}
+
+/* ----- 4. Iconos de la sección 'usecases' (Hospitales / Fábricas / etc.)
+       eran inline-svg de 1.2em. Subir a tarjeta visible y cuadrada con
+       fondo accent suave. ----- */
+.bento-emoji {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 14px !important;
+  background: var(--ds-accent-soft, #e9f5f2) !important;
+  margin-bottom: 16px !important;
+  color: var(--ds-accent-text, #0a5950) !important;
+}
+.bento-emoji svg {
+  width: 28px !important;
+  height: 28px !important;
+  vertical-align: middle !important;
+  stroke: var(--ds-accent-text, #0a5950) !important;
+  fill: none !important;
+}
+/* Para los iconos de bento-card que usan stroke="#4ecdc4" (legacy hardcoded),
+   forzamos que cojan el color del contenedor */
+.bento-emoji svg path,
+.bento-emoji svg rect,
+.bento-emoji svg circle,
+.bento-emoji svg line {
+  stroke: var(--ds-accent-text, #0a5950) !important;
+}
+.bento-card h3 { margin-top: 4px !important; font-size: clamp(1.15rem, 2vw, 1.35rem) !important; }
+
+/* Lo mismo para la sección 'features' si comparte estructura */
+.feat-card .feat-icon, .feat-card .feat-emoji {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  background: var(--ds-accent-soft, #e9f5f2) !important;
+  color: var(--ds-accent-text, #0a5950) !important;
+  margin-bottom: 14px !important;
+}
+.feat-card .feat-icon svg, .feat-card .feat-emoji svg {
+  width: 24px !important; height: 24px !important;
+  stroke: var(--ds-accent-text, #0a5950) !important;
+  fill: none !important;
+}
+
+/* ----- 5. Iconos de cperk (formulario contacto) — mismo tratamiento ----- */
+.cperk-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 40px !important; height: 40px !important;
+  border-radius: 10px !important;
+  background: var(--ds-accent-soft, #e9f5f2) !important;
+  color: var(--ds-accent-text, #0a5950) !important;
+  margin-right: 12px !important;
+  flex-shrink: 0 !important;
+}
+.cperk-icon svg {
+  width: 20px !important; height: 20px !important;
+  stroke: var(--ds-accent-text, #0a5950) !important;
+  fill: none !important;
+}
+.cperk-icon svg path, .cperk-icon svg rect, .cperk-icon svg circle, .cperk-icon svg line {
+  stroke: var(--ds-accent-text, #0a5950) !important;
+}
+
 </style>
 </head>
 <body>
@@ -4866,7 +5046,7 @@ const featData = [
       fr: 'Shiftia fonctionne sur tout appareil avec navigateur sans installation. Sauvegarde automatique dans le cloud.'
     },
     previewTitle: { es: 'Multi-dispositivo', en: 'Multi-device', de: 'Multi-Gerät', fr: 'Multi-appareil' },
-    preview: '<div style="display:flex;align-items:flex-end;justify-content:center;gap:16px;padding:20px 0"><div style="width:120px;height:80px;background:white;border-radius:6px;border:2px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative"><div style="font-size:0.5rem;color:var(--text3);margin-bottom:4px"><svg viewBox="0 0 24 24" fill="none" style="width:1em;height:1em;vertical-align:middle;display:inline-block"><rect x="2" y="3" width="20" height="14" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M2 17h20" stroke="#4ecdc4" stroke-width="2"/><path d="M7 20h10" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg> Desktop</div><div style="display:flex;gap:2px"><div style="width:8px;height:16px;background:#4ecdc4;border-radius:2px"></div><div style="width:8px;height:12px;background:#2980b9;border-radius:2px"></div><div style="width:8px;height:8px;background:#f59e0b;border-radius:2px"></div></div></div><div style="width:60px;height:70px;background:white;border-radius:6px;border:2px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:0.5rem;color:var(--text3);margin-bottom:4px"><svg viewBox="0 0 24 24" fill="none" style="width:1em;height:1em;vertical-align:middle;display:inline-block"><rect x="7" y="2" width="10" height="20" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M10 19h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg> Movil</div><div style="display:flex;gap:2px"><div style="width:6px;height:12px;background:#4ecdc4;border-radius:2px"></div><div style="width:6px;height:8px;background:#2980b9;border-radius:2px"></div></div></div><div style="width:80px;height:65px;background:white;border-radius:6px;border:2px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:0.5rem;color:var(--text3);margin-bottom:4px"><svg viewBox="0 0 24 24" fill="none" style="width:1em;height:1em;vertical-align:middle;display:inline-block"><rect x="7" y="2" width="10" height="20" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M10 19h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg> Tablet</div><div style="display:flex;gap:2px"><div style="width:7px;height:14px;background:#4ecdc4;border-radius:2px"></div><div style="width:7px;height:10px;background:#2980b9;border-radius:2px"></div><div style="width:7px;height:6px;background:#f59e0b;border-radius:2px"></div></div></div></div><div style="text-align:center;margin-top:8px;padding:8px;background:linear-gradient(135deg,rgba(78,205,196,0.08),rgba(41,128,185,0.08));border-radius:8px;font-size:0.7rem;color:var(--text2)"><svg viewBox="0 0 24 24" fill="none" style="width:1em;height:1em;vertical-align:middle;display:inline-block"><path d="M19 9a2 2 0 00-2-2h-1V6a3 3 0 00-6 0v1H7a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2v-10z" stroke="#4ecdc4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg> Sincronizacion automatica en la nube</div>'
+    preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Shiftia funciona en escritorio, tablet y móvil"><defs><linearGradient id="dvScreen" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#fafafa"/><stop offset="100%" stop-color="#f0eee6"/></linearGradient></defs><rect x="42" y="34" width="172" height="116" rx="8" fill="#0e0f0f"/><rect x="48" y="40" width="160" height="100" rx="3" fill="url(#dvScreen)"/><rect x="56" y="50" width="50" height="6" rx="1" fill="#0f7a6d" opacity="0.85"/><rect x="56" y="62" width="80" height="3" rx="1" fill="#c8c5bb"/><rect x="56" y="70" width="60" height="3" rx="1" fill="#c8c5bb"/><g transform="translate(56,82)"><rect x="0" y="0" width="22" height="14" rx="2" fill="#e9f5f2"/><rect x="26" y="0" width="22" height="14" rx="2" fill="#f4f2ec"/><rect x="52" y="0" width="22" height="14" rx="2" fill="#0e0f0f"/><rect x="78" y="0" width="22" height="14" rx="2" fill="#e9f5f2"/><rect x="104" y="0" width="22" height="14" rx="2" fill="#f4f2ec"/></g><g transform="translate(56,102)"><rect x="0" y="0" width="22" height="14" rx="2" fill="#f4f2ec"/><rect x="26" y="0" width="22" height="14" rx="2" fill="#0e0f0f"/><rect x="52" y="0" width="22" height="14" rx="2" fill="#e9f5f2"/><rect x="78" y="0" width="22" height="14" rx="2" fill="#f4f2ec"/><rect x="104" y="0" width="22" height="14" rx="2" fill="#e9f5f2"/></g><rect x="100" y="150" width="56" height="3" rx="1.5" fill="#c8c5bb"/><rect x="118" y="156" width="20" height="6" rx="1" fill="#0e0f0f"/><rect x="222" y="50" width="68" height="92" rx="6" fill="#0e0f0f"/><rect x="226" y="54" width="60" height="84" rx="3" fill="url(#dvScreen)"/><rect x="232" y="62" width="20" height="3" rx="1" fill="#0f7a6d" opacity="0.85"/><rect x="232" y="70" width="48" height="2" rx="1" fill="#c8c5bb"/><g transform="translate(232,80)"><rect x="0" y="0" width="22" height="10" rx="1.5" fill="#e9f5f2"/><rect x="26" y="0" width="22" height="10" rx="1.5" fill="#0e0f0f"/></g><g transform="translate(232,94)"><rect x="0" y="0" width="22" height="10" rx="1.5" fill="#f4f2ec"/><rect x="26" y="0" width="22" height="10" rx="1.5" fill="#e9f5f2"/></g><g transform="translate(232,108)"><rect x="0" y="0" width="22" height="10" rx="1.5" fill="#0e0f0f"/><rect x="26" y="0" width="22" height="10" rx="1.5" fill="#f4f2ec"/></g><rect x="298" y="58" width="34" height="80" rx="6" fill="#0e0f0f"/><rect x="300" y="62" width="30" height="68" rx="3" fill="url(#dvScreen)"/><circle cx="315" cy="60" r="0.8" fill="#0e0f0f"/><rect x="304" y="68" width="14" height="2" rx="1" fill="#0f7a6d" opacity="0.85"/><rect x="304" y="74" width="22" height="1.5" rx="0.7" fill="#c8c5bb"/><g transform="translate(304,82)"><rect x="0" y="0" width="22" height="6" rx="1" fill="#e9f5f2"/><rect x="0" y="9" width="22" height="6" rx="1" fill="#0e0f0f"/><rect x="0" y="18" width="22" height="6" rx="1" fill="#f4f2ec"/><rect x="0" y="27" width="22" height="6" rx="1" fill="#e9f5f2"/><rect x="0" y="36" width="22" height="6" rx="1" fill="#0e0f0f"/></g><circle cx="315" cy="128" r="1.2" fill="#0e0f0f"/></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500;letter-spacing:0.02em"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a4 4 0 0 0-4-4H7a4 4 0 0 0 0 8h10a4 4 0 0 0 4-4z"/><path d="M3 9a4 4 0 0 1 4-4h10a4 4 0 0 1 0 8H7a4 4 0 0 1-4-4z"/></svg>Sincronización automática</div></div>'
   }
 ];
 
@@ -4933,37 +5113,11 @@ window.addEventListener('scroll', () => {
 
 /* ====== PREMIUM VISUAL EFFECTS JAVASCRIPT ====== */
 
-// 3. Magnetic buttons
-document.querySelectorAll('.btn-lg, .price-btn, .floating-cta, .nav-cta').forEach(btn => {
-  btn.addEventListener('mousemove', (e) => {
-    const rect = btn.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
-  });
-  btn.addEventListener('mouseleave', () => {
-    btn.style.transform = '';
-    btn.style.transition = 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)';
-    setTimeout(() => btn.style.transition = '', 400);
-  });
-});
-
-// 5. Ripple on buttons
-document.querySelectorAll('.btn-lg, .price-btn, .floating-cta').forEach(btn => {
-  btn.style.position = 'relative';
-  btn.style.overflow = 'hidden';
-  btn.addEventListener('click', function(e) {
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple';
-    const rect = this.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
-    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
-    this.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-  });
-});
+// 3+5. Magnetic + ripple legacy: ELIMINADOS en v2.9.
+// Ya están reemplazados por el bloque IIFE de microinteracciones al final
+// del body, que es más sobrio y no rompe los .price-btn ni el layout.
+// Mantenemos esto comentado por si en el futuro queremos reintroducir el
+// efecto sólo en CTAs específicos.
 
 // 7. Animate pricing checkmarks
 const checkObs = new IntersectionObserver((entries) => {
