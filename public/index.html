@@ -2841,6 +2841,211 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .vs-foot { margin-top: 24px; text-align: center; font-family: var(--ds-font-sans, 'Geist', sans-serif); font-size: 14px; color: var(--ds-text-subtle, #8a8a85); font-style: italic; }
 
 /* ============================================================================
+   v3.0 — Orbit Ecosistema · Acentos · Anti-saltos · Mobile massive
+   ============================================================================ */
+
+/* ----- Orbit icons: matar gradients teal→azul, sustituir por chip premium ----- */
+.orbit-emoji {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background: var(--ds-bg-elev, #fff) !important;
+  border: 1px solid var(--ds-border, #e8e6df) !important;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 4px 14px rgba(15,15,15,0.05) !important;
+  color: var(--ds-accent-text, #0a5950) !important;
+  transition: transform 240ms cubic-bezier(0.16,1,0.3,1), box-shadow 240ms, border-color 240ms !important;
+}
+.orbit-node:hover .orbit-emoji {
+  transform: scale(1.08) !important;
+  border-color: var(--ds-accent, #0f7a6d) !important;
+  box-shadow: 0 0 0 4px rgba(15,122,109,0.10), 0 6px 20px rgba(15,122,109,0.12) !important;
+}
+.orbit-emoji svg { width: 22px !important; height: 22px !important; display: block !important; }
+.orbit-emoji svg path,
+.orbit-emoji svg rect,
+.orbit-emoji svg circle,
+.orbit-emoji svg line,
+.orbit-emoji svg polyline,
+.orbit-emoji svg polygon {
+  stroke: currentColor !important;
+  stroke-width: 1.7 !important;
+  fill: none !important;
+}
+.orbit-emoji svg circle[r="1.5"], .orbit-emoji svg circle[r="2"] { fill: currentColor !important; stroke: none !important; }
+.orbit-label {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--ds-text, #0e0f0f) !important;
+  letter-spacing: -0.005em !important;
+  margin-top: 6px !important;
+}
+.orbit-center { color: var(--ds-bg, #faf9f6) !important; }
+.orbit-center .orbit-emoji {
+  background: var(--ds-bg-inverse, #0e0f0f) !important;
+  border-color: var(--ds-bg-inverse, #0e0f0f) !important;
+  color: var(--ds-bg, #faf9f6) !important;
+  width: 72px !important; height: 72px !important;
+  box-shadow: 0 8px 24px rgba(15,15,15,0.18) !important;
+}
+.orbit-center .orbit-emoji svg { width: 32px !important; height: 32px !important; }
+.orbit-center .orbit-label {
+  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.02em !important;
+}
+.orbit-ring, .orbit-ring-1, .orbit-ring-2, .orbit-ring-3 {
+  border: 1px dashed var(--ds-border, #e8e6df) !important;
+  background: none !important;
+  box-shadow: none !important;
+  opacity: 0.8 !important;
+}
+
+/* ----- Anti-saltos en texto centrado ----- */
+.container.centered .section-p,
+.centered .section-p,
+section.centered p,
+.hero-desc {
+  text-wrap: balance;
+  hyphens: none !important;
+  -webkit-hyphens: none !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+#orbit .section-p, .orbit-section .section-p { max-width: 44ch !important; }
+.container.centered h1, .container.centered h2, .container.centered .section-h2,
+.centered h1, .centered h2, .centered .section-h2 { text-wrap: balance; }
+
+/* ============================================================================
+   MOBILE MASSIVE (≤768px)
+   ============================================================================ */
+@media (max-width: 768px) {
+  .ds-section, section, .hero, .trust-logo-band, .orbit-section,
+  .compare, .impact, .showcase, .features, .how, .usecases,
+  .proof, .faq, .pricing, .contact, .roi-section, .vs-section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .hero { padding-top: 72px !important; padding-bottom: 48px !important; }
+  section { padding-top: 56px !important; padding-bottom: 56px !important; }
+  .roi-section, .vs-section { padding: 56px 20px !important; }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 10vw, 3.2rem) !important;
+    line-height: 1 !important;
+  }
+  .hero-desc { font-size: 1rem !important; line-height: 1.55 !important; max-width: 36ch !important; }
+
+  .hero-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  .hero-actions .btn-lg, .hero-actions .hero-cta, .hero-actions a {
+    width: 100% !important;
+    min-height: 50px !important;
+    justify-content: center !important;
+    font-size: 15px !important;
+  }
+
+  .nav, .navbar { padding: 12px 16px !important; }
+
+  .tlb-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 18px 16px !important; }
+  .tlb-item svg { height: 22px !important; }
+
+  .orbit-map { transform: scale(0.75) !important; transform-origin: center center !important; margin: -8% 0 !important; }
+
+  .features-grid, .feat-grid, .bento, .pricing-grid, .impact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .bento-emoji { width: 48px !important; height: 48px !important; }
+  .bento-emoji svg { width: 24px !important; height: 24px !important; }
+  .bento-card { padding: 24px 20px !important; }
+
+  .compare-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .compare-card { padding: 24px 20px !important; }
+
+  .impact-grid { grid-template-columns: 1fr 1fr !important; gap: 18px !important; }
+  .impact-num { font-size: clamp(2.2rem, 9vw, 2.8rem) !important; }
+
+  .roi-shell { grid-template-columns: 1fr !important; gap: 28px !important; }
+  .roi-card { padding: 22px 18px !important; }
+  .roi-output-grid { grid-template-columns: 1fr !important; gap: 18px !important; }
+  .roi-cta-row { flex-direction: column !important; }
+
+  .vs-table-wrap { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .vs-table { min-width: 560px !important; font-size: 13px !important; }
+  .vs-table thead th, .vs-table tbody td { padding: 12px 14px !important; }
+  .vs-table-wrap::after {
+    content: '← Desliza →';
+    display: block; text-align: center;
+    font-family: var(--ds-font-sans, 'Geist', sans-serif);
+    font-size: 11px; color: var(--ds-text-subtle, #8a8a85);
+    padding: 8px 0 0; letter-spacing: 0.06em;
+  }
+
+  .price-card { padding: 28px 22px !important; }
+  .price-btn { min-height: 50px !important; font-size: 15px !important; }
+
+  .contact-split { grid-template-columns: 1fr !important; gap: 28px !important; }
+  .form-row { flex-direction: column !important; gap: 14px !important; }
+  .form-row .fg { width: 100% !important; }
+
+  .cal-day { min-height: 42px !important; font-size: 14px !important; }
+  .cal-grid { gap: 4px !important; }
+  .time-slot { min-height: 44px !important; font-size: 13px !important; padding: 10px 8px !important; }
+  .time-slots { grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
+
+  .dash-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+
+  .faq-q { padding: 18px 16px !important; font-size: 15px !important; }
+  .faq-a-inner { padding: 0 16px 18px !important; font-size: 14px !important; }
+
+  .footer .container { display: flex !important; flex-direction: column !important; gap: 32px !important; }
+  .footer-columns, .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+  .footer-brand { text-align: center !important; }
+
+  .section-h2 {
+    font-size: clamp(1.85rem, 7vw, 2.5rem) !important;
+    text-wrap: balance;
+    margin-bottom: 16px !important;
+  }
+  .section-p { font-size: 0.98rem !important; text-wrap: balance; }
+
+  button, a.btn, .ds-btn, .nav-cta, .hero-cta, .price-btn, .roi-cta, .roi-cta-ghost {
+    min-height: 44px !important;
+  }
+
+  html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+  .container, .wrap { max-width: 100% !important; }
+
+  .chat-widget, .chat-panel { max-width: calc(100vw - 32px) !important; }
+
+  .scroll-progress { height: 2px !important; }
+}
+
+/* MOBILE SMALL (≤420px) — iPhones de 1 mano */
+@media (max-width: 420px) {
+  .hero h1 { font-size: clamp(1.9rem, 11vw, 2.6rem) !important; }
+  .section-h2 { font-size: clamp(1.6rem, 8.5vw, 2.2rem) !important; }
+  .tlb-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .impact-grid { grid-template-columns: 1fr !important; }
+  .time-slots { grid-template-columns: repeat(2, 1fr) !important; }
+  .footer-columns, .footer-grid { grid-template-columns: 1fr !important; }
+  .orbit-map { transform: scale(0.62) !important; margin: -14% 0 !important; }
+  .hero-product-svg { border-radius: 14px !important; }
+  .price-amount { font-size: clamp(2.2rem, 9vw, 2.8rem) !important; }
+  .roi-output-value { font-size: clamp(2rem, 9vw, 2.6rem) !important; }
+}
+
+/* ============================================================================
    v2.9 HOTFIX — Bug-fixes derivados del overhaul visual
    - Botones de pricing rotos / azules
    - Iconos sectoriales (bento) demasiado pequeños
@@ -3157,7 +3362,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="orbit_eyebrow">Ecosistema</div>
     <h2 class="section-h2 reveal" data-i18n="orbit_title">Todo conectado. Todo inteligente.</h2>
-    <p class="section-p reveal" data-i18n="orbit_desc">Shiftia integra cada aspecto de la gestion de turnos en un unico sistema inteligente.</p>
+    <p class="section-p reveal" data-i18n="orbit_desc">Shiftia integra cada aspecto de la gestión de turnos en un único sistema inteligente.</p>
   </div>
   <div class="orbit-map reveal">
     <!-- Orbit rings -->
@@ -3189,8 +3394,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
     </div>
     <!-- Ring 3 (outer, slow) -->
     <div class="orbit-track orbit-track-3">
-      <div class="orbit-node n8"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og8" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><rect x="7" y="2" width="10" height="20" rx="2" stroke="url(#og8)" stroke-width="1.5" fill="none"/><path d="M10 19h4" stroke="url(#og8)" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/></svg></span><span class="orbit-label" data-i18n="orb_mobile">App movil</span></div>
-      <div class="orbit-node n9"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og9" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M4 16.9A5 5 0 0112 6a6 6 0 016 6 4 4 0 01-2 7.5" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5A5 5 0 014 16.9" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M16 19.5a4 4 0 002-3" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5h8" stroke="url(#og9)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_sync">Sincronizacion</span></div>
+      <div class="orbit-node n8"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og8" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><rect x="7" y="2" width="10" height="20" rx="2" stroke="url(#og8)" stroke-width="1.5" fill="none"/><path d="M10 19h4" stroke="url(#og8)" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/></svg></span><span class="orbit-label" data-i18n="orb_mobile">App móvil</span></div>
+      <div class="orbit-node n9"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og9" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M4 16.9A5 5 0 0112 6a6 6 0 016 6 4 4 0 01-2 7.5" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5A5 5 0 014 16.9" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M16 19.5a4 4 0 002-3" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5h8" stroke="url(#og9)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_sync">Sincronización</span></div>
       <div class="orbit-node n10"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og10" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><rect x="5" y="11" width="14" height="10" rx="2" stroke="url(#og10)" stroke-width="1.5" fill="none"/><path d="M8 11V7a4 4 0 118 0v4" stroke="url(#og10)" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="url(#og10)"/></svg></span><span class="orbit-label" data-i18n="orb_gdpr">RGPD</span></div>
       <div class="orbit-node n11"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og11" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="url(#og11)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="url(#og11)" stroke-width="1.5" stroke-linecap="round"/><path d="M9 15l2 2 4-4" stroke="url(#og11)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="orbit-label" data-i18n="orb_pdf">Import PDF</span></div>
       <div class="orbit-node n12"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og12" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M12 2L4 7v5c0 5.5 3.4 10.7 8 12 4.6-1.3 8-6.5 8-12V7l-8-5z" stroke="url(#og12)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 8v4h3" stroke="url(#og12)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="orbit-label" data-i18n="orb_conciliation">Conciliacion</span></div>
@@ -3203,7 +3408,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 <section class="compare" id="compare">
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="compare_eyebrow">Antes vs despues</div>
-    <h2 class="section-h2 reveal" data-i18n="compare_title">Deja de gestionar turnos con hojas de calculo</h2>
+    <h2 class="section-h2 reveal" data-i18n="compare_title">Deja de gestionar turnos con hojas de cálculo</h2>
     <p class="section-p reveal" data-i18n="compare_desc">La mayoria de empresas todavia planifican turnos manualmente. Shiftia cambia eso.</p>
   </div>
   <div class="container">
@@ -3509,7 +3714,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="feat_eyebrow">Funcionalidades</div>
     <h2 class="section-h2 reveal" data-i18n="feat_title">Todo lo que necesita tu equipo</h2>
-    <p class="section-p reveal" data-i18n="feat_desc">Cada funcionalidad esta diseñada para resolver problemas reales de la gestion diaria de turnos y planillas.</p>
+    <p class="section-p reveal" data-i18n="feat_desc">Cada funcionalidad está diseñada para resolver problemas reales de la gestión diaria de turnos y planillas.</p>
   </div>
   <div class="container">
     <div class="features-grid">
@@ -3637,7 +3842,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
         <div>
           <span class="bento-emoji"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M12 8v8M8 12h8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></span>
           <h3 data-i18n="uc1_t">Hospitales y clinicas</h3>
-          <p data-i18n="uc1_d">Equipo mixto de enfermeria, tecnicos y especialistas. Rotacion de mañana, tarde y noche. Conciliacion, jornadas reducidas y restricciones medicas gestionadas automaticamente.</p>
+          <p data-i18n="uc1_d">Equipo mixto de enfermería, técnicos y especialistas. Rotación de mañana, tarde y noche. Conciliación, jornadas reducidas y restricciones médicas gestionadas automáticamente.</p>
           <div class="bento-tags">
             <span class="bento-tag">Rotacion nocturna</span>
             <span class="bento-tag">Coberturas IA</span>
@@ -3648,7 +3853,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
         <div>
           <span class="bento-emoji"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M3 21h18V8l-3-3V2h-2v1l-3-1-3 1V2H9v3l-3 3v13z" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 13v3M12 11v5M16 13v3" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></span>
           <h3 data-i18n="uc2_t">Fabricas e industria</h3>
-          <p data-i18n="uc2_d">Turnos rotativos con produccion continua. Controla que cada linea tenga cobertura minima, gestiona festivos y detecta sobrecargas antes de que impacten en la produccion.</p>
+          <p data-i18n="uc2_d">Turnos rotativos con producción continua. Controla que cada línea tenga cobertura mínima, gestiona festivos y detecta sobrecargas antes de que impacten en la producción.</p>
           <div class="bento-tags">
             <span class="bento-tag">Produccion 24/7</span>
             <span class="bento-tag">Cobertura por linea</span>
@@ -4586,19 +4791,19 @@ const translations = {
     hero_badge: 'ShiftiaOS v5.3',
     hero_title_1: 'Planificación de turnos y planillas,',
     hero_title_2: 'simplificada',
-    hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clinicas, residencias, fabricas y cualquier negocio con planillas. Menos Excel, mas control.',
+    hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.',
     hero_cta: 'Solicitar demo', hero_cta2: 'Como funciona', hero_trial: 'Garantia de devolucion de 30 dias',
     stat1: 'Trabajadores', stat2: 'Tiempo ahorrado', stat3: 'Conflictos sin resolver',
-    orbit_eyebrow: 'Ecosistema', orbit_title: 'Todo conectado. Todo inteligente.', orbit_desc: 'Shiftia integra cada aspecto de la gestion de turnos en un unico sistema inteligente.',
-    orb_ai: 'Motor IA', orb_schedule: 'Planilla', orb_equity: 'Equidad', orb_dashboard: 'Dashboard', orb_alerts: 'Alertas', orb_coverage: 'Coberturas', orb_nights: 'Noches', orb_mobile: 'App movil', orb_sync: 'Sincronizacion', orb_gdpr: 'RGPD', orb_pdf: 'Import PDF', orb_conciliation: 'Conciliacion', orb_holidays: 'Vacaciones',
-    compare_eyebrow: 'Antes vs despues', compare_title: 'Deja de gestionar turnos con hojas de calculo',
+    orbit_eyebrow: 'Ecosistema', orbit_title: 'Todo conectado. Todo inteligente.', orbit_desc: 'Shiftia integra cada aspecto de la gestión de turnos en un único sistema inteligente.',
+    orb_ai: 'Motor IA', orb_schedule: 'Planilla', orb_equity: 'Equidad', orb_dashboard: 'Dashboard', orb_alerts: 'Alertas', orb_coverage: 'Coberturas', orb_nights: 'Noches', orb_mobile: 'App móvil', orb_sync: 'Sincronización', orb_gdpr: 'RGPD', orb_pdf: 'Import PDF', orb_conciliation: 'Conciliacion', orb_holidays: 'Vacaciones',
+    compare_eyebrow: 'Antes vs despues', compare_title: 'Deja de gestionar turnos con hojas de cálculo',
     compare_desc: 'La mayoria de empresas todavia planifican turnos manualmente. Shiftia cambia eso.',
     compare_old_title: 'Sin Shiftia',
     compare_old_text: 'Cuadrantes en Excel compartidos por email. Horas buscando quien puede cubrir una ausencia. Quejas constantes por reparto desigual de noches. Errores de cobertura que solo se detectan el mismo dia.',
     compare_new_title: 'Con Shiftia',
     compare_new_text: 'Planilla visual con edicion en un clic. La IA sugiere coberturas en 0.2 segundos con 3 candidatos puntuados. Equidad nocturna medida automaticamente. Conflictos detectados dias antes de que ocurran.',
     feat_eyebrow: 'Funcionalidades', feat_title: 'Todo lo que necesita tu equipo',
-    feat_desc: 'Cada funcionalidad esta diseñada para resolver problemas reales de la gestion diaria de turnos y planillas.',
+    feat_desc: 'Cada funcionalidad está diseñada para resolver problemas reales de la gestión diaria de turnos y planillas.',
     f1_t: 'Planilla visual', f1_d: 'Vista mensual con colores por turno. Edita cualquier celda con un clic. Ve todo tu equipo de un vistazo.',
     f2_t: 'Motor IA de coberturas', f2_d: '7 criterios de analisis, 3 candidatos con puntuacion, impacto en equidad y nivel de confianza. En menos de un segundo.',
     f3_t: 'Equidad nocturna', f3_d: 'Calcula automaticamente la media de noches solo entre trabajadores que rotan. Detecta desequilibrios antes de que escalen.',
@@ -4613,8 +4818,8 @@ const translations = {
     s4_t: 'Analiza y mejora', s4_d: 'Dashboard de equidad, sobrecargas, tendencias. Datos para tomar mejores decisiones.',
     uc_eyebrow: 'Uso', uc_title: 'Diseñado para cualquier sector con turnos',
     uc_desc: 'Hospitales, fabricas, residencias, seguridad, hosteleria. Si tienes planillas, Shiftia se adapta.',
-    uc1_t: 'Hospitales y clinicas', uc1_d: 'Equipo mixto de enfermeria, tecnicos y especialistas. Rotacion de mañana, tarde y noche. Conciliacion, jornadas reducidas y restricciones medicas gestionadas automaticamente.',
-    uc2_t: 'Fabricas e industria', uc2_d: 'Turnos rotativos con produccion continua. Controla que cada linea tenga cobertura minima, gestiona festivos y detecta sobrecargas antes de que impacten en la produccion.',
+    uc1_t: 'Hospitales y clinicas', uc1_d: 'Equipo mixto de enfermería, técnicos y especialistas. Rotación de mañana, tarde y noche. Conciliación, jornadas reducidas y restricciones médicas gestionadas automáticamente.',
+    uc2_t: 'Fabricas e industria', uc2_d: 'Turnos rotativos con producción continua. Controla que cada línea tenga cobertura mínima, gestiona festivos y detecta sobrecargas antes de que impacten en la producción.',
     uc3_t: 'Residencias y socio-sanitario', uc3_d: 'Personal de atencion directa con alta rotacion. Shiftia asegura cobertura minima por planta y respeta descansos obligatorios entre turnos.',
     uc4_t: 'Seguridad y hosteleria', uc4_d: 'Vigilantes, personal de hotel, restaurantes. Cualquier negocio con planillas por turnos. Control de vacaciones, permisos y balance de horas en tiempo real.',
     proof_eyebrow: 'Testimonios', proof_title: 'Profesionales que ya usan Shiftia',
@@ -4986,7 +5191,7 @@ const featData = [
       fr: 'Shiftia présente votre planning mensuel dans une vue calendrier colorée par type de poste. Matin en vert, après-midi en bleu, nuit en ambre. Chaque cellule est modifiable en un clic.'
     },
     previewTitle: { es: 'Vista de planilla', en: 'Roster view', de: 'Planansicht', fr: 'Vue planning' },
-    preview: '<div style="display:grid;grid-template-columns:40px repeat(7,1fr);gap:2px;font-size:0.65rem;"><div style="padding:4px;font-weight:700;color:var(--text3)"></div><div style="padding:4px;text-align:center;font-weight:600;color:var(--text2)">L</div><div style="padding:4px;text-align:center;font-weight:600;color:var(--text2)">M</div><div style="padding:4px;text-align:center;font-weight:600;color:var(--text2)">X</div><div style="padding:4px;text-align:center;font-weight:600;color:var(--text2)">J</div><div style="padding:4px;text-align:center;font-weight:600;color:var(--text2)">V</div><div style="padding:4px;text-align:center;font-weight:600;color:var(--text2)">S</div><div style="padding:4px;text-align:center;font-weight:600;color:var(--text2)">D</div><div style="padding:4px;font-weight:600;color:var(--text2);white-space:nowrap">Ana R.</div><div style="padding:4px;text-align:center;background:#dff5ee;border-radius:4px;color:#1a8870;font-weight:600">M</div><div style="padding:4px;text-align:center;background:#dff5ee;border-radius:4px;color:#1a8870;font-weight:600">M</div><div style="padding:4px;text-align:center;background:#dbeafe;border-radius:4px;color:#2980b9;font-weight:600">T</div><div style="padding:4px;text-align:center;background:#dbeafe;border-radius:4px;color:#2980b9;font-weight:600">T</div><div style="padding:4px;text-align:center;background:#fef3c7;border-radius:4px;color:#d97706;font-weight:600">N</div><div style="padding:4px;text-align:center;color:var(--text3)">L</div><div style="padding:4px;text-align:center;color:var(--text3)">L</div><div style="padding:4px;font-weight:600;color:var(--text2);white-space:nowrap">Pedro M.</div><div style="padding:4px;text-align:center;background:#fef3c7;border-radius:4px;color:#d97706;font-weight:600">N</div><div style="padding:4px;text-align:center;color:var(--text3)">L</div><div style="padding:4px;text-align:center;color:var(--text3)">L</div><div style="padding:4px;text-align:center;background:#dff5ee;border-radius:4px;color:#1a8870;font-weight:600">M</div><div style="padding:4px;text-align:center;background:#dff5ee;border-radius:4px;color:#1a8870;font-weight:600">M</div><div style="padding:4px;text-align:center;background:#dbeafe;border-radius:4px;color:#2980b9;font-weight:600">T</div><div style="padding:4px;text-align:center;background:#dbeafe;border-radius:4px;color:#2980b9;font-weight:600">T</div><div style="padding:4px;font-weight:600;color:var(--text2);white-space:nowrap">Laura S.</div><div style="padding:4px;text-align:center;background:#dbeafe;border-radius:4px;color:#2980b9;font-weight:600">T</div><div style="padding:4px;text-align:center;background:#dbeafe;border-radius:4px;color:#2980b9;font-weight:600">T</div><div style="padding:4px;text-align:center;background:#fef3c7;border-radius:4px;color:#d97706;font-weight:600">N</div><div style="padding:4px;text-align:center;background:#fef3c7;border-radius:4px;color:#d97706;font-weight:600">N</div><div style="padding:4px;text-align:center;color:var(--text3)">L</div><div style="padding:4px;text-align:center;background:#dff5ee;border-radius:4px;color:#1a8870;font-weight:600">M</div><div style="padding:4px;text-align:center;background:#dff5ee;border-radius:4px;color:#1a8870;font-weight:600">M</div></div>'
+    preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cuadrante semanal con turnos M, T y N"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><text x="14" y="18" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1.2" fill="#8a8a85">SEMANA 17 · UVI</text><g font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85" letter-spacing="0.5"><text x="86" y="36" text-anchor="middle">L</text><text x="134" y="36" text-anchor="middle">M</text><text x="182" y="36" text-anchor="middle">X</text><text x="230" y="36" text-anchor="middle">J</text><text x="278" y="36" text-anchor="middle">V</text></g><line x1="14" y1="42" x2="346" y2="42" stroke="#e8e6df"/><g font-family="\'Geist Mono\', monospace" font-size="9" font-weight="500"><g transform="translate(14,52)"><circle cx="8" cy="14" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">MC</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">María C.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="86" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="134" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="182" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="230" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="278" y="17" text-anchor="middle" fill="#8a8a85">L</text></g><g transform="translate(14,82)"><circle cx="8" cy="14" r="8" fill="#f4f2ec" stroke="#c8c5bb"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#4a4a47">JR</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Javier R.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="86" y="17" text-anchor="middle" fill="#faf9f6">N</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="134" y="17" text-anchor="middle" fill="#8a8a85">L</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="182" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="230" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="278" y="17" text-anchor="middle" fill="#5a4a2a">T</text></g><g transform="translate(14,112)"><circle cx="8" cy="14" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">AG</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Ana G.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="86" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="134" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="182" y="17" text-anchor="middle" fill="#faf9f6">N</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="230" y="17" text-anchor="middle" fill="#faf9f6">N</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="278" y="17" text-anchor="middle" fill="#8a8a85">L</text></g><g transform="translate(14,142)"><circle cx="8" cy="14" r="8" fill="#f4f2ec" stroke="#c8c5bb"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#4a4a47">LS</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Laura S.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="86" y="17" text-anchor="middle" fill="#8a8a85">L</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="134" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="182" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="230" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="278" y="17" text-anchor="middle" fill="#faf9f6">N</text></g></g><g transform="translate(14,178)" font-family="\'Geist\', sans-serif" font-size="8" fill="#8a8a85"><rect x="0" y="0" width="8" height="8" rx="2" fill="#e9f5f2"/><text x="12" y="7">Mañana</text><rect x="50" y="0" width="8" height="8" rx="2" fill="#f4f2ec"/><text x="62" y="7">Tarde</text><rect x="92" y="0" width="8" height="8" rx="2" fill="#0e0f0f"/><text x="104" y="7">Noche</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Planificación visual al instante</div></div>'
   },
   {
     icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="6" y="3" width="12" height="13" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M9 6h6M9 10h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="3" y="18" width="18" height="2" rx="1" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M8 16v2M16 16v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#dbeafe',
@@ -4998,7 +5203,7 @@ const featData = [
       fr: 'Quand quelqu\'un est absent, le moteur IA analyse 7 critères en temps réel et présente 3 candidats classés.'
     },
     previewTitle: { es: 'Motor IA en accion', en: 'AI Engine in action', de: 'KI-Motor in Aktion', fr: 'Moteur IA en action' },
-    preview: '<div style="display:flex;flex-direction:column;gap:8px;"><div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:white;border-radius:8px;border:1px solid var(--border-light)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4ecdc4,#2980b9);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.7rem">DC</div><div><div style="font-size:0.8rem;font-weight:600">Diego C.</div><div style="font-size:0.65rem;color:var(--text3)">Disponible · Media de noches baja</div></div></div><div style="font-size:0.82rem;font-weight:800;padding:3px 10px;border-radius:20px;background:#dbeafe;color:#2980b9">94</div></div><div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:white;border-radius:8px;border:1px solid var(--border-light)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4ecdc4,#2980b9);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.7rem">IZ</div><div><div style="font-size:0.8rem;font-weight:600">Iouri Z.</div><div style="font-size:0.65rem;color:var(--text3)">Sin turno · 2 noches bajo media</div></div></div><div style="font-size:0.82rem;font-weight:800;padding:3px 10px;border-radius:20px;background:#dbeafe;color:#2980b9">87</div></div><div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:white;border-radius:8px;border:1px solid var(--border-light)"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4ecdc4,#2980b9);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.7rem">YJ</div><div><div style="font-size:0.8rem;font-weight:600">Yolanda J.</div><div style="font-size:0.65rem;color:var(--text3)">Sin turno · 1 noche sobre media</div></div></div><div style="font-size:0.82rem;font-weight:800;padding:3px 10px;border-radius:20px;background:#fef3c7;color:#d97706">72</div></div></div>'
+    preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Motor IA sugiere 3 candidatos para cubrir un turno"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><g transform="translate(14,14)"><circle cx="6" cy="6" r="4" fill="#0f7a6d"/><text x="16" y="9" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Cobertura sugerida</text><text x="346" y="9" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#8a8a85">0.8s</text></g><line x1="14" y1="30" x2="346" y2="30" stroke="#e8e6df"/><text x="14" y="46" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1" fill="#8a8a85">TURNO NOCHE · MAR 14 · UVI</text><g transform="translate(14,56)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#e9f5f2" stroke="#0f7a6d"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#0a5950">DC</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">Diego C.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Disponible · 2 noches bajo media</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#0f7a6d"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#fff">94</text></g><g transform="translate(14,102)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#e9f5f2" stroke="#0f7a6d"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#0a5950">IZ</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">Iouri Z.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Sin turno · descanso 22h</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#e9f5f2" stroke="#0f7a6d"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#0a5950">87</text></g><g transform="translate(14,148)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#f4f2ec" stroke="#c8c5bb"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#4a4a47">YJ</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">Yolanda J.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Sin turno · 1 noche sobre media</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#fff" stroke="#c8c5bb"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#8a8a85">72</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Sugerencias en menos de 1 segundo</div></div>'
   },
   {
     icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M12 2v6M12 2h8M12 2h-8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="8" x2="20" y2="8" stroke="#4ecdc4" stroke-width="2"/><path d="M8 8v10c0 1.1 1.8 2 4 2s4-.9 4-2V8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M12 20v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#fef3c7',
@@ -5010,7 +5215,7 @@ const featData = [
       fr: 'Shiftia calcule la moyenne des nuits uniquement parmi les travailleurs en rotation avec des indicateurs visuels.'
     },
     previewTitle: { es: 'Panel de equidad', en: 'Equity panel', de: 'Gerechtigkeitspanel', fr: 'Panel d\'équité' },
-    preview: '<div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:white;border-radius:8px;border:1px solid var(--border-light);font-size:0.75rem"><span style="font-weight:600">Diego C.</span><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3)">4 noches</span><div style="width:60px;height:5px;background:var(--border-light);border-radius:3px;overflow:hidden"><div style="width:50%;height:100%;background:#4ecdc4;border-radius:3px"></div></div><span style="background:#dff5ee;color:#1a8870;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700">OK</span></div></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:white;border-radius:8px;border:1px solid var(--border-light);font-size:0.75rem"><span style="font-weight:600">Iouri Z.</span><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3)">7 noches</span><div style="width:60px;height:5px;background:var(--border-light);border-radius:3px;overflow:hidden"><div style="width:85%;height:100%;background:#f59e0b;border-radius:3px"></div></div><span style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700">Alto</span></div></div><div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:white;border-radius:8px;border:1px solid var(--border-light);font-size:0.75rem"><span style="font-weight:600">Yolanda J.</span><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3)">3 noches</span><div style="width:60px;height:5px;background:var(--border-light);border-radius:3px;overflow:hidden"><div style="width:38%;height:100%;background:#4ecdc4;border-radius:3px"></div></div><span style="background:#dff5ee;color:#1a8870;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700">OK</span></div></div><div style="margin-top:8px;padding:8px 12px;background:linear-gradient(135deg,rgba(78,205,196,0.08),rgba(41,128,185,0.08));border-radius:8px;font-size:0.7rem;color:var(--text2);text-align:center">Media equipo: 4.7 noches · Spread: 4 · <span style="color:#1a8870;font-weight:600">Equilibrio bueno</span></div></div>'
+    preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Panel de equidad nocturna con donut 96% y lista de reparto"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><text x="14" y="18" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1.2" fill="#8a8a85">EQUIDAD NOCTURNA · ABR</text><line x1="14" y1="26" x2="346" y2="26" stroke="#e8e6df"/><g transform="translate(28,44)"><circle cx="56" cy="56" r="48" fill="none" stroke="#f4f2ec" stroke-width="10"/><circle cx="56" cy="56" r="48" fill="none" stroke="#0f7a6d" stroke-width="10" stroke-dasharray="289.6 301.6" stroke-dashoffset="0" transform="rotate(-90 56 56)" stroke-linecap="round"/><text x="56" y="54" text-anchor="middle" font-family="\'Instrument Serif\', serif" font-size="30" fill="#0e0f0f">96</text><text x="56" y="68" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85" letter-spacing="0.6">% EQUILIBRIO</text></g><g transform="translate(166,42)"><text x="0" y="0" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.8" fill="#8a8a85">REPARTO · 3 ROTADORES</text><g transform="translate(0,14)"><rect x="0" y="0" width="176" height="30" rx="6" fill="#fff" stroke="#e8e6df"/><circle cx="14" cy="15" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="14" y="18" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">DC</text><text x="28" y="18" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Diego C.</text><text x="128" y="18" font-family="\'Geist Mono\', monospace" font-size="10" fill="#0a5950">4n</text><rect x="148" y="11" width="22" height="8" rx="4" fill="#e9f5f2"/><rect x="148" y="11" width="11" height="8" rx="4" fill="#0f7a6d"/></g><g transform="translate(0,48)"><rect x="0" y="0" width="176" height="30" rx="6" fill="#fff" stroke="#e8e6df"/><circle cx="14" cy="15" r="8" fill="#f4f2ec" stroke="#c8c5bb"/><text x="14" y="18" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#4a4a47">IZ</text><text x="28" y="18" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Iouri Z.</text><text x="128" y="18" font-family="\'Geist Mono\', monospace" font-size="10" fill="#5a4a2a">7n</text><rect x="148" y="11" width="22" height="8" rx="4" fill="#f4f2ec"/><rect x="148" y="11" width="19" height="8" rx="4" fill="#c89849"/></g><g transform="translate(0,82)"><rect x="0" y="0" width="176" height="30" rx="6" fill="#fff" stroke="#e8e6df"/><circle cx="14" cy="15" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="14" y="18" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">YJ</text><text x="28" y="18" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Yolanda J.</text><text x="128" y="18" font-family="\'Geist Mono\', monospace" font-size="10" fill="#0a5950">3n</text><rect x="148" y="11" width="22" height="8" rx="4" fill="#e9f5f2"/><rect x="148" y="11" width="8" height="8" rx="4" fill="#0f7a6d"/></g></g><g transform="translate(14,180)" font-family="\'Geist\', sans-serif" font-size="8" fill="#8a8a85"><text x="0" y="6">Media 4.7n · Spread 4 · Solo rotadores reales</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg>Reparto justo y transparente</div></div>'
   },
   {
     icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M18 2l-2 4M6 2l2 4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2l-3 5v10h6V7l-3-5z" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="21" x2="15" y2="21" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M10 13h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#fee2e2',
@@ -5022,7 +5227,7 @@ const featData = [
       fr: 'Shiftia analyse en continu le planning et signale les conflits avec des explications et suggestions de correction.'
     },
     previewTitle: { es: 'Alertas detectadas', en: 'Detected alerts', de: 'Erkannte Warnungen', fr: 'Alertes détectées' },
-    preview: '<div style="display:flex;flex-direction:column;gap:8px;"><div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:white;border-radius:8px;border-left:3px solid #dc2626;border-top:1px solid var(--border-light);border-right:1px solid var(--border-light);border-bottom:1px solid var(--border-light)"><div style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#e74c3c;margin-top:2px"></div><div><div style="font-size:0.78rem;font-weight:700;color:#dc2626">Cobertura insuficiente</div><div style="font-size:0.7rem;color:var(--text3);margin-top:2px">Martes 3 — Turno Noche: solo 1 de 2 requeridos</div></div></div><div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:white;border-radius:8px;border-left:3px solid #f59e0b;border-top:1px solid var(--border-light);border-right:1px solid var(--border-light);border-bottom:1px solid var(--border-light)"><div style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f39c12;margin-top:2px"></div><div><div style="font-size:0.78rem;font-weight:700;color:#d97706">Descanso no respetado</div><div style="font-size:0.7rem;color:var(--text3);margin-top:2px">Pedro M. — Solo 8h entre Noche (Lun) y Mañana (Mar)</div></div></div><div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:white;border-radius:8px;border-left:3px solid #2980b9;border-top:1px solid var(--border-light);border-right:1px solid var(--border-light);border-bottom:1px solid var(--border-light)"><div style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3498db;margin-top:2px"></div><div><div style="font-size:0.78rem;font-weight:700;color:#2980b9">Vacaciones solapadas</div><div style="font-size:0.7rem;color:var(--text3);margin-top:2px">Ana R. y Laura S. — Semana 15: cobertura comprometida</div></div></div></div>'
+    preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Panel de alertas con 3 conflictos detectados y sugerencia de solución"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><g transform="translate(14,14)"><circle cx="6" cy="6" r="4" fill="#0f7a6d"/><text x="16" y="9" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Conflictos detectados</text><text x="346" y="9" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#8a8a85">3 activos</text></g><line x1="14" y1="30" x2="346" y2="30" stroke="#e8e6df"/><g transform="translate(14,42)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><rect x="0" y="0" width="3" height="40" rx="1.5" fill="#0e0f0f"/><g transform="translate(14,12)"><circle cx="8" cy="8" r="8" fill="#0e0f0f"/><path d="M8 4.5v4.5M8 11v1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round"/></g><text x="36" y="17" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Cobertura insuficiente</text><text x="36" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Mar 3 · Noche UVI · 1 de 2 requeridos</text><text x="316" y="24" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">Fix →</text></g><g transform="translate(14,88)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><rect x="0" y="0" width="3" height="40" rx="1.5" fill="#c89849"/><g transform="translate(14,12)"><circle cx="8" cy="8" r="8" fill="none" stroke="#c89849" stroke-width="1.5"/><path d="M8 4.5v4.5M8 11v1" stroke="#c89849" stroke-width="1.5" stroke-linecap="round"/></g><text x="36" y="17" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Descanso no respetado</text><text x="36" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Pedro M. · 8h entre Noche L y Mañana M</text><text x="316" y="24" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">Fix →</text></g><g transform="translate(14,134)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><rect x="0" y="0" width="3" height="40" rx="1.5" fill="#0f7a6d"/><g transform="translate(14,12)"><circle cx="8" cy="8" r="8" fill="none" stroke="#0f7a6d" stroke-width="1.5"/><path d="M4.5 8h7" stroke="#0f7a6d" stroke-width="1.5" stroke-linecap="round"/></g><text x="36" y="17" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Vacaciones solapadas</text><text x="36" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Ana R. + Laura S. · Sem 15 cobertura baja</text><text x="316" y="24" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">Fix →</text></g><g transform="translate(14,180)" font-family="\'Geist\', sans-serif" font-size="8" fill="#8a8a85"><text x="0" y="6">Escaneo continuo · auto-sugerencia de solución</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Problemas resueltos antes de escalar</div></div>'
   },
   {
     icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="3" y="11" width="18" height="10" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M7 21V8M12 21V5M17 21v-3" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#f3e8ff',
@@ -5034,7 +5239,7 @@ const featData = [
       fr: 'Tableau de bord complet avec métriques en temps réel et graphiques interactifs.'
     },
     previewTitle: { es: 'Panel de control', en: 'Control panel', de: 'Kontrollzentrum', fr: 'Panneau de contrôle' },
-    preview: '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px"><div style="padding:12px;background:white;border-radius:8px;border:1px solid var(--border-light);text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text1)">156h</div><div style="font-size:0.65rem;color:var(--text3);margin-top:2px">Media horas</div></div><div style="padding:12px;background:white;border-radius:8px;border:1px solid var(--border-light);text-align:center"><div style="font-size:1.3rem;font-weight:800;color:var(--text1)">0</div><div style="font-size:0.65rem;color:var(--text3);margin-top:2px">Conflictos</div></div><div style="padding:12px;background:white;border-radius:8px;border:1px solid var(--border-light);text-align:center"><div style="font-size:1.3rem;font-weight:800;color:#4ecdc4">98%</div><div style="font-size:0.65rem;color:var(--text3);margin-top:2px">Cobertura</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="padding:16px;background:white;border-radius:8px;border:1px solid var(--border-light)"><div style="font-size:0.65rem;font-weight:700;color:var(--text2);margin-bottom:10px">Turnos por semana</div><div style="display:flex;align-items:flex-end;gap:8px;height:80px"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%"><div style="width:100%;height:38px;background:#4ecdc4;border-radius:3px 3px 0 0"></div><div style="width:100%;height:22px;background:#2980b9"></div><div style="width:100%;height:12px;background:#f59e0b;border-radius:0 0 3px 3px"></div><div style="font-size:0.5rem;color:var(--text3);margin-top:4px">S1</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%"><div style="width:100%;height:32px;background:#4ecdc4;border-radius:3px 3px 0 0"></div><div style="width:100%;height:28px;background:#2980b9"></div><div style="width:100%;height:14px;background:#f59e0b;border-radius:0 0 3px 3px"></div><div style="font-size:0.5rem;color:var(--text3);margin-top:4px">S2</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%"><div style="width:100%;height:42px;background:#4ecdc4;border-radius:3px 3px 0 0"></div><div style="width:100%;height:18px;background:#2980b9"></div><div style="width:100%;height:10px;background:#f59e0b;border-radius:0 0 3px 3px"></div><div style="font-size:0.5rem;color:var(--text3);margin-top:4px">S3</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%"><div style="width:100%;height:30px;background:#4ecdc4;border-radius:3px 3px 0 0"></div><div style="width:100%;height:24px;background:#2980b9"></div><div style="width:100%;height:16px;background:#f59e0b;border-radius:0 0 3px 3px"></div><div style="font-size:0.5rem;color:var(--text3);margin-top:4px">S4</div></div></div><div style="display:flex;gap:12px;margin-top:8px"><div style="display:flex;align-items:center;gap:4px;font-size:0.55rem;color:var(--text3)"><div style="width:6px;height:6px;border-radius:50%;background:#4ecdc4"></div>M</div><div style="display:flex;align-items:center;gap:4px;font-size:0.55rem;color:var(--text3)"><div style="width:6px;height:6px;border-radius:50%;background:#2980b9"></div>T</div><div style="display:flex;align-items:center;gap:4px;font-size:0.55rem;color:var(--text3)"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b"></div>N</div></div></div><div style="padding:16px;background:white;border-radius:8px;border:1px solid var(--border-light)"><div style="font-size:0.65rem;font-weight:700;color:var(--text2);margin-bottom:10px">Equipo por grupo</div><div style="display:flex;align-items:center;gap:14px"><div style="width:70px;height:70px;border-radius:50%;background:conic-gradient(#4ecdc4 0% 45%,#2980b9 45% 75%,#f59e0b 75% 90%,#e5e7eb 90% 100%);position:relative;flex-shrink:0"><div style="position:absolute;inset:12px;background:white;border-radius:50%"></div></div><div style="display:flex;flex-direction:column;gap:4px"><div style="display:flex;align-items:center;gap:6px;font-size:0.6rem;color:var(--text2)"><div style="width:6px;height:6px;border-radius:50%;background:#4ecdc4"></div>Equipo A 45%</div><div style="display:flex;align-items:center;gap:6px;font-size:0.6rem;color:var(--text2)"><div style="width:6px;height:6px;border-radius:50%;background:#2980b9"></div>Equipo B 30%</div><div style="display:flex;align-items:center;gap:6px;font-size:0.6rem;color:var(--text2)"><div style="width:6px;height:6px;border-radius:50%;background:#f59e0b"></div>Equipo C 15%</div></div></div></div></div>'
+    preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dashboard con 3 KPIs y gráfico de tendencia de cobertura"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><text x="14" y="18" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1.2" fill="#8a8a85">PANEL DE CONTROL · ABR</text><line x1="14" y1="26" x2="346" y2="26" stroke="#e8e6df"/><g transform="translate(14,36)"><rect x="0" y="0" width="104" height="52" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="22" font-family="\'Instrument Serif\', serif" font-size="24" fill="#0e0f0f">156</text><text x="56" y="22" font-family="\'Geist\', sans-serif" font-size="10" fill="#8a8a85">h</text><text x="12" y="40" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.6" fill="#8a8a85">MEDIA HORAS</text></g><g transform="translate(128,36)"><rect x="0" y="0" width="104" height="52" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="22" font-family="\'Instrument Serif\', serif" font-size="24" fill="#0e0f0f">0</text><text x="12" y="40" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.6" fill="#8a8a85">CONFLICTOS</text><circle cx="92" cy="14" r="4" fill="#e9f5f2" stroke="#0f7a6d"/></g><g transform="translate(242,36)"><rect x="0" y="0" width="104" height="52" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="22" font-family="\'Instrument Serif\', serif" font-size="24" fill="#0f7a6d">98</text><text x="52" y="22" font-family="\'Geist\', sans-serif" font-size="10" fill="#0a5950">%</text><text x="12" y="40" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.6" fill="#8a8a85">COBERTURA</text><path d="M68 22 L74 18 L80 20 L86 14 L92 16" fill="none" stroke="#0f7a6d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(14,98)"><rect x="0" y="0" width="332" height="90" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="16" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.8" fill="#8a8a85">COBERTURA · ÚLT. 8 SEMANAS</text><text x="320" y="16" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">+2.4</text><g font-family="\'Geist Mono\', monospace" font-size="7" fill="#8a8a85"><text x="12" y="34">100</text><text x="12" y="78">80</text></g><line x1="28" y1="32" x2="320" y2="32" stroke="#e8e6df" stroke-dasharray="2 2"/><line x1="28" y1="56" x2="320" y2="56" stroke="#e8e6df" stroke-dasharray="2 2"/><line x1="28" y1="78" x2="320" y2="78" stroke="#e8e6df"/><path d="M32 64 L72 58 L112 52 L152 48 L192 42 L232 40 L272 36 L312 34" fill="none" stroke="#0f7a6d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M32 64 L72 58 L112 52 L152 48 L192 42 L232 40 L272 36 L312 34 L312 78 L32 78 Z" fill="#0f7a6d" opacity="0.08"/><g fill="#0f7a6d"><circle cx="32" cy="64" r="2"/><circle cx="112" cy="52" r="2"/><circle cx="192" cy="42" r="2"/><circle cx="272" cy="36" r="2"/><circle cx="312" cy="34" r="2.5" stroke="#fff" stroke-width="1.5"/></g><g font-family="\'Geist Mono\', monospace" font-size="7" fill="#8a8a85"><text x="32" y="88" text-anchor="middle">S1</text><text x="112" y="88" text-anchor="middle">S3</text><text x="192" y="88" text-anchor="middle">S5</text><text x="272" y="88" text-anchor="middle">S7</text><text x="312" y="88" text-anchor="middle">S8</text></g></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>Métricas en tiempo real</div></div>'
   },
   {
     icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="7" y="2" width="10" height="20" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M10 19h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="#4ecdc4" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="#4ecdc4" stroke-width="1" fill="none" opacity="0.5"/></svg>', iconBg: '#e0f2fe',
@@ -5145,8 +5350,8 @@ const chatKB = {
   'implantar': 'La mayoria de equipos estan operativos en menos de 1 hora. No hay migraciones complejas: 1) Configuras tu equipo, 2) Importas tu planilla en PDF o la creas desde cero, 3) Empiezas a gestionar. Ofrecemos acompañamiento personalizado en la configuracion inicial.',
   'implantacion': 'El plazo de implantacion es de 1 a 5 dias desde la contratacion. Configuramos tu equipo, importamos la planilla y te acompañamos en todo el proceso de puesta en marcha.',
   'importar excel': 'Puedes importar tu planilla actual en formato PDF y Shiftia extrae los datos automaticamente. Tambien puedes crear la planilla desde cero en minutos añadiendo tu equipo y configurando los turnos. Estamos trabajando en importacion directa desde Excel.',
-  'excel': 'Shiftia sustituye a Excel para la gestion de turnos. Puedes importar tu cuadrante en PDF y la plataforma lo convierte automaticamente. Adios a las hojas de calculo compartidas por email.',
-  'hospital': 'Shiftia es perfecto para hospitales y clinicas. Gestiona equipos mixtos de enfermeria, tecnicos y especialistas con rotacion de mañana, tarde y noche. Maneja conciliaciones, jornadas reducidas y restricciones medicas automaticamente.',
+  'excel': 'Shiftia sustituye a Excel para la gestión de turnos. Puedes importar tu cuadrante en PDF y la plataforma lo convierte automáticamente. Adiós a las hojas de cálculo compartidas por email.',
+  'hospital': 'Shiftia es perfecto para hospitales y clínicas. Gestiona equipos mixtos de enfermería, técnicos y especialistas con rotación de mañana, tarde y noche. Maneja conciliaciones, jornadas reducidas y restricciones médicas automáticamente.',
   'fabrica': 'Shiftia se adapta perfectamente a entornos industriales. Controla turnos rotativos con produccion continua, asegura cobertura minima por linea, gestiona festivos y detecta sobrecargas antes de que impacten.',
   'equidad': 'Shiftia calcula la media de noches solo entre trabajadores que realmente rotan, excluyendo automaticamente a quienes tienen restricciones. Muestra indicadores visuales: verde (OK), ambar (cerca del limite), rojo (desequilibrio). Tu equipo ve que el reparto es justo y transparente.',
   'noches': 'El sistema de equidad nocturna calcula promedios solo entre rotadores reales. Detecta desequilibrios antes de que se conviertan en quejas y muestra indicadores visuales por trabajador. Transparencia total.',
