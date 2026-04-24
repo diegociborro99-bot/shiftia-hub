@@ -3079,6 +3079,164 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .proof + .wave-divider svg path { fill: var(--ds-bg, #faf9f6) !important; }
 
 /* ============================================================================
+   v3.2 — MOBILE PERFECTION FINAL PASS
+   ============================================================================ */
+
+/* ----- Tooltips pricing en touch: mostrar al focus también (tap = focus en muchos móviles) ----- */
+.price-list li[data-tip]:focus-within .tooltip,
+.price-list li[data-tip]:active .tooltip {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+.price-list li[data-tip] { tabindex: 0; outline: none; }
+
+@media (hover: none) {
+  /* En touch, hover no funciona — el indicador "i" se ve siempre como CTA */
+  .price-list li[data-tip]::after {
+    background: var(--ds-accent, #0f7a6d) !important;
+    box-shadow: 0 0 0 3px rgba(15,122,109,0.12);
+  }
+  .price-list li[data-tip] .tooltip { font-size: 0.82rem; padding: 10px 14px; }
+}
+
+/* ============================================================================
+   Mobile ≤768px — refinamientos finales
+   ============================================================================ */
+@media (max-width: 768px) {
+  /* Hero — espacio respira */
+  .hero {
+    padding-top: 64px !important;
+    padding-bottom: 40px !important;
+    text-align: center !important;
+  }
+  .hero-text { max-width: 100% !important; margin: 0 auto !important; }
+  .hero h1 {
+    margin: 0 auto 16px !important;
+    max-width: 14ch !important;
+    text-wrap: balance;
+  }
+  .hero-desc {
+    margin: 0 auto 24px !important;
+    text-align: center !important;
+  }
+  .hero-eyebrow, .hero-label { justify-content: center !important; margin: 0 auto 18px !important; }
+  .hero-actions { justify-content: center !important; margin: 0 auto !important; }
+  .hero-product-svg, .hero-visual { margin: 32px auto 0 !important; max-width: 100% !important; }
+
+  /* Proof: testimonios serif más cómodos en móvil */
+  .proof { padding: 64px 16px !important; }
+  .proof-card { padding: 28px 22px !important; }
+  .proof-card::before { font-size: 64px !important; top: 8px; left: 16px; }
+  .proof-text {
+    font-size: 1.08rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 18px !important;
+  }
+  .proof-author { gap: 10px !important; padding-top: 14px !important; }
+  .proof-avatar { width: 38px !important; height: 38px !important; font-size: 13px !important; }
+  .proof-name { font-size: 14px !important; }
+  .proof-role { font-size: 12px !important; flex-wrap: wrap; gap: 4px; }
+  .proof-role::after { font-size: 9px !important; padding: 2px 6px !important; }
+  .proof-arrows { display: none !important; }       /* dots bastan en móvil */
+
+  /* Trust band: cards más compactas */
+  .trust-logo-band { padding: 56px 16px 64px !important; }
+
+  /* Container: padding global a 16px */
+  .container, .ds-container { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* Pricing toggle Mensual/Anual centrado y cómodo */
+  .price-toggle-wrap { flex-wrap: wrap; gap: 10px !important; }
+
+  /* Tabla VS: scroll fluido + indicador ya añadido en v3.0 */
+  .vs-table-wrap { -webkit-overflow-scrolling: touch !important; scrollbar-width: thin; }
+
+  /* Calendario booking con celdas grandes y números legibles */
+  .cal-day { font-size: 15px !important; min-height: 44px !important; }
+  .cal-grid { gap: 6px !important; }
+
+  /* FAQ items con más respiración */
+  .faq-item { padding: 0 !important; }
+
+  /* Chat widget: si existe, hacerlo más discreto */
+  .chat-widget, .chat-fab {
+    right: 12px !important; bottom: 12px !important;
+    width: 56px !important; height: 56px !important;
+  }
+  .chat-panel {
+    width: calc(100vw - 24px) !important;
+    max-width: 380px !important;
+    right: 12px !important;
+    bottom: 80px !important;
+  }
+
+  /* Footer: marca y legal centrados */
+  .footer { padding: 48px 16px 32px !important; }
+  .footer-brand-name, .footer-bottom { text-align: center !important; }
+
+  /* Modal genérico — full-width con margen */
+  .modal, .modal-content { margin: 16px !important; max-width: calc(100% - 32px) !important; }
+
+  /* Cookie banner discreto */
+  .cookie-banner, .cookies-bar {
+    left: 12px !important; right: 12px !important; bottom: 12px !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 14px 16px !important;
+    font-size: 13px !important;
+  }
+
+  /* Eliminar elementos decorativos pesados que no aportan en móvil */
+  .floating-orbs, .orb, .particles { display: none !important; }
+
+  /* ROI slider: thumb más grande para tap */
+  .roi-slider::-webkit-slider-thumb { width: 26px !important; height: 26px !important; }
+  .roi-slider::-moz-range-thumb { width: 26px !important; height: 26px !important; }
+
+  /* Booking form: scheduler-section con padding cómodo */
+  .scheduler-section { padding: 16px !important; }
+
+  /* Lengua y sesión: el nav superior derecho a stack vertical sin romper */
+  .nav-right { gap: 8px !important; }
+  .lang-selector .lang-btn { padding: 8px 10px !important; font-size: 13px !important; }
+
+  /* Eliminar smooth scroll en móvil para que no se sienta lento */
+  html { scroll-behavior: auto !important; }
+}
+
+/* ============================================================================
+   Mobile small ≤420px — iPhone SE / 1-mano
+   ============================================================================ */
+@media (max-width: 420px) {
+  .hero h1 { font-size: clamp(1.7rem, 11vw, 2.3rem) !important; max-width: 100% !important; }
+  .hero-desc { font-size: 0.95rem !important; }
+  .section-h2 { font-size: clamp(1.5rem, 8.5vw, 2rem) !important; max-width: 14ch !important; margin-left: auto !important; margin-right: auto !important; }
+  .proof-text { font-size: 1rem !important; }
+  .vs-table { font-size: 12px !important; }
+  .vs-table thead th, .vs-table tbody td { padding: 10px 12px !important; }
+  .price-amount, .price-val { font-size: clamp(2rem, 9vw, 2.6rem) !important; }
+  .price-card { padding: 24px 18px !important; }
+  .roi-card { padding: 18px 14px !important; }
+  .roi-output-value { font-size: clamp(1.8rem, 8.5vw, 2.4rem) !important; }
+  .step-flow { padding: 24px 18px !important; }
+  .step-flow .step-num { width: 56px !important; height: 56px !important; }
+  .step-flow .step-num svg { width: 24px !important; height: 24px !important; }
+  .step-flow h3 { font-size: 1.25rem !important; }
+  .step-flow p { font-size: 13px !important; max-width: 100% !important; }
+  .form-card { padding: 20px 16px !important; }
+  .impact-num { font-size: clamp(2rem, 9vw, 2.5rem) !important; }
+  .nav { padding: 10px 14px !important; }
+  .nav-cta { padding: 10px 14px !important; font-size: 13px !important; }
+  .brand, .nav-logo { font-size: 1.25rem !important; }
+}
+
+/* iOS bottom-bar safe area */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .footer { padding-bottom: calc(32px + env(safe-area-inset-bottom)) !important; }
+  .chat-widget, .chat-panel { bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
+  .cookie-banner, .cookies-bar { bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
+}
+
+/* ============================================================================
    v2.8 — ROI CALCULATOR
    ============================================================================ */
 .roi-section {
@@ -6317,6 +6475,69 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   }
 
   window.dsToast = dsToast;
+})();
+</script>
+
+<!-- Cursor glow — sombra suave teal que sigue el ratón. Solo desktop con hover. -->
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<style>
+.cursor-glow {
+  position: fixed;
+  top: 0; left: 0;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle at center,
+    rgba(15, 122, 109, 0.18) 0%,
+    rgba(15, 122, 109, 0.10) 28%,
+    rgba(15, 122, 109, 0.04) 55%,
+    transparent 75%);
+  filter: blur(40px);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+.cursor-glow.is-active { opacity: 1; }
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .cursor-glow { display: none !important; }
+}
+</style>
+<script>
+(function () {
+  if (typeof window === 'undefined') return;
+  if (window.matchMedia('(hover: none)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const glow = document.getElementById('cursorGlow');
+  if (!glow) return;
+
+  let targetX = window.innerWidth / 2;
+  let targetY = window.innerHeight / 2;
+  let currentX = targetX;
+  let currentY = targetY;
+  let raf = null;
+
+  function tick() {
+    // Easing: el glow sigue al ratón con un lag suave en lugar de pegarse 1:1.
+    currentX += (targetX - currentX) * 0.18;
+    currentY += (targetY - currentY) * 0.18;
+    glow.style.transform = 'translate(' + currentX + 'px, ' + currentY + 'px) translate(-50%, -50%)';
+    raf = requestAnimationFrame(tick);
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+    if (!glow.classList.contains('is-active')) glow.classList.add('is-active');
+    if (!raf) raf = requestAnimationFrame(tick);
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', () => {
+    glow.classList.remove('is-active');
+  });
 })();
 </script>
 
