@@ -132,30 +132,13 @@
   animation: cellGlitch 2.4s ease-in-out forwards;
   animation-delay: var(--cell-delay, 0s);
 }
-.vs-table.is-anim .vs-cell-x::after {
-  content: '#REF!'; position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(220, 38, 38, 0.92); color: white;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
-  font-family: 'Geist Mono', monospace;
-  opacity: 0; border-radius: 4px;
-  animation: cellRefShow 1.8s ease both;
-  animation-delay: calc(var(--cell-delay, 0s) + 0.8s);
-  pointer-events: none;
-}
+/* #REF! overlay removed — was causing persistent visual bugs */
 @keyframes cellGlitch {
-  0% { transform: translateX(0); filter: none; opacity: 1; }
-  8%, 20%, 35% { transform: translateX(-2px); filter: hue-rotate(15deg); }
-  14%, 28% { transform: translateX(2px); filter: hue-rotate(-15deg); }
-  45% { transform: translateX(0); filter: none; opacity: 0.4; }
-  70% { opacity: 0.4; filter: blur(0.5px); }
-  100% { transform: none; opacity: 1; filter: none; }
-}
-@keyframes cellRefShow {
-  0% { opacity: 0; }
-  25% { opacity: 1; }
-  65% { opacity: 1; }
-  100% { opacity: 0; pointer-events: none; }
+  0% { transform: translateX(0); opacity: 1; }
+  15% { transform: translateX(-2px); opacity: 0.7; }
+  30% { transform: translateX(2px); opacity: 0.7; }
+  50% { transform: translateX(0); opacity: 0.85; }
+  100% { transform: none; opacity: 1; }
 }
 
 /* Construcción Shiftia: celdas se "ensamblan" con stagger verde */
