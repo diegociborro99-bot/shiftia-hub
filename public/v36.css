@@ -129,7 +129,7 @@
 /* Animación destructiva sobre celdas Excel cuando entran en viewport */
 .vs-table.is-anim .vs-cell-x {
   position: relative;
-  animation: cellGlitch 1.6s ease-in-out forwards;
+  animation: cellGlitch 2.4s ease-in-out forwards;
   animation-delay: var(--cell-delay, 0s);
 }
 .vs-table.is-anim .vs-cell-x::after {
@@ -139,18 +139,22 @@
   font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
   font-family: 'Geist Mono', monospace;
   opacity: 0; border-radius: 4px;
-  animation: cellRefShow 0.6s ease forwards;
-  animation-delay: calc(var(--cell-delay, 0s) + 1s);
+  animation: cellRefShow 1.8s ease forwards;
+  animation-delay: calc(var(--cell-delay, 0s) + 0.8s);
 }
 @keyframes cellGlitch {
-  0% { transform: translateX(0); filter: none; }
-  10%, 30%, 50% { transform: translateX(-2px); filter: hue-rotate(15deg); }
-  20%, 40% { transform: translateX(2px); filter: hue-rotate(-15deg); }
-  60% { transform: translateX(0); filter: none; opacity: 1; }
-  100% { transform: translateX(0) scale(0.98); opacity: 0.4; filter: blur(0.5px); }
+  0% { transform: translateX(0); filter: none; opacity: 1; }
+  8%, 20%, 35% { transform: translateX(-2px); filter: hue-rotate(15deg); }
+  14%, 28% { transform: translateX(2px); filter: hue-rotate(-15deg); }
+  45% { transform: translateX(0); filter: none; opacity: 0.4; }
+  70% { opacity: 0.4; filter: blur(0.5px); }
+  100% { transform: none; opacity: 1; filter: none; }
 }
 @keyframes cellRefShow {
-  to { opacity: 1; }
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  65% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
 }
 
 /* Construcción Shiftia: celdas se "ensamblan" con stagger verde */

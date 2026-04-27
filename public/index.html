@@ -72,7 +72,6 @@
 <title>Shiftia — Planificación inteligente de turnos y planillas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="image" href="/product-mockup.svg" type="image/svg+xml">
 <link rel="preload" as="style" href="/design-system.css">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/design-system.css">
@@ -138,6 +137,22 @@ a { text-decoration: none; color: inherit; }
   --radius: 20px;
   --radius-sm: 12px;
   --radius-pill: 999px;
+
+  /* Z-Index Scale */
+  --z-bg: 0;
+  --z-content: 1;
+  --z-float: 2;
+  --z-raised: 5;
+  --z-dropdown: 50;
+  --z-sticky: 90;
+  --z-chat: 96;
+  --z-nav: 100;
+  --z-hamburger: 101;
+  --z-menu: 200;
+  --z-modal: 1000;
+  --z-banner: 9990;
+  --z-overlay: 9998;
+  --z-top: 9999;
 }
 
 /* ====== NAVBAR ====== */
@@ -1209,24 +1224,29 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
   .orbit-ring-1 { width: 130px; height: 130px; }
   .orbit-ring-2 { width: 220px; height: 220px; }
   .orbit-ring-3 { width: 310px; height: 310px; }
-  .orbit-center { width: 70px; height: 70px; }
-  .orbit-center svg { width: 32px; height: 32px; }
-  .orbit-emoji { width: 36px; height: 36px; }
-  .orbit-emoji svg { width: 17px; height: 17px; }
-  .orbit-label { font-size: 0.55rem; }
-  .n1 { margin-top: -87px; margin-left: -17px; }
-  .n2 { margin-top: 18px; margin-left: -78px; }
-  .n3 { margin-top: 18px; margin-left: 42px; }
-  .n4 { margin-top: -132px; margin-left: -17px; }
-  .n5 { margin-top: -17px; margin-left: 95px; }
-  .n6 { margin-top: 95px; margin-left: -17px; }
-  .n7 { margin-top: -17px; margin-left: -130px; }
-  .n8  { margin-top: -177px; margin-left: -20px; }
-  .n9  { margin-top: -97px; margin-left: 122px; }
-  .n10 { margin-top: 57px; margin-left: 130px; }
-  .n11 { margin-top: 140px; margin-left: -20px; }
-  .n12 { margin-top: 57px; margin-left: -160px; }
-  .n13 { margin-top: -97px; margin-left: -155px; }
+  .orbit-center { width: 64px; height: 64px; }
+  .orbit-center svg { width: 28px; height: 28px; }
+  .orbit-center span { font-size: 0.55rem; }
+  .orbit-emoji { width: 34px; height: 34px; }
+  .orbit-emoji svg { width: 16px; height: 16px; }
+  .orbit-label { font-size: 0.5rem; padding: 2px 6px; }
+  /* Ring 1 (r=65): 3 nodes at 120° apart */
+  .n1 { margin-top: -82px; margin-left: -17px; }
+  .n2 { margin-top: 22px; margin-left: -73px; }
+  .n3 { margin-top: 22px; margin-left: 39px; }
+  /* Ring 2 (r=110): 4 nodes at 90° apart */
+  .n4 { margin-top: -127px; margin-left: -17px; }
+  .n5 { margin-top: -17px; margin-left: 93px; }
+  .n6 { margin-top: 93px; margin-left: -17px; }
+  .n7 { margin-top: -17px; margin-left: -127px; }
+  /* Ring 3 (r=155): hide labels, reduce overlap */
+  .orbit-track-3 .orbit-label { display: none; }
+  .n8  { margin-top: -172px; margin-left: -17px; }
+  .n9  { margin-top: -95px; margin-left: 118px; }
+  .n10 { margin-top: 55px; margin-left: 118px; }
+  .n11 { margin-top: 135px; margin-left: -17px; }
+  .n12 { margin-top: 55px; margin-left: -152px; }
+  .n13 { margin-top: -95px; margin-left: -152px; }
 }
 
 /* Compare cards enhanced */
@@ -1439,29 +1459,33 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
   .hero-trial-badge { font-size: 0.72rem; padding: 7px 14px; }
   .hero-label { font-size: 0.7rem; padding: 5px 12px; }
 
-  /* Orbit map extra small */
+  /* Orbit map extra small — hide outer ring nodes, keep clean */
   .orbit-map { width: 280px; height: 280px; }
   .orbit-ring-1 { width: 100px; height: 100px; }
   .orbit-ring-2 { width: 180px; height: 180px; }
   .orbit-ring-3 { width: 260px; height: 260px; }
-  .orbit-center { width: 56px; height: 56px; }
-  .orbit-center svg { width: 26px; height: 26px; }
-  .orbit-emoji { width: 30px; height: 30px; }
-  .orbit-emoji svg { width: 14px; height: 14px; }
+  .orbit-center { width: 52px; height: 52px; }
+  .orbit-center svg { width: 24px; height: 24px; }
+  .orbit-center span { font-size: 0.5rem; }
+  .orbit-emoji { width: 28px; height: 28px; }
+  .orbit-emoji svg { width: 13px; height: 13px; }
   .orbit-label { display: none; }
-  .n1 { margin-top: -72px; margin-left: -14px; }
-  .n2 { margin-top: 12px; margin-left: -64px; }
-  .n3 { margin-top: 12px; margin-left: 36px; }
-  .n4 { margin-top: -112px; margin-left: -14px; }
-  .n5 { margin-top: -14px; margin-left: 78px; }
-  .n6 { margin-top: 78px; margin-left: -14px; }
-  .n7 { margin-top: -14px; margin-left: -106px; }
-  .n8  { margin-top: -148px; margin-left: -16px; }
-  .n9  { margin-top: -78px; margin-left: 100px; }
-  .n10 { margin-top: 48px; margin-left: 108px; }
-  .n11 { margin-top: 118px; margin-left: -16px; }
-  .n12 { margin-top: 48px; margin-left: -130px; }
-  .n13 { margin-top: -78px; margin-left: -128px; }
+  /* Ring 1 (r=50): 3 nodes */
+  .n1 { margin-top: -64px; margin-left: -14px; }
+  .n2 { margin-top: 14px; margin-left: -57px; }
+  .n3 { margin-top: 14px; margin-left: 30px; }
+  /* Ring 2 (r=90): 4 nodes */
+  .n4 { margin-top: -104px; margin-left: -14px; }
+  .n5 { margin-top: -14px; margin-left: 76px; }
+  .n6 { margin-top: 76px; margin-left: -14px; }
+  .n7 { margin-top: -14px; margin-left: -104px; }
+  /* Ring 3 (r=130): 6 nodes evenly distributed */
+  .n8  { margin-top: -144px; margin-left: -14px; }
+  .n9  { margin-top: -79px; margin-left: 98px; }
+  .n10 { margin-top: 51px; margin-left: 98px; }
+  .n11 { margin-top: 116px; margin-left: -14px; }
+  .n12 { margin-top: 51px; margin-left: -126px; }
+  .n13 { margin-top: -79px; margin-left: -126px; }
 
   /* Section titles tighter */
   .section-h2 { font-size: clamp(1.4rem, 6.5vw, 1.8rem); }
@@ -2693,7 +2717,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   white-space: nowrap;
 }
 @media (max-width: 1100px) { .tlb-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-@media (max-width: 600px)  { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .tlb-item { padding: 16px 8px; min-height: 88px; } .tlb-icon { width: 36px; height: 36px; } .tlb-label { font-size: 13px; } }
+@media (max-width: 600px)  { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .tlb-item { padding: 16px 8px; min-height: 88px; } .tlb-icon { width: 36px; height: 36px; } .tlb-label { font-size: clamp(10px, 2.8vw, 13px); white-space: normal; text-align: center; } }
+@media (max-width: 360px)  { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .tlb-item { padding: 12px 6px; min-height: 78px; } .tlb-icon { width: 32px; height: 32px; } .tlb-label { font-size: 10px; } }
 
 /* ============================================================================
    v3.1 — Flow diagram fluido + proof testimonios luminoso y creíble
@@ -4059,7 +4084,7 @@ section.centered p,
 <!-- NAV -->
 <nav class="nav" id="nav">
   <a href="#" class="nav-logo">
-    <svg class="shiftia-svg" width="32" height="32" viewBox="0 0 40 40" fill="none">
+    <svg class="shiftia-svg" width="32" height="32" viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia logo">
       <defs><linearGradient id="sG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs>
       <path class="s-path-1" d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sG)" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path class="s-path-2" d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sG)" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -4127,7 +4152,7 @@ section.centered p,
            class="hero-product-svg"
            id="heroProductMockup"
            width="1280" height="880"
-           loading="eager" decoding="async"
+           loading="lazy" decoding="async"
            data-animate="true">
     </div>
   </div>
@@ -4138,10 +4163,7 @@ section.centered p,
 </section>
 
 <!-- TRUST LOGO BAND -->
-<!-- TODO: Reemplazar nombres y logos con clientes reales cuando los tengas.
-     Mientras tanto: tipos de organización en grayscale como placeholder elegante.
-     Cuando tengas logos reales, sustituye cada div.tlb-item por <img src="/logos/...">
-     y mantén la estructura grayscale → color en hover. -->
+<!-- Sustituir div.tlb-item por <img src="/logos/..."> cuando haya logos reales -->
 <section class="trust-logo-band" aria-label="Sectores que confían en Shiftia">
   <div class="container">
     <div class="tlb-eyebrow">Confiado por equipos en sectores con turnos exigentes</div>
@@ -4186,7 +4208,7 @@ section.centered p,
   </div>
 </section>
 
-<div class="wave-divider">
+<div class="wave-divider" aria-hidden="true">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
     <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="var(--bg-warm)"/>
   </svg>
@@ -4328,7 +4350,7 @@ section.centered p,
   </div>
 </div>
 
-<div class="wave-divider">
+<div class="wave-divider" aria-hidden="true">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
     <path d="M0,20 C150,55 350,0 600,30 C850,60 1050,10 1200,25 L1200,60 L0,60 Z" fill="var(--bg)"/>
   </svg>
@@ -4537,7 +4559,7 @@ section.centered p,
   </div>
 </section>
 
-<div class="wave-divider">
+<div class="wave-divider" aria-hidden="true">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
     <path d="M0,40 C300,10 500,50 700,25 C900,0 1100,40 1200,20 L1200,60 L0,60 Z" fill="var(--bg)"/>
   </svg>
@@ -4587,7 +4609,7 @@ section.centered p,
   </div>
 </section>
 
-<div class="wave-divider">
+<div class="wave-divider" aria-hidden="true">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
     <path d="M0,40 C300,10 500,50 700,25 C900,0 1100,40 1200,20 L1200,60 L0,60 Z" fill="var(--bg)"/>
   </svg>
@@ -4718,7 +4740,7 @@ section.centered p,
   </div>
 </section>
 
-<div class="wave-divider">
+<div class="wave-divider" aria-hidden="true">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
     <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="var(--text1)"/>
   </svg>
@@ -4821,9 +4843,7 @@ section.centered p,
 </section>
 
 <!-- ROI CALCULATOR -->
-<!-- TODO: las constantes de ahorro (HOURS_PER_WORKER_MONTH, COORDINATOR_HOURLY_COST) son
-     estimaciones razonables del sector. Si en el futuro tienes datos reales de tus clientes,
-     ajusta los valores en el JS al final del index.html (busca SHIFTIA_ROI). -->
+<!-- Constantes ROI: ajustar HOURS_PER_WORKER_MONTH y COORDINATOR_HOURLY_COST en SHIFTIA_ROI con datos reales -->
 <section class="roi-section" id="roi" aria-labelledby="roiTitle">
   <div class="container">
     <div class="roi-shell">
@@ -5019,19 +5039,19 @@ section.centered p,
       </div>
     </div>
     <div class="form-card reveal d2">
-      <form id="contactForm" onsubmit="handleSubmit(event)">
+      <form id="contactForm" onsubmit="handleSubmit(event)" aria-label="Formulario de contacto para agendar una demo">
         <div class="form-row">
-          <div class="fg"><label for="cf-name">Nombre completo</label><input id="cf-name" type="text" placeholder="Tu nombre" required></div>
-          <div class="fg"><label for="cf-email">Email profesional</label><input id="cf-email" type="email" placeholder="tu@empresa.es" required></div>
+          <div class="fg"><label for="cf-name">Nombre completo</label><input id="cf-name" type="text" placeholder="Tu nombre" required aria-required="true"></div>
+          <div class="fg"><label for="cf-email">Email profesional</label><input id="cf-email" type="email" placeholder="tu@empresa.es" required aria-required="true" aria-invalid="false"></div>
         </div>
         <div class="form-row">
-          <div class="fg"><label for="cf-phone">Teléfono</label><input id="cf-phone" type="tel" placeholder="+34 600 000 000" required></div>
-          <div class="fg"><label for="cf-company">Centro / Empresa</label><input id="cf-company" type="text" placeholder="Nombre de tu empresa" required></div>
+          <div class="fg"><label for="cf-phone">Teléfono</label><input id="cf-phone" type="tel" placeholder="+34 600 000 000" required aria-required="true"></div>
+          <div class="fg"><label for="cf-company">Centro / Empresa</label><input id="cf-company" type="text" placeholder="Nombre de tu empresa" required aria-required="true"></div>
         </div>
         <div class="form-row">
           <div class="fg">
             <label for="cf-workers">Num. trabajadores</label>
-            <select id="cf-workers" required>
+            <select id="cf-workers" required aria-required="true">
               <option value="" disabled selected>Selecciona</option>
               <option>1 – 10</option>
               <option>11 – 25</option>
@@ -5054,7 +5074,7 @@ section.centered p,
         <!-- GDPR consent -->
         <div class="fg" style="margin-top:8px;">
           <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:0.88rem;color:var(--text2);font-weight:400;line-height:1.5;">
-            <input type="checkbox" id="cf-consent" required style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer;">
+            <input type="checkbox" id="cf-consent" required aria-required="true" style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer;">
             <span>He leído y acepto la <a href="/privacidad" target="_blank" rel="noopener" style="color:#2980b9;text-decoration:underline;">Política de Privacidad</a>. Mis datos se usarán únicamente para gestionar esta solicitud de demo.</span>
           </label>
         </div>
@@ -5106,7 +5126,7 @@ section.centered p,
   <div class="footer-inner">
     <div class="footer-brand">
       <a href="#" class="nav-logo">
-        <svg class="shiftia-svg" width="32" height="32" viewBox="0 0 40 40" fill="none">
+        <svg class="shiftia-svg" width="32" height="32" viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia logo">
           <defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs>
           <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/>
           <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -5170,6 +5190,17 @@ function toggleMenu() {
   document.getElementById('hamburger').classList.toggle('active');
   document.querySelector('.nav-links').classList.toggle('open');
 }
+// Auto-close mobile menu on nav link click
+document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(link) {
+  link.addEventListener('click', function() {
+    var navLinks = document.querySelector('.nav-links');
+    var hamburger = document.getElementById('hamburger');
+    if (navLinks && navLinks.classList.contains('open')) {
+      navLinks.classList.remove('open');
+      if (hamburger) hamburger.classList.remove('active');
+    }
+  });
+});
 
 // Navbar scroll
 window.addEventListener('scroll', () => {

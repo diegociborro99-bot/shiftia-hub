@@ -14,6 +14,9 @@
   // Respeta usuarios con motion reducido
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Cache fine-pointer check (hover + precise pointer = desktop with mouse)
+  var HAS_FINE_POINTER = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
   // ===========================================================================
   // 1. HERO "DEMO VIVA"
   // ===========================================================================
@@ -267,8 +270,7 @@
   // ===========================================================================
   function initMagnetic() {
     if (REDUCED) return;
-    var mq = window.matchMedia('(hover: hover) and (pointer: fine)');
-    if (!mq.matches) return;
+    if (!HAS_FINE_POINTER) return;
 
     // Marcar automáticamente los CTAs principales
     var ctas = document.querySelectorAll('.btn-lg.primary, .nav-btn-primary, .hero-actions a.primary, .ds-btn-primary');
@@ -332,8 +334,7 @@
   // ===========================================================================
   function initSmartCursor() {
     if (REDUCED) return;
-    var mq = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 901px)');
-    if (!mq.matches) return;
+    if (!HAS_FINE_POINTER || !window.matchMedia('(min-width: 901px)').matches) return;
 
     var cursor = document.createElement('div');
     cursor.className = 'smart-cursor';

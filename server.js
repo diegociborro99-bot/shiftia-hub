@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const Stripe = require('stripe');
+const rateLimit = require('express-rate-limit');
 
 const compression = require('compression');
 
@@ -328,6 +329,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   // M3: Content Security Policy — restricts script/style/connect/frame sources.
+  // TODO: Migrate to nonce-based CSP to remove 'unsafe-inline'. Requires templating engine to inject nonce into inline scripts.
   res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self';");
   // Strict Transport Security (HTTPS only) — reinforced: 2-year max-age + preload
   if (IS_PRODUCTION) {
@@ -848,17 +850,9 @@ function emailTemplate(opts) {
 }
 
 // ====== AUTHENTICATION ROUTES ======
-// Rate limit middleware for auth endpoints
-function authRateLimit(req, res, next) {
-  const ip = req.ip || req.connection.remoteAddress;
-  if (isRateLimited(ip, RATE_LIMIT_MAX_AUTH)) {
-    return res.status(429).json({ error: 'Demasiados intentos. Espera un momento antes de reintentar.' });
-  }
-  next();
-}
 
 // POST /api/auth/register
-app.post('/api/auth/register', authRateLimit, async (req, res) => {
+app.post('/api/auth/register', authLimiter, async (req, res) => {
   try {
     let { email, password, name, company } = req.body;
 
@@ -946,7 +940,7 @@ app.post('/api/auth/register', authRateLimit, async (req, res) => {
 });
 
 // POST /api/auth/login
-app.post('/api/auth/login', authRateLimit, async (req, res) => {
+app.post('/api/auth/login', authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -990,7 +984,7 @@ app.post('/api/auth/login', authRateLimit, async (req, res) => {
 });
 
 // POST /api/auth/forgot-password
-app.post('/api/auth/forgot-password', authRateLimit, async (req, res) => {
+app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
   try {
     let { email } = req.body;
 
@@ -1059,7 +1053,7 @@ app.post('/api/auth/forgot-password', authRateLimit, async (req, res) => {
 });
 
 // POST /api/auth/reset-password
-app.post('/api/auth/reset-password', authRateLimit, async (req, res) => {
+app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
   try {
     const { token, password } = req.body;
 
@@ -1408,43 +1402,26 @@ app.get('/api/stripe/prices', (req, res) => {
   });
 });
 
-// ====== RATE LIMITING ======
-const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW = 60000; // 1 minute
-const RATE_LIMIT_MAX_GENERAL = 3;
-const RATE_LIMIT_MAX_AUTH = 5;
+// ====== RATE LIMITING (express-rate-limit) ======
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes, intenta de nuevo más tarde' }
+});
 
-function isRateLimited(ip, maxAttempts = RATE_LIMIT_MAX_GENERAL) {
-  const now = Date.now();
-  const attempts = rateLimitMap.get(ip) || [];
-  const recent = attempts.filter(t => now - t < RATE_LIMIT_WINDOW);
-  if (recent.length === 0) { rateLimitMap.delete(ip); return false; }
-  rateLimitMap.set(ip, recent);
-  if (recent.length >= maxAttempts) return true;
-  recent.push(now);
-  rateLimitMap.set(ip, recent);
-  return false;
-}
-
-// Periodic cleanup every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, attempts] of rateLimitMap) {
-    const recent = attempts.filter(t => now - t < RATE_LIMIT_WINDOW);
-    if (recent.length === 0) rateLimitMap.delete(ip);
-    else rateLimitMap.set(ip, recent);
-  }
-}, 5 * 60 * 1000);
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 15, // stricter limit for auth endpoints
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiados intentos. Espera un momento antes de reintentar.' }
+});
 
 // ====== CONTACT FORM API ======
-app.post('/api/contact', async (req, res) => {
+app.post('/api/contact', apiLimiter, async (req, res) => {
   try {
-    // Rate limiting
-    const clientIP = req.ip || req.connection.remoteAddress;
-    if (isRateLimited(clientIP)) {
-      return res.status(429).json({ error: 'Demasiadas solicitudes. Espera un momento.' });
-    }
-
     let { name, email, company, workers, department, message } = req.body;
 
     // Validate required fields
@@ -1715,17 +1692,12 @@ app.get('/api/booking/slots', async (req, res) => {
 });
 
 // POST booking — la cita real
-app.post('/api/booking', async (req, res) => {
+app.post('/api/booking', apiLimiter, async (req, res) => {
   try {
-    // Rate limiting
-    const clientIP = req.ip || req.connection.remoteAddress;
-    if (isRateLimited(clientIP)) {
-      return res.status(429).json({ error: 'Demasiadas solicitudes. Espera un momento.' });
-    }
-
     const body = req.body || {};
 
     // Honeypot anti-bot — campo invisible que solo bots rellenan
+    const clientIP = req.ip || req.connection.remoteAddress;
     if (body.website && String(body.website).trim() !== '') {
       console.log('Booking honeypot triggered from', clientIP);
       return res.json({ ok: true }); // fingimos OK para no señalar al bot

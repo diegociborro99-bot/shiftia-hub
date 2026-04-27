@@ -104,36 +104,16 @@
 :root { color-scheme: light; }
 
 /* ===========================================================================
-   Reset y base
-   =========================================================================== */
-.ds-reset *, .ds-reset *::before, .ds-reset *::after {
-  box-sizing: border-box;
-}
-
-/* ===========================================================================
    Utility classes (ds-*) — usar en HTML para estilos premium consistentes
    =========================================================================== */
 
 /* ----- Container ----- */
 .ds-container { max-width: var(--ds-container); margin: 0 auto; padding: 0 var(--ds-space-6); }
-.ds-container-md { max-width: var(--ds-container-md); margin: 0 auto; padding: 0 var(--ds-space-6); }
-.ds-container-sm { max-width: var(--ds-container-sm); margin: 0 auto; padding: 0 var(--ds-space-6); }
 @media (max-width: 640px) {
-  .ds-container, .ds-container-md, .ds-container-sm { padding: 0 var(--ds-space-4); }
+  .ds-container { padding: 0 var(--ds-space-4); }
 }
 
 /* ----- Tipografía ----- */
-.ds-display     { font-family: var(--ds-font-display); font-weight: 400; letter-spacing: -0.02em; line-height: 1.05; color: var(--ds-text); }
-.ds-display-lg  { font-family: var(--ds-font-display); font-weight: 400; letter-spacing: -0.025em; line-height: 1.02; font-size: var(--ds-display-lg); color: var(--ds-text); }
-.ds-display-md  { font-family: var(--ds-font-display); font-weight: 400; letter-spacing: -0.022em; line-height: 1.05; font-size: var(--ds-display-md); color: var(--ds-text); }
-.ds-display-sm  { font-family: var(--ds-font-display); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1;  font-size: var(--ds-display-sm); color: var(--ds-text); }
-.ds-h2          { font-family: var(--ds-font-display); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1;  font-size: var(--ds-text-3xl); color: var(--ds-text); }
-.ds-h3          { font-family: var(--ds-font-sans);    font-weight: 600; letter-spacing: -0.01em; line-height: 1.2;  font-size: var(--ds-text-2xl); color: var(--ds-text); }
-.ds-h4          { font-family: var(--ds-font-sans);    font-weight: 600; letter-spacing: -0.005em; line-height: 1.3; font-size: var(--ds-text-xl);  color: var(--ds-text); }
-.ds-body        { font-family: var(--ds-font-sans);    font-weight: 400; line-height: 1.65; font-size: var(--ds-text-md); color: var(--ds-text-muted); }
-.ds-body-lg     { font-family: var(--ds-font-sans);    font-weight: 400; line-height: 1.55; font-size: var(--ds-text-lg); color: var(--ds-text-muted); }
-.ds-small       { font-family: var(--ds-font-sans);    font-weight: 400; line-height: 1.5;  font-size: var(--ds-text-sm); color: var(--ds-text-muted); }
-.ds-caption     { font-family: var(--ds-font-sans);    font-weight: 500; line-height: 1.4;  font-size: var(--ds-text-xs); color: var(--ds-text-subtle); letter-spacing: 0.02em; }
 .ds-eyebrow     {
   font-family: var(--ds-font-sans); font-weight: 600;
   font-size: var(--ds-text-xs); letter-spacing: 0.12em;
@@ -143,13 +123,6 @@
 .ds-eyebrow::before {
   content: ''; width: 18px; height: 1px; background: currentColor; opacity: 0.6;
 }
-.ds-mono        { font-family: var(--ds-font-mono); font-feature-settings: "tnum"; }
-
-/* Color utilities */
-.ds-text-strong { color: var(--ds-text-strong); }
-.ds-text-muted  { color: var(--ds-text-muted); }
-.ds-text-subtle { color: var(--ds-text-subtle); }
-.ds-text-accent { color: var(--ds-accent-text); }
 
 /* ----- Botones premium ----- */
 .ds-btn {
@@ -166,37 +139,16 @@
   border-color: var(--ds-bg-inverse);
 }
 .ds-btn-primary:hover { background: var(--ds-text-strong); transform: translateY(-1px); box-shadow: var(--ds-shadow-md); }
-.ds-btn-secondary {
-  background: transparent; color: var(--ds-text);
-  border-color: var(--ds-border-strong);
-}
-.ds-btn-secondary:hover { border-color: var(--ds-text); background: var(--ds-bg-subtle); }
 .ds-btn-ghost {
   background: transparent; color: var(--ds-text-muted); border-color: transparent;
 }
 .ds-btn-ghost:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
-.ds-btn-accent {
-  background: var(--ds-accent); color: #fff; border-color: var(--ds-accent);
-}
-.ds-btn-accent:hover { box-shadow: var(--ds-shadow-md), var(--ds-shadow-glow); transform: translateY(-1px); }
 .ds-btn-lg { padding: 14px 24px; min-height: 50px; font-size: var(--ds-text-base); border-radius: var(--ds-radius-md); }
 .ds-btn-sm { padding: 8px 14px; min-height: 34px; font-size: var(--ds-text-xs); }
 .ds-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
 
-/* ----- Cards premium ----- */
-.ds-card {
-  background: var(--ds-bg-elev);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-md);
-  padding: var(--ds-space-6);
-  transition: border-color var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease), transform var(--ds-dur) var(--ds-ease);
-}
-.ds-card-hover:hover { border-color: var(--ds-border-strong); box-shadow: var(--ds-shadow-sm); transform: translateY(-2px); }
-.ds-card-elev { box-shadow: var(--ds-shadow-md); }
-.ds-card-flush { padding: 0; overflow: hidden; }
-
 /* ----- Inputs premium ----- */
-.ds-input, .ds-select, .ds-textarea {
+.ds-input {
   width: 100%; display: block;
   font-family: var(--ds-font-sans); font-size: var(--ds-text-base);
   color: var(--ds-text); background: var(--ds-bg);
@@ -205,9 +157,8 @@
   padding: 12px 14px; min-height: 46px;
   transition: border-color var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease), background var(--ds-dur) var(--ds-ease);
 }
-.ds-textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
-.ds-input::placeholder, .ds-textarea::placeholder { color: var(--ds-text-subtle); }
-.ds-input:focus, .ds-select:focus, .ds-textarea:focus {
+.ds-input::placeholder { color: var(--ds-text-subtle); }
+.ds-input:focus {
   outline: none; border-color: var(--ds-accent);
   box-shadow: var(--ds-shadow-glow); background: var(--ds-bg-elev);
 }
@@ -216,7 +167,6 @@
   font-size: var(--ds-text-sm); font-weight: 500; color: var(--ds-text);
   margin-bottom: 6px; letter-spacing: -0.005em;
 }
-.ds-helper { font-size: var(--ds-text-xs); color: var(--ds-text-subtle); margin-top: 6px; }
 .ds-field { margin-bottom: var(--ds-space-4); }
 
 /* ----- Pills, chips, badges ----- */
@@ -228,44 +178,8 @@
   font-weight: 500; letter-spacing: 0.01em;
   border: 1px solid var(--ds-border);
 }
-.ds-pill-accent {
-  background: var(--ds-accent-soft); color: var(--ds-accent-text);
-  border-color: transparent;
-}
-.ds-pill-dot::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: currentColor; display: inline-block;
-}
-
-/* ----- Dividers ----- */
-.ds-hr { height: 1px; border: 0; background: var(--ds-border); margin: var(--ds-space-12) 0; }
-.ds-hr-soft { height: 1px; border: 0; background: linear-gradient(90deg, transparent, var(--ds-border), transparent); }
-
 /* ----- Section spacing ----- */
 .ds-section    { padding-top: var(--ds-space-24); padding-bottom: var(--ds-space-24); }
-.ds-section-sm { padding-top: var(--ds-space-16); padding-bottom: var(--ds-space-16); }
-.ds-section-lg { padding-top: var(--ds-space-32); padding-bottom: var(--ds-space-32); }
-
-/* ----- Reveal animation (subtle) ----- */
-.ds-reveal {
-  opacity: 0;
-  transform: translateY(14px);
-  transition: opacity var(--ds-dur-slow) var(--ds-ease-out), transform var(--ds-dur-slow) var(--ds-ease-out);
-}
-.ds-reveal.is-visible { opacity: 1; transform: translateY(0); }
-@keyframes ds-fade-up {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ds-reveal { opacity: 1 !important; transform: none !important; }
-  .ds-btn:hover { transform: none !important; }
-}
-
-/* ----- Focus ring global ----- */
-.ds-focus-ring:focus-visible {
-  outline: 2px solid var(--ds-accent); outline-offset: 3px; border-radius: var(--ds-radius-sm);
-}
 
 /* ----- Link premium con underline animado ----- */
 .ds-link {
@@ -276,17 +190,6 @@
 }
 .ds-link:hover { background-size: 100% 1px; }
 .ds-link-accent { color: var(--ds-accent-text); }
-
-/* ----- Subtle grain overlay para fondos (signature detail) ----- */
-.ds-grain {
-  position: relative; isolation: isolate;
-}
-.ds-grain::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.5; mix-blend-mode: multiply;
-  z-index: -1;
-}
 
 /* ----- Skip-link reuse ----- */
 .ds-skip {
