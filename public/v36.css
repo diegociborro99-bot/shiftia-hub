@@ -139,8 +139,9 @@
   font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
   font-family: 'Geist Mono', monospace;
   opacity: 0; border-radius: 4px;
-  animation: cellRefShow 1.8s ease forwards;
+  animation: cellRefShow 1.8s ease both;
   animation-delay: calc(var(--cell-delay, 0s) + 0.8s);
+  pointer-events: none;
 }
 @keyframes cellGlitch {
   0% { transform: translateX(0); filter: none; opacity: 1; }

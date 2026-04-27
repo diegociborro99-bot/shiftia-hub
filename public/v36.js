@@ -322,6 +322,11 @@
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           table.classList.add('is-anim');
+          // Remove vs-cell-x after animations finish so ::after (#REF!) disappears from DOM
+          var maxDelay = bads.length * 80 + 1800 + 800; // stagger + animation + delay
+          setTimeout(function () {
+            bads.forEach(function (el) { el.classList.remove('vs-cell-x'); });
+          }, maxDelay);
           io.unobserve(entry.target);
         }
       });
