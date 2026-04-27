@@ -849,6 +849,23 @@ function emailTemplate(opts) {
 </html>`;
 }
 
+// ====== RATE LIMITING (express-rate-limit) ======
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes, intenta de nuevo más tarde' }
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 15, // stricter limit for auth endpoints
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiados intentos. Espera un momento antes de reintentar.' }
+});
+
 // ====== AUTHENTICATION ROUTES ======
 
 // POST /api/auth/register
@@ -1400,23 +1417,6 @@ app.get('/api/stripe/prices', (req, res) => {
       business: { monthly: 50,  annual: 480,  monthlyEquiv: 40 }
     }
   });
-});
-
-// ====== RATE LIMITING (express-rate-limit) ======
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Demasiadas solicitudes, intenta de nuevo más tarde' }
-});
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 15, // stricter limit for auth endpoints
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Demasiados intentos. Espera un momento antes de reintentar.' }
 });
 
 // ====== CONTACT FORM API ======
