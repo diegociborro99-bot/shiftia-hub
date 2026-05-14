@@ -1147,8 +1147,21 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
 
 /* ====== ORBITAL CONCEPT MAP ====== */
 .orbit-section { background: var(--bg); overflow: hidden; }
+/* Wrapper que limita el alto visual del átomo cuando se escala */
+.orbit-map-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: visible;
+  /* Reserva espacio para el átomo escalado (ver media queries) */
+}
 .orbit-map {
   position: relative; width: 520px; height: 520px; margin: 20px auto 0;
+  flex-shrink: 0;
+  /* transform-origin top center asegura que al escalar se queda centrado y arriba */
+  transform-origin: top center;
 }
 .orbit-ring {
   position: absolute; border-radius: 50%; border: 1px solid rgba(78,205,196,0.15);
@@ -1219,34 +1232,40 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
 .n11 { top: 50%; left: 50%; margin-top: 210px; margin-left: -30px; }
 .n12 { top: 50%; left: 50%; margin-top: 90px; margin-left: -240px; }
 .n13 { top: 50%; left: 50%; margin-top: -142px; margin-left: -230px; }
+/* ─────────────────────────────────────────────────────────
+   ★ ORBIT RESPONSIVE V2 — escala uniforme por transform
+   En lugar de recalcular cada nodo en cada breakpoint (frágil y
+   propenso a romperse en viewports estrechos), escalamos TODO el
+   átomo como una unidad con transform: scale(). Las proporciones
+   internas se conservan perfectas y nunca se sale del viewport.
+   ───────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .orbit-map { width: 340px; height: 340px; }
-  .orbit-ring-1 { width: 130px; height: 130px; }
-  .orbit-ring-2 { width: 220px; height: 220px; }
-  .orbit-ring-3 { width: 310px; height: 310px; }
-  .orbit-center { width: 64px; height: 64px; }
-  .orbit-center svg { width: 28px; height: 28px; }
-  .orbit-center span { font-size: 0.55rem; }
-  .orbit-emoji { width: 34px; height: 34px; }
-  .orbit-emoji svg { width: 16px; height: 16px; }
-  .orbit-label { font-size: 0.5rem; padding: 2px 6px; }
-  /* Ring 1 (r=65): 3 nodes at 120° apart */
-  .n1 { margin-top: -82px; margin-left: -17px; }
-  .n2 { margin-top: 22px; margin-left: -73px; }
-  .n3 { margin-top: 22px; margin-left: 39px; }
-  /* Ring 2 (r=110): 4 nodes at 90° apart */
-  .n4 { margin-top: -127px; margin-left: -17px; }
-  .n5 { margin-top: -17px; margin-left: 93px; }
-  .n6 { margin-top: 93px; margin-left: -17px; }
-  .n7 { margin-top: -17px; margin-left: -127px; }
-  /* Ring 3 (r=155): hide labels, reduce overlap */
+  /* Calcula la escala según ancho útil del viewport (con 16px padding por lado).
+     Si el viewport tiene 360px, scale ≈ (360-32)/520 ≈ 0.63 → átomo de 327px. */
+  .orbit-map {
+    transform: scale(min(1, calc((100vw - 32px) / 520)));
+  }
+  /* Reserva el alto VISUAL (escalado) en el flujo del documento.
+     520px * scale_factor + margen top original. */
+  .orbit-map-wrap {
+    height: calc(min(540px, (100vw - 32px) + 20px));
+  }
+  /* Ocultar el orbit-map del flujo natural y dejar que el wrapper haga el espacio */
+  .orbit-map {
+    margin: 0;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    margin-left: -260px;
+  }
+  /* En móvil hide labels del anillo exterior porque colisionan al escalar */
   .orbit-track-3 .orbit-label { display: none; }
-  .n8  { margin-top: -172px; margin-left: -17px; }
-  .n9  { margin-top: -95px; margin-left: 118px; }
-  .n10 { margin-top: 55px; margin-left: 118px; }
-  .n11 { margin-top: 135px; margin-left: -17px; }
-  .n12 { margin-top: 55px; margin-left: -152px; }
-  .n13 { margin-top: -95px; margin-left: -152px; }
+}
+
+/* Para tablets/desktop pequeño, escala ligera + posiciones originales (no abs) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .orbit-map { transform: scale(0.9); transform-origin: top center; }
+  .orbit-map-wrap { height: 510px; }
 }
 
 /* Compare cards enhanced */
@@ -1459,33 +1478,10 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
   .hero-trial-badge { font-size: 0.72rem; padding: 7px 14px; }
   .hero-label { font-size: 0.7rem; padding: 5px 12px; }
 
-  /* Orbit map extra small — hide outer ring nodes, keep clean */
-  .orbit-map { width: 280px; height: 280px; }
-  .orbit-ring-1 { width: 100px; height: 100px; }
-  .orbit-ring-2 { width: 180px; height: 180px; }
-  .orbit-ring-3 { width: 260px; height: 260px; }
-  .orbit-center { width: 52px; height: 52px; }
-  .orbit-center svg { width: 24px; height: 24px; }
-  .orbit-center span { font-size: 0.5rem; }
-  .orbit-emoji { width: 28px; height: 28px; }
-  .orbit-emoji svg { width: 13px; height: 13px; }
-  .orbit-label { display: none; }
-  /* Ring 1 (r=50): 3 nodes */
-  .n1 { margin-top: -64px; margin-left: -14px; }
-  .n2 { margin-top: 14px; margin-left: -57px; }
-  .n3 { margin-top: 14px; margin-left: 30px; }
-  /* Ring 2 (r=90): 4 nodes */
-  .n4 { margin-top: -104px; margin-left: -14px; }
-  .n5 { margin-top: -14px; margin-left: 76px; }
-  .n6 { margin-top: 76px; margin-left: -14px; }
-  .n7 { margin-top: -14px; margin-left: -104px; }
-  /* Ring 3 (r=130): 6 nodes evenly distributed */
-  .n8  { margin-top: -144px; margin-left: -14px; }
-  .n9  { margin-top: -79px; margin-left: 98px; }
-  .n10 { margin-top: 51px; margin-left: 98px; }
-  .n11 { margin-top: 116px; margin-left: -14px; }
-  .n12 { margin-top: 51px; margin-left: -126px; }
-  .n13 { margin-top: -79px; margin-left: -126px; }
+  /* Orbit ya escalado por transform: scale() arriba.
+     En móviles muy estrechos ocultamos también labels de ring 1 y 2 para evitar overlap. */
+  .orbit-track-2 .orbit-label { display: none; }
+  .orbit-track-1 .orbit-label { font-size: 0.55rem; padding: 1px 5px; }
 
   /* Section titles tighter */
   .section-h2 { font-size: clamp(1.4rem, 6.5vw, 1.8rem); }
@@ -4221,6 +4217,7 @@ section.centered p,
     <h2 class="section-h2 reveal" data-i18n="orbit_title">Todo conectado. Todo inteligente.</h2>
     <p class="section-p reveal" data-i18n="orbit_desc">Shiftia integra cada aspecto de la gestión de turnos en un único sistema inteligente.</p>
   </div>
+  <div class="orbit-map-wrap">
   <div class="orbit-map reveal">
     <!-- Orbit rings -->
     <div class="orbit-ring orbit-ring-1"></div>
@@ -4259,9 +4256,296 @@ section.centered p,
       <div class="orbit-node n13"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og13" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M3 21h18M5 21V7l4-4 4 4v14" stroke="url(#og13)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M13 21V11h6v10" stroke="url(#og13)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 9v2M11 9v2M7 13v2M11 13v2M15 13v2M15 17v2" stroke="url(#og13)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_holidays">Vacaciones</span></div>
     </div>
   </div>
+  </div><!-- /orbit-map-wrap -->
 </section>
 
 <!-- COMPARE: Before vs After -->
+<!-- ═══════════════════════════════════════════════════════════
+     DUAL PROFILE + MULTI-DEVICE
+     ═══════════════════════════════════════════════════════════ -->
+<style>
+.dual-section{background:var(--bg);padding:var(--section-pad) 0;position:relative;overflow:hidden;}
+.dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px;max-width:1100px;margin-left:auto;margin-right:auto;}
+.dual-card{position:relative;background:linear-gradient(170deg,var(--bg-card),rgba(78,205,196,0.03));border:1px solid var(--border);border-radius:24px;padding:36px 28px;overflow:hidden;transition:transform .35s cubic-bezier(0.16,1,0.3,1),border-color .35s,box-shadow .35s;}
+.dual-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,rgba(78,205,196,0.10),transparent 50%);opacity:.6;pointer-events:none;}
+.dual-card:hover{transform:translateY(-4px);border-color:rgba(78,205,196,0.35);box-shadow:0 20px 40px rgba(41,128,185,0.10);}
+.dual-card .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:linear-gradient(135deg,rgba(78,205,196,0.15),rgba(41,128,185,0.10));border:1px solid rgba(78,205,196,0.3);border-radius:999px;font-size:0.7rem;font-weight:700;color:#2980b9;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:18px;}
+.dual-card h3{font-size:1.5rem;font-weight:800;color:var(--text1);margin-bottom:8px;letter-spacing:-0.02em;}
+.dual-card p.sub{font-size:0.95rem;color:var(--text2);line-height:1.6;margin-bottom:24px;}
+.dual-features{list-style:none;display:flex;flex-direction:column;gap:14px;margin:0;padding:0;}
+.dual-features li{display:flex;align-items:flex-start;gap:12px;font-size:0.92rem;color:var(--text2);}
+.dual-features li svg{flex-shrink:0;margin-top:2px;}
+.dual-features li b{color:var(--text1);font-weight:700;}
+.dual-card .pic{display:flex;justify-content:center;align-items:center;margin:20px 0 28px;height:140px;}
+.dual-card.admin .pic{background:linear-gradient(135deg,rgba(78,205,196,0.08),rgba(41,128,185,0.04));border-radius:18px;}
+.dual-card.worker .pic{background:linear-gradient(135deg,rgba(255,184,77,0.10),rgba(255,140,60,0.04));border-radius:18px;}
+.dual-card.worker .badge{background:linear-gradient(135deg,rgba(255,184,77,0.18),rgba(255,140,60,0.10));border-color:rgba(255,184,77,0.35);color:#cc7a00;}
+
+@media (max-width: 768px){.dual-grid{grid-template-columns:1fr;gap:20px;margin-top:32px;}.dual-card{padding:28px 22px;}.dual-card h3{font-size:1.3rem;}.dual-card .pic{height:120px;}}
+
+/* Devices section */
+.devices-section{padding:var(--section-pad) 0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg-soft,#f4f9fa) 100%);position:relative;}
+.devices-mosaic{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;max-width:1100px;margin-left:auto;margin-right:auto;align-items:end;}
+.device{position:relative;padding:24px 20px 28px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;text-align:center;transition:transform .35s,border-color .35s,box-shadow .35s;}
+.device:hover{transform:translateY(-3px);border-color:rgba(78,205,196,0.4);box-shadow:0 16px 32px rgba(41,128,185,0.08);}
+.device-frame{margin:0 auto 16px;display:flex;justify-content:center;align-items:flex-end;height:170px;}
+.device-frame svg{width:auto;height:100%;max-width:100%;}
+.device h4{font-size:1.05rem;font-weight:800;color:var(--text1);margin-bottom:4px;letter-spacing:-0.01em;}
+.device p{font-size:0.8rem;color:var(--text2);line-height:1.5;}
+.device .tag{display:inline-block;margin-top:10px;padding:3px 10px;background:rgba(78,205,196,0.12);color:#15847d;border-radius:999px;font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
+
+@media (max-width: 768px){.devices-mosaic{grid-template-columns:1fr;gap:14px;margin-top:30px;}.device-frame{height:140px;}.device{padding:20px 16px 22px;}}
+
+/* Custom section */
+.custom-section{padding:var(--section-pad) 0;background:var(--bg);overflow:hidden;}
+.custom-hero{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;max-width:1100px;margin:48px auto 0;}
+.custom-copy h3{font-size:1.7rem;font-weight:800;color:var(--text1);margin-bottom:16px;letter-spacing:-0.02em;line-height:1.15;}
+.custom-copy h3 em{font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.custom-copy p{font-size:1rem;color:var(--text2);line-height:1.65;margin-bottom:22px;}
+.custom-bullets{list-style:none;padding:0;display:flex;flex-direction:column;gap:14px;}
+.custom-bullets li{display:flex;align-items:flex-start;gap:12px;font-size:0.95rem;color:var(--text2);}
+.custom-bullets li b{color:var(--text1);}
+.custom-bullets li svg{flex-shrink:0;margin-top:2px;color:#4ecdc4;}
+
+.custom-modules{position:relative;padding:24px;background:linear-gradient(160deg,var(--bg-card),rgba(78,205,196,0.04));border:1px solid var(--border);border-radius:24px;}
+.custom-modules .label{font-size:0.7rem;font-weight:700;color:var(--text3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px;text-align:center;}
+.modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.module-chip{padding:14px 8px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;text-align:center;font-size:0.72rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:6px;user-select:none;}
+.module-chip:hover{transform:translateY(-2px);border-color:#4ecdc4;color:#2980b9;}
+.module-chip.active{background:linear-gradient(135deg,rgba(78,205,196,0.18),rgba(41,128,185,0.10));border-color:#4ecdc4;color:#15847d;box-shadow:0 0 0 3px rgba(78,205,196,0.15);}
+.module-chip svg{width:22px;height:22px;color:#4ecdc4;}
+.module-chip.required{background:rgba(78,205,196,0.06);border-style:solid;}
+.module-chip.required .pill{font-size:0.55rem;color:#15847d;font-weight:800;letter-spacing:0.05em;}
+.custom-modules .helper{margin-top:14px;font-size:0.72rem;color:var(--text3);text-align:center;font-style:italic;}
+
+@media (max-width: 880px){.custom-hero{grid-template-columns:1fr;gap:28px;margin-top:32px;}.custom-copy h3{font-size:1.4rem;}.modules-grid{grid-template-columns:repeat(3,1fr);gap:8px;}.module-chip{font-size:0.66rem;padding:11px 6px;}}
+</style>
+
+<section class="dual-section" id="profiles">
+  <div class="container centered">
+    <div class="section-eyebrow reveal">Perfiles</div>
+    <h2 class="section-h2 reveal">Un sistema, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">dos experiencias</em></h2>
+    <p class="section-p reveal">Tu equipo no necesita aprender otro software. Cada perfil ve solo lo suyo, con la interfaz pensada para su rol.</p>
+  </div>
+  <div class="container">
+    <div class="dual-grid">
+      <!-- Admin -->
+      <article class="dual-card admin reveal">
+        <span class="badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          Perfil administrador
+        </span>
+        <h3>Visión completa, control total</h3>
+        <p class="sub">El director, supervisor o responsable ve toda la operación. Planilla mensual, métricas en tiempo real, equipo, vacaciones, IA de optimización.</p>
+        <div class="pic">
+          <svg width="220" height="130" viewBox="0 0 220 130" fill="none">
+            <rect x="6" y="6" width="208" height="118" rx="10" fill="var(--bg-card)" stroke="#4ecdc4" stroke-opacity="0.4" stroke-width="1.5"/>
+            <rect x="14" y="14" width="50" height="6" rx="3" fill="#4ecdc4" opacity="0.6"/>
+            <rect x="14" y="26" width="32" height="4" rx="2" fill="#9bb"/>
+            <rect x="14" y="38" width="60" height="38" rx="6" fill="rgba(78,205,196,0.10)" stroke="#4ecdc4" stroke-opacity="0.3"/>
+            <rect x="80" y="38" width="60" height="38" rx="6" fill="rgba(78,205,196,0.10)" stroke="#4ecdc4" stroke-opacity="0.3"/>
+            <rect x="146" y="38" width="60" height="38" rx="6" fill="rgba(78,205,196,0.10)" stroke="#4ecdc4" stroke-opacity="0.3"/>
+            <path d="M14 92 L40 86 L70 89 L100 80 L130 84 L160 76 L190 70 L206 73" stroke="#2980b9" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="206" cy="73" r="3" fill="#4ecdc4"/>
+            <rect x="14" y="104" width="60" height="6" rx="3" fill="#9bb" opacity="0.5"/>
+            <rect x="80" y="104" width="40" height="6" rx="3" fill="#9bb" opacity="0.5"/>
+            <rect x="126" y="104" width="80" height="6" rx="3" fill="#9bb" opacity="0.5"/>
+          </svg>
+        </div>
+        <ul class="dual-features">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Planilla mensual completa</b> con IA, drag & drop, conflictos resaltados.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Gestor SP, ausencias, vacaciones</b> y mapa de cobertura por planta.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Auditoría y exportación</b> CSV/PDF para gerencia.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Editor por trabajador</b>: convenio, restricciones, preferencias.</span></li>
+        </ul>
+      </article>
+      <!-- Worker -->
+      <article class="dual-card worker reveal">
+        <span class="badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/></svg>
+          Perfil trabajador
+        </span>
+        <h3>Solo lo que necesitas, cuando lo necesitas</h3>
+        <p class="sub">Cada persona del equipo entra y ve <b>sus</b> turnos, <b>sus</b> noches, <b>sus</b> vacaciones. Sin ruido, sin permisos extra, sin riesgos.</p>
+        <div class="pic">
+          <svg width="86" height="130" viewBox="0 0 86 130" fill="none">
+            <rect x="3" y="3" width="80" height="124" rx="14" fill="var(--bg-card)" stroke="#ff9a3c" stroke-opacity="0.4" stroke-width="1.5"/>
+            <rect x="35" y="9" width="16" height="3" rx="1.5" fill="#ccc"/>
+            <rect x="10" y="20" width="66" height="14" rx="4" fill="rgba(255,184,77,0.18)"/>
+            <text x="13" y="30" font-family="-apple-system,sans-serif" font-size="6.5" font-weight="700" fill="#cc7a00">MI MES</text>
+            <rect x="10" y="40" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="27" y="40" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="44" y="40" width="14" height="14" rx="3" fill="rgba(255,184,77,0.18)"/>
+            <rect x="61" y="40" width="14" height="14" rx="3" fill="rgba(255,184,77,0.18)"/>
+            <rect x="10" y="57" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="27" y="57" width="14" height="14" rx="3" fill="rgba(120,120,120,0.10)"/>
+            <rect x="44" y="57" width="14" height="14" rx="3" fill="rgba(120,120,120,0.10)"/>
+            <rect x="61" y="57" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="10" y="78" width="66" height="20" rx="5" fill="rgba(78,205,196,0.08)" stroke="#4ecdc4" stroke-opacity="0.3"/>
+            <text x="14" y="90" font-family="-apple-system,sans-serif" font-size="5" fill="#15847d">Próximo turno</text>
+            <text x="14" y="96.5" font-family="-apple-system,sans-serif" font-size="6.5" font-weight="800" fill="#15847d">Mañana · 8h</text>
+            <rect x="10" y="103" width="66" height="18" rx="9" fill="linear-gradient(90deg,#4ecdc4,#2980b9)" fill-opacity="0.85"/>
+            <rect x="10" y="103" width="66" height="18" rx="9" fill="#4ecdc4" fill-opacity="0.85"/>
+            <text x="22" y="114.5" font-family="-apple-system,sans-serif" font-size="6.5" font-weight="800" fill="#fff">PEDIR CAMBIO</text>
+          </svg>
+        </div>
+        <ul class="dual-features">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff9a3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Calendario personal</b> con sus turnos, noches, festivos y vacaciones.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff9a3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Solicitudes 1-click</b>: cambio de turno, día libre, ausencia justificada.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff9a3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Notificaciones push</b> cuando hay cambios en su planilla.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff9a3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span><b>Cómputo de jornada</b>, horas extra y noches acumuladas a la vista.</span></li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- DEVICES -->
+<section class="devices-section" id="devices">
+  <div class="container centered">
+    <div class="section-eyebrow reveal">Multidispositivo</div>
+    <h2 class="section-h2 reveal">Funciona en todo lo que ya tienes</h2>
+    <p class="section-p reveal">Web responsive nativa. Mismo código, misma experiencia, ajustada a cada pantalla. Sin instalar nada.</p>
+  </div>
+  <div class="container">
+    <div class="devices-mosaic">
+      <!-- Mobile -->
+      <div class="device reveal">
+        <div class="device-frame">
+          <svg width="78" height="170" viewBox="0 0 78 170" fill="none">
+            <rect x="2" y="2" width="74" height="166" rx="14" fill="var(--bg-card)" stroke="#4ecdc4" stroke-opacity="0.45" stroke-width="1.5"/>
+            <rect x="30" y="8" width="18" height="3" rx="1.5" fill="#bbb"/>
+            <rect x="8" y="18" width="62" height="10" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="8" y="33" width="62" height="22" rx="5" fill="rgba(78,205,196,0.08)"/>
+            <rect x="8" y="60" width="62" height="22" rx="5" fill="rgba(78,205,196,0.08)"/>
+            <rect x="8" y="87" width="62" height="22" rx="5" fill="rgba(78,205,196,0.08)"/>
+            <rect x="8" y="114" width="62" height="22" rx="5" fill="rgba(78,205,196,0.08)"/>
+            <circle cx="20" cy="148" r="4" fill="#4ecdc4" opacity="0.6"/>
+            <circle cx="39" cy="148" r="4" fill="#9bb"/>
+            <circle cx="58" cy="148" r="4" fill="#9bb"/>
+          </svg>
+        </div>
+        <h4>Móvil</h4>
+        <p>Tap, deslizar, push. La app va contigo al hospital.</p>
+        <span class="tag">iOS · Android</span>
+      </div>
+      <!-- Tablet -->
+      <div class="device reveal">
+        <div class="device-frame">
+          <svg width="130" height="170" viewBox="0 0 130 170" fill="none">
+            <rect x="2" y="2" width="126" height="166" rx="12" fill="var(--bg-card)" stroke="#4ecdc4" stroke-opacity="0.45" stroke-width="1.5"/>
+            <circle cx="65" cy="11" r="2" fill="#bbb"/>
+            <rect x="10" y="22" width="110" height="12" rx="4" fill="rgba(78,205,196,0.18)"/>
+            <rect x="10" y="40" width="52" height="60" rx="6" fill="rgba(78,205,196,0.08)"/>
+            <rect x="68" y="40" width="52" height="60" rx="6" fill="rgba(78,205,196,0.08)"/>
+            <rect x="10" y="106" width="110" height="14" rx="4" fill="rgba(41,128,185,0.10)"/>
+            <rect x="10" y="124" width="110" height="14" rx="4" fill="rgba(41,128,185,0.10)"/>
+            <rect x="10" y="142" width="110" height="14" rx="4" fill="rgba(41,128,185,0.10)"/>
+          </svg>
+        </div>
+        <h4>Tablet</h4>
+        <p>Vista expandida para sesiones largas de planificación.</p>
+        <span class="tag">iPad · Android</span>
+      </div>
+      <!-- Desktop -->
+      <div class="device reveal">
+        <div class="device-frame">
+          <svg width="220" height="170" viewBox="0 0 220 170" fill="none">
+            <rect x="2" y="6" width="216" height="130" rx="10" fill="var(--bg-card)" stroke="#4ecdc4" stroke-opacity="0.45" stroke-width="1.5"/>
+            <rect x="12" y="16" width="196" height="10" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="12" y="32" width="44" height="92" rx="6" fill="rgba(78,205,196,0.08)"/>
+            <rect x="62" y="32" width="146" height="44" rx="6" fill="rgba(41,128,185,0.10)"/>
+            <rect x="62" y="82" width="70" height="42" rx="6" fill="rgba(78,205,196,0.08)"/>
+            <rect x="138" y="82" width="70" height="42" rx="6" fill="rgba(78,205,196,0.08)"/>
+            <rect x="60" y="140" width="100" height="6" rx="3" fill="#aaa"/>
+            <rect x="40" y="146" width="140" height="20" rx="3" fill="#888" opacity="0.4"/>
+          </svg>
+        </div>
+        <h4>Desktop</h4>
+        <p>Workstation completa con todos los paneles abiertos.</p>
+        <span class="tag">Chrome · Safari · Edge · Firefox</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CUSTOM SECTION -->
+<section class="custom-section" id="custom">
+  <div class="container centered">
+    <div class="section-eyebrow reveal">100% a tu medida</div>
+    <h2 class="section-h2 reveal">No es una plantilla. <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">Es tu app.</em></h2>
+    <p class="section-p reveal">Cada cliente arranca con las funciones esenciales y elige qué módulos quiere encima. Pagas solo por lo que usas, ves solo lo que te interesa.</p>
+  </div>
+  <div class="container">
+    <div class="custom-hero">
+      <div class="custom-copy reveal">
+        <h3>Tú eliges <em>qué hace</em> tu Shiftia.</h3>
+        <p>El convenio de un hospital de cuidados intensivos no se parece al de una empresa de seguridad. Por eso no vendemos una plantilla a todo el mundo: armamos tu app contigo, función a función.</p>
+        <ul class="custom-bullets">
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span><b>Núcleo siempre incluido:</b> planilla, equipo, perfiles, app móvil.</span></li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span><b>Añade lo que necesites:</b> IA, fichaje, partes de incidencias, integración con nómina, multi-centro…</span></li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span><b>Personalización gráfica:</b> tu marca, tus colores, tus términos internos.</span></li>
+          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span><b>Convenio a medida:</b> introducimos tus reglas (max noches, descansos, festivos) y la IA las respeta como sagradas.</span></li>
+        </ul>
+      </div>
+      <div class="custom-modules reveal" id="custom-modules">
+        <div class="label">⚙ Configura tu Shiftia · pulsa para activar</div>
+        <div class="modules-grid">
+          <div class="module-chip required" title="Siempre incluido">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <span>Planilla</span><span class="pill">CORE</span>
+          </div>
+          <div class="module-chip required" title="Siempre incluido">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="17" cy="7" r="3"/></svg>
+            <span>Equipo</span><span class="pill">CORE</span>
+          </div>
+          <div class="module-chip required" title="Siempre incluido">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M10 19h4"/></svg>
+            <span>App móvil</span><span class="pill">CORE</span>
+          </div>
+          <div class="module-chip active" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2.5-2.5 2.5-2.5 5"/><circle cx="12" cy="17" r="0.6"/></svg>
+            <span>Motor IA</span>
+          </div>
+          <div class="module-chip active" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span>Fichaje</span>
+          </div>
+          <div class="module-chip" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8v.5z"/></svg>
+            <span>Chat interno</span>
+          </div>
+          <div class="module-chip active" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>
+            <span>Avisos email</span>
+          </div>
+          <div class="module-chip" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>
+            <span>Parte incidencias</span>
+          </div>
+          <div class="module-chip" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export PDF</span>
+          </div>
+          <div class="module-chip" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L3 7v6c0 5 3.5 9 9 11 5.5-2 9-6 9-11V7l-9-5z"/></svg>
+            <span>SSO / 2FA</span>
+          </div>
+          <div class="module-chip" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M8 14h3"/></svg>
+            <span>Integración nómina</span>
+          </div>
+          <div class="module-chip" onclick="this.classList.toggle('active')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-7-7-12a7 7 0 0114 0c0 5-7 12-7 12z"/></svg>
+            <span>Multi-centro</span>
+          </div>
+        </div>
+        <div class="helper">CORE = siempre incluido · Resto = activable según contrato</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="compare" id="compare">
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="compare_eyebrow">Antes vs despues</div>

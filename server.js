@@ -612,7 +612,9 @@ function isValidEmail(email) {
 function cap(s, n) { return String(s == null ? '' : s).slice(0, n); }
 
 // ====== EMAIL CONFIG ======
-const GMAIL_USER = process.env.GMAIL_USER || 'highkeycvsender@gmail.com';
+// Tanto GMAIL_USER como GMAIL_APP_PASSWORD deben venir SIEMPRE de env vars.
+// Si falta GMAIL_USER, el SMTP queda deshabilitado (Resend se usa como provider primario).
+const GMAIL_USER = process.env.GMAIL_USER || '';
 const GMAIL_PASS = process.env.GMAIL_APP_PASSWORD || '';
 
 let transporter = null;
@@ -1954,9 +1956,18 @@ app.get('/booking/cancel', async (req, res) => {
 // ====== ADMIN BOOKING ENDPOINTS ======
 // Protegidos por ADMIN_API_KEY (no JWT, son endpoints de owner). Sin la key
 // devuelven 404 para no leak de su existencia.
+// La key viaja en el header x-admin-key (no en query string para no aparecer
+// en logs de servidor/proxy/Railway).
 function requireAdminKey(req, res) {
   const adminKey = process.env.ADMIN_API_KEY;
-  if (!adminKey || (req.query.key !== adminKey && req.headers['x-admin-key'] !== adminKey)) {
+  const sentKey  = req.headers['x-admin-key'];
+  if (!adminKey || sentKey !== adminKey) {
+    // Fallback temporal: aceptamos query string para no romper ningún script existente,
+    // pero lo logueamos para poder migrarlos.
+    if (adminKey && req.query.key === adminKey) {
+      console.warn('[admin] ADMIN_API_KEY en query string — usa header x-admin-key en su lugar');
+      return true;
+    }
     res.status(404).end();
     return false;
   }
@@ -2105,6 +2116,15 @@ app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'pub
 // Health check público — minimalista, no expone diagnóstico interno
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', version: PKG_VERSION });
+});
+
+// Status público para la página /status — datos minimalistas, no expone diagnóstico
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'operational',
+    version: PKG_VERSION,
+    updated_at: new Date().toISOString()
+  });
 });
 
 // Endpoint público para verificar versión desplegada
