@@ -377,9 +377,12 @@ const poolConfig = process.env.DATABASE_URL
 
 const pool = new Pool(poolConfig);
 
-// Test database connection
+// Test database connection — swallow idle errors to keep landing online.
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+  if (global.__shiftiaDbReady) {
+    console.error('Unexpected error on idle client', err && err.message);
+  }
+  // Else: DB never came up, ignore noise.
 });
 
 // ====== DATABASE INITIALIZATION ======
@@ -575,20 +578,27 @@ async function initializeDatabase() {
 
     client.release();
   } catch (err) {
-    // Verbose log so Railway 502 root-cause is visible.
-    console.error('Database initialization error:');
-    console.error('  message :', err && err.message);
-    console.error('  code    :', err && err.code);
-    console.error('  detail  :', err && err.detail);
-    console.error('  where   :', err && err.where);
-    console.error('  schema  :', err && err.schema);
-    console.error('  table   :', err && err.table);
-    console.error('  routine :', err && err.routine);
-    console.error('  stack   :', err && err.stack);
-    console.error('  DATABASE_URL set:', !!process.env.DATABASE_URL);
-    console.error('  PGHOST set      :', !!process.env.PGHOST);
-    process.exit(1);
+    // DB init is NON-FATAL. Landing pública sigue viva aunque no haya Postgres.
+    // Endpoints que necesiten DB devolverán 503 vía requireDB middleware.
+    global.__shiftiaDbReady = false;
+    console.warn('Database unavailable — running in degraded mode (landing only).');
+    console.warn('  message :', err && err.message);
+    console.warn('  code    :', err && err.code);
+    console.warn('  DATABASE_URL set:', !!process.env.DATABASE_URL);
+    console.warn('  PGHOST set      :', !!process.env.PGHOST);
+    console.warn('Para activar back-office, provisiona Postgres en Railway y define DATABASE_URL.');
+    return;
   }
+  global.__shiftiaDbReady = true;
+}
+
+// Middleware: blocks DB-dependent endpoints when DB is offline.
+function requireDB(req, res, next) {
+  if (global.__shiftiaDbReady) return next();
+  return res.status(503).json({
+    error: 'Servicio no disponible temporalmente',
+    detail: 'La base de datos no está conectada. Contacta con el administrador.'
+  });
 }
 
 // ====== MIDDLEWARE ======
@@ -2223,8 +2233,11 @@ process.on('SIGTERM', async () => {
 // ====== SERVER STARTUP ======
 async function startServer() {
   try {
-    // Initialize database
-    await initializeDatabase();
+    // Initialize database — non-fatal, server arranca igual.
+    try { await initializeDatabase(); } catch (e) {
+      console.warn('initializeDatabase threw uncaught:', e && e.message);
+      global.__shiftiaDbReady = false;
+    }
 
     app.listen(PORT, () => {
       console.log(`Shiftia HUB v2.3 running on port ${PORT}`);
