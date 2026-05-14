@@ -7277,68 +7277,8 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
 })();
 </script>
 
-<!-- Cursor glow — sombra suave teal que sigue el ratón. Solo desktop con hover. -->
-<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
-<style>
-.cursor-glow {
-  position: fixed;
-  top: 0; left: 0;
-  width: 380px; height: 380px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1;
-  background: radial-gradient(circle at center,
-    rgba(15, 122, 109, 0.18) 0%,
-    rgba(15, 122, 109, 0.10) 28%,
-    rgba(15, 122, 109, 0.04) 55%,
-    transparent 75%);
-  filter: blur(40px);
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
-  mix-blend-mode: multiply;
-  will-change: transform, opacity;
-}
-.cursor-glow.is-active { opacity: 1; }
-@media (hover: none), (prefers-reduced-motion: reduce) {
-  .cursor-glow { display: none !important; }
-}
-</style>
-<script>
-(function () {
-  if (typeof window === 'undefined') return;
-  if (window.matchMedia('(hover: none)').matches) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const glow = document.getElementById('cursorGlow');
-  if (!glow) return;
-
-  let targetX = window.innerWidth / 2;
-  let targetY = window.innerHeight / 2;
-  let currentX = targetX;
-  let currentY = targetY;
-  let raf = null;
-
-  function tick() {
-    // Easing: el glow sigue al ratón con un lag suave en lugar de pegarse 1:1.
-    currentX += (targetX - currentX) * 0.18;
-    currentY += (targetY - currentY) * 0.18;
-    glow.style.transform = 'translate(' + currentX + 'px, ' + currentY + 'px) translate(-50%, -50%)';
-    raf = requestAnimationFrame(tick);
-  }
-
-  document.addEventListener('mousemove', (e) => {
-    targetX = e.clientX;
-    targetY = e.clientY;
-    if (!glow.classList.contains('is-active')) glow.classList.add('is-active');
-    if (!raf) raf = requestAnimationFrame(tick);
-  }, { passive: true });
-
-  document.addEventListener('mouseleave', () => {
-    glow.classList.remove('is-active');
-  });
-})();
-</script>
+<!-- Cursor glow legacy eliminado (el blob verde turquesa que seguía al ratón).
+     El cursor follower único vive ahora en el bloque v37-premium-js, más limpio. -->
 
 <!-- v3.6 — Animaciones e interactividad enhancements -->
 <script src="/v36.js?v=362" defer></script>
@@ -7356,29 +7296,30 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
     pointer-events: none;
     opacity: .85;
   }
-  /* Cursor follower (desktop only) */
+  /* Cursor follower (desktop only) — anillo suave sin punto central */
   #v37-cursor {
     position: fixed; top: 0; left: 0;
-    width: 28px; height: 28px;
-    border: 1.5px solid rgba(78,205,196,.55);
+    width: 32px; height: 32px;
+    border: 1.5px solid rgba(78,205,196,.45);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
     transform: translate3d(-100px,-100px,0);
-    transition: width .25s cubic-bezier(.16,1,.3,1), height .25s cubic-bezier(.16,1,.3,1), border-color .2s, background-color .2s;
-    mix-blend-mode: difference;
+    transition: width .35s cubic-bezier(.16,1,.3,1),
+                height .35s cubic-bezier(.16,1,.3,1),
+                border-color .25s ease,
+                background-color .25s ease,
+                opacity .3s ease;
     will-change: transform;
+    background: transparent;
   }
   #v37-cursor.is-hover {
-    width: 56px; height: 56px;
-    border-color: rgba(201,169,97,.7);
-    background: rgba(201,169,97,.08);
+    width: 60px; height: 60px;
+    border-color: rgba(78,205,196,.85);
+    background: rgba(78,205,196,.04);
   }
-  #v37-cursor.is-pressed { transform: translate3d(var(--x,0), var(--y,0), 0) scale(.85); }
   @media (hover: none), (pointer: coarse) { #v37-cursor { display: none !important; } }
-  body.v37-cursor-on, body.v37-cursor-on * { cursor: none !important; }
-  body.v37-cursor-on a, body.v37-cursor-on button, body.v37-cursor-on .btn-lg,
-  body.v37-cursor-on input, body.v37-cursor-on textarea, body.v37-cursor-on select { cursor: none !important; }
+  /* No ocultamos el cursor nativo del SO — el ring v37 va por encima como halo. */
 
   /* Magnetic buttons (desktop only) */
   @media (hover: hover) and (pointer: fine) {
@@ -7475,35 +7416,47 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
     } catch(e){}
   }
 
-  // ─── 2) Cursor follower (desktop only) ────────────────
+  // ─── 2) Cursor follower (desktop only) — anillo suave estilo halo ──
   function initCursor(){
     if (reduced || !hoverFine) return;
     try {
       const c = document.createElement('div');
       c.id = 'v37-cursor';
       document.body.appendChild(c);
-      document.body.classList.add('v37-cursor-on');
-      let x = -100, y = -100, tx = -100, ty = -100, raf = null;
+      // Estado en píxeles, sin ocultar el cursor nativo.
+      let x = window.innerWidth / 2, y = window.innerHeight / 2;
+      let tx = x, ty = y;
+      let running = true;
+      const SIZE_BASE = 16; // half of 32px ring (border-box ring → centramos)
       function tick(){
-        x += (tx - x) * 0.22;
-        y += (ty - y) * 0.22;
-        c.style.transform = 'translate3d(' + (x - 14) + 'px,' + (y - 14) + 'px,0)';
-        if (Math.abs(tx-x) > .5 || Math.abs(ty-y) > .5) raf = requestAnimationFrame(tick);
-        else raf = null;
+        // Easing más suave (0.14 = lag claro pero estable) con threshold pequeño para
+        // evitar jitter sub-píxel. RAF se mantiene vivo siempre — la diferencia es
+        // imperceptible en CPU pero hace el movimiento mucho más natural.
+        x += (tx - x) * 0.14;
+        y += (ty - y) * 0.14;
+        c.style.transform = 'translate3d(' + (x - SIZE_BASE) + 'px,' + (y - SIZE_BASE) + 'px,0)';
+        if (running) requestAnimationFrame(tick);
       }
+      requestAnimationFrame(tick);
+
       document.addEventListener('mousemove', (e) => {
         tx = e.clientX; ty = e.clientY;
-        if (!raf) raf = requestAnimationFrame(tick);
       }, { passive: true });
       document.addEventListener('mouseleave', () => { c.style.opacity = '0'; });
       document.addEventListener('mouseenter', () => { c.style.opacity = '1'; });
-      // hover state on interactive elements
-      const interactiveSel = 'a, button, .btn-lg, .module-chip, .dual-card, .device, input, textarea, select, [role="button"], [data-tilt]';
+
+      // Hover sobre elementos interactivos → el ring crece.
+      const interactiveSel = 'a, button, .btn-lg, .module-chip, .fm-chip, .dual-card, .device, input, textarea, select, [role="button"], [data-tilt]';
       document.addEventListener('mouseover', (e) => {
         if (e.target.closest && e.target.closest(interactiveSel)) c.classList.add('is-hover');
       });
       document.addEventListener('mouseout', (e) => {
         if (e.target.closest && e.target.closest(interactiveSel)) c.classList.remove('is-hover');
+      });
+      // Pausa el RAF si la pestaña se va a background — ahorro CPU.
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) { running = false; }
+        else if (!running) { running = true; requestAnimationFrame(tick); }
       });
     } catch(e){}
   }
