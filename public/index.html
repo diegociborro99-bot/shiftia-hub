@@ -5427,34 +5427,64 @@ section.centered p,
           <div class="fm-head">
             <div>
               <div class="fm-title">Configura tu Shiftia <span class="fm-badge">opcional</span></div>
-              <div class="fm-sub">Marca qué módulos te interesan. Preparamos la demo con esa configuración.</div>
+              <div class="fm-sub">Marca las funciones IA que te interesan. Preparamos la demo con esa configuración.</div>
             </div>
-            <div class="fm-count"><span id="fm-count-num">3</span> módulos</div>
+            <div class="fm-count"><span id="fm-count-num">4</span> módulos</div>
           </div>
           <div class="fm-grid" id="fm-grid">
-            <div class="fm-chip required" data-mod="Planilla" title="Siempre incluido">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <span>Planilla</span><em>CORE</em>
+            <!-- CORE: la base operativa del producto, siempre incluido -->
+            <div class="fm-chip required" data-mod="Planilla anual" title="Vista anual con códigos de turno (M, T, N, CMP, VAC, PRL, LIB, CHG) y sufijos de turno extra">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M7 14h2M11 14h2M15 14h2M7 18h2M11 18h2"/></svg>
+              <span>Planilla anual</span><em>CORE</em>
             </div>
-            <div class="fm-chip required" data-mod="Equipo" title="Siempre incluido">
+            <div class="fm-chip required" data-mod="Convenio inteligente" title="Tus reglas (max noches, descansos mínimos, festivos, guardias) codificadas como restricciones que la IA respeta como sagradas">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              <span>Convenio inteligente</span><em>CORE</em>
+            </div>
+            <div class="fm-chip required" data-mod="Equipo & perfiles" title="Gestión de personas: contratos, disponibilidad, perfiles, permisos">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="17" cy="7" r="3"/></svg>
-              <span>Equipo</span><em>CORE</em>
+              <span>Equipo & perfiles</span><em>CORE</em>
             </div>
-            <div class="fm-chip required" data-mod="App móvil" title="Siempre incluido">
+            <div class="fm-chip required" data-mod="App móvil 24/7" title="Acceso desde el bolsillo para todo el equipo: ver su turno, pedir cambios, ver el equipo de hoy">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M10 19h4"/></svg>
-              <span>App móvil</span><em>CORE</em>
+              <span>App móvil 24/7</span><em>CORE</em>
             </div>
-            <div class="fm-chip" data-mod="Motor IA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2.5-2.5 2.5-2.5 5"/><circle cx="12" cy="17" r="0.6"/></svg><span>Motor IA</span></div>
-            <div class="fm-chip" data-mod="Fichaje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Fichaje</span></div>
-            <div class="fm-chip" data-mod="Chat interno"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8v.5z"/></svg><span>Chat interno</span></div>
-            <div class="fm-chip" data-mod="Avisos email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg><span>Avisos email</span></div>
-            <div class="fm-chip" data-mod="Parte incidencias"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg><span>Parte incidencias</span></div>
-            <div class="fm-chip" data-mod="Export PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Export PDF</span></div>
-            <div class="fm-chip" data-mod="SSO / 2FA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L3 7v6c0 5 3.5 9 9 11 5.5-2 9-6 9-11V7l-9-5z"/></svg><span>SSO / 2FA</span></div>
-            <div class="fm-chip" data-mod="Integración nómina"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M8 14h3"/></svg><span>Integración nómina</span></div>
-            <div class="fm-chip" data-mod="Multi-centro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="10" r="3"/><path d="M12 21s-7-7-7-12a7 7 0 0114 0c0 5-7 12-7 12z"/></svg><span>Multi-centro</span></div>
+
+            <!-- ACTIVABLES — donde está el valor diferencial -->
+            <div class="fm-chip" data-mod="Gestor de Cobertura IA" title="Cuando alguien falta, la IA propone quién puede cubrir respetando descansos y convenio. Versión 5.0 con simulador.">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2.5-2.5 2.5-2.5 5"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
+              <span>Gestor de Cobertura IA</span>
+            </div>
+            <div class="fm-chip" data-mod="Radar de Riesgo 14 días" title="Predicción a 14 días: detecta huecos de cobertura, sobrecargas y zonas calientes antes de que ocurran">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor"/><path d="M12 3l3 4"/></svg>
+              <span>Radar de Riesgo</span>
+            </div>
+            <div class="fm-chip" data-mod="Detector de Conflictos" title="Alertas antes de publicar: descansos vulnerados, dobletes, máx. noches superado, festivos solapados">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.3 3.86l-8.05 14a2 2 0 001.74 3h16.02a2 2 0 001.74-3l-8.05-14a2 2 0 00-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
+              <span>Detector de Conflictos</span>
+            </div>
+            <div class="fm-chip" data-mod="Mapa de Cobertura" title="Heatmap visual del servicio: ves al instante qué días y qué franjas están bien cubiertas y cuáles flojean">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor" opacity="0.35"/><rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor" opacity="0.6"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              <span>Mapa de Cobertura</span>
+            </div>
+            <div class="fm-chip" data-mod="Importar planillas PDF" title="Sube tu PDF anual del convenio y el parser lo vuelca a la planilla automáticamente, conservando códigos y sufijos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l3-3 3 3"/><path d="M12 12v6"/></svg>
+              <span>Importar PDF</span>
+            </div>
+            <div class="fm-chip" data-mod="Gestión de Vacaciones" title="Solicitudes, aprobación por director, calendario anual y cálculo de días pendientes por trabajador">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="7" r="4"/><path d="M5 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg>
+              <span>Gestión Vacaciones</span>
+            </div>
+            <div class="fm-chip" data-mod="Métricas & Informes" title="KPIs operativos, resumen mensual por trabajador, informes exportables a PDF y CSV para nóminas y dirección">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="12" width="4" height="9" rx="0.5"/><rect x="10" y="7" width="4" height="14" rx="0.5"/><rect x="17" y="3" width="4" height="18" rx="0.5"/></svg>
+              <span>Métricas & Informes</span>
+            </div>
+            <div class="fm-chip" data-mod="Multi-centro" title="Federación de unidades, servicios o centros con director propio y permisos independientes">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="9" width="6" height="12" rx="1"/><rect x="9" y="3" width="6" height="18" rx="1"/><rect x="16" y="11" width="6" height="10" rx="1"/></svg>
+              <span>Multi-centro</span>
+            </div>
           </div>
-          <input type="hidden" id="cf-modules" name="modules" value="Planilla,Equipo,App móvil">
+          <input type="hidden" id="cf-modules" name="modules" value="Planilla anual,Convenio inteligente,Equipo & perfiles,App móvil 24/7">
         </div>
 
         <!-- Call scheduler -->
