@@ -330,9 +330,14 @@
   }
 
   // ===========================================================================
-  // 5. CURSOR SMART
+  // 5. CURSOR SMART — DESHABILITADO en v3.8
+  // Sustituido por el ring v37 en index.html. Este cursor smart es el "punto verde"
+  // que Diego veía siguiendo al ratón. Lo neutralizamos completamente.
   // ===========================================================================
   function initSmartCursor() {
+    return; // no-op
+  }
+  function _initSmartCursor_legacy() {
     if (REDUCED) return;
     if (!HAS_FINE_POINTER || !window.matchMedia('(min-width: 901px)').matches) return;
 

@@ -1185,16 +1185,9 @@ body.dark .logo-ia { color: #4ecdc4 !important; -webkit-text-fill-color: #4ecdc4
 }
 @keyframes shimmerText { 0%{background-position:0% center} 100%{background-position:200% center} }
 
-/* Cursor glow */
-.cursor-glow {
-  position: fixed; width: 500px; height: 500px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(78,205,196,0.18) 0%, rgba(41,128,185,0.06) 40%, transparent 70%);
-  pointer-events: none; z-index: 0; transform: translate(-50%, -50%);
-  transition: left 0.3s ease-out, top 0.3s ease-out; will-change: left, top;
-}
-body.dark .cursor-glow {
-  background: radial-gradient(circle, rgba(78,205,196,0.12) 0%, rgba(41,128,185,0.04) 40%, transparent 70%);
-}
+/* Cursor glow & smart-cursor legacy — DESHABILITADOS en v3.8.
+   Sustituidos por el ring v37 al final del body. */
+.cursor-glow, .smart-cursor { display: none !important; }
 
 /* Scroll progress bar */
 .scroll-progress {
@@ -7281,7 +7274,7 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
      El cursor follower único vive ahora en el bloque v37-premium-js, más limpio. -->
 
 <!-- v3.6 — Animaciones e interactividad enhancements -->
-<script src="/v36.js?v=362" defer></script>
+<script src="/v36.js?v=380" defer></script>
 
 <!-- v3.7 — Premium UX layer: magnetic, cursor, tilt, parallax, nav glass, page transitions, scroll progress -->
 <style id="v37-premium">
