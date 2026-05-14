@@ -575,7 +575,18 @@ async function initializeDatabase() {
 
     client.release();
   } catch (err) {
-    console.error('Database initialization error:', err.message);
+    // Verbose log so Railway 502 root-cause is visible.
+    console.error('Database initialization error:');
+    console.error('  message :', err && err.message);
+    console.error('  code    :', err && err.code);
+    console.error('  detail  :', err && err.detail);
+    console.error('  where   :', err && err.where);
+    console.error('  schema  :', err && err.schema);
+    console.error('  table   :', err && err.table);
+    console.error('  routine :', err && err.routine);
+    console.error('  stack   :', err && err.stack);
+    console.error('  DATABASE_URL set:', !!process.env.DATABASE_URL);
+    console.error('  PGHOST set      :', !!process.env.PGHOST);
     process.exit(1);
   }
 }
