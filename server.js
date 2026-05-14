@@ -1665,26 +1665,29 @@ app.get('/api/booking/slots', async (req, res) => {
 
     // Slots ya reservados (consulta sobre booking_at extrayendo HH:MM en Europe/Madrid)
     let bookedRows = { rows: [] };
-    try {
-      bookedRows = await pool.query(
-        `SELECT to_char(booking_at AT TIME ZONE $2, 'HH24:MI') AS hhmm
-         FROM bookings
-         WHERE (booking_at AT TIME ZONE $2)::date = $1::date
-           AND status != 'cancelled'`,
-        [date, BOOKING_TIMEZONE]
-      );
-    } catch (e) {
-      if (!/does not exist/i.test(e.message)) console.error('slots query err:', e.message);
-    }
-    const booked = new Set(bookedRows.rows.map(r => r.hhmm));
-
-    // Día bloqueado por admin?
     let blocked = false;
     let blockedReason = null;
-    try {
-      const b = await pool.query('SELECT reason FROM blocked_dates WHERE block_date = $1 LIMIT 1', [date]);
-      if (b.rows.length > 0) { blocked = true; blockedReason = b.rows[0].reason; }
-    } catch (_) {}
+
+    // Si DB está caída, saltamos las queries para no provocar timeouts de 30s por request.
+    if (global.__shiftiaDbReady) {
+      try {
+        bookedRows = await pool.query(
+          `SELECT to_char(booking_at AT TIME ZONE $2, 'HH24:MI') AS hhmm
+           FROM bookings
+           WHERE (booking_at AT TIME ZONE $2)::date = $1::date
+             AND status != 'cancelled'`,
+          [date, BOOKING_TIMEZONE]
+        );
+      } catch (e) {
+        if (!/does not exist/i.test(e.message)) console.error('slots query err:', e.message);
+      }
+
+      try {
+        const b = await pool.query('SELECT reason FROM blocked_dates WHERE block_date = $1 LIMIT 1', [date]);
+        if (b.rows.length > 0) { blocked = true; blockedReason = b.rows[0].reason; }
+      } catch (_) {}
+    }
+    const booked = new Set(bookedRows.rows.map(r => r.hhmm));
 
     // Lead-time mínimo (no permitimos reservar el mismo día con < BOOKING_MIN_LEAD_HOURS)
     const now = new Date();
@@ -1726,7 +1729,7 @@ app.post('/api/booking', apiLimiter, async (req, res) => {
       return res.json({ ok: true }); // fingimos OK para no señalar al bot
     }
 
-    let { name, email, phone, company, workers, department, message, date, time } = body;
+    let { name, email, phone, company, workers, department, message, date, time, modules } = body;
 
     // Required
     if (!name || !email || !phone || !date || !time) {
@@ -1741,6 +1744,15 @@ app.post('/api/booking', apiLimiter, async (req, res) => {
     workers    = cap(String(workers || '').trim(), 20);
     department = cap(String(department || '').trim(), 120);
     message    = cap(String(message || '').trim(), 2000);
+
+    // Normalize modules array. Accept array or comma-separated string.
+    let modulesList = [];
+    if (Array.isArray(modules)) {
+      modulesList = modules.map(m => cap(String(m).trim(), 60)).filter(Boolean);
+    } else if (typeof modules === 'string' && modules.trim()) {
+      modulesList = modules.split(',').map(m => cap(m.trim(), 60)).filter(Boolean);
+    }
+    modulesList = modulesList.slice(0, 30); // cap total
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Email no válido' });
@@ -1773,13 +1785,15 @@ app.post('/api/booking', apiLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Solo se puede agendar de lunes a viernes' });
     }
 
-    // Día bloqueado por admin (vacaciones, festivo)
-    try {
-      const b = await pool.query('SELECT reason FROM blocked_dates WHERE block_date = $1 LIMIT 1', [date]);
-      if (b.rows.length > 0) {
-        return res.status(400).json({ error: 'Ese día no está disponible. Por favor, elige otro.' });
-      }
-    } catch (_) {}
+    // Día bloqueado por admin (vacaciones, festivo) — solo chequea si DB online.
+    if (global.__shiftiaDbReady) {
+      try {
+        const b = await pool.query('SELECT reason FROM blocked_dates WHERE block_date = $1 LIMIT 1', [date]);
+        if (b.rows.length > 0) {
+          return res.status(400).json({ error: 'Ese día no está disponible. Por favor, elige otro.' });
+        }
+      } catch (_) {}
+    }
 
     // Lead-time mínimo
     const slotInstant = madridIsoFromLocal(date, time);
@@ -1792,39 +1806,54 @@ app.post('/api/booking', apiLimiter, async (req, res) => {
       return res.status(400).json({ error: `Solo se puede reservar hasta ${BOOKING_HORIZON_DAYS} días en el futuro.` });
     }
 
-    // INSERT atómico — la UNIQUE INDEX captura el conflicto
-    let inserted;
-    try {
-      inserted = await pool.query(
-        `INSERT INTO bookings (
-           name, email, phone, company, workers, department, message,
-           booking_date, booking_time, booking_at, ip, user_agent, status, email_status
-         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pending','pending') RETURNING id`,
-        [
-          name, email, phone, company || null, workers || null, department || null, message || null,
-          date, time, slotInstant,
-          clientIP || null,
-          cap(req.headers['user-agent'] || '', 255)
-        ]
-      );
-    } catch (dbErr) {
-      // 23505 = unique_violation — slot ya reservado (race condition resuelta por DB)
-      if (dbErr.code === '23505') {
-        return res.status(409).json({ error: 'Esa hora ya ha sido reservada por otra persona. Por favor, elige otra.' });
+    // Persistir módulos como sufijo en el campo message (no tocamos schema)
+    const messageWithModules = modulesList.length
+      ? `${message || ''}${message ? '\n\n' : ''}[Módulos solicitados: ${modulesList.join(', ')}]`
+      : message;
+
+    // INSERT atómico — solo si DB está disponible. Si no, modo "email-only" (lead llega por correo).
+    let bookingId;
+    let cancelToken;
+    const dbOnline = !!global.__shiftiaDbReady;
+
+    if (dbOnline) {
+      let inserted;
+      try {
+        inserted = await pool.query(
+          `INSERT INTO bookings (
+             name, email, phone, company, workers, department, message,
+             booking_date, booking_time, booking_at, ip, user_agent, status, email_status
+           ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'pending','pending') RETURNING id`,
+          [
+            name, email, phone, company || null, workers || null, department || null, messageWithModules || null,
+            date, time, slotInstant,
+            clientIP || null,
+            cap(req.headers['user-agent'] || '', 255)
+          ]
+        );
+      } catch (dbErr) {
+        // 23505 = unique_violation — slot ya reservado (race condition resuelta por DB)
+        if (dbErr.code === '23505') {
+          return res.status(409).json({ error: 'Esa hora ya ha sido reservada por otra persona. Por favor, elige otra.' });
+        }
+        console.error('Booking INSERT failed:', dbErr.code, dbErr.message);
+        // Fallback: si la DB falla aquí, NO matamos el lead — seguimos en modo email-only.
+        global.__shiftiaDbReady = false;
       }
-      console.error('Booking INSERT failed:', dbErr.code, dbErr.message);
-      return res.status(500).json({ error: 'Error guardando la reserva. Inténtalo de nuevo.' });
+
+      if (inserted && inserted.rowCount === 1 && inserted.rows[0] && inserted.rows[0].id) {
+        bookingId = inserted.rows[0].id;
+        cancelToken = makeCancelToken(bookingId, email);
+        await pool.query('UPDATE bookings SET cancel_token = $1 WHERE id = $2', [cancelToken, bookingId]).catch(() => {});
+      }
     }
 
-    if (!inserted || inserted.rowCount !== 1 || !inserted.rows[0] || !inserted.rows[0].id) {
-      console.error('Booking INSERT returned no row');
-      return res.status(500).json({ error: 'Error guardando la reserva. Inténtalo de nuevo.' });
+    if (!bookingId) {
+      // Modo email-only: generamos un ID efímero para el correo (no permite cancelación URL).
+      bookingId = `LEAD-${Date.now().toString(36).toUpperCase()}`;
+      cancelToken = '';
+      console.warn(`Booking en modo email-only (DB down) — lead ${bookingId} de ${email}`);
     }
-    const bookingId = inserted.rows[0].id;
-
-    // Generar y guardar token de cancelación
-    const cancelToken = makeCancelToken(bookingId, email);
-    await pool.query('UPDATE bookings SET cancel_token = $1 WHERE id = $2', [cancelToken, bookingId]).catch(() => {});
 
     // Construir strings legibles en TZ Madrid
     const prettyDate = prettyDateMadrid(slotInstant);
@@ -1887,6 +1916,14 @@ app.post('/api/booking', apiLimiter, async (req, res) => {
             ${department ? `<tr><td style="padding:12px 0;color:#7a766f;font-size:13px;">Departamento</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;">${ESC_HTML(department)}</td></tr>` : ''}
           </table>
           ${message ? `<div style="margin-top:20px;padding:20px;background:#faf9f6;border-radius:10px;border:1px solid #ece9e2;"><p style="color:#7a766f;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">Mensaje</p><p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">${ESC_HTML(message)}</p></div>` : ''}
+          ${modulesList.length ? `
+          <div style="margin-top:20px;padding:20px;background:linear-gradient(135deg,#f0fdfa,#e0f2fe);border-radius:10px;border:1px solid #99f6e4;">
+            <p style="color:#0f766e;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;font-weight:700;">Configuración solicitada · ${modulesList.length} módulos</p>
+            <div style="display:block;line-height:1.9;">
+              ${modulesList.map(m => `<span style="display:inline-block;padding:5px 12px;margin:3px 4px 3px 0;background:#fff;border:1px solid #5eead4;border-radius:999px;font-size:13px;color:#0f766e;font-weight:600;">${ESC_HTML(m)}</span>`).join('')}
+            </div>
+            <p style="color:#0f766e;font-size:11px;margin:12px 0 0;opacity:0.7;">El cliente seleccionó estos módulos al agendar. Prepara la demo en consecuencia.</p>
+          </div>` : ''}
           <p style="color:#9a958c;font-size:12px;margin:20px 0 0;">Booking #${bookingId} · IP ${ESC_HTML(clientIP || '-')} · ${new Date().toLocaleString('es-ES', { timeZone: BOOKING_TIMEZONE })}</p>
         `
       })
