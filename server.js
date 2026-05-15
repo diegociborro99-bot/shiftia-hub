@@ -39,6 +39,23 @@ if (!JWT_SECRET) {
 // el rate limiter agrupa todo el tráfico bajo una sola IP.
 app.set('trust proxy', 1);
 
+// ====== SEO: canonical host + HTTPS redirect ======
+// Forzamos www.shiftia.es + HTTPS para que Google no indexe duplicados.
+// Solo activo en producción (Railway, Fly, etc.) — en dev no toca.
+const CANONICAL_HOST = process.env.CANONICAL_HOST || 'www.shiftia.es';
+const FORCE_HTTPS = process.env.NODE_ENV === 'production';
+app.use((req, res, next) => {
+  if (!FORCE_HTTPS) return next();
+  const proto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+  const host = req.headers.host || '';
+  // Saltamos health checks internos de Railway sin hostname
+  if (!host) return next();
+  if (proto !== 'https' || host !== CANONICAL_HOST) {
+    return res.redirect(301, 'https://' + CANONICAL_HOST + req.originalUrl);
+  }
+  next();
+});
+
 // ====== TIMEZONE BOOKING ======
 // Toda la aplicación de booking opera en horario de Madrid (Europe/Madrid).
 const BOOKING_TIMEZONE = process.env.BOOKING_TIMEZONE || 'Europe/Madrid';
@@ -2165,6 +2182,32 @@ app.get('/docs', (req, res) => {
 });
 
 // Serve legal pages
+// Sitemap dinámico — siempre con lastmod = hoy. Sustituye al sitemap.xml estático
+// (que servirá express.static como fallback si por algún motivo este endpoint cae).
+app.get('/sitemap.xml', (req, res) => {
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = [
+    { loc: '/',            priority: '1.0', changefreq: 'weekly'  },
+    { loc: '/demo',        priority: '0.9', changefreq: 'monthly' },
+    { loc: '/docs',        priority: '0.7', changefreq: 'monthly' },
+    { loc: '/privacidad',  priority: '0.3', changefreq: 'yearly'  },
+    { loc: '/terminos',    priority: '0.3', changefreq: 'yearly'  },
+    { loc: '/cookies',     priority: '0.3', changefreq: 'yearly'  }
+  ];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(u => `  <url>
+    <loc>https://${CANONICAL_HOST}${u.loc}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+  res.set('Content-Type', 'application/xml; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.send(xml);
+});
+
 app.get('/privacidad', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacidad.html')));
 app.get('/terminos',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'terminos.html')));
 app.get('/cookies',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));

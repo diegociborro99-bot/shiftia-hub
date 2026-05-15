@@ -6,19 +6,29 @@
 <meta name="description" content="Shiftia: planificación inteligente de turnos y planillas con IA. Para hospitales, fábricas, residencias y cualquier negocio con turnos. Desde 20€/mes.">
 <meta name="keywords" content="turnos, planificación, hospital, enfermería, IA, cuadrantes, planillas, gestión turnos">
 <meta name="author" content="Shiftia">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="https://www.shiftia.es/">
+<!-- hreflang: aunque hoy servimos solo español, declaramos es-ES y x-default para que
+     Google no nos rankee mal en queries internacionales y prepara terreno para /en/ futuro. -->
+<link rel="alternate" hreflang="es-ES" href="https://www.shiftia.es/">
+<link rel="alternate" hreflang="x-default" href="https://www.shiftia.es/">
+<!-- Google Search Console verification — pega aquí el content="..." que te dé Google -->
+<!-- <meta name="google-site-verification" content="PEGA-AQUI-TU-TOKEN"> -->
 <meta property="og:title" content="Shiftia — Planificación de turnos simplificada con IA">
 <meta property="og:description" content="Automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Desde 20€/mes.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.shiftia.es/">
-<meta property="og:image" content="https://www.shiftia.es/og-image.svg">
+<meta property="og:image" content="https://www.shiftia.es/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Shiftia · Planificación de turnos con IA · Vista del cuadrante semanal">
 <meta property="og:locale" content="es_ES">
 <meta property="og:site_name" content="Shiftia">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Shiftia — Planificación de turnos simplificada">
 <meta name="twitter:description" content="Automatiza turnos, gestiona ausencias con IA y garantiza la equidad.">
-<meta name="twitter:image" content="https://www.shiftia.es/og-image.svg">
+<meta name="twitter:image" content="https://www.shiftia.es/og-image.png">
+<meta name="twitter:image:alt" content="Shiftia · Planificación de turnos con IA">
 <meta name="theme-color" content="#faf9f6">
 <meta name="color-scheme" content="light only">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -50,7 +60,7 @@
   "@type":"SoftwareApplication",
   "name":"Shiftia",
   "applicationCategory":"BusinessApplication",
-  "operatingSystem":"Web",
+  "operatingSystem":"Web, iOS, Android",
   "description":"Planificación inteligente de turnos y planillas con motor IA de coberturas. Para hospitales, fábricas, residencias.",
   "url":"https://www.shiftia.es",
   "offers":{
@@ -60,13 +70,89 @@
     "priceCurrency":"EUR",
     "offerCount":"3"
   },
-  "featureList":"Gestión de turnos, Motor IA de coberturas, Cuadrantes automáticos, Gestión de ausencias, Informes y analytics",
+  "featureList":"Planilla anual con códigos de turno, Gestor de Cobertura IA, Radar de Riesgo 14 días, Detector de Conflictos, Mapa de Cobertura, Lector PDF con IA, Vacaciones IA, Informes con IA, Briefing diario IA, Convenio inteligente, Equipo y roles, Multidispositivo",
   "screenshot":"https://www.shiftia.es/og-image.png",
   "creator":{
     "@type":"Organization",
     "name":"Shiftia",
     "url":"https://www.shiftia.es"
   }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Organization",
+  "name":"Shiftia",
+  "url":"https://www.shiftia.es",
+  "logo":"https://www.shiftia.es/favicon.svg",
+  "description":"Software de planificación de turnos con IA para hospitales, residencias, fábricas y empresas con cuadrantes.",
+  "sameAs":[]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"Shiftia",
+  "url":"https://www.shiftia.es",
+  "inLanguage":"es-ES",
+  "potentialAction":{
+    "@type":"SearchAction",
+    "target":{
+      "@type":"EntryPoint",
+      "urlTemplate":"https://www.shiftia.es/?q={search_term_string}"
+    },
+    "query-input":"required name=search_term_string"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {
+      "@type":"Question",
+      "name":"¿Para qué sectores funciona Shiftia?",
+      "acceptedAnswer":{
+        "@type":"Answer",
+        "text":"Shiftia funciona para cualquier organización con planillas: hospitales, residencias, clínicas, fábricas, seguridad privada, hostelería y centros de atención 24/7. La IA aprende tu convenio específico."
+      }
+    },
+    {
+      "@type":"Question",
+      "name":"¿Cómo respeta Shiftia el convenio colectivo?",
+      "acceptedAnswer":{
+        "@type":"Answer",
+        "text":"Codificamos tus reglas (máximo de noches consecutivas, descanso mínimo entre turnos, festivos, guardias) como restricciones que la IA respeta como sagradas. El motor no genera nunca un turno que rompa el convenio."
+      }
+    },
+    {
+      "@type":"Question",
+      "name":"¿Cuánto cuesta Shiftia?",
+      "acceptedAnswer":{
+        "@type":"Answer",
+        "text":"Desde 20€ al mes. El precio depende del tamaño del equipo y de los módulos que actives (Gestor de Cobertura IA, Radar de Riesgo, Multi-centro, etc.). Garantía de devolución de 30 días."
+      }
+    },
+    {
+      "@type":"Question",
+      "name":"¿Puedo importar mi planilla actual desde un PDF?",
+      "acceptedAnswer":{
+        "@type":"Answer",
+        "text":"Sí. El Lector PDF con IA reconoce los códigos de turno (M, T, N, CMP, VAC, PRL, LIB, CHG) y los sufijos de turno extra, y vuelca tu planilla histórica a la app automáticamente. Cero introducción manual."
+      }
+    },
+    {
+      "@type":"Question",
+      "name":"¿Mis datos están seguros?",
+      "acceptedAnswer":{
+        "@type":"Answer",
+        "text":"Sí. Cumplimos RGPD, los datos se cifran en tránsito (HTTPS/TLS) y en reposo, no compartimos información con terceros, y dispones de Single Sign-On y autenticación 2FA opcional para entornos corporativos."
+      }
+    }
+  ]
 }
 </script>
 <title>Shiftia — Planificación inteligente de turnos y planillas</title>
@@ -4228,7 +4314,7 @@ section.centered p,
   <div class="hero-inner">
     <div class="hero-text">
       <div class="hero-label"><span class="hero-label-dot"></span> <span data-i18n="hero_badge">ShiftiaOS v5.3</span></div>
-      <h1><span data-i18n="hero_title_1">Planificación de turnos y planillas,</span> <span class="rotating-words"><span class="rw-word active">simplificada</span><span class="rw-word">automatizada</span><span class="rw-word">inteligente</span><span class="rw-word">sin esfuerzo</span></span></h1>
+      <h1><span data-i18n="hero_title_1">Planificación de turnos y planillas,</span> <span class="rotating-words"><span class="rw-word active">simplificada</span><span class="rw-word" aria-hidden="true">automatizada</span><span class="rw-word" aria-hidden="true">inteligente</span><span class="rw-word" aria-hidden="true">sin esfuerzo</span></span></h1>
       <p class="hero-desc" data-i18n="hero_desc">Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.</p>
       <div class="hero-actions">
         <a href="#contact" class="btn-lg primary">
@@ -4248,7 +4334,7 @@ section.centered p,
            class="hero-product-svg"
            id="heroProductMockup"
            width="1280" height="880"
-           loading="lazy" decoding="async"
+           loading="eager" decoding="async" fetchpriority="high"
            data-animate="true">
     </div>
   </div>
