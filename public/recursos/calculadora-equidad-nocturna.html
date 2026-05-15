@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de equidad de turnos nocturnos · Gratis</title>
+<meta name="description" content="Calcula gratis cuán equitativo es el reparto de noches en tu equipo. Introduce trabajadores y noches asignadas y obtén desviación, índice de equidad y diagnóstico claro. Sin registro.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://www.shiftia.es/recursos/calculadora-equidad-nocturna">
+<link rel="alternate" hreflang="es-ES" href="https://www.shiftia.es/recursos/calculadora-equidad-nocturna">
+<link rel="alternate" hreflang="x-default" href="https://www.shiftia.es/recursos/calculadora-equidad-nocturna">
+<meta property="og:title" content="Calculadora de equidad de turnos nocturnos · Gratis">
+<meta property="og:description" content="Mide la justicia del reparto de noches en tu equipo. Sin registro.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.shiftia.es/recursos/calculadora-equidad-nocturna">
+<meta property="og:image" content="https://www.shiftia.es/og-image.png">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Shiftia">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Calculadora de equidad de turnos nocturnos">
+<meta name="twitter:description" content="Mide la justicia del reparto de noches en tu equipo. Sin registro.">
+<meta name="twitter:image" content="https://www.shiftia.es/og-image.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":["Article","HowTo"],
+  "headline":"Calculadora de equidad de turnos nocturnos",
+  "description":"Herramienta gratuita para medir la equidad en el reparto de turnos nocturnos. Calcula desviación estándar, índice de equidad y muestra diagnóstico claro.",
+  "datePublished":"2026-05-15",
+  "dateModified":"2026-05-15",
+  "author":{"@type":"Organization","name":"Shiftia","url":"https://www.shiftia.es"},
+  "publisher":{"@type":"Organization","name":"Shiftia","url":"https://www.shiftia.es","logo":{"@type":"ImageObject","url":"https://www.shiftia.es/favicon.svg"}},
+  "mainEntityOfPage":{"@type":"WebPage","@id":"https://www.shiftia.es/recursos/calculadora-equidad-nocturna"},
+  "image":"https://www.shiftia.es/og-image.png",
+  "inLanguage":"es-ES"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.shiftia.es/"},
+    {"@type":"ListItem","position":2,"name":"Recursos","item":"https://www.shiftia.es/recursos"},
+    {"@type":"ListItem","position":3,"name":"Calculadora de equidad nocturna","item":"https://www.shiftia.es/recursos/calculadora-equidad-nocturna"}
+  ]
+}
+</script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#faf9f6;--bg-card:#fff;--text1:#0e0f0f;--text2:#4a5160;--text3:#7a8290;--accent:#2980b9;--accent2:#4ecdc4;--gold:#c9a961;--border:#ece9e2;--red:#dc2626;--green:#16a34a;--amber:#d97706}
+html,body{background:var(--bg);color:var(--text1);font-family:'Geist',system-ui,-apple-system,sans-serif;font-weight:400;line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.wrap{max-width:880px;margin:0 auto;padding:48px 24px 96px}
+.nav-top{position:sticky;top:0;background:rgba(250,249,246,.85);backdrop-filter:saturate(160%) blur(14px);-webkit-backdrop-filter:saturate(160%) blur(14px);border-bottom:1px solid var(--border);z-index:10;padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+.nav-top .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text1);font-weight:700;font-size:1.05rem;letter-spacing:-0.01em}
+.nav-top .brand svg{width:26px;height:26px}
+.nav-top .cta{padding:8px 16px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;text-decoration:none;border-radius:8px;font-size:0.88rem;font-weight:600;transition:transform .2s,box-shadow .2s}
+.nav-top .cta:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(41,128,185,.25)}
+.breadcrumbs{font-size:0.82rem;color:var(--text3);margin-bottom:24px}
+.breadcrumbs a{color:var(--text3);text-decoration:none}
+.breadcrumbs a:hover{color:var(--accent)}
+.eyebrow{display:inline-block;font-size:0.72rem;font-weight:700;color:var(--accent);background:rgba(78,205,196,.1);padding:5px 12px;border-radius:999px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:18px}
+h1{font-family:'Instrument Serif',Georgia,serif;font-size:3rem;line-height:1.08;letter-spacing:-0.02em;color:var(--text1);font-weight:400;margin-bottom:14px}
+.lede{font-size:1.15rem;color:var(--text2);line-height:1.55;margin-bottom:42px;max-width:680px}
+h2{font-family:'Instrument Serif',Georgia,serif;font-size:1.8rem;letter-spacing:-0.015em;color:var(--text1);font-weight:400;margin:48px 0 16px;line-height:1.2}
+h3{font-size:1.1rem;font-weight:700;color:var(--text1);margin:24px 0 10px;letter-spacing:-0.01em}
+p{margin-bottom:18px;color:var(--text2);font-size:1rem}
+strong{color:var(--text1);font-weight:600}
+ul,ol{margin:0 0 22px 22px;color:var(--text2)}
+li{margin-bottom:8px;line-height:1.6}
+/* TOOL */
+.tool{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;margin:28px 0;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.tool-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:16px;flex-wrap:wrap}
+.tool-title{font-weight:700;color:var(--text1);font-size:1.05rem;letter-spacing:-0.01em}
+.tool-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 14px;font-size:0.85rem;font-weight:600;border:1px solid var(--border);background:#fff;color:var(--text2);border-radius:8px;cursor:pointer;transition:all .2s;font-family:inherit}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(41,128,185,.04)}
+.btn.primary{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;border-color:transparent}
+.btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(41,128,185,.25);color:#fff}
+.btn.ghost{border:none;color:var(--text3)}
+.btn.ghost:hover{color:var(--red);background:rgba(220,38,38,.06)}
+.peopleRows{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.row{display:grid;grid-template-columns:1fr 110px 36px;gap:10px;align-items:center}
+.row input[type=text],.row input[type=number]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.94rem;font-family:inherit;background:#fff;color:var(--text1);transition:border-color .2s}
+.row input[type=number]{font-family:'Geist Mono',monospace;text-align:right}
+.row input:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(78,205,196,.15)}
+.row .del{width:36px;height:36px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:8px;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.row .del:hover{color:var(--red);background:rgba(220,38,38,.08)}
+.tool-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px}
+.tool-foot .total{font-size:0.86rem;color:var(--text3);font-family:'Geist Mono',monospace}
+/* RESULT */
+.result{margin-top:24px;padding:24px;border-radius:14px;background:linear-gradient(135deg,rgba(78,205,196,.05),rgba(41,128,185,.03));border:1px solid rgba(78,205,196,.18)}
+.result-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;margin-bottom:18px}
+.verdict{font-family:'Instrument Serif',Georgia,serif;font-size:1.65rem;letter-spacing:-0.015em;line-height:1.15;font-weight:400}
+.verdict.ok{color:var(--green)}
+.verdict.warn{color:var(--amber)}
+.verdict.bad{color:var(--red)}
+.score-pill{font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:6px 12px;border-radius:999px;align-self:center;white-space:nowrap}
+.score-pill.ok{background:rgba(22,163,74,.12);color:var(--green)}
+.score-pill.warn{background:rgba(217,119,6,.12);color:var(--amber)}
+.score-pill.bad{background:rgba(220,38,38,.12);color:var(--red)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.metric{padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:10px}
+.metric-label{font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:4px}
+.metric-value{font-family:'Geist Mono',monospace;font-size:1.4rem;color:var(--text1);font-weight:600;letter-spacing:-0.02em}
+.metric-sub{font-size:0.78rem;color:var(--text3);margin-top:2px}
+.bars{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.bar-row{display:grid;grid-template-columns:120px 1fr 50px;gap:10px;align-items:center;font-size:0.86rem}
+.bar-name{color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{height:14px;background:rgba(78,205,196,.1);border-radius:7px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:7px;transition:width .4s cubic-bezier(.16,1,.3,1)}
+.bar-fill.above{background:linear-gradient(90deg,#fb923c,#dc2626)}
+.bar-val{font-family:'Geist Mono',monospace;color:var(--text2);font-size:0.84rem;text-align:right}
+.diag{margin-top:18px;padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:10px;font-size:0.93rem;color:var(--text2);line-height:1.55}
+.diag strong{color:var(--text1)}
+.empty{padding:24px;text-align:center;color:var(--text3);font-size:0.95rem}
+.cta-card{margin:56px 0 0;padding:36px 32px;background:linear-gradient(135deg,rgba(78,205,196,.08),rgba(41,128,185,.05));border:1px solid rgba(78,205,196,.25);border-radius:18px;text-align:center}
+.cta-card h3{font-family:'Instrument Serif',Georgia,serif;font-size:1.7rem;font-weight:400;color:var(--text1);margin-bottom:10px;letter-spacing:-0.01em}
+.cta-card p{font-size:1rem;color:var(--text2);margin-bottom:22px;max-width:480px;margin-left:auto;margin-right:auto}
+.cta-card a{display:inline-block;padding:14px 28px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;text-decoration:none;border-radius:10px;font-weight:600;font-size:0.98rem;transition:transform .25s,box-shadow .25s;box-shadow:0 6px 18px rgba(41,128,185,.18)}
+.cta-card a:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(41,128,185,.32)}
+.related{margin-top:64px;padding-top:32px;border-top:1px solid var(--border)}
+.related-title{font-size:0.74rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);font-weight:700;margin-bottom:16px}
+.related ul{list-style:none;margin:0;padding:0}
+.related li{margin-bottom:8px}
+.related a{color:var(--accent);text-decoration:none;font-size:0.96rem;font-weight:500}
+.related a:hover{text-decoration:underline}
+footer{max-width:880px;margin:64px auto 0;padding:24px;text-align:center;font-size:0.82rem;color:var(--text3);border-top:1px solid var(--border)}
+footer a{color:var(--text3);text-decoration:none;margin:0 8px}
+@media (max-width:640px){
+  h1{font-size:2.15rem}
+  h2{font-size:1.45rem}
+  .wrap{padding:32px 16px 64px}
+  .row{grid-template-columns:1fr 80px 32px}
+  .bar-row{grid-template-columns:90px 1fr 40px;font-size:0.78rem}
+  .tool{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav-top">
+  <a href="/" class="brand">
+    <svg viewBox="0 0 40 40" fill="none"><defs><linearGradient id="sg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sg)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sg)" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+    Shiftia
+  </a>
+  <a href="/#contact" class="cta">Solicitar demo</a>
+</nav>
+
+<main class="wrap">
+  <div class="breadcrumbs">
+    <a href="/">Inicio</a> · <a href="/recursos">Recursos</a> · Calculadora de equidad nocturna
+  </div>
+
+  <div class="eyebrow">Herramienta gratis · Sin registro</div>
+
+  <h1>¿Está repartida con justicia la carga de noches en tu equipo?</h1>
+
+  <p class="lede">Introduce los nombres y noches asignadas en un mes. La calculadora te dice qué tan equitativo es el reparto y dónde están los desequilibrios. Sirve para hospitales, residencias, fábricas, seguridad privada, hostelería y cualquier servicio 24/7. Cálculo en tu navegador, sin enviar datos a ningún servidor.</p>
+
+  <div class="tool">
+    <div class="tool-head">
+      <div class="tool-title">Reparto de noches por trabajador</div>
+      <div class="tool-actions">
+        <button class="btn" onclick="loadDemo()">Cargar ejemplo</button>
+        <button class="btn" onclick="addRow()">+ Añadir persona</button>
+        <button class="btn ghost" onclick="clearAll()">Limpiar</button>
+      </div>
+    </div>
+    <div class="peopleRows" id="rows"></div>
+    <div class="tool-foot">
+      <div class="total"><span id="totalLine">0 personas · 0 noches</span></div>
+      <button class="btn primary" onclick="calculate()">Calcular equidad</button>
+    </div>
+    <div id="result"></div>
+  </div>
+
+  <h2>Cómo se calcula la equidad</h2>
+
+  <p>La equidad nocturna no es una opinión: es un cálculo. Tres métricas estadísticas clásicas, fáciles de interpretar:</p>
+
+  <h3>1 · Media</h3>
+  <p>Cuántas noches "le tocan" en promedio a cada persona. Si tu servicio tiene 30 noches al mes a cubrir entre 10 personas, la media es 3 noches por persona. Es el suelo: el reparto perfecto sería que todos hicieran 3.</p>
+
+  <h3>2 · Desviación estándar</h3>
+  <p>Cuánto se aleja cada persona de esa media. Una desviación de 0,3 noches significa que casi todos están cerca de la media. Una desviación de 1,8 significa que hay gente haciendo el doble que otra. Cuanto más baja, más justo.</p>
+
+  <h3>3 · Rango (max - min)</h3>
+  <p>La diferencia entre quien más noches hace y quien menos. Si el más cargado hace 6 y el menos 1, el rango es 5. En un servicio sano debería ser ≤2.</p>
+
+  <h2>Cuándo deja de ser equitativo</h2>
+
+  <p>No existe "el número mágico de la equidad", pero estos umbrales son los que usan los servicios de personal con criterio:</p>
+
+  <ul>
+    <li><strong>Desviación estándar &lt; 0,8 noches</strong> → reparto correcto</li>
+    <li><strong>0,8 a 1,5</strong> → desigualdad detectable, conviene revisar</li>
+    <li><strong>&gt; 1,5</strong> → desigualdad significativa, fuente de conflicto y bajas</li>
+  </ul>
+
+  <p>Y para el rango (max-min), el límite práctico es <strong>2 noches</strong>. A partir de 3 noches de diferencia, alguien va a quejarse, y con razón.</p>
+
+  <h2>Por qué importa más de lo que parece</h2>
+
+  <p>La carga nocturna desigual es <strong>la primera causa de bajas por agotamiento</strong> en servicios 24/7. No es solo justicia: una persona que hace 7 noches mientras su compañero hace 2 acumula deuda de sueño, cae enferma con más frecuencia y suele acabar pidiendo el traslado o la baja voluntaria. Cada baja te cuesta 3-6 meses de búsqueda de sustituto y curva de aprendizaje. La equidad nocturna es <em>el</em> ROI más medible en gestión de turnos.</p>
+
+  <h2>El problema con planificar a mano</h2>
+
+  <p>Conseguir una desviación estándar baja con Excel es factible para 5-8 personas. Con 20-40 personas, varios tipos de turno (M/T/N), vacaciones cruzadas, libranzas y guardias, el problema se vuelve combinatorio: hay millones de planillas posibles y la diferencia entre la mejor y la peor en términos de equidad puede ser de un orden de magnitud. La mente humana no lo resuelve bien, ni siquiera con paciencia.</p>
+
+  <p>Por eso los sistemas IA-first plantean la generación de turnos como un problema de optimización con restricciones: minimizar la desviación estándar de noches (y de festivos, y de horas totales) <em>sujeta a</em> las reglas del convenio. El resultado: en segundos obtienes la planilla con la mejor equidad posible dentro del cumplimiento legal.</p>
+
+  <div class="cta-card">
+    <h3>Equidad sin pelear con Excel</h3>
+    <p>Shiftia genera tu planilla automáticamente buscando la mejor equidad posible: noches, festivos y guardias repartidos entre el equipo respetando convenio. Sin tener que justificar a nadie.</p>
+    <a href="/#contact">Probar Shiftia con tu equipo</a>
+  </div>
+
+  <div class="related">
+    <div class="related-title">Sigue leyendo</div>
+    <ul>
+      <li><a href="/recursos/descanso-minimo-entre-turnos">Descanso mínimo entre turnos: qué dice la ley en España →</a></li>
+      <li><a href="/recursos/excel-vs-software-turnos">Excel vs software de turnos: cuándo basta y cuándo no →</a></li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <a href="/">Shiftia</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a>
+  <p style="margin-top:8px;font-size:0.78rem;opacity:0.8">Los cálculos se hacen en tu navegador. No enviamos ni almacenamos los nombres ni los datos introducidos.</p>
+</footer>
+
+<script>
+(function(){
+  let people = [
+    { name: '', n: '' },
+    { name: '', n: '' },
+    { name: '', n: '' }
+  ];
+  const rowsEl = document.getElementById('rows');
+  const totalEl = document.getElementById('totalLine');
+  const resultEl = document.getElementById('result');
+
+  function render(){
+    rowsEl.innerHTML = '';
+    people.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <input type="text" placeholder="Nombre o ID" value="${p.name.replace(/"/g,'&quot;')}" oninput="onName(${i}, this.value)">
+        <input type="number" min="0" step="1" placeholder="0" value="${p.n === '' ? '' : p.n}" oninput="onNights(${i}, this.value)">
+        <button class="del" title="Eliminar" onclick="removeRow(${i})">×</button>`;
+      rowsEl.appendChild(row);
+    });
+    updateTotal();
+  }
+  function updateTotal(){
+    const valid = people.filter(p => p.n !== '' && !isNaN(Number(p.n)));
+    const total = valid.reduce((a,b)=> a + Number(b.n), 0);
+    totalEl.textContent = `${valid.length} personas · ${total} noches en total`;
+  }
+  window.onName = (i, v) => { people[i].name = v; updateTotal(); };
+  window.onNights = (i, v) => { people[i].n = v; updateTotal(); };
+  window.addRow = () => { people.push({ name:'', n:'' }); render(); };
+  window.removeRow = (i) => { people.splice(i,1); if (!people.length) people.push({name:'',n:''}); render(); resultEl.innerHTML=''; };
+  window.clearAll = () => { people = [{name:'',n:''},{name:'',n:''},{name:'',n:''}]; render(); resultEl.innerHTML=''; };
+  window.loadDemo = () => {
+    people = [
+      { name:'Ana',     n:5 },
+      { name:'Luis',    n:4 },
+      { name:'Marta',   n:3 },
+      { name:'Sergio',  n:6 },
+      { name:'Carla',   n:2 },
+      { name:'Pablo',   n:3 },
+      { name:'Elena',   n:4 },
+      { name:'Rubén',   n:1 }
+    ];
+    render();
+    calculate();
+  };
+  window.calculate = () => {
+    const valid = people.filter(p => p.n !== '' && !isNaN(Number(p.n)) && Number(p.n) >= 0);
+    if (valid.length < 2) {
+      resultEl.innerHTML = '<div class="empty">Introduce al menos 2 personas con sus noches asignadas para calcular.</div>';
+      return;
+    }
+    const nights = valid.map(p => Number(p.n));
+    const total = nights.reduce((a,b)=>a+b, 0);
+    const mean = total / valid.length;
+    const variance = nights.reduce((acc, n) => acc + Math.pow(n - mean, 2), 0) / valid.length;
+    const stdDev = Math.sqrt(variance);
+    const min = Math.min(...nights);
+    const max = Math.max(...nights);
+    const range = max - min;
+
+    // Veredicto
+    let verdict, vClass, pillTxt, pillClass, diag;
+    if (stdDev < 0.8 && range <= 2) {
+      verdict = 'Reparto justo';
+      vClass = 'ok';
+      pillTxt = 'Equitativo';
+      pillClass = 'ok';
+      diag = `Excelente reparto. La diferencia entre quien más y quien menos hace es de <strong>${range} noches</strong>, y la desviación de <strong>${stdDev.toFixed(2)}</strong> está por debajo del umbral de alerta. Si esta es la planilla del mes, mantén el criterio que estés usando.`;
+    } else if (stdDev < 1.5 && range <= 3) {
+      verdict = 'Reparto mejorable';
+      vClass = 'warn';
+      pillTxt = 'Atención';
+      pillClass = 'warn';
+      diag = `Hay desigualdad detectable. La desviación de <strong>${stdDev.toFixed(2)}</strong> y el rango de <strong>${range} noches</strong> indican que alguien está cargando más que la media. No es alarmante todavía, pero si se repite varios meses puede generar tensión. Revisa quién está acumulando noches y por qué.`;
+    } else {
+      verdict = 'Desigualdad significativa';
+      vClass = 'bad';
+      pillTxt = 'Crítico';
+      pillClass = 'bad';
+      diag = `Reparto claramente desequilibrado. Desviación <strong>${stdDev.toFixed(2)}</strong>, rango <strong>${range} noches</strong>. Esto suele generar quejas formales, bajas por agotamiento y conflictos sindicales. Recomendamos rehacer la planilla con criterios de equidad explícitos o automatizar el reparto.`;
+    }
+
+    // barras
+    const barsHtml = valid
+      .map((p, i) => ({ ...p, idx:i, val:Number(p.n) }))
+      .sort((a,b) => b.val - a.val)
+      .map(p => {
+        const pct = max > 0 ? (p.val / max) * 100 : 0;
+        const above = p.val > mean + stdDev;
+        return `<div class="bar-row">
+          <span class="bar-name">${p.name ? escapeHtml(p.name) : 'Persona ' + (p.idx + 1)}</span>
+          <div class="bar-track"><div class="bar-fill ${above ? 'above' : ''}" style="width:${pct}%"></div></div>
+          <span class="bar-val">${p.val}</span>
+        </div>`;
+      }).join('');
+
+    resultEl.innerHTML = `
+      <div class="result">
+        <div class="result-head">
+          <div class="verdict ${vClass}">${verdict}</div>
+          <div class="score-pill ${pillClass}">${pillTxt}</div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Personas</div><div class="metric-value">${valid.length}</div></div>
+          <div class="metric"><div class="metric-label">Noches totales</div><div class="metric-value">${total}</div></div>
+          <div class="metric"><div class="metric-label">Media</div><div class="metric-value">${mean.toFixed(2)}</div><div class="metric-sub">por persona</div></div>
+          <div class="metric"><div class="metric-label">Desviación</div><div class="metric-value">${stdDev.toFixed(2)}</div><div class="metric-sub">σ noches</div></div>
+          <div class="metric"><div class="metric-label">Rango</div><div class="metric-value">${range}</div><div class="metric-sub">${min} – ${max}</div></div>
+        </div>
+        <div class="bars">${barsHtml}</div>
+        <div class="diag"><strong>Diagnóstico.</strong> ${diag}</div>
+      </div>`;
+  };
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  render();
+})();
+</script>
+
+</body>
+</html>

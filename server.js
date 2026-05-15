@@ -2187,12 +2187,16 @@ app.get('/docs', (req, res) => {
 app.get('/sitemap.xml', (req, res) => {
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
-    { loc: '/',            priority: '1.0', changefreq: 'weekly'  },
-    { loc: '/demo',        priority: '0.9', changefreq: 'monthly' },
-    { loc: '/docs',        priority: '0.7', changefreq: 'monthly' },
-    { loc: '/privacidad',  priority: '0.3', changefreq: 'yearly'  },
-    { loc: '/terminos',    priority: '0.3', changefreq: 'yearly'  },
-    { loc: '/cookies',     priority: '0.3', changefreq: 'yearly'  }
+    { loc: '/',                                          priority: '1.0', changefreq: 'weekly'  },
+    { loc: '/demo',                                      priority: '0.9', changefreq: 'monthly' },
+    { loc: '/recursos',                                  priority: '0.8', changefreq: 'weekly'  },
+    { loc: '/recursos/descanso-minimo-entre-turnos',     priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/calculadora-equidad-nocturna',     priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/excel-vs-software-turnos',         priority: '0.8', changefreq: 'monthly' },
+    { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
+    { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
+    { loc: '/terminos',                                  priority: '0.3', changefreq: 'yearly'  },
+    { loc: '/cookies',                                   priority: '0.3', changefreq: 'yearly'  }
   ];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -2211,6 +2215,13 @@ ${urls.map(u => `  <url>
 app.get('/privacidad', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacidad.html')));
 app.get('/terminos',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'terminos.html')));
 app.get('/cookies',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));
+
+// SEO pillar pages — recursos
+app.get('/recursos',  (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'index.html')));
+app.get('/recursos/', (req, res) => res.redirect(301, '/recursos'));
+app.get('/recursos/descanso-minimo-entre-turnos', (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'descanso-minimo-entre-turnos.html')));
+app.get('/recursos/calculadora-equidad-nocturna', (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'calculadora-equidad-nocturna.html')));
+app.get('/recursos/excel-vs-software-turnos',     (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'excel-vs-software-turnos.html')));
 app.get('/demo', (req, res) => res.sendFile(path.join(__dirname, 'public', 'demo.html')));
 app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'public', 'forgot-password.html')));
 
