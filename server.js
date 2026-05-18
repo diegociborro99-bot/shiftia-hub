@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 
 const app = express();
+app.disable('x-powered-by');
 const PORT = process.env.PORT || 3000;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -434,6 +435,9 @@ async function initializeDatabase() {
       await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS ${col.name} ${col.type}`).catch(() => {});
     }
 
+    // password_changed_at — usado para invalidar JWTs tras cambio de password
+    await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS password_changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`).catch(() => {});
+
     // Create support tickets table
     await client.query(`
       CREATE TABLE IF NOT EXISTS support_tickets (
@@ -630,7 +634,12 @@ function authMiddleware(req, res, next) {
   const token = authHeader.slice(7);
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+    // Invalida tokens emitidos antes del último cambio de password.
+    // Migración suave: tokens viejos sin `pca` se aceptan hasta su expiración natural.
+    if (typeof decoded.pca === 'number' && typeof decoded.iat === 'number' && decoded.iat < decoded.pca) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
     req.user = { id: decoded.userId || decoded.id, email: decoded.email };
     next();
   } catch (err) {
@@ -949,7 +958,7 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
     const result = await pool.query(
       `INSERT INTO users (email, password_hash, name, company, plan, plan_status, workers_limit)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING id, email, name, company, plan, plan_status, workers_limit, created_at`,
+       RETURNING id, email, name, company, plan, plan_status, workers_limit, created_at, password_changed_at`,
       [email, passwordHash, name, company || null, 'trial', 'active', 25]
     );
 
@@ -957,12 +966,14 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, pca: Math.floor(new Date(user.password_changed_at).getTime() / 1000) },
       JWT_SECRET,
-      { expiresIn: '30d' }
+      { expiresIn: '7d' }
     );
 
-    res.status(201).json({ token, user });
+    // Don't expose password_changed_at to clients
+    const { password_changed_at, ...userPublic } = user;
+    res.status(201).json({ token, user: userPublic });
 
     // Fire-and-forget welcome email (don't block response)
     const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -1025,13 +1036,13 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, pca: Math.floor(new Date(user.password_changed_at).getTime() / 1000) },
       JWT_SECRET,
-      { expiresIn: '30d' }
+      { expiresIn: '7d' }
     );
 
-    // Return user without password_hash
-    const { password_hash, ...userWithoutPassword } = user;
+    // Return user without password_hash or password_changed_at
+    const { password_hash, password_changed_at, ...userWithoutPassword } = user;
 
     res.json({ token, user: userWithoutPassword });
   } catch (err) {
@@ -1138,7 +1149,7 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update user's password
-    await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hashedPassword, userId]);
+    await pool.query('UPDATE users SET password_hash = $1, password_changed_at = NOW() WHERE id = $2', [hashedPassword, userId]);
 
     // Mark token as used
     await pool.query('UPDATE password_reset_tokens SET used = true WHERE id = $1', [tokenId]);
@@ -1249,6 +1260,7 @@ app.put('/api/auth/update', authMiddleware, async (req, res) => {
       updates.push(`password_hash = $${paramCount}`);
       values.push(passwordHash);
       paramCount++;
+      updates.push(`password_changed_at = NOW()`);
     }
 
     updates.push(`updated_at = NOW()`);
@@ -2037,12 +2049,6 @@ function requireAdminKey(req, res) {
   const adminKey = process.env.ADMIN_API_KEY;
   const sentKey  = req.headers['x-admin-key'];
   if (!adminKey || sentKey !== adminKey) {
-    // Fallback temporal: aceptamos query string para no romper ningún script existente,
-    // pero lo logueamos para poder migrarlos.
-    if (adminKey && req.query.key === adminKey) {
-      console.warn('[admin] ADMIN_API_KEY en query string — usa header x-admin-key en su lugar');
-      return true;
-    }
     res.status(404).end();
     return false;
   }
@@ -2069,7 +2075,8 @@ app.get('/api/admin/bookings', async (req, res) => {
     );
     res.json({ count: r.rowCount, bookings: r.rows });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[admin]', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
@@ -2093,7 +2100,8 @@ app.post('/api/admin/bookings/:id/status', express.json(), async (req, res) => {
     if (r.rowCount === 0) return res.status(404).json({ error: 'No encontrada' });
     res.json({ ok: true, id, status });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('[admin]', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
@@ -2109,7 +2117,10 @@ app.post('/api/admin/blocked-dates', express.json(), async (req, res) => {
       [date, reason || null]
     );
     res.json({ ok: true, date, reason });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    console.error('[admin]', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
 app.delete('/api/admin/blocked-dates/:date', async (req, res) => {
@@ -2119,7 +2130,10 @@ app.delete('/api/admin/blocked-dates/:date', async (req, res) => {
   try {
     await pool.query('DELETE FROM blocked_dates WHERE block_date = $1', [date]);
     res.json({ ok: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    console.error('[admin]', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
 // Listar días bloqueados
@@ -2128,7 +2142,10 @@ app.get('/api/admin/blocked-dates', async (req, res) => {
   try {
     const r = await pool.query("SELECT block_date, reason FROM blocked_dates WHERE block_date >= CURRENT_DATE ORDER BY block_date ASC");
     res.json({ blocked: r.rows });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    console.error('[admin]', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
 // Export CSV de bookings
@@ -2151,7 +2168,10 @@ app.get('/api/admin/bookings.csv', async (req, res) => {
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="bookings-${new Date().toISOString().slice(0,10)}.csv"`);
     res.send(header + body);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) {
+    console.error('[admin]', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
 function htmlPage(title, body) {
@@ -2227,27 +2247,20 @@ app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'pub
 
 // Health check público — minimalista, no expone diagnóstico interno
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', version: PKG_VERSION });
+  res.json({ status: 'ok' });
 });
 
 // Status público para la página /status — datos minimalistas, no expone diagnóstico
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'operational',
-    version: PKG_VERSION,
     updated_at: new Date().toISOString()
   });
 });
 
-// Endpoint público para verificar versión desplegada
-app.get('/version', (req, res) => {
-  res.type('text/plain').send(`Shiftia HUB v${PKG_VERSION}\nNODE_ENV=${process.env.NODE_ENV || 'development'}\nBoot: ${new Date().toISOString()}`);
-});
-
 // Health check completo — solo con ADMIN_API_KEY
 app.get('/api/health/full', (req, res) => {
-  const adminKey = process.env.ADMIN_API_KEY;
-  if (!adminKey || req.query.key !== adminKey) return res.status(404).end();
+  if (!requireAdminKey(req, res)) return;
   res.json({
     status: 'ok',
     version: require('./package.json').version,
@@ -2264,9 +2277,7 @@ app.get('/api/health/full', (req, res) => {
 // Test email endpoint — protegido contra abuso. Requiere ADMIN_API_KEY que solo el
 // owner conoce. Sin esa key el endpoint devuelve 404 (no leak de su existencia).
 app.get('/api/test-email', async (req, res) => {
-  const adminKey = process.env.ADMIN_API_KEY;
-  if (!adminKey) return res.status(404).end();
-  if (req.query.key !== adminKey) return res.status(404).end();
+  if (!requireAdminKey(req, res)) return;
 
   const to = req.query.to;
   if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to) || to.length > 254) {

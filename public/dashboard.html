@@ -1477,7 +1477,6 @@
             </div>
 
             <!-- Sparklines · uso del equipo + equidad nocturna -->
-            <!-- TODO: integrar con endpoint real /api/auth/usage cuando exista -->
             <div class="metric-row reveal" id="sparklineRow">
                 <article class="metric-card">
                     <div class="metric-eyebrow">Uso del equipo · últimos 7 días</div>
@@ -1521,7 +1520,6 @@
             </div>
 
             <!-- "Lo que pasó esta semana" KPI grid -->
-            <!-- TODO: integrar con endpoint real /api/auth/week-summary cuando exista -->
             <section class="section-block reveal" aria-labelledby="weekKpiTitle" style="margin-top:48px;">
                 <div class="section-eyebrow">Resumen</div>
                 <h2 class="section-title" id="weekKpiTitle">Lo que pasó esta semana</h2>
@@ -1565,7 +1563,6 @@
                 <h2 class="section-title" id="billingTitle">Historial de facturas</h2>
 
                 <!-- Billing summary cards -->
-                <!-- TODO: integrar con endpoint real /api/auth/billing-summary cuando exista -->
                 <div class="billing-summary" id="billingSummary" style="display:none;">
                     <article class="billing-summary-card">
                         <span class="billing-summary-eyebrow">Total pagado este año</span>
@@ -1617,7 +1614,6 @@
             </section>
 
             <!-- Activity timeline (últimos 30 días) -->
-            <!-- TODO: integrar con endpoint real /api/auth/activity cuando exista -->
             <section class="section-block reveal" id="actividad" aria-labelledby="activityTitle">
                 <div class="section-eyebrow">Actividad</div>
                 <h2 class="section-title" id="activityTitle">Últimos 30 días</h2>
@@ -2178,7 +2174,6 @@
         }
 
         // ===== BILLING SUMMARY CARDS =====
-        // TODO: integrar con endpoint real /api/auth/billing-summary cuando exista.
         // Por ahora se calcula sumando facturas demo del año en curso.
         function renderBillingSummary(u, info, invoices) {
             const wrap = document.getElementById('billingSummary');
@@ -2392,7 +2387,6 @@
         }
 
         // ===== NOTIFICATIONS =====
-        // TODO: integrar con endpoint real /api/auth/notifications cuando exista.
         const NOTIF_ICONS = {
             info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
             warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
@@ -2814,7 +2808,6 @@
 
         // ===================================================================
         // SPARKLINE · uso del equipo últimos 7 días
-        // TODO: integrar con endpoint real /api/auth/usage cuando exista.
         // ===================================================================
         function renderUsageSparkline() {
             const svg = document.getElementById('sparkUsageSvg');
@@ -2883,7 +2876,6 @@
 
         // ===================================================================
         // ACTIVITY TIMELINE · últimos 30 días
-        // TODO: integrar con endpoint real /api/auth/activity cuando exista.
         // ===================================================================
         const TIMELINE_ICONS = {
             plan:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15.09 8.26 22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>',
