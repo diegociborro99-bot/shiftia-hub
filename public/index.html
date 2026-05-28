@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="Shiftia: planificación inteligente de turnos y planillas con IA. Para hospitales, fábricas, residencias y cualquier negocio con turnos. Desde 20€/mes.">
 <meta name="keywords" content="turnos, planificación, hospital, enfermería, IA, cuadrantes, planillas, gestión turnos">
 <meta name="author" content="Shiftia">
@@ -2597,10 +2597,17 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="password
   transition: border-color 200ms, box-shadow 200ms, background 200ms !important;
 }
 input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
-  outline: none !important;
+  outline: 2px solid var(--ds-accent, #0f7a6d) !important;
+  outline-offset: 2px !important;
   border-color: var(--ds-accent, #0f7a6d) !important;
   box-shadow: 0 0 0 4px rgba(15, 122, 109, 0.12) !important;
   background: #fff !important;
+}
+input[type="text"]:focus:not(:focus-visible), input[type="email"]:focus:not(:focus-visible),
+input[type="tel"]:focus:not(:focus-visible), input[type="password"]:focus:not(:focus-visible),
+select:focus:not(:focus-visible), textarea:focus:not(:focus-visible) {
+  outline: none !important;
+  outline-offset: 0 !important;
 }
 label, .fg label, .form-label {
   font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
