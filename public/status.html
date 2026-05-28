@@ -299,8 +299,6 @@
 
     <script>
     // Uptime bars: render 90 days of operational status.
-    // TODO: cuando haya monitoring real (Better Stack / UptimeRobot), sustituir
-    // este loop por un fetch a /api/status que devuelva las observaciones reales.
     (function () {
         const days = 90;
         const variants = { web: 0, api: 1, sara: 2 };

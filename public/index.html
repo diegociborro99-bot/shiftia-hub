@@ -12,8 +12,6 @@
      Google no nos rankee mal en queries internacionales y prepara terreno para /en/ futuro. -->
 <link rel="alternate" hreflang="es-ES" href="https://www.shiftia.es/">
 <link rel="alternate" hreflang="x-default" href="https://www.shiftia.es/">
-<!-- Google Search Console verification — pega aquí el content="..." que te dé Google -->
-<!-- <meta name="google-site-verification" content="PEGA-AQUI-TU-TOKEN"> -->
 <meta property="og:title" content="Shiftia — Planificación de turnos simplificada con IA">
 <meta property="og:description" content="Automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Desde 20€/mes.">
 <meta property="og:type" content="website">
@@ -4339,7 +4337,6 @@ section.centered p,
 </section>
 
 <!-- TRUST LOGO BAND -->
-<!-- Sustituir div.tlb-item por <img src="/logos/..."> cuando haya logos reales -->
 <section class="trust-logo-band" aria-label="Sectores que confían en Shiftia">
   <div class="container">
     <div class="tlb-eyebrow">Confiado por equipos en sectores con turnos exigentes</div>
@@ -5281,7 +5278,6 @@ section.centered p,
 </section>
 
 <!-- ROI CALCULATOR -->
-<!-- Constantes ROI: ajustar HOURS_PER_WORKER_MONTH y COORDINATOR_HOURLY_COST en SHIFTIA_ROI con datos reales -->
 <section class="roi-section" id="roi" aria-labelledby="roiTitle">
   <div class="container">
     <div class="roi-shell">
@@ -5992,9 +5988,7 @@ async function showTimeSlots(date) {
     const data = await resp.json();
     slots = data.slots || [];
     blocked = !!data.blocked;
-  } catch (e) {
-    console.error('Error cargando slots:', e);
-  }
+  } catch (e) {}
 
   container.innerHTML = '';
 
@@ -7049,7 +7043,6 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   </div>
 </div>
 
-<!-- Social proof notifications eliminadas en v3.5: tono fake/spam, no aporta. -->
 <div class="social-notif" id="socialNotif" style="display:none !important;" aria-hidden="true"></div>
 
 <!-- Scroll progress bar (se rellena con JS al scrollear) -->

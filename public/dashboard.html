@@ -1928,7 +1928,6 @@
                 populateUserData(currentUser);
                 populateBilling(currentUser);
             } catch (error) {
-                console.error('Error:', error);
                 populateDefaultData();
                 populateEmptyBilling();
             }
@@ -1946,12 +1945,6 @@
             const welcome = document.getElementById('welcomeMessage');
             if (welcome) welcome.innerHTML = `Hola, <em>${escapeHtml(firstName)}</em>`;
 
-            // ===== Estado del producto (luz roja → verde cuando se entregue) =====
-            // TODO: cuando el backend devuelva u.product_url o u.product_status === 'ready',
-            // sustituir esta lógica por el valor real. Por ahora se basa en convenciones:
-            //   · Si u.product_url existe → producto entregado.
-            //   · Si u.product_status === 'ready' → producto entregado.
-            //   · Si u.plan === 'trial' o no hay info → demo (rojo).
             const launchCard  = document.getElementById('productLaunchCard');
             const launchTitle = document.getElementById('productLaunchTitle');
             const launchDesc  = document.getElementById('productLaunchDesc');
@@ -2732,7 +2725,6 @@
                 showAlert('supportMsgBox', 'success', 'Tu mensaje se ha enviado. Te responderemos pronto.');
                 document.getElementById('supportForm').reset();
             } catch (err) {
-                console.error('Error:', err);
                 showAlert('supportMsgBox', 'error', 'Error al enviar el mensaje. Inténtalo de nuevo.');
             } finally {
                 btn.disabled = false;
@@ -2801,7 +2793,6 @@
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmPassword').value = '';
             } catch (err) {
-                console.error('Error:', err);
                 showAlert('accountMsgBox', 'error', err.message || 'Error al guardar los cambios.');
             }
         }

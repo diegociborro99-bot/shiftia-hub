@@ -1,15 +1,9 @@
-/* ============================================================================
-   v3.6 — ANIMATIONS & INTERACTIVITY ENHANCEMENTS (runtime)
-   - Hero "Demo viva" overlay (cursor + conflictos + Motor IA streaming + KPIs)
-   - Counter-up de métricas con IntersectionObserver
-   - Magnetic CTAs (botones que se inclinan al cursor)
-   - Excel-vs-Shiftia animación destructiva al hacer scroll
-   - Cursor "smart" que cambia según contexto
-   ============================================================================ */
+/* Frontend interactive runtime: hero demo overlay, counter-up, magnetic CTAs,
+   vs-table scroll animation. */
 (function () {
   'use strict';
-  if (window.__v36Init) return; // evita doble inicialización
-  window.__v36Init = true;
+  if (window.__siInit) return;
+  window.__siInit = true;
 
   // Respeta usuarios con motion reducido
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
