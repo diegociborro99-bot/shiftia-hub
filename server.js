@@ -341,15 +341,13 @@ app.use(compression());
 // Security headers (lightweight helmet alternative — no extra dependency)
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  // X-XSS-Protection removed: legacy header, deprecated by all major browsers and may
-  // introduce vulnerabilities. Modern protection comes via the Content-Security-Policy below.
+  // Clickjacking protection lives in CSP frame-ancestors below; modern browsers
+  // ignore X-Frame-Options when both are present, so we drop the duplicate header.
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  // M3: Content Security Policy — restricts script/style/connect/frame sources.
-  // TODO: Migrate to nonce-based CSP to remove 'unsafe-inline'. Requires templating engine to inject nonce into inline scripts.
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self';");
-  // Strict Transport Security (HTTPS only) — reinforced: 2-year max-age + preload
+  // TODO: migrate to nonce-based CSP to drop 'unsafe-inline' on script-src.
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests");
+  // Strict Transport Security (HTTPS only) — 2-year max-age + preload
   if (IS_PRODUCTION) {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
@@ -361,6 +359,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
   etag: true,
   lastModified: true,
+  dotfiles: 'deny',
   setHeaders: (res, filePath) => {
     // Performance: long-cache (30 días) para assets estáticos críticos de la landing,
     // 5 min para HTML para permitir invalidar copy rápidamente.
