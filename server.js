@@ -670,6 +670,13 @@ function isValidEmail(email) {
 // A10: server-side length cap helper (used across auth, contact, support, booking)
 function cap(s, n) { return String(s == null ? '' : s).slice(0, n); }
 
+// PII-safe log identifier: short stable hash of the email — enough to correlate
+// log lines for one user without leaking the address into Railway logs.
+function emailTag(email) {
+  if (!email) return '<no-email>';
+  return 'u:' + crypto.createHash('sha256').update(String(email).toLowerCase()).digest('hex').slice(0, 8);
+}
+
 // ====== EMAIL CONFIG ======
 // Tanto GMAIL_USER como GMAIL_APP_PASSWORD deben venir SIEMPRE de env vars.
 // Si falta GMAIL_USER, el SMTP queda deshabilitado (Resend se usa como provider primario).
@@ -1370,7 +1377,7 @@ app.post('/api/support', authMiddleware, async (req, res) => {
       }
     }
 
-    console.log(`Support ticket from ${user.name} <${user.email}>: [${cat}] ${subject}`);
+    console.log(`Support ticket from ${emailTag(user.email)} [${cat}] (${subject.length} chars)`);
     res.json({ ok: true });
 
     // Fire-and-forget email (don't block response)
@@ -1558,7 +1565,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
       }
     }
 
-    console.log(`Contact lead saved: ${name} <${email}> — ${company || 'N/A'}`);
+    console.log(`Contact lead saved: ${emailTag(email)} company=${company ? 'yes' : 'no'}`);
     res.json({ ok: true });
 
     // Fire-and-forget emails (don't block response)
@@ -1938,7 +1945,7 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     const supportEmail = process.env.SUPPORT_EMAIL || GMAIL_USER;
 
     // Responder OK al cliente DESPUÉS de confirmar la fila en BD
-    console.log(`Booking #${bookingId} OK: ${email} ${digits} — ${date} ${time} (Madrid)`);
+    console.log(`Booking #${bookingId} OK: ${emailTag(email)} — ${date} ${time} (Madrid)`);
     res.json({
       ok: true,
       bookingId,
