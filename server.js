@@ -1073,7 +1073,7 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
     // Compare password
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Email o contraseña incorrectos' });
     }
 
     // Generate JWT token
