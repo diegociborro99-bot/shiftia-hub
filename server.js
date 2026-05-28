@@ -507,6 +507,13 @@ async function initializeDatabase() {
       );
     `);
 
+    // Migration: tokens written before the sha256-at-rest change are now unusable
+    // (column stores hashes, code looks up by hash). Invalidate any in-flight ones
+    // so they don't linger as ghost rows. Safe to run every boot — idempotent.
+    await client.query(
+      "UPDATE password_reset_tokens SET used = true WHERE used = false AND length(token) = 64 AND token ~ '^[0-9a-f]+$' AND created_at < NOW() - INTERVAL '1 hour'"
+    ).catch(() => {});
+
     // Idempotencia de webhooks Stripe — sin esto, los retries duplican efectos.
     await client.query(`
       CREATE TABLE IF NOT EXISTS stripe_processed_events (
@@ -1110,17 +1117,21 @@ app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
     if (userExists) {
       const user = userResult.rows[0];
 
-      // Generate reset token
+      // Generate reset token. The plaintext goes in the email; only the sha256
+      // digest is stored in DB. A DB leak no longer yields working reset tokens.
+      // sha256 (not bcrypt) is used because 32 random bytes already have full
+      // entropy and we need exact-match lookup on the hash column.
       const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
       // A2: Invalidate any previous unused tokens for this user before issuing a new one
       await pool.query("UPDATE password_reset_tokens SET used = true WHERE user_id = $1 AND used = false", [user.id]);
 
-      // Store token in database
+      // Store ONLY the hash; the plaintext token never persists.
       await pool.query(
         'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
-        [user.id, resetToken, expiresAt]
+        [user.id, resetTokenHash, expiresAt]
       );
 
       // Send email with reset link
@@ -1168,10 +1179,11 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
       return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
-    // Find token in database
+    // Look up by sha256(plaintext) — the DB never holds the usable token.
+    const tokenHash = crypto.createHash('sha256').update(String(token)).digest('hex');
     const tokenResult = await pool.query(
       'SELECT id, user_id FROM password_reset_tokens WHERE token = $1 AND used = false AND expires_at > NOW()',
-      [token]
+      [tokenHash]
     );
 
     if (tokenResult.rows.length === 0) {
