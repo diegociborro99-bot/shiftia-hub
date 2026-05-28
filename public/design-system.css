@@ -144,7 +144,7 @@
 }
 .ds-btn-ghost:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
 .ds-btn-lg { padding: 14px 24px; min-height: 50px; font-size: var(--ds-text-base); border-radius: var(--ds-radius-md); }
-.ds-btn-sm { padding: 8px 14px; min-height: 34px; font-size: var(--ds-text-xs); }
+.ds-btn-sm { padding: 10px 14px; min-height: 44px; font-size: var(--ds-text-xs); }
 .ds-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none !important; }
 
 /* ----- Inputs premium ----- */

@@ -66,7 +66,20 @@ const BOOKING_LUNCH_BLOCK = (process.env.BOOKING_LUNCH_BLOCK || '14:00,14:30,15:
 const BOOKING_SLOT_MINUTES = Number(process.env.BOOKING_SLOT_MINUTES || 30); // 30 → :00 y :30; 60 → solo :00
 const BOOKING_HOUR_START = Number(process.env.BOOKING_HOUR_START || 9);
 const BOOKING_HOUR_END = Number(process.env.BOOKING_HOUR_END || 18);
-const BOOKING_CANCEL_SECRET = process.env.BOOKING_CANCEL_SECRET || JWT_SECRET; // HMAC para tokens de cancelar
+// Independent secret for HMAC cancel tokens — never fall back to JWT_SECRET so a leak
+// of one doesn't compromise the other. In dev we generate an ephemeral secret.
+let BOOKING_CANCEL_SECRET = process.env.BOOKING_CANCEL_SECRET;
+if (!BOOKING_CANCEL_SECRET) {
+  if (IS_PRODUCTION) {
+    console.error('FATAL: BOOKING_CANCEL_SECRET env var not set in production — refusing to start.');
+    process.exit(1);
+  }
+  BOOKING_CANCEL_SECRET = 'shiftia-dev-booking-cancel-' + crypto.randomBytes(8).toString('hex');
+  console.warn('WARNING: BOOKING_CANCEL_SECRET not set — using ephemeral dev secret.');
+}
+
+// Single source of truth for bcrypt cost. OWASP 2024 recommends >=10; we use 12.
+const BCRYPT_ROUNDS = Math.max(10, parseInt(process.env.BCRYPT_ROUNDS, 10) || 12);
 
 // ====== STRIPE CONFIG ======
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
@@ -341,15 +354,13 @@ app.use(compression());
 // Security headers (lightweight helmet alternative — no extra dependency)
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  // X-XSS-Protection removed: legacy header, deprecated by all major browsers and may
-  // introduce vulnerabilities. Modern protection comes via the Content-Security-Policy below.
+  // Clickjacking protection lives in CSP frame-ancestors below; modern browsers
+  // ignore X-Frame-Options when both are present, so we drop the duplicate header.
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  // M3: Content Security Policy — restricts script/style/connect/frame sources.
-  // TODO: Migrate to nonce-based CSP to remove 'unsafe-inline'. Requires templating engine to inject nonce into inline scripts.
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self';");
-  // Strict Transport Security (HTTPS only) — reinforced: 2-year max-age + preload
+  // TODO: migrate to nonce-based CSP to drop 'unsafe-inline' on script-src.
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests");
+  // Strict Transport Security (HTTPS only) — 2-year max-age + preload
   if (IS_PRODUCTION) {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
@@ -361,6 +372,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
   etag: true,
   lastModified: true,
+  dotfiles: 'deny',
   setHeaders: (res, filePath) => {
     // Performance: long-cache (30 días) para assets estáticos críticos de la landing,
     // 5 min para HTML para permitir invalidar copy rápidamente.
@@ -495,6 +507,13 @@ async function initializeDatabase() {
       );
     `);
 
+    // Migration: tokens written before the sha256-at-rest change are now unusable
+    // (column stores hashes, code looks up by hash). Invalidate any in-flight ones
+    // so they don't linger as ghost rows. Safe to run every boot — idempotent.
+    await client.query(
+      "UPDATE password_reset_tokens SET used = true WHERE used = false AND length(token) = 64 AND token ~ '^[0-9a-f]+$' AND created_at < NOW() - INTERVAL '1 hour'"
+    ).catch(() => {});
+
     // Idempotencia de webhooks Stripe — sin esto, los retries duplican efectos.
     await client.query(`
       CREATE TABLE IF NOT EXISTS stripe_processed_events (
@@ -587,7 +606,7 @@ async function initializeDatabase() {
     const existingAdmin = await client.query('SELECT id FROM users WHERE email = $1', [adminEmail]);
 
     if (existingAdmin.rows.length === 0 && adminPassword) {
-      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      const hashedPassword = await bcrypt.hash(adminPassword, BCRYPT_ROUNDS);
       await client.query(`
         INSERT INTO users (email, password_hash, name, company, plan, plan_status, workers_limit)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -657,6 +676,13 @@ function isValidEmail(email) {
 
 // A10: server-side length cap helper (used across auth, contact, support, booking)
 function cap(s, n) { return String(s == null ? '' : s).slice(0, n); }
+
+// PII-safe log identifier: short stable hash of the email — enough to correlate
+// log lines for one user without leaking the address into Railway logs.
+function emailTag(email) {
+  if (!email) return '<no-email>';
+  return 'u:' + crypto.createHash('sha256').update(String(email).toLowerCase()).digest('hex').slice(0, 8);
+}
 
 // ====== EMAIL CONFIG ======
 // Tanto GMAIL_USER como GMAIL_APP_PASSWORD deben venir SIEMPRE de env vars.
@@ -915,6 +941,15 @@ const authLimiter = rateLimit({
   message: { error: 'Demasiados intentos. Espera un momento antes de reintentar.' }
 });
 
+// Contact/booking forms are spam magnets — much stricter than apiLimiter.
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes. Intenta de nuevo en unos minutos.' }
+});
+
 // ====== AUTHENTICATION ROUTES ======
 
 // POST /api/auth/register
@@ -945,14 +980,21 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
       return res.status(400).json({ error: 'La contrasena debe tener al menos 8 caracteres' });
     }
 
-    // Check if email already exists (case-insensitive via idx_users_email_lower)
+    // Anti-enumeration: respond with a uniform 200 + generic message whether the
+    // email exists or not, and burn bcrypt cycles either way to flatten timing.
+    // Front-end relies on `data.token` to decide auto-login; absence of a token
+    // shows the generic message and leaves the form in place.
     const existingUser = await pool.query('SELECT id FROM users WHERE LOWER(email) = $1', [email]);
     if (existingUser.rows.length > 0) {
-      return res.status(409).json({ error: 'Email already exists' });
+      // Constant-time work to match the happy-path latency (one bcrypt hash).
+      await bcrypt.hash(password, BCRYPT_ROUNDS).catch(() => {});
+      return res.status(200).json({
+        message: 'Si los datos son correctos, podrás acceder con tu cuenta.'
+      });
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
     // Insert user
     const result = await pool.query(
@@ -1031,7 +1073,7 @@ app.post('/api/auth/login', authLimiter, async (req, res) => {
     // Compare password
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
     if (!passwordMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Email o contraseña incorrectos' });
     }
 
     // Generate JWT token
@@ -1075,17 +1117,21 @@ app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
     if (userExists) {
       const user = userResult.rows[0];
 
-      // Generate reset token
+      // Generate reset token. The plaintext goes in the email; only the sha256
+      // digest is stored in DB. A DB leak no longer yields working reset tokens.
+      // sha256 (not bcrypt) is used because 32 random bytes already have full
+      // entropy and we need exact-match lookup on the hash column.
       const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
 
       // A2: Invalidate any previous unused tokens for this user before issuing a new one
       await pool.query("UPDATE password_reset_tokens SET used = true WHERE user_id = $1 AND used = false", [user.id]);
 
-      // Store token in database
+      // Store ONLY the hash; the plaintext token never persists.
       await pool.query(
         'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
-        [user.id, resetToken, expiresAt]
+        [user.id, resetTokenHash, expiresAt]
       );
 
       // Send email with reset link
@@ -1133,10 +1179,11 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
       return res.status(400).json({ error: 'La contraseña debe tener al menos 8 caracteres' });
     }
 
-    // Find token in database
+    // Look up by sha256(plaintext) — the DB never holds the usable token.
+    const tokenHash = crypto.createHash('sha256').update(String(token)).digest('hex');
     const tokenResult = await pool.query(
       'SELECT id, user_id FROM password_reset_tokens WHERE token = $1 AND used = false AND expires_at > NOW()',
-      [token]
+      [tokenHash]
     );
 
     if (tokenResult.rows.length === 0) {
@@ -1146,7 +1193,7 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
     const { id: tokenId, user_id: userId } = tokenResult.rows[0];
 
     // Hash new password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
     // Update user's password
     await pool.query('UPDATE users SET password_hash = $1, password_changed_at = NOW() WHERE id = $2', [hashedPassword, userId]);
@@ -1256,7 +1303,7 @@ app.put('/api/auth/update', authMiddleware, async (req, res) => {
       if (!currentMatch) {
         return res.status(403).json({ error: 'La contraseña actual es incorrecta' });
       }
-      const passwordHash = await bcrypt.hash(password, 10);
+      const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
       updates.push(`password_hash = $${paramCount}`);
       values.push(passwordHash);
       paramCount++;
@@ -1342,7 +1389,7 @@ app.post('/api/support', authMiddleware, async (req, res) => {
       }
     }
 
-    console.log(`Support ticket from ${user.name} <${user.email}>: [${cat}] ${subject}`);
+    console.log(`Support ticket from ${emailTag(user.email)} [${cat}] (${subject.length} chars)`);
     res.json({ ok: true });
 
     // Fire-and-forget email (don't block response)
@@ -1472,7 +1519,7 @@ app.get('/api/stripe/prices', (req, res) => {
 });
 
 // ====== CONTACT FORM API ======
-app.post('/api/contact', apiLimiter, async (req, res) => {
+app.post('/api/contact', contactLimiter, async (req, res) => {
   try {
     let { name, email, company, workers, department, message } = req.body;
 
@@ -1530,7 +1577,7 @@ app.post('/api/contact', apiLimiter, async (req, res) => {
       }
     }
 
-    console.log(`Contact lead saved: ${name} <${email}> — ${company || 'N/A'}`);
+    console.log(`Contact lead saved: ${emailTag(email)} company=${company ? 'yes' : 'no'}`);
     res.json({ ok: true });
 
     // Fire-and-forget emails (don't block response)
@@ -1683,7 +1730,7 @@ function buildIcs({ uid, startUtc, endUtc, summary, description, location, organ
 }
 
 // GET slots — devuelve disponibilidad real de un día
-app.get('/api/booking/slots', async (req, res) => {
+app.get('/api/booking/slots', apiLimiter, async (req, res) => {
   try {
     const { date } = req.query;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '')) {
@@ -1747,7 +1794,7 @@ app.get('/api/booking/slots', async (req, res) => {
 });
 
 // POST booking — la cita real
-app.post('/api/booking', apiLimiter, async (req, res) => {
+app.post('/api/booking', contactLimiter, async (req, res) => {
   try {
     const body = req.body || {};
 
@@ -1910,7 +1957,7 @@ app.post('/api/booking', apiLimiter, async (req, res) => {
     const supportEmail = process.env.SUPPORT_EMAIL || GMAIL_USER;
 
     // Responder OK al cliente DESPUÉS de confirmar la fila en BD
-    console.log(`Booking #${bookingId} OK: ${email} ${digits} — ${date} ${time} (Madrid)`);
+    console.log(`Booking #${bookingId} OK: ${emailTag(email)} — ${date} ${time} (Madrid)`);
     res.json({
       ok: true,
       bookingId,
