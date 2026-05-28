@@ -966,10 +966,17 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
       return res.status(400).json({ error: 'La contrasena debe tener al menos 8 caracteres' });
     }
 
-    // Check if email already exists (case-insensitive via idx_users_email_lower)
+    // Anti-enumeration: respond with a uniform 200 + generic message whether the
+    // email exists or not, and burn bcrypt cycles either way to flatten timing.
+    // Front-end relies on `data.token` to decide auto-login; absence of a token
+    // shows the generic message and leaves the form in place.
     const existingUser = await pool.query('SELECT id FROM users WHERE LOWER(email) = $1', [email]);
     if (existingUser.rows.length > 0) {
-      return res.status(409).json({ error: 'Email already exists' });
+      // Constant-time work to match the happy-path latency (one bcrypt hash).
+      await bcrypt.hash(password, BCRYPT_ROUNDS).catch(() => {});
+      return res.status(200).json({
+        message: 'Si los datos son correctos, podrás acceder con tu cuenta.'
+      });
     }
 
     // Hash password
