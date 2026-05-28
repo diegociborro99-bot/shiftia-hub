@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
@@ -347,6 +348,54 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
   res.json({ received: true });
 });
 
+// ====== THIRD-PARTY ANALYTICS / CHAT (server-side injection) ======
+// Snippets are injected into the <head> of every HTML response ONLY if the env
+// var is set. Without env vars, the public HTML stays clean — no placeholders,
+// no commented-out tracking, no leaks of which vendor we use.
+const CRISP_WEBSITE_ID = (process.env.CRISP_WEBSITE_ID || '').trim();
+const POSTHOG_API_KEY = (process.env.POSTHOG_API_KEY || '').trim();
+const POSTHOG_HOST = (process.env.POSTHOG_HOST || 'https://eu.i.posthog.com').trim();
+
+function buildThirdPartySnippets() {
+  let out = '';
+  if (CRISP_WEBSITE_ID && /^[a-f0-9-]{20,}$/i.test(CRISP_WEBSITE_ID)) {
+    out += `<script>window.$crisp=[];window.CRISP_WEBSITE_ID=${JSON.stringify(CRISP_WEBSITE_ID)};(function(){var d=document,s=d.createElement('script');s.src='https://client.crisp.chat/l.js';s.async=1;d.getElementsByTagName('head')[0].appendChild(s);})();</script>`;
+  }
+  if (POSTHOG_API_KEY && /^phc_[A-Za-z0-9]{30,}$/.test(POSTHOG_API_KEY)) {
+    const cfg = JSON.stringify({ api_host: POSTHOG_HOST, capture_pageview: true, persistence: 'localStorage+cookie' });
+    out += `<script>!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split('.');2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement('script')).type='text/javascript',p.async=!0,p.src=s.api_host+'/static/array.js',(r=t.getElementsByTagName('script')[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a='posthog',u.people=u.people||[],u.toString=function(t){var e='posthog';return'posthog'!==a&&(e+='.'+a),t||(e+=' (stub)'),e},u.people.toString=function(){return u.toString(1)+'.people (stub)'},o='capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId'.split(' '),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);posthog.init(${JSON.stringify(POSTHOG_API_KEY)},${cfg});</script>`;
+  }
+  return out;
+}
+const THIRD_PARTY_SNIPPETS = buildThirdPartySnippets();
+const HAS_THIRD_PARTY = THIRD_PARTY_SNIPPETS.length > 0;
+if (HAS_THIRD_PARTY) {
+  console.log('Third-party widgets enabled:', [CRISP_WEBSITE_ID && 'Crisp', POSTHOG_API_KEY && 'PostHog'].filter(Boolean).join(', '));
+}
+
+// Inject snippets into the <head> of HTML responses we own. Runs BEFORE
+// express.static so we can transform the response. Falls through (calls next())
+// for non-HTML paths and when no third-party widget is configured.
+function injectThirdPartySnippets(req, res, next) {
+  if (!HAS_THIRD_PARTY) return next();
+  if (req.method !== 'GET') return next();
+  const isHtmlPath = req.path === '/' || req.path.endsWith('.html') || ['/login', '/dashboard', '/docs'].includes(req.path);
+  if (!isHtmlPath) return next();
+
+  let fileName = req.path === '/' ? 'index.html' : req.path.replace(/^\//, '');
+  if (!fileName.endsWith('.html')) fileName += '.html';
+
+  const filePath = path.join(__dirname, 'public', fileName);
+  fs.promises.readFile(filePath, 'utf8').then((html) => {
+    const injected = html.includes('</head>')
+      ? html.replace('</head>', THIRD_PARTY_SNIPPETS + '</head>')
+      : html;
+    res.type('html');
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.send(injected);
+  }).catch(() => next());
+}
+
 // ====== SECURITY & PERFORMANCE MIDDLEWARE ======
 // Gzip/brotli compression for all responses
 app.use(compression());
@@ -358,8 +407,8 @@ app.use((req, res, next) => {
   // ignore X-Frame-Options when both are present, so we drop the duplicate header.
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  // TODO: migrate to nonce-based CSP to drop 'unsafe-inline' on script-src.
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests");
+  // Plan: nonce-based CSP to drop 'unsafe-inline' on script-src once the bundle is split.
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com https://client.crisp.chat https://*.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat; font-src 'self' https://fonts.gstatic.com https://client.crisp.chat data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://client.crisp.chat wss://client.relay.crisp.chat https://*.posthog.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://client.crisp.chat; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests");
   // Strict Transport Security (HTTPS only) — 2-year max-age + preload
   if (IS_PRODUCTION) {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
@@ -368,6 +417,10 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json({ limit: '50kb' }));
+
+// Inject Crisp/PostHog snippets into HTML responses BEFORE express.static serves the raw file.
+app.use(injectThirdPartySnippets);
+
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
   etag: true,
