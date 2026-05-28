@@ -3660,33 +3660,20 @@ body.dark .orbit-emoji {
 body.dark .orbit-label {
   background: transparent !important; color: #0e0f0f !important;
 }
-/* Si el SO del visitante manda dark, lo ignoramos en TODA la web */
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background: #faf9f6 !important;
-    color: #0e0f0f !important;
-    color-scheme: light only !important;
-  }
-  body.dark, body { background: #faf9f6 !important; color: #0e0f0f !important; }
-  /* v3.5.2 — RESET DE TOKENS CSS A LIGHT cuando el SO está en dark.
-     Sin esto, var(--bg-warm) en .hero/.section coge un fallback oscuro. */
-  :root {
-    --bg: #ffffff !important;
-    --bg-warm: #faf8f5 !important;
-    --bg-card: #ffffff !important;
-    --text1: #0a0e1f !important;
-    --text2: #4a5269 !important;
-    --text3: #8a92a6 !important;
-    --border: #e8eaf0 !important;
-    --border-light: #f0f2f7 !important;
-  }
-}
-/* v3.5.2 — Refuerzo final: forzar los tokens a light SIEMPRE, fuera del media query,
-   por si algún script o estilo viejo intenta reasignarlos a oscuro en runtime. */
+/* Light-only product decision: declare it once at :root so we don't ping-pong
+   between an @media dark override and a later :root override. Browsers see
+   color-scheme: light and skip auto-darkening; the !important on the tokens
+   keeps any legacy runtime script from reassigning them back to dark. */
+html { color-scheme: light only; }
 :root {
-  --bg: #ffffff;
-  --bg-warm: #faf8f5;
-  --bg-card: #ffffff;
+  --bg: #ffffff !important;
+  --bg-warm: #faf8f5 !important;
+  --bg-card: #ffffff !important;
+  --text1: #0a0e1f !important;
+  --text2: #4a5269 !important;
+  --text3: #8a92a6 !important;
+  --border: #e8eaf0 !important;
+  --border-light: #f0f2f7 !important;
 }
 /* Script-side: nada más cargar, eliminamos body.dark si existe (ataque defensivo) */
 
