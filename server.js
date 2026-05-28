@@ -66,7 +66,20 @@ const BOOKING_LUNCH_BLOCK = (process.env.BOOKING_LUNCH_BLOCK || '14:00,14:30,15:
 const BOOKING_SLOT_MINUTES = Number(process.env.BOOKING_SLOT_MINUTES || 30); // 30 → :00 y :30; 60 → solo :00
 const BOOKING_HOUR_START = Number(process.env.BOOKING_HOUR_START || 9);
 const BOOKING_HOUR_END = Number(process.env.BOOKING_HOUR_END || 18);
-const BOOKING_CANCEL_SECRET = process.env.BOOKING_CANCEL_SECRET || JWT_SECRET; // HMAC para tokens de cancelar
+// Independent secret for HMAC cancel tokens — never fall back to JWT_SECRET so a leak
+// of one doesn't compromise the other. In dev we generate an ephemeral secret.
+let BOOKING_CANCEL_SECRET = process.env.BOOKING_CANCEL_SECRET;
+if (!BOOKING_CANCEL_SECRET) {
+  if (IS_PRODUCTION) {
+    console.error('FATAL: BOOKING_CANCEL_SECRET env var not set in production — refusing to start.');
+    process.exit(1);
+  }
+  BOOKING_CANCEL_SECRET = 'shiftia-dev-booking-cancel-' + crypto.randomBytes(8).toString('hex');
+  console.warn('WARNING: BOOKING_CANCEL_SECRET not set — using ephemeral dev secret.');
+}
+
+// Single source of truth for bcrypt cost. OWASP 2024 recommends >=10; we use 12.
+const BCRYPT_ROUNDS = Math.max(10, parseInt(process.env.BCRYPT_ROUNDS, 10) || 12);
 
 // ====== STRIPE CONFIG ======
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
@@ -586,7 +599,7 @@ async function initializeDatabase() {
     const existingAdmin = await client.query('SELECT id FROM users WHERE email = $1', [adminEmail]);
 
     if (existingAdmin.rows.length === 0 && adminPassword) {
-      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      const hashedPassword = await bcrypt.hash(adminPassword, BCRYPT_ROUNDS);
       await client.query(`
         INSERT INTO users (email, password_hash, name, company, plan, plan_status, workers_limit)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -951,7 +964,7 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
     // Insert user
     const result = await pool.query(
@@ -1145,7 +1158,7 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
     const { id: tokenId, user_id: userId } = tokenResult.rows[0];
 
     // Hash new password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
     // Update user's password
     await pool.query('UPDATE users SET password_hash = $1, password_changed_at = NOW() WHERE id = $2', [hashedPassword, userId]);
@@ -1255,7 +1268,7 @@ app.put('/api/auth/update', authMiddleware, async (req, res) => {
       if (!currentMatch) {
         return res.status(403).json({ error: 'La contraseña actual es incorrecta' });
       }
-      const passwordHash = await bcrypt.hash(password, 10);
+      const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
       updates.push(`password_hash = $${paramCount}`);
       values.push(passwordHash);
       paramCount++;
