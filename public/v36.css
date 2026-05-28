@@ -152,39 +152,9 @@
   100% { opacity: 1; transform: none; background: transparent; }
 }
 
-/* ---------- 5. CURSOR SMART (custom cursor) ---------- */
-.smart-cursor {
-  position: fixed; left: 0; top: 0; pointer-events: none;
-  width: 12px; height: 12px; border-radius: 50%;
-  background: #0f7a6d; opacity: 0;
-  transform: translate(-50%, -50%);
-  transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-              height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-              background 0.25s ease, opacity 0.3s ease,
-              border-color 0.25s ease, mix-blend-mode 0.25s;
-  z-index: 9999; mix-blend-mode: multiply;
-}
-.smart-cursor.is-visible { opacity: 1; }
-.smart-cursor.on-link { width: 28px; height: 28px; background: rgba(15,122,109,0.18); border: 1.5px solid #0f7a6d; }
-.smart-cursor.on-cta {
-  width: 64px; height: 64px;
-  background: rgba(15,122,109,0.92); color: white;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-  mix-blend-mode: normal;
-}
-.smart-cursor.on-cta::before { content: 'Click'; }
-.smart-cursor.on-text { width: 4px; height: 22px; border-radius: 2px; background: #0e0f0f; }
-
-/* Solo en desktop con puntero fino — móviles, touchscreens y trackpads especiales no */
-@media (hover: none), (pointer: coarse), (max-width: 900px) {
-  .smart-cursor { display: none !important; }
-}
-
-/* Si el usuario prefiere reduced motion, desactiva animaciones invasivas */
+/* Reduced motion: pause heavier animations */
 @media (prefers-reduced-motion: reduce) {
   .hd-cursor, .hd-conflict, .hd-ai-stream, .hd-kpi { transition: opacity 0.15s; }
-  .vs-table.is-anim .vs-cell-x, .vs-table.is-anim .vs-cell-s,
-  .smart-cursor { animation: none !important; transition: opacity 0.15s !important; }
+  .vs-table.is-anim .vs-cell-x, .vs-table.is-anim .vs-cell-s { animation: none !important; transition: opacity 0.15s !important; }
   .hd-cursor { display: none; }
 }
