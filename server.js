@@ -927,6 +927,15 @@ const authLimiter = rateLimit({
   message: { error: 'Demasiados intentos. Espera un momento antes de reintentar.' }
 });
 
+// Contact/booking forms are spam magnets — much stricter than apiLimiter.
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiadas solicitudes. Intenta de nuevo en unos minutos.' }
+});
+
 // ====== AUTHENTICATION ROUTES ======
 
 // POST /api/auth/register
@@ -1484,7 +1493,7 @@ app.get('/api/stripe/prices', (req, res) => {
 });
 
 // ====== CONTACT FORM API ======
-app.post('/api/contact', apiLimiter, async (req, res) => {
+app.post('/api/contact', contactLimiter, async (req, res) => {
   try {
     let { name, email, company, workers, department, message } = req.body;
 
@@ -1695,7 +1704,7 @@ function buildIcs({ uid, startUtc, endUtc, summary, description, location, organ
 }
 
 // GET slots — devuelve disponibilidad real de un día
-app.get('/api/booking/slots', async (req, res) => {
+app.get('/api/booking/slots', apiLimiter, async (req, res) => {
   try {
     const { date } = req.query;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '')) {
@@ -1759,7 +1768,7 @@ app.get('/api/booking/slots', async (req, res) => {
 });
 
 // POST booking — la cita real
-app.post('/api/booking', apiLimiter, async (req, res) => {
+app.post('/api/booking', contactLimiter, async (req, res) => {
   try {
     const body = req.body || {};
 
