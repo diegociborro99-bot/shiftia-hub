@@ -122,6 +122,11 @@
         }
         .app-nav a:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
         .app-nav a.active { color: var(--ds-text); background: var(--ds-bg-subtle); }
+        /* En móvil el nav center no cabe junto al logo + avatar — lo ocultamos. Las
+           secciones siguen accesibles vía scroll y desde el user menu. */
+        @media (max-width: 640px) {
+            .app-nav { display: none; }
+        }
 
         .app-header-right {
             display: inline-flex; align-items: center; gap: 8px;
@@ -1729,7 +1734,7 @@
         <div class="modal-box">
             <button class="modal-close" id="planModalClose" type="button" aria-label="Cerrar">&times;</button>
             <h2 class="modal-title" id="planModalTitle">Cambiar plan</h2>
-            <p style="font-family: var(--ds-font-sans); color: var(--ds-text-muted); margin: 0 0 8px; font-size: var(--ds-text-md);">Elige el plan que mejor encaja con tu hospital.</p>
+            <p style="font-family: var(--ds-font-sans); color: var(--ds-text-muted); margin: 0 0 8px; font-size: var(--ds-text-md);">Elige el plan que mejor encaja con tu equipo.</p>
 
             <div class="billing-toggle-wrap">
                 <span class="billing-label active" id="blMonthly">Mensual</span>
@@ -1803,24 +1808,38 @@
             if (profileStep) {
                 profileStep.querySelector('.ob-step-dot').classList.add('completed');
             }
-            if (plan !== 'trial' || hasStripeSubscription) {
-                if (planStep) {
-                    planStep.querySelector('.ob-step-dot').classList.add('completed');
-                }
+            const planCompleted = plan !== 'trial' || hasStripeSubscription;
+            if (planCompleted && planStep) {
+                planStep.querySelector('.ob-step-dot').classList.add('completed');
             }
 
             let completedSteps = 1;
-            if (plan !== 'trial' || hasStripeSubscription) completedSteps++;
+            if (planCompleted) completedSteps++;
 
             const progressFill = document.querySelector('.onboarding-progress-fill');
             if (progressFill) {
                 progressFill.style.width = (completedSteps / 3) * 100 + '%';
             }
 
+            // Steps clickeables: si el paso no está completado, abre la acción que lo cumple.
+            if (planStep && !planCompleted) {
+                planStep.style.cursor = 'pointer';
+                planStep.setAttribute('role', 'button');
+                planStep.setAttribute('tabindex', '0');
+                const triggerPlan = () => openPlanModal();
+                planStep.addEventListener('click', triggerPlan);
+                planStep.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); triggerPlan(); }
+                });
+            }
             if (scheduleStep) {
                 scheduleStep.style.cursor = 'pointer';
-                scheduleStep.addEventListener('click', () => {
-                    window.open('https://sara.shiftia.es', '_blank');
+                scheduleStep.setAttribute('role', 'button');
+                scheduleStep.setAttribute('tabindex', '0');
+                const triggerSchedule = () => window.open('https://sara.shiftia.es', '_blank');
+                scheduleStep.addEventListener('click', triggerSchedule);
+                scheduleStep.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); triggerSchedule(); }
                 });
             }
         }
@@ -1998,7 +2017,7 @@
                 pricePeriod.style.display = 'none';
                 monthlyCostHidden.textContent = 'Selecciona un plan';
             } else if (isAnnualPlan) {
-                const annualPrices = { starter: 192, pro: 288, business: 480 };
+                const annualPrices = { starter: 192, pro: 288, business: 540 };
                 const annualTotal = annualPrices[plan] || info.cost * 12;
                 const monthEquiv = Math.round(annualTotal / 12);
                 priceEmpty.style.display = 'none';
@@ -2041,8 +2060,8 @@
                 document.getElementById('nextBillingDate').textContent = plan === 'trial' ? 'Sin programar' : 'No programada';
             }
 
-            // Workers usage bar
-            const usedWorkers = u.workers_used || Math.max(1, Math.floor(limit * 0.6));
+            // Workers usage bar — si el backend no manda workers_used asumimos 0 (no inventamos).
+            const usedWorkers = Number.isFinite(u.workers_used) ? u.workers_used : 0;
             updateWorkersBar(usedWorkers, limit, isUnlimited);
 
             // Account form
@@ -2057,6 +2076,10 @@
 
             initOnboarding(u);
             updateBillingDisplay(u);
+
+            // Señal de que el dashboard está renderizado: tour y otros listeners pueden
+            // esperar este evento en lugar de un setTimeout ciego.
+            window.dispatchEvent(new CustomEvent('dashboardReady', { detail: { user: u } }));
         }
 
         function updateWorkersBar(used, limit, isUnlimited) {
@@ -2200,7 +2223,7 @@
             }
             if (nextAmountEl) {
                 const isAnnualPlan = (u.billing_cycle || 'monthly') === 'annual';
-                const annualPrices = { starter: 192, pro: 288, business: 480 };
+                const annualPrices = { starter: 192, pro: 288, business: 540 };
                 const amount = isAnnualPlan
                     ? Math.round((annualPrices[u.plan] || (info.cost || 0) * 12) / 12)
                     : (info.cost || 0);
@@ -2556,7 +2579,7 @@
         const PLAN_PRICES = {
             starter:  { monthly: 20,  annual: 192,  monthlyEquiv: 16 },
             pro:      { monthly: 30,  annual: 288,  monthlyEquiv: 24 },
-            business: { monthly: 50,  annual: 480,  monthlyEquiv: 40 }
+            business: { monthly: 50,  annual: 540,  monthlyEquiv: 45 }
         };
 
         function toggleBilling() {
@@ -3152,15 +3175,21 @@
                 positionStep(STEPS[current]);
             }
 
-            // Espera 800ms para que el dashboard renderice (cards reveal, etc.)
-            setTimeout(() => {
-                // Re-check por si abrió tour en otra pestaña
+            // Esperamos a que populateUserData() haya pintado el contenido. Si por algún
+            // motivo el evento no llega (fetch /api/auth/me cuelga, error de red), un
+            // fallback de 3s nos saca del callback hell sin dejar al usuario sin tour.
+            let launched = false;
+            function launch() {
+                if (launched) return;
+                launched = true;
                 try { if (localStorage.getItem(SEEN_KEY)) return; } catch (e) { return; }
                 buildDom();
                 renderCard();
                 requestAnimationFrame(() => overlay.classList.add('is-active'));
                 window.addEventListener('resize', onResize);
-            }, 800);
+            }
+            window.addEventListener('dashboardReady', launch, { once: true });
+            setTimeout(launch, 3000);
         })();
     </script>
 </body>
