@@ -373,19 +373,38 @@ if (HAS_THIRD_PARTY) {
   console.log('Third-party widgets enabled:', [CRISP_WEBSITE_ID && 'Crisp', POSTHOG_API_KEY && 'PostHog'].filter(Boolean).join(', '));
 }
 
+// Map of pretty routes (without .html) to the file under public/ that serves them.
+// Every public HTML page must be listed here to receive the analytics snippets.
+const PRETTY_HTML_ROUTES = {
+  '/':         'index.html',
+  '/login':    'login.html',
+  '/dashboard':'dashboard.html',
+  '/docs':     'docs.html',
+  '/demo':     'demo.html',
+  '/recursos': 'recursos/index.html',
+  '/recursos/descanso-minimo-entre-turnos': 'recursos/descanso-minimo-entre-turnos.html',
+  '/recursos/calculadora-equidad-nocturna': 'recursos/calculadora-equidad-nocturna.html',
+  '/recursos/excel-vs-software-turnos':     'recursos/excel-vs-software-turnos.html',
+};
+const PUBLIC_DIR = path.resolve(__dirname, 'public');
+
 // Inject snippets into the <head> of HTML responses we own. Runs BEFORE
 // express.static so we can transform the response. Falls through (calls next())
 // for non-HTML paths and when no third-party widget is configured.
 function injectThirdPartySnippets(req, res, next) {
   if (!HAS_THIRD_PARTY) return next();
   if (req.method !== 'GET') return next();
-  const isHtmlPath = req.path === '/' || req.path.endsWith('.html') || ['/login', '/dashboard', '/docs'].includes(req.path);
-  if (!isHtmlPath) return next();
 
-  let fileName = req.path === '/' ? 'index.html' : req.path.replace(/^\//, '');
-  if (!fileName.endsWith('.html')) fileName += '.html';
+  let fileName = PRETTY_HTML_ROUTES[req.path];
+  if (!fileName) {
+    if (!req.path.endsWith('.html')) return next();
+    fileName = req.path.replace(/^\//, '');
+  }
 
-  const filePath = path.join(__dirname, 'public', fileName);
+  const filePath = path.resolve(PUBLIC_DIR, fileName);
+  // Defense-in-depth: ensure the resolved file is inside public/, never escape.
+  if (!filePath.startsWith(PUBLIC_DIR + path.sep)) return next();
+
   fs.promises.readFile(filePath, 'utf8').then((html) => {
     const injected = html.includes('</head>')
       ? html.replace('</head>', THIRD_PARTY_SNIPPETS + '</head>')
