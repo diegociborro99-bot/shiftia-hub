@@ -1293,7 +1293,7 @@
                             <div class="user-menu-info-name" id="userMenuName">Usuario</div>
                             <div class="user-menu-info-email" id="userMenuEmail"></div>
                         </div>
-                        <a href="#configuracion" class="user-menu-item" id="goToSettings">
+                        <a href="#configuración" class="user-menu-item" id="goToSettings">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10 3.09V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                             Configuración
                         </a>
@@ -1672,7 +1672,7 @@
             </section>
 
             <!-- Account settings -->
-            <section class="section-block" id="configuracion" aria-labelledby="accountTitle">
+            <section class="section-block" id="configuración" aria-labelledby="accountTitle">
                 <div class="section-eyebrow">Configuración</div>
                 <h2 class="section-title" id="accountTitle">Datos de cuenta</h2>
                 <article class="card">
@@ -2394,7 +2394,7 @@
             if (currentUser) {
                 const plan = currentUser.plan || 'trial';
                 if (plan === 'trial') {
-                    notifs.push({ title: 'Tu periodo de prueba está activo', time: 'Hoy', type: 'info', unread: true });
+                    notifs.push({ title: 'Tu período de prueba está activo', time: 'Hoy', type: 'info', unread: true });
                 }
                 if (currentUser.next_billing_date) {
                     const billing = new Date(currentUser.next_billing_date);
@@ -2480,7 +2480,7 @@
                 goSettings.addEventListener('click', (e) => {
                     e.preventDefault();
                     userDropdown.classList.remove('show');
-                    const target = document.getElementById('configuracion');
+                    const target = document.getElementById('configuración');
                     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
             }

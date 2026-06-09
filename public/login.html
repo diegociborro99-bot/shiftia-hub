@@ -516,12 +516,12 @@
             }
         });
 
-        // Auto-show register tab if coming from checkout
+        // Auto-show register tab if coming from checkout OR if ?tab=register is set
         function checkInitialTab() {
             const params = new URLSearchParams(window.location.search);
-            if (params.get('redirect') && params.get('redirect').includes('intent=checkout')) {
-                showTab('register');
-            }
+            const wantsRegister = params.get('tab') === 'register'
+                || (params.get('redirect') && params.get('redirect').includes('intent=checkout'));
+            if (wantsRegister) showTab('register');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
