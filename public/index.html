@@ -278,6 +278,8 @@ a { text-decoration: none; color: inherit; }
   transition: color 0.2s;
 }
 .nav-btn-ghost:hover { color: var(--text1); }
+/* Mobile-only login inside the drawer. Hidden by default; shown in the @media block. */
+.nav-mobile-login { display: none; }
 .nav-btn-primary {
   padding: 10px 24px; font-size: 0.88rem; font-weight: 600;
   color: white; background: var(--primary); border: none; cursor: pointer;
@@ -303,10 +305,22 @@ a { text-decoration: none; color: inherit; }
   }
   .nav-links.open { right: 0; }
   .nav-links a { font-size: 1.05rem; padding: 14px 0; border-bottom: 1px solid var(--border-light); min-height: 48px; display: flex; align-items: center; }
-  .nav-cta, .nav-right .nav-btn-primary { width: 100%; text-align: center; margin-top: 16px; }
-  .nav-login, .nav-right .nav-btn-ghost { margin-top: 8px; text-align: center; width: 100%; display: block; }
-  .lang-selector { margin-top: auto; }
-  .nav-right { display: none; }
+  /* En móvil mostramos solo el lang-selector en .nav-right, al lado del hamburger.
+     El botón "Iniciar sesión" se replica dentro del drawer (.nav-mobile-login). */
+  .nav-right { display: flex; gap: 8px; align-items: center; margin-right: 8px; }
+  .nav-right .nav-btn-ghost { display: none; }
+  .nav-right .lang-selector { display: block; }
+  .nav-right .lang-selector .lang-btn { padding: 6px 10px; font-size: 13px; }
+  /* Dropdown del idioma: en móvil se alinea a la derecha y queda dentro de la pantalla. */
+  .nav-right .lang-dropdown { right: 0; left: auto; min-width: 160px; }
+  /* Login link dentro del drawer (sólo en móvil) */
+  .nav-mobile-login {
+    display: flex !important; justify-content: center; align-items: center;
+    margin-top: 24px; padding: 14px 0 !important; min-height: 48px;
+    background: var(--primary); color: #fff !important; border-radius: 12px;
+    font-weight: 700; border-bottom: none !important;
+  }
+  .nav-mobile-login:hover { background: var(--primary-hover); }
   /* Overlay behind drawer */
   .nav-links.open::before {
     content: ''; position: fixed; top: 0; left: 0; right: 280px; bottom: 0;
@@ -4262,6 +4276,7 @@ section.centered p,
     <a href="#usecases" data-i18n="nav_usecases">Uso</a>
     <a href="#pricing" data-i18n="nav_pricing">Planes</a>
     <a href="#contact" data-i18n="nav_contact">Contacto</a>
+    <a href="/login" class="nav-mobile-login" data-i18n="nav_login">Iniciar sesión</a>
   </div>
   <div class="nav-right">
     <!-- Dark mode toggle eliminado: la web es light-only por diseño. -->
