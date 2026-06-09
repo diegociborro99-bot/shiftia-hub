@@ -1772,6 +1772,20 @@
     </div>
 
     <script>
+        // ===== ISSUER BILLING INFO =====
+        // Datos fiscales del emisor de las facturas. Hoy autónomo; cuando pasemos
+        // a SL hay que cambiar `name`, `idLabel` ("NIF" → "CIF"), `idNumber` y el
+        // pie de página. Centralizado aquí para que no haya placeholders sueltos.
+        const SHIFTIA_ISSUER = {
+            name:     'Diego Ciborro',
+            idLabel:  'NIF',
+            idNumber: '32894332P',
+            address1: 'Calle Daniel Álvarez González 4, 3º A',
+            address2: '33900 Langreo (Asturias), España',
+            email:    'info@shiftia.es',
+            web:      'shiftia.es'
+        };
+
         // ===== STATE =====
         let currentUser = null;
         const PLAN_INFO = {
@@ -2296,19 +2310,21 @@
             doc.setTextColor(14, 15, 15);
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.text('Shiftia Technologies S.L.', 20, y);
+            doc.text(SHIFTIA_ISSUER.name, 20, y);
             doc.text(user.name || 'Cliente', 115, y);
             y += 5;
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
             doc.setTextColor(74, 74, 71);
-            doc.text('CIF: B12345678', 20, y);
+            doc.text(`${SHIFTIA_ISSUER.idLabel}: ${SHIFTIA_ISSUER.idNumber}`, 20, y);
             doc.text(user.email || '', 115, y);
             y += 4.5;
-            doc.text('Calle Ejemplo 42, 33212 Gijón', 20, y);
+            doc.text(SHIFTIA_ISSUER.address1, 20, y);
             doc.text(user.company || '', 115, y);
             y += 4.5;
-            doc.text('info@shiftia.es', 20, y);
+            doc.text(SHIFTIA_ISSUER.address2, 20, y);
+            y += 4.5;
+            doc.text(SHIFTIA_ISSUER.email, 20, y);
 
             // ===== SEPARATOR =====
             y += 10;
@@ -2395,7 +2411,7 @@
             doc.setFontSize(8);
             doc.setTextColor(138, 138, 133);
             doc.setFont('helvetica', 'normal');
-            doc.text('Shiftia Technologies S.L. · CIF B12345678 · shiftia.es', w / 2, footerY + 6, { align: 'center' });
+            doc.text(`${SHIFTIA_ISSUER.name} · ${SHIFTIA_ISSUER.idLabel} ${SHIFTIA_ISSUER.idNumber} · ${SHIFTIA_ISSUER.web}`, w / 2, footerY + 6, { align: 'center' });
             doc.text('Esta factura ha sido generada automáticamente y es válida sin firma.', w / 2, footerY + 11, { align: 'center' });
             doc.text('Gracias por confiar en Shiftia.', w / 2, footerY + 16, { align: 'center' });
 
