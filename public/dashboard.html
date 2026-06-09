@@ -1586,7 +1586,7 @@
                 </div>
 
                 <article class="card card-flush">
-                    <div id="billingContent">
+                    <div id="billingContent" style="display:none;">
                         <div class="billing-table-wrap">
                             <table class="billing-table">
                                 <thead>
@@ -1598,9 +1598,7 @@
                                         <th scope="col"></th>
                                     </tr>
                                 </thead>
-                                <tbody id="billingTableBody">
-                                    <tr><td colspan="5" class="billing-empty">Cargando facturas…</td></tr>
-                                </tbody>
+                                <tbody id="billingTableBody"></tbody>
                             </table>
                         </div>
                         <div class="billing-cards" id="billingCards"></div>
@@ -1613,6 +1611,16 @@
                             <h3 class="empty-title">Sin suscripción activa</h3>
                             <p class="empty-desc">Elige un plan para desbloquear todas las funcionalidades de Shiftia.</p>
                             <button class="btn btn-primary" type="button" onclick="openPlanModal()">Ver planes</button>
+                        </div>
+                    </div>
+                    <div id="billingComingSoon" style="display:none;">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <h3 class="empty-title">Tus facturas estarán disponibles muy pronto</h3>
+                            <p class="empty-desc">Estamos terminando la integración con Stripe para que puedas descargar tus facturas desde aquí. Mientras tanto, escríbenos y te las enviamos por email en menos de 24h.</p>
+                            <a class="btn btn-primary" href="mailto:info@shiftia.es?subject=Solicitud%20de%20factura" style="text-decoration:none;">Pedir factura por email</a>
                         </div>
                     </div>
                 </article>
@@ -1962,7 +1970,7 @@
                 populateBilling(currentUser);
             } catch (error) {
                 populateDefaultData();
-                populateEmptyBilling();
+                populateBilling({ plan: 'trial' });
             }
         }
 
@@ -2159,100 +2167,31 @@
             const plan = u.plan || 'trial';
             const info = PLAN_INFO[plan] || PLAN_INFO.trial;
 
+            const billingContent     = document.getElementById('billingContent');
+            const billingEmptyState  = document.getElementById('billingEmptyState');
+            const billingComingSoon  = document.getElementById('billingComingSoon');
+            const billingSummary     = document.getElementById('billingSummary');
+
+            if (billingContent)    billingContent.style.display    = 'none';
+            if (billingEmptyState) billingEmptyState.style.display = 'none';
+            if (billingComingSoon) billingComingSoon.style.display = 'none';
+            if (billingSummary)    billingSummary.style.display    = 'none';
+
             if (info.cost === 0 || info.cost === null) {
-                populateEmptyBilling();
+                // Sin plan de pago: el empty state ya invita a elegir uno.
+                if (billingEmptyState) billingEmptyState.style.display = 'block';
                 return;
             }
 
-            const invoices = [];
-            const now = new Date();
-            for (let i = 0; i < 3; i++) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                invoices.push({
-                    date: d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
-                    concept: `${info.name} · Mensual`,
-                    amount: `€${info.cost.toFixed(2)}`,
-                    status: i === 0 ? 'pending' : 'paid',
-                    id: `INV-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}`
-                });
-            }
-
-            const tbody = document.getElementById('billingTableBody');
-            tbody.innerHTML = invoices.map(inv => `
-                <tr>
-                    <td style="font-family: var(--ds-font-mono); font-size: var(--ds-text-xs); color: var(--ds-text-muted);">${inv.date}</td>
-                    <td>${inv.concept}</td>
-                    <td style="font-family: var(--ds-font-mono); font-weight: 500;">${inv.amount}</td>
-                    <td><span class="status-pill ${inv.status === 'paid' ? 'status-paid' : 'status-pending'}">${inv.status === 'paid' ? 'Pagado' : 'Pendiente'}</span></td>
-                    <td style="text-align: right;"><button class="download-btn" data-id="${inv.id}" onclick="downloadInvoice('${inv.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></td>
-                </tr>
-            `).join('');
-
-            const cardsEl = document.getElementById('billingCards');
-            cardsEl.innerHTML = invoices.map(inv => `
-                <div class="billing-card-item">
-                    <div class="billing-card-row"><span class="billing-card-label">Fecha</span><span class="billing-card-value">${inv.date}</span></div>
-                    <div class="billing-card-row"><span class="billing-card-label">Concepto</span><span class="billing-card-value">${inv.concept}</span></div>
-                    <div class="billing-card-row"><span class="billing-card-label">Importe</span><span class="billing-card-value" style="font-family: var(--ds-font-mono);">${inv.amount}</span></div>
-                    <div class="billing-card-row"><span class="billing-card-label">Estado</span><span class="status-pill ${inv.status === 'paid' ? 'status-paid' : 'status-pending'}">${inv.status === 'paid' ? 'Pagado' : 'Pendiente'}</span></div>
-                    <div class="billing-card-row" style="margin-top: 8px;"><span></span><button class="download-btn" onclick="downloadInvoice('${inv.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button></div>
-                </div>
-            `).join('');
-
-            // Billing summary cards (total pagado este año + próxima factura)
-            renderBillingSummary(u, info, invoices);
+            // Plan de pago activo: la integración con Stripe para listar facturas
+            // reales todavía no está. Mostramos "coming soon" honesto en lugar de
+            // facturas demo calculadas en el cliente (que no son fiscalmente válidas).
+            if (billingComingSoon) billingComingSoon.style.display = 'block';
         }
 
-        // ===== BILLING SUMMARY CARDS =====
-        // Por ahora se calcula sumando facturas demo del año en curso.
-        function renderBillingSummary(u, info, invoices) {
-            const wrap = document.getElementById('billingSummary');
-            if (!wrap) return;
-            const year = new Date().getFullYear();
-            const paidThisYear = invoices.filter(i => i.status === 'paid' && i.id.includes(String(year)));
-            // Fallback realista si solo hay 2 facturas pagadas: extiende al year-to-date
-            const monthsElapsed = Math.max(1, new Date().getMonth());
-            const totalYear = (info.cost || 0) * Math.max(paidThisYear.length, monthsElapsed - 1);
-
-            const totalEl = document.getElementById('billingSummaryTotal');
-            const subEl   = document.getElementById('billingSummarySub');
-            if (totalEl) totalEl.textContent = totalYear.toFixed(0);
-            if (subEl) {
-                const count = Math.max(paidThisYear.length, monthsElapsed - 1);
-                subEl.textContent = `${count} ${count === 1 ? 'factura pagada' : 'facturas pagadas'} en ${year}`;
-            }
-
-            // Próxima factura
-            const nextDateEl = document.getElementById('billingSummaryNextDate');
-            const nextAmountEl = document.getElementById('billingSummaryNextAmount');
-            let nextDate;
-            if (u.next_billing_date) {
-                nextDate = new Date(u.next_billing_date);
-            } else {
-                const now = new Date();
-                nextDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-            }
-            if (nextDateEl) {
-                nextDateEl.textContent = nextDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
-            }
-            if (nextAmountEl) {
-                const isAnnualPlan = (u.billing_cycle || 'monthly') === 'annual';
-                const annualPrices = { starter: 192, pro: 288, business: 540 };
-                const amount = isAnnualPlan
-                    ? Math.round((annualPrices[u.plan] || (info.cost || 0) * 12) / 12)
-                    : (info.cost || 0);
-                nextAmountEl.textContent = amount.toFixed(0);
-            }
-            wrap.style.display = 'grid';
-        }
-
-        function populateEmptyBilling() {
-            document.getElementById('billingTableBody').innerHTML = '<tr><td colspan="5" class="billing-empty">Aún no hay facturas. Activa un plan de pago para ver tu historial.</td></tr>';
-            document.getElementById('billingCards').innerHTML = '<div class="billing-empty">Aún no hay facturas.</div>';
-            const summary = document.getElementById('billingSummary');
-            if (summary) summary.style.display = 'none';
-        }
-
+        // downloadInvoice() y SHIFTIA_ISSUER se conservan listos para cuando se
+        // conecte la integración real con Stripe (endpoint /api/stripe/invoices o
+        // hosted_invoice_url) y reactivemos la sección de facturación.
         function downloadInvoice(invoiceId) {
             if (!window.jspdf) {
                 // Toast en lugar de alert nativo
