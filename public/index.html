@@ -413,6 +413,15 @@ a { text-decoration: none; color: inherit; }
   animation: badgeSweep 3s ease-in-out infinite;
   animation-delay: 2s;
 }
+.hero-trial-sep { opacity: 0.55; margin: 0 4px; }
+.hero-trial-link {
+  color: inherit; text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-color: rgba(41,128,185,0.45); text-decoration-thickness: 1px;
+  transition: text-decoration-color .2s ease, color .2s ease;
+}
+.hero-trial-link:hover, .hero-trial-link:focus-visible {
+  text-decoration-color: currentColor; color: #1f6fa1;
+}
 @keyframes badgeGlow {
   0%, 100% { box-shadow: 0 0 8px rgba(78,205,196,0.2), 0 0 20px rgba(78,205,196,0.08); border-color: rgba(78,205,196,0.3); }
   50% { box-shadow: 0 0 16px rgba(78,205,196,0.4), 0 0 40px rgba(78,205,196,0.15); border-color: rgba(78,205,196,0.6); }
@@ -4292,9 +4301,16 @@ section.centered p,
           <span data-i18n="hero_cta">Solicitar demo</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="#how" class="btn-lg ghost" data-i18n="hero_cta2">Como funciona</a>
+        <a href="/login?tab=register" class="btn-lg ghost" data-i18n="hero_cta_signup" data-event="hero_signup_click">
+          <span data-i18n="hero_cta_signup_label">Empezar ahora</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
       </div>
-      <div class="hero-trial-badge" data-i18n="hero_trial">Garantia de devolucion de 30 dias</div>
+      <div class="hero-trial-badge">
+        <span data-i18n="hero_trial">Garantía de devolución de 30 días</span>
+        <span class="hero-trial-sep" aria-hidden="true">·</span>
+        <a href="#how" class="hero-trial-link" data-i18n="hero_cta2">Ver cómo funciona</a>
+      </div>
     </div>
     <div class="hero-visual">
       <!-- Mockup SVG del producto Motor IA. Se renderiza primero como <img> (rápido,
