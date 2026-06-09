@@ -1,15 +1,9 @@
-/* ============================================================================
-   v3.6 — ANIMATIONS & INTERACTIVITY ENHANCEMENTS (runtime)
-   - Hero "Demo viva" overlay (cursor + conflictos + Motor IA streaming + KPIs)
-   - Counter-up de métricas con IntersectionObserver
-   - Magnetic CTAs (botones que se inclinan al cursor)
-   - Excel-vs-Shiftia animación destructiva al hacer scroll
-   - Cursor "smart" que cambia según contexto
-   ============================================================================ */
+/* Frontend interactive runtime: hero demo overlay, counter-up, magnetic CTAs,
+   vs-table scroll animation. */
 (function () {
   'use strict';
-  if (window.__v36Init) return; // evita doble inicialización
-  window.__v36Init = true;
+  if (window.__siInit) return;
+  window.__siInit = true;
 
   // Respeta usuarios con motion reducido
   var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -330,75 +324,13 @@
   }
 
   // ===========================================================================
-  // 5. CURSOR SMART — DESHABILITADO en v3.8
-  // Sustituido por el ring v37 en index.html. Este cursor smart es el "punto verde"
-  // que Diego veía siguiendo al ratón. Lo neutralizamos completamente.
-  // ===========================================================================
-  function initSmartCursor() {
-    return; // no-op
-  }
-  function _initSmartCursor_legacy() {
-    if (REDUCED) return;
-    if (!HAS_FINE_POINTER || !window.matchMedia('(min-width: 901px)').matches) return;
-
-    var cursor = document.createElement('div');
-    cursor.className = 'smart-cursor';
-    document.body.appendChild(cursor);
-
-    var x = 0, y = 0, tx = 0, ty = 0;
-    var visible = false;
-
-    document.addEventListener('mousemove', function (e) {
-      tx = e.clientX; ty = e.clientY;
-      if (!visible) {
-        cursor.classList.add('is-visible');
-        x = tx; y = ty;
-        visible = true;
-      }
-    });
-    document.addEventListener('mouseleave', function () {
-      cursor.classList.remove('is-visible'); visible = false;
-    });
-
-    function loop() {
-      x += (tx - x) * 0.22;
-      y += (ty - y) * 0.22;
-      cursor.style.transform = 'translate(' + x + 'px, ' + y + 'px) translate(-50%, -50%)';
-      requestAnimationFrame(loop);
-    }
-    loop();
-
-    function classify(target) {
-      cursor.classList.remove('on-link', 'on-cta', 'on-text');
-      if (!target) return;
-      // CTAs grandes
-      if (target.closest('.btn-lg.primary, .nav-btn-primary')) {
-        cursor.classList.add('on-cta');
-        return;
-      }
-      // Links/botones
-      if (target.closest('a, button, [role="button"], .magnetic, .clickable, .feat-card, .price-card')) {
-        cursor.classList.add('on-link');
-        return;
-      }
-      // Texto editable / inputs
-      if (target.closest('input, textarea, [contenteditable="true"]')) {
-        cursor.classList.add('on-text');
-        return;
-      }
-    }
-    document.addEventListener('mouseover', function (e) { classify(e.target); });
-  }
-
-  // ===========================================================================
   // BOOT
   // ===========================================================================
   function boot() {
-    try { initHeroDemo(); } catch (e) { console.warn('[v3.6] hero demo failed:', e); }
-    try { initCounters(); } catch (e) { console.warn('[v3.6] counters failed:', e); }
-    try { initMagnetic(); } catch (e) { console.warn('[v3.6] magnetic failed:', e); }
-    try { initVsAnimation(); } catch (e) { console.warn('[v3.6] vs anim failed:', e); }
-    try { initSmartCursor(); } catch (e) { console.warn('[v3.6] cursor failed:', e); }
+    try { initHeroDemo(); } catch (e) {}
+    try { initCounters(); } catch (e) {}
+    try { initMagnetic(); } catch (e) {}
+    try { initVsAnimation(); } catch (e) {}
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

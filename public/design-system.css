@@ -1,13 +1,4 @@
-/* ===========================================================================
-   Shiftia · Design System v1.0
-   Premium minimal — inspirado en Linear, Vercel, Stripe.
-   ---
-   Fonts: Instrument Serif (display) + Geist (body/UI) + Geist Mono (números/code)
-   Colors: neutral-first (off-white cálido + warm dark) + 1 accent (teal profundo)
-   Radii: 8 / 12 / 16 / 999
-   Spacing: 8px grid (4, 8, 12, 16, 24, 32, 48, 64, 96, 128)
-   Motion: 200-350ms con cubic-bezier(0.4, 0, 0.2, 1)
-   =========================================================================== */
+/* Design system tokens (fonts, colors, radii, spacing, motion). */
 
 /* ----- Fuentes (preload via <link> en cada página) ----- */
 /* @import sin preconnect tarda más; preferir <link rel="preconnect"> + <link rel="stylesheet"> en el <head> */
