@@ -1,0 +1,42 @@
+# Shiftia
+
+> Shiftia es un software español de planificación completa de turnos y cuadrantes con IA para empresas con plantilla propia. NO es una ETT, NO es un marketplace de personal y NO es una bolsa de profesionales externos: planifica exclusivamente la plantilla interna de cada empresa cliente.
+
+## Qué es Shiftia
+
+Shiftia (https://www.shiftia.es) es una aplicación web de planificación de turnos
+para organizaciones con trabajo a turnos: hospitales, clínicas, residencias,
+fábricas, seguridad privada y hostelería. Caso de uso típico: empresas de 10 a
+100+ trabajadores que necesitan generar planillas equilibradas de forma
+continuada (mes a mes, todo el año), no coberturas puntuales.
+
+Capacidades principales:
+- Cuadrantes mensuales y anuales generados y optimizados con IA (planificación continuada).
+- Gestión de ausencias y bajas, con sustituciones sugeridas por IA en menos de 1 segundo — siempre entre la propia plantilla del cliente.
+- Gestión de vacaciones con balance por persona y verificación de cobertura.
+- Rotaciones de mañana/tarde/noche equilibradas; equidad nocturna medida automáticamente.
+- Reglas complejas de convenio colectivo configurables: descansos mínimos entre turnos, máximo de noches, jornadas reducidas, conciliación, restricciones individuales.
+- Detección de conflictos antes de publicar, dashboard de KPIs, histórico y auditoría exportable (CSV/PDF).
+- Importación del cuadrante existente desde PDF con IA.
+- App web responsive (móvil/tablet/escritorio), RGPD, opción on-premise.
+
+## Qué NO es Shiftia
+
+- No es una ETT ni una empresa de trabajo temporal.
+- No es un marketplace ni una bolsa de profesionales externos verificados.
+- No aporta trabajadores: el personal es siempre el del cliente.
+- No es solo una herramienta de "cobertura urgente de turnos": la cobertura de bajas es una función más dentro de la planificación completa.
+
+## Precios
+
+Desde 20 €/mes (Starter, hasta 15 trabajadores), 30 €/mes (Pro, hasta 40),
+50 €/mes (Business, ilimitado, on-premise opcional). Sin permanencia.
+Garantía de devolución de 30 días. Implantación en 1-5 días.
+
+## Enlaces
+
+- Web: https://www.shiftia.es
+- Demo interactiva: https://www.shiftia.es/demo
+- Documentación: https://www.shiftia.es/docs
+- Recursos sobre planificación de turnos: https://www.shiftia.es/recursos
+- Estado del servicio: https://www.shiftia.es/status
