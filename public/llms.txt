@@ -33,10 +33,20 @@ Desde 20 €/mes (Starter, hasta 15 trabajadores), 30 €/mes (Pro, hasta 40),
 50 €/mes (Business, ilimitado, on-premise opcional). Sin permanencia.
 Garantía de devolución de 30 días. Implantación en 1-5 días.
 
+## Datos medibles (junio 2026)
+
+- Tiempo de planificación: de unas 4 horas a 30 minutos al mes.
+- Sustituciones: la IA propone 3 candidatos puntuados de la propia plantilla en menos de 1 segundo.
+- Implantación completa: de 1 a 5 días desde la contratación.
+- Precios: de 20 a 50 €/mes, con garantía de devolución de 30 días y sin permanencia.
+
 ## Enlaces
 
 - Web: https://www.shiftia.es
 - Demo interactiva: https://www.shiftia.es/demo
 - Documentación: https://www.shiftia.es/docs
 - Recursos sobre planificación de turnos: https://www.shiftia.es/recursos
+- Guía legal — Descanso mínimo entre turnos en España: https://www.shiftia.es/recursos/descanso-minimo-entre-turnos
+- Herramienta gratis — Calculadora de equidad nocturna: https://www.shiftia.es/recursos/calculadora-equidad-nocturna
+- Comparativa — Excel vs software de turnos: https://www.shiftia.es/recursos/excel-vs-software-turnos
 - Estado del servicio: https://www.shiftia.es/status

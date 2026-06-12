@@ -591,7 +591,7 @@
     <section class="demo-hero">
       <span class="ds-eyebrow">Demo interactiva · sin registro</span>
       <h1>Prueba <em>Shiftia</em> sin pedir nada.</h1>
-      <p>Toca las celdas para ciclar turnos. Pulsa &laquo;Asignar con IA&raquo; y mira cómo Shiftia rellena los huecos con criterios reales en menos de un segundo.</p>
+      <p>Shiftia es un software español de planificación de turnos con IA que construye una app a medida por cliente, desde 20&nbsp;€/mes. Esta demo es una versión reducida del cuadrante real: toca las celdas para ciclar turnos, pulsa &laquo;Asignar con IA&raquo; y mira cómo Shiftia rellena los huecos con criterios reales en menos de un segundo.</p>
     </section>
 
     <section class="demo-app" aria-label="Cuadrante demo">
@@ -697,7 +697,7 @@
       { abbr: 'DOM', date: 19 }
     ];
 
-    // Estado: matriz [persona][dia] -> { state: '' | 'M' | 'T' | 'N' | 'L', ai: bool }
+    // Estado: matriz [persona][día] -> { state: '' | 'M' | 'T' | 'N' | 'L', ai: bool }
     var STATES = ['', 'M', 'T', 'N', 'L'];
     var SHIFT_LABELS = {
       'M': { label: 'M', hours: '7-15' },
@@ -919,7 +919,7 @@
           }
         }
       });
-      // 2. Sin descanso (7 dias seguidos sin Libre/vacio)
+      // 2. Sin descanso (7 días seguidos sin Libre/vacio)
       grid.forEach(function (row, pi) {
         var allWork = row.every(function (c) { return c.state === 'M' || c.state === 'T' || c.state === 'N'; });
         if (allWork) warnings.push(people[pi].name + ': sin día de descanso');

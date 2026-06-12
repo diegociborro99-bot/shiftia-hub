@@ -437,6 +437,16 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: '50kb' }));
 
+// SEO: canonicaliza URLs con barra final (/recursos/ → /recursos) antes de que
+// express.static sirva el index del directorio y genere contenido duplicado.
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path.length > 1 && req.path.endsWith('/')) {
+    const query = req.originalUrl.slice(req.path.length);
+    return res.redirect(301, req.path.slice(0, -1) + query);
+  }
+  next();
+});
+
 // Inject Crisp/PostHog snippets into HTML responses BEFORE express.static serves the raw file.
 app.use(injectThirdPartySnippets);
 
@@ -445,6 +455,10 @@ app.use(express.static(path.join(__dirname, 'public'), {
   etag: true,
   lastModified: true,
   dotfiles: 'deny',
+  // SEO: sin esto, serve-static responde a /recursos (directorio existente) con un
+  // 301 a /recursos/ y título "Redirecting", en lugar de dejar pasar la petición
+  // a la ruta app.get('/recursos') que sirve el índice con 200.
+  redirect: false,
   setHeaders: (res, filePath) => {
     // Performance: long-cache (30 días) para assets estáticos críticos de la landing,
     // 5 min para HTML para permitir invalidar copy rápidamente.
@@ -2321,27 +2335,29 @@ app.get('/docs', (req, res) => {
 });
 
 // Serve legal pages
-// Sitemap dinámico — siempre con lastmod = hoy. Sustituye al sitemap.xml estático
+// Sitemap dinámico. Sustituye al sitemap.xml estático
 // (que servirá express.static como fallback si por algún motivo este endpoint cae).
+// lastmod debe ser la fecha REAL del último cambio de contenido de cada página
+// (un lastmod siempre "hoy" hace que Google deje de fiarse de él): actualizar la
+// fecha de la URL correspondiente cuando se modifique su contenido.
 app.get('/sitemap.xml', (req, res) => {
-  const today = new Date().toISOString().slice(0, 10);
   const urls = [
-    { loc: '/',                                          priority: '1.0', changefreq: 'weekly'  },
-    { loc: '/demo',                                      priority: '0.9', changefreq: 'monthly' },
-    { loc: '/recursos',                                  priority: '0.8', changefreq: 'weekly'  },
-    { loc: '/recursos/descanso-minimo-entre-turnos',     priority: '0.8', changefreq: 'monthly' },
-    { loc: '/recursos/calculadora-equidad-nocturna',     priority: '0.8', changefreq: 'monthly' },
-    { loc: '/recursos/excel-vs-software-turnos',         priority: '0.8', changefreq: 'monthly' },
-    { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
-    { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
-    { loc: '/terminos',                                  priority: '0.3', changefreq: 'yearly'  },
-    { loc: '/cookies',                                   priority: '0.3', changefreq: 'yearly'  }
+    { loc: '/',                                          lastmod: '2026-06-12', priority: '1.0', changefreq: 'weekly'  },
+    { loc: '/demo',                                      lastmod: '2026-06-12', priority: '0.9', changefreq: 'monthly' },
+    { loc: '/recursos',                                  lastmod: '2026-06-12', priority: '0.8', changefreq: 'weekly'  },
+    { loc: '/recursos/descanso-minimo-entre-turnos',     lastmod: '2026-06-12', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/calculadora-equidad-nocturna',     lastmod: '2026-06-12', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/excel-vs-software-turnos',         lastmod: '2026-06-12', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/docs',                                      lastmod: '2026-05-15', priority: '0.7', changefreq: 'monthly' },
+    { loc: '/privacidad',                                lastmod: '2026-05-15', priority: '0.3', changefreq: 'yearly'  },
+    { loc: '/terminos',                                  lastmod: '2026-05-15', priority: '0.3', changefreq: 'yearly'  },
+    { loc: '/cookies',                                   lastmod: '2026-05-15', priority: '0.3', changefreq: 'yearly'  }
   ];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url>
     <loc>https://${CANONICAL_HOST}${u.loc}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${u.lastmod}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('\n')}
