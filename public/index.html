@@ -1027,6 +1027,120 @@ section { padding: 140px 48px; }
 }
 .price-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.08); border-color: rgba(41,128,185,0.15); }
 .price-name { font-size: 0.9rem; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
+.price-billing-note { font-size: 0.8rem; color: var(--text3); margin-top: 6px; margin-bottom: 4px; }
+.price-list-head {
+  font-size: 0.7rem; font-weight: 700; color: var(--text3);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding-top: 18px; margin-bottom: 10px;
+  border-top: 1px solid var(--border);
+}
+.price-card.pop .price-pop-badge {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--primary); color: white;
+  padding: 5px 20px; border-radius: var(--radius-pill);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px rgba(41,128,185,0.3);
+  white-space: nowrap;
+}
+.price-card.pop::before { content: none; }
+
+.price-enterprise {
+  max-width: 1000px; margin: 36px auto 0;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #2980b9 100%);
+  color: #fff; border-radius: var(--radius);
+  padding: 36px 40px; position: relative; overflow: hidden;
+  box-shadow: 0 12px 40px rgba(44,62,80,0.18);
+}
+.price-enterprise::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 90% 10%, rgba(78,205,196,0.18), transparent 50%);
+  pointer-events: none;
+}
+.pe-head {
+  display: grid; grid-template-columns: minmax(0, 0.5fr) 1.2fr;
+  gap: 28px; align-items: start; position: relative;
+}
+.pe-name { font-size: 1.4rem; font-weight: 700; }
+.pe-price { font-size: 0.95rem; color: #c8d5e0; margin-top: 6px; }
+.pe-desc { font-size: 0.92rem; color: #d8e0e8; line-height: 1.55; margin: 0; }
+.pe-list {
+  list-style: none; padding: 24px 0 0 0; margin: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px;
+  position: relative;
+}
+.pe-list li {
+  font-size: 0.9rem; color: #e7edf3; padding-left: 24px; position: relative;
+}
+.pe-list li::before {
+  content: ''; position: absolute; left: 0; top: 7px; width: 14px; height: 14px;
+  border-radius: 50%; background: rgba(78,205,196,0.25);
+  box-shadow: inset 0 0 0 2px #4ecdc4;
+}
+.price-enterprise .price-btn.ghost {
+  margin-top: 26px;
+  background: rgba(255,255,255,0.08); color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  position: relative;
+}
+.price-enterprise .price-btn.ghost:hover {
+  background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.5);
+}
+
+.price-chips {
+  display: flex; flex-wrap: wrap; gap: 10px 18px;
+  justify-content: center; align-items: center;
+  max-width: 1000px; margin: 32px auto 0; padding: 0 16px;
+}
+.pchip {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.82rem; color: var(--text2); font-weight: 500;
+}
+.pchip-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--primary); flex-shrink: 0;
+}
+
+.price-compare {
+  max-width: 1000px; margin: 56px auto 0;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px 36px;
+}
+.pc-head h3 { font-size: 1.35rem; font-weight: 700; margin: 0 0 6px; color: var(--text); }
+.pc-head p { font-size: 0.9rem; color: var(--text2); margin: 0 0 22px; }
+.pc-table {
+  display: grid; gap: 0;
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+}
+.pc-row {
+  display: grid; grid-template-columns: 1.1fr 0.9fr 1.6fr;
+  gap: 18px; padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  align-items: center; font-size: 0.9rem;
+}
+.pc-row:last-child { border-bottom: none; }
+.pc-row-head {
+  background: var(--bg-warm); font-weight: 700; font-size: 0.78rem;
+  color: var(--text3); letter-spacing: 0.04em; text-transform: uppercase;
+}
+.pc-row-shiftia { background: rgba(78,205,196,0.08); }
+.pc-row-shiftia .pc-price { color: var(--primary); }
+.pc-price-muted { color: var(--text2); }
+.pc-mute { color: var(--text3); font-weight: 400; }
+.pc-foot {
+  font-size: 0.88rem; color: var(--text2); font-style: italic;
+  margin: 18px 0 0; line-height: 1.5; text-align: center;
+}
+
+@media (max-width: 760px) {
+  .price-enterprise { padding: 28px 22px; }
+  .pe-head { grid-template-columns: 1fr; gap: 12px; }
+  .pe-list { grid-template-columns: 1fr; }
+  .price-compare { padding: 24px 18px; margin-top: 40px; }
+  .pc-row { grid-template-columns: 1fr; gap: 6px; padding: 14px; }
+  .pc-row-head { display: none; }
+  .pc-row { border-bottom: 1px solid var(--border); }
+}
+
 .price-toggle-wrap { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 40px; }
 .price-toggle-label { font-size: 0.9rem; font-weight: 600; color: var(--text3); transition: color 0.3s; }
 .price-toggle-label.active { color: var(--text1); }
@@ -4890,7 +5004,6 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <svg class="nav-link-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
       <span data-i18n="nav_contact">Contacto</span>
     </a>
-    <a href="/login" class="nav-mobile-login" data-i18n="nav_login">Iniciar sesión</a>
   </div>
   <div class="nav-right">
     <!-- Dark mode toggle eliminado: la web es light-only por diseño. -->
@@ -4908,8 +5021,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         <div class="lang-option" onclick="setLang('fr')"><span class="lang-flag">🇫🇷</span> Français</div>
       </div>
     </div>
-    <a href="/login" class="nav-btn-ghost" data-i18n="nav_login" style="text-decoration:none">Iniciar sesión</a>
-    <button class="nav-btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})" data-i18n="nav_cta">Pedir demo</button>
+    <button class="nav-btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})" data-i18n="nav_cta">Solicitar llamada</button>
   </div>
   <button class="nav-mobile" onclick="this.parentElement.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -4935,8 +5047,8 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           <span data-i18n="hero_cta">Solicitar demo</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <a href="/login?tab=register" class="btn-lg ghost" data-i18n="hero_cta_signup" data-event="hero_signup_click">
-          <span data-i18n="hero_cta_signup_label">Empezar ahora</span>
+        <a href="#pricing" class="btn-lg ghost" data-i18n="hero_cta_signup" data-event="hero_pricing_click">
+          <span data-i18n="hero_cta_signup_label">Ver planes</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -6010,8 +6122,8 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   <div class="floating-orbs"><div class="orb orb-2" style="right:-80px;left:auto;"></div><div class="orb orb-3"></div></div>
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="price_eyebrow">Planes</div>
-    <h2 class="section-h2 reveal" data-i18n="price_title">Precios transparentes, sin sorpresas</h2>
-    <p class="section-p reveal" data-i18n="price_desc">Sin permanencia. Garantía de devolución de 30 días en todos los planes.</p>
+    <h2 class="section-h2 reveal" data-i18n="price_title">Tarifa plana. Sin coste por trabajador.</h2>
+    <p class="section-p reveal" data-i18n="price_desc">Sin permanencia. Garantía de devolución de 30 días. Implantación en 1-5 días.</p>
   </div>
   <div class="price-toggle-wrap reveal">
     <span class="price-toggle-label active" id="ptMonthly" data-i18n="price_monthly">Mensual</span>
@@ -6022,41 +6134,117 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </div>
   <div class="pricing-grid">
     <div class="price-card reveal">
-      <div class="price-name" data-i18n="p1_n">Starter</div>
-      <div class="price-amount"><span class="price-val" data-monthly="20" data-annual="16">20</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
-      <div class="price-desc" data-i18n="p1_d">Hasta 15 trabajadores</div>
+      <div class="price-name" data-i18n="p1_n">Esencial</div>
+      <div class="price-amount"><span class="price-val" data-monthly="29" data-annual="23">29</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
+      <div class="price-billing-note" data-i18n="p1_billing">o 23€/mes facturado anual</div>
+      <div class="price-desc" data-i18n="p1_d">Clínicas y equipos pequeños · hasta 15 trabajadores</div>
+      <div class="price-list-head" data-i18n="p1_head">El núcleo, siempre</div>
       <ul class="price-list">
-        <li data-i18n="p1_f1">Planilla visual completa</li>
-        <li data-i18n="p1_f2">Detección de conflictos</li>
-        <li data-i18n="p1_f3">Dashboard basico</li>
-        <li data-i18n="p1_f4">Guardado en la nube</li>
+        <li data-i18n="p1_f1">Planilla visual mensual editable</li>
+        <li data-i18n="p1_f2">Equipo, roles y perfiles</li>
+        <li data-i18n="p1_f3">Convenio inteligente: descansos, máx. noches, jornadas</li>
+        <li data-i18n="p1_f4">Multidispositivo (móvil, tablet, escritorio)</li>
+        <li data-i18n="p1_f5">Vacaciones y ausencias</li>
+        <li data-i18n="p1_f6">Detección de conflictos</li>
+        <li data-i18n="p1_f7">Dashboard básico</li>
+        <li data-i18n="p1_f8">Nube + RGPD · soporte por email</li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn" onclick="goToCheckout('starter')">Comprar ahora</button>
+      <button class="price-btn outline" data-i18n="price_btn_starter" onclick="scrollToContact('esencial')">Empezar</button>
     </div>
     <div class="price-card pop reveal d1">
+      <div class="price-pop-badge" data-i18n="p2_badge">★ Más elegido</div>
       <div class="price-name" data-i18n="p2_n">Pro</div>
-      <div class="price-amount"><span class="price-val" data-monthly="30" data-annual="24">30</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
-      <div class="price-desc" data-i18n="p2_d">Hasta 40 trabajadores</div>
+      <div class="price-amount"><span class="price-val" data-monthly="69" data-annual="55">69</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
+      <div class="price-billing-note" data-i18n="p2_billing">o 55€/mes facturado anual</div>
+      <div class="price-desc" data-i18n="p2_d">El plan con IA · hasta 40 trabajadores</div>
+      <div class="price-list-head" data-i18n="p2_head">Todo Esencial, y además</div>
       <ul class="price-list">
-        <li data-i18n="p2_f1">Todo del plan Starter</li>
-        <li data-i18n="p2_f2" data-tip>Motor IA de coberturas<span class="tooltip">Sugiere 3 candidatos en &lt;1 segundo</span></li>
-        <li data-i18n="p2_f3" data-tip>Equidad nocturna avanzada<span class="tooltip">Mide y balancea automáticamente las noches</span></li>
-        <li data-i18n="p2_f4">Importacion PDF automática</li>
-        <li data-i18n="p2_f5">Historial de cambios</li>
+        <li data-i18n="p2_f1" data-tip>★ Motor IA de coberturas — 3 candidatos en &lt;1 s, 7 criterios<span class="tooltip">Sugiere 3 candidatos en menos de un segundo con 7 criterios de equidad y convenio</span></li>
+        <li data-i18n="p2_f2">Equidad nocturna avanzada (balanceo automático)</li>
+        <li data-i18n="p2_f3">Lector PDF con IA: importa tu cuadrante</li>
+        <li data-i18n="p2_f4">Vacaciones IA + verificación de cobertura</li>
+        <li data-i18n="p2_f5">Radar de riesgo y conflictos avanzado</li>
+        <li data-i18n="p2_f6">Historial y auditoría (export CSV/PDF)</li>
+        <li data-i18n="p2_f7">Personalización gráfica (tu marca y términos)</li>
+        <li data-i18n="p2_f8">Implantación guiada 1-5 días · soporte prioritario</li>
       </ul>
-      <button class="price-btn fill" data-i18n="price_btn" onclick="goToCheckout('pro')">Comprar ahora</button>
+      <button class="price-btn fill" data-i18n="price_btn_pro" onclick="scrollToContact('pro')">Solicitar demo</button>
     </div>
     <div class="price-card reveal d2">
       <div class="price-name" data-i18n="p3_n">Business</div>
-      <div class="price-amount"><span class="price-val" data-monthly="50" data-annual="45">50</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
-      <div class="price-desc" data-i18n="p3_d">Trabajadores ilimitados</div>
+      <div class="price-amount"><span class="price-val" data-monthly="129" data-annual="103">129</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
+      <div class="price-billing-note" data-i18n="p3_billing">o 103€/mes facturado anual</div>
+      <div class="price-desc" data-i18n="p3_d">Multi-centro · hasta 100 trabajadores</div>
+      <div class="price-list-head" data-i18n="p3_head">Todo Pro, y además</div>
       <ul class="price-list">
-        <li data-i18n="p3_f1">Todo del plan Pro</li>
-        <li data-i18n="p3_f2">Múltiples servicios / sedes</li>
-        <li data-i18n="p3_f4">Soporte prioritario</li>
-        <li data-i18n="p3_f5" data-tip>Despliegue on-premise<span class="tooltip">Instalación en tus propios servidores</span></li>
+        <li data-i18n="p3_f1">Multi-centro / multi-servicio</li>
+        <li data-i18n="p3_f2">Mapa de cobertura por planta o sede</li>
+        <li data-i18n="p3_f3">Informes con IA + Briefing diario IA</li>
+        <li data-i18n="p3_f4">Integración con nómina</li>
+        <li data-i18n="p3_f5">Roles y permisos avanzados</li>
+        <li data-i18n="p3_f6">Acceso API</li>
+        <li data-i18n="p3_f7">Onboarding dedicado + gestor de cuenta</li>
+        <li data-i18n="p3_f8">Soporte prioritario con SLA</li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn" onclick="goToCheckout('business')">Contratar Business</button>
+      <button class="price-btn outline" data-i18n="price_btn_business" onclick="scrollToContact('business')">Contratar</button>
+    </div>
+  </div>
+
+  <div class="price-enterprise reveal">
+    <div class="pe-head">
+      <div>
+        <div class="pe-name" data-i18n="p4_n">Enterprise</div>
+        <div class="pe-price" data-i18n="p4_p">Precio a medida</div>
+      </div>
+      <p class="pe-desc" data-i18n="p4_d">Hospitales, grupos y sector público. Más de 100 trabajadores, varios centros o requisitos de despliegue propios.</p>
+    </div>
+    <ul class="pe-list">
+      <li data-i18n="p4_f1">Todo Business incluido</li>
+      <li data-i18n="p4_f2">On-premise o nube privada</li>
+      <li data-i18n="p4_f3">SLA garantizado · soporte 24/7 opcional</li>
+      <li data-i18n="p4_f4">Integraciones a medida (HIS, ERP, fichaje)</li>
+      <li data-i18n="p4_f5">Seguridad reforzada y auditoría</li>
+      <li data-i18n="p4_f6">Formación on-site + contrato adaptado</li>
+    </ul>
+    <button class="price-btn ghost" data-i18n="price_btn_enterprise" onclick="scrollToContact('enterprise')">Hablar con ventas</button>
+  </div>
+
+  <div class="price-chips reveal">
+    <span class="pchip"><span class="pchip-dot"></span><span data-i18n="chip_nopermanencia">Sin permanencia</span></span>
+    <span class="pchip"><span class="pchip-dot"></span><span data-i18n="chip_garantia">Garantía 30 días</span></span>
+    <span class="pchip"><span class="pchip-dot"></span><span data-i18n="chip_sincoste">Sin coste por trabajador</span></span>
+    <span class="pchip"><span class="pchip-dot"></span><span data-i18n="chip_implantacion">Implantación 1-5 días</span></span>
+  </div>
+
+  <div class="container">
+    <div class="price-compare reveal">
+      <div class="pc-head">
+        <h3 data-i18n="pc_title">Por qué cuesta lo que cuesta</h3>
+        <p data-i18n="pc_desc">Coste mensual real para un equipo de 40 personas. Los competidores cobran por cabeza; Shiftia, plano.</p>
+      </div>
+      <div class="pc-table">
+        <div class="pc-row pc-row-head">
+          <div data-i18n="pc_col1">Solución</div>
+          <div data-i18n="pc_col2">Coste / mes (40 personas)</div>
+          <div data-i18n="pc_col3">Qué obtienes</div>
+        </div>
+        <div class="pc-row pc-row-shiftia">
+          <div><strong>Shiftia Pro</strong></div>
+          <div class="pc-price"><strong>69€ — plano</strong></div>
+          <div data-i18n="pc_shiftia_d">App a medida + IA de coberturas + equidad + convenio</div>
+        </div>
+        <div class="pc-row">
+          <div>aTurnos <span class="pc-mute">(~1€/empleado)</span></div>
+          <div class="pc-price-muted">~40€</div>
+          <div data-i18n="pc_aturnos_d">Más barato, pero UX enterprise y sin app a medida</div>
+        </div>
+        <div class="pc-row">
+          <div>Factorial <span class="pc-mute">(~5,5€/empleado)</span></div>
+          <div class="pc-price-muted">~220€</div>
+          <div data-i18n="pc_factorial_d">Suite de RRHH; turnos como módulo flojo para convenios</div>
+        </div>
+      </div>
+      <p class="pc-foot" data-i18n="pc_foot">Toda la potencia de planificación con IA por una fracción de una suite genérica — y sin que la factura crezca cuando crece tu equipo.</p>
     </div>
   </div>
 </section>
@@ -6106,6 +6294,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           </div>
           <div class="fg"><label for="cf-dept">Departamento / Área</label><input id="cf-dept" type="text" placeholder="Ej: Enfermería, Laboratorio..."></div>
         </div>
+        <input type="hidden" id="cf-plan" name="plan" value="">
         <div class="fg"><label for="cf-message">Cuéntanos tu caso (opcional)</label><textarea id="cf-message" placeholder="Describe tu situación actual..." rows="3"></textarea></div>
 
         <!-- Module configurator (live inside the booking form) -->
@@ -6436,18 +6625,26 @@ function toggleFaq(el) {
 }
 
 // Pricing toggle
-// Redirect to login/dashboard for checkout
-function goToCheckout(plan) {
-  const billing = isAnnual ? 'annual' : 'monthly';
-  const token = localStorage.getItem('shiftia_token');
-  if (token) {
-    // User logged in — go to dashboard with checkout intent
-    window.location.href = `/dashboard?intent=checkout&plan=${encodeURIComponent(plan)}&billing=${encodeURIComponent(billing)}`;
-  } else {
-    // Not logged in — go to login with redirect
-    const redirectPath = `/dashboard?intent=checkout&plan=${encodeURIComponent(plan)}&billing=${encodeURIComponent(billing)}`;
-    window.location.href = `/login?redirect=${encodeURIComponent(redirectPath)}`;
-  }
+// Las contrataciones se gestionan por llamada previa: el CTA de cada plan
+// pre-selecciona el plan en el formulario de contacto y hace scroll suave.
+function scrollToContact(plan) {
+  try {
+    const sel = document.getElementById('cf-plan');
+    if (sel && plan) sel.value = plan;
+    const ta = document.getElementById('cf-message');
+    if (ta && plan && !ta.value) {
+      const labels = {
+        esencial: 'Esencial',
+        pro: 'Pro',
+        business: 'Business',
+        enterprise: 'Enterprise',
+      };
+      const label = labels[plan] || plan;
+      ta.value = 'Estoy interesado en el plan ' + label + '.';
+    }
+  } catch (e) {}
+  const target = document.getElementById('contact');
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 let isAnnual = false;
@@ -6775,7 +6972,8 @@ let currentLang = 'es';
 const translations = {
   es: {
     nav_features: 'Funciones', nav_usecases: 'Uso', nav_pricing: 'Planes',
-    nav_contact: 'Contacto', nav_login: 'Iniciar sesión', nav_cta: 'Pedir demo',
+    nav_contact: 'Contacto', nav_cta: 'Solicitar llamada',
+    hero_cta_signup: 'Ver planes', hero_cta_signup_label: 'Ver planes',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Planificación de turnos y planillas,',
     hero_title_2: 'simplificada',
@@ -6844,15 +7042,55 @@ const translations = {
     fc_start: 'Enero', fc_end: 'Diciembre',
 
     price_monthly: 'Mensual', price_annual: 'Anual', price_save: '-20%',
-    price_eyebrow: 'Planes', price_title: 'Precios transparentes, sin sorpresas',
-    price_desc: 'Sin permanencia. Garantía de devolución de 30 días en todos los planes.',
-    p1_n: 'Starter', p1_d: 'Hasta 15 trabajadores',
-    p1_f1: 'Planilla visual completa', p1_f2: 'Detección de conflictos', p1_f3: 'Dashboard basico', p1_f4: 'Guardado en la nube',
-    p2_n: 'Pro', p2_d: 'Hasta 40 trabajadores',
-    p2_f1: 'Todo del plan Starter', p2_f2: 'Motor IA de coberturas internas', p2_f3: 'Equidad nocturna avanzada', p2_f4: 'Importacion PDF automática', p2_f5: 'Historial de cambios',
-    p3_n: 'Business', p3_d: 'Trabajadores ilimitados',
-    p3_f1: 'Todo del plan Pro', p3_f2: 'Múltiples servicios / sedes', p3_f4: 'Soporte prioritario', p3_f5: 'Despliegue on-premise',
-    price_btn: 'Comprar ahora',
+    price_eyebrow: 'Planes', price_title: 'Tarifa plana. Sin coste por trabajador.',
+    price_desc: 'Sin permanencia. Garantía de devolución de 30 días. Implantación en 1-5 días.',
+    price_monthly: 'Mensual', price_annual: 'Anual', price_save: '-20%',
+    p1_n: 'Esencial', p1_d: 'Clínicas y equipos pequeños · hasta 15 trabajadores',
+    p1_billing: 'o 23€/mes facturado anual', p1_head: 'El núcleo, siempre',
+    p1_f1: 'Planilla visual mensual editable', p1_f2: 'Equipo, roles y perfiles',
+    p1_f3: 'Convenio inteligente: descansos, máx. noches, jornadas',
+    p1_f4: 'Multidispositivo (móvil, tablet, escritorio)',
+    p1_f5: 'Vacaciones y ausencias', p1_f6: 'Detección de conflictos',
+    p1_f7: 'Dashboard básico', p1_f8: 'Nube + RGPD · soporte por email',
+    p2_n: 'Pro', p2_d: 'El plan con IA · hasta 40 trabajadores',
+    p2_badge: '★ Más elegido', p2_billing: 'o 55€/mes facturado anual',
+    p2_head: 'Todo Esencial, y además',
+    p2_f1: '★ Motor IA de coberturas — 3 candidatos en <1 s, 7 criterios',
+    p2_f2: 'Equidad nocturna avanzada (balanceo automático)',
+    p2_f3: 'Lector PDF con IA: importa tu cuadrante',
+    p2_f4: 'Vacaciones IA + verificación de cobertura',
+    p2_f5: 'Radar de riesgo y conflictos avanzado',
+    p2_f6: 'Historial y auditoría (export CSV/PDF)',
+    p2_f7: 'Personalización gráfica (tu marca y términos)',
+    p2_f8: 'Implantación guiada 1-5 días · soporte prioritario',
+    p3_n: 'Business', p3_d: 'Multi-centro · hasta 100 trabajadores',
+    p3_billing: 'o 103€/mes facturado anual', p3_head: 'Todo Pro, y además',
+    p3_f1: 'Multi-centro / multi-servicio',
+    p3_f2: 'Mapa de cobertura por planta o sede',
+    p3_f3: 'Informes con IA + Briefing diario IA',
+    p3_f4: 'Integración con nómina',
+    p3_f5: 'Roles y permisos avanzados',
+    p3_f6: 'Acceso API',
+    p3_f7: 'Onboarding dedicado + gestor de cuenta',
+    p3_f8: 'Soporte prioritario con SLA',
+    p4_n: 'Enterprise', p4_p: 'Precio a medida',
+    p4_d: 'Hospitales, grupos y sector público. Más de 100 trabajadores, varios centros o requisitos de despliegue propios.',
+    p4_f1: 'Todo Business incluido', p4_f2: 'On-premise o nube privada',
+    p4_f3: 'SLA garantizado · soporte 24/7 opcional',
+    p4_f4: 'Integraciones a medida (HIS, ERP, fichaje)',
+    p4_f5: 'Seguridad reforzada y auditoría',
+    p4_f6: 'Formación on-site + contrato adaptado',
+    price_btn_starter: 'Empezar', price_btn_pro: 'Solicitar demo',
+    price_btn_business: 'Contratar', price_btn_enterprise: 'Hablar con ventas',
+    chip_nopermanencia: 'Sin permanencia', chip_garantia: 'Garantía 30 días',
+    chip_sincoste: 'Sin coste por trabajador', chip_implantacion: 'Implantación 1-5 días',
+    pc_title: 'Por qué cuesta lo que cuesta',
+    pc_desc: 'Coste mensual real para un equipo de 40 personas. Los competidores cobran por cabeza; Shiftia, plano.',
+    pc_col1: 'Solución', pc_col2: 'Coste / mes (40 personas)', pc_col3: 'Qué obtienes',
+    pc_shiftia_d: 'App a medida + IA de coberturas + equidad + convenio',
+    pc_aturnos_d: 'Más barato, pero UX enterprise y sin app a medida',
+    pc_factorial_d: 'Suite de RRHH; turnos como módulo flojo para convenios',
+    pc_foot: 'Toda la potencia de planificación con IA por una fracción de una suite genérica — y sin que la factura crezca cuando crece tu equipo.',
     contact_title: 'Cuentanos tu caso y agenda una llamada',
     contact_desc: 'Cada empresa es diferente. Explicanos tu situación y te hacemos una propuesta personalizada con demo incluida.',
     cp1_t: 'Respuesta en 24h', cp1_d: 'Te contestamos con una propuesta clara y sin compromiso.',
@@ -6882,7 +7120,7 @@ const translations = {
   },
   en: {
     nav_features: 'Features', nav_usecases: 'Use', nav_pricing: 'Pricing',
-    nav_contact: 'Contact', nav_login: 'Sign in', nav_cta: 'Get a demo',
+    nav_contact: 'Contact', nav_cta: 'Request a call',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Shift scheduling and rosters,',
     hero_title_2: 'simplified',
@@ -6989,7 +7227,7 @@ const translations = {
   },
   de: {
     nav_features: 'Funktionen', nav_usecases: 'Einsatz', nav_pricing: 'Preise',
-    nav_contact: 'Kontakt', nav_login: 'Anmelden', nav_cta: 'Demo anfragen',
+    nav_contact: 'Kontakt', nav_cta: 'Anruf anfragen',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Schichtplanung und Dienstplane,',
     hero_title_2: 'vereinfacht',
@@ -7096,7 +7334,7 @@ const translations = {
   },
   fr: {
     nav_features: 'Fonctionnalites', nav_usecases: 'Usage', nav_pricing: 'Tarifs',
-    nav_contact: 'Contact', nav_login: 'Connexion', nav_cta: 'Demander une demo',
+    nav_contact: 'Contact', nav_cta: 'Demander un appel',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Planification des equipes et des plannings,',
     hero_title_2: 'simplifiee',
