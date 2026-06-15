@@ -1,7 +1,7 @@
 {
   "name": "shiftia-hub",
   "version": "3.6.0",
-  "description": "Shiftia HUB — Landing + back-office (Express + Stripe + Postgres)",
+  "description": "Shiftia HUB — Landing + back-office (Express + Postgres)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -17,8 +17,7 @@
     "express-rate-limit": "^7.1.5",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.8",
-    "pg": "^8.11.3",
-    "stripe": "^14.11.0"
+    "pg": "^8.11.3"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -1400,16 +1400,15 @@
                             <div class="sub-meta-item">
                                 <div class="sub-meta-label">Forma de pago</div>
                                 <div class="sub-meta-value" style="display:inline-flex;align-items:center;gap:8px;">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                                    Tarjeta •••• Stripe
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                    Acordado en llamada
                                 </div>
                             </div>
                         </div>
 
                         <div class="btn-row">
-                            <button class="btn btn-primary" id="changePlanBtn" type="button">Gestionar suscripción</button>
-                            <button class="btn btn-secondary" id="manageSubBtn" type="button" style="display:none;" onclick="openBillingPortal()">Portal de facturación</button>
-                            <a href="#facturacion" class="btn btn-ghost">Ver facturas</a>
+                            <button class="btn btn-primary" id="changePlanBtn" type="button" onclick="contactSales('plan')">Cambiar plan</button>
+                            <a class="btn btn-secondary" href="mailto:info@shiftia.es?subject=Gestion%20de%20mi%20plan" style="text-decoration:none;">Escribir a soporte</a>
                         </div>
 
                         <!-- Workers usage · progress ring -->
@@ -1616,10 +1615,10 @@
                     <div id="billingComingSoon" style="display:none;">
                         <div class="empty-state">
                             <div class="empty-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                             </div>
-                            <h3 class="empty-title">Tus facturas estarán disponibles muy pronto</h3>
-                            <p class="empty-desc">Estamos terminando la integración con Stripe para que puedas descargar tus facturas desde aquí. Mientras tanto, escríbenos y te las enviamos por email en menos de 24h.</p>
+                            <h3 class="empty-title">Recibe tus facturas por email</h3>
+                            <p class="empty-desc">Ahora gestionamos las contrataciones por llamada previa y enviamos las facturas directamente a tu email. Escríbenos y te las hacemos llegar en menos de 24h.</p>
                             <a class="btn btn-primary" href="mailto:info@shiftia.es?subject=Solicitud%20de%20factura" style="text-decoration:none;">Pedir factura por email</a>
                         </div>
                     </div>
@@ -1754,28 +1753,28 @@
 
             <div class="plan-options">
                 <div class="plan-option" data-plan="starter">
-                    <div class="plan-option-name">Starter</div>
-                    <div class="plan-option-price" id="priceStarter">€20<span>/mes</span></div>
+                    <div class="plan-option-name">Esencial</div>
+                    <div class="plan-option-price" id="priceStarter">€29<span>/mes</span></div>
                     <div class="plan-option-annual-price" id="annualInfoStarter"></div>
                     <div class="plan-option-workers">Hasta 15 trabajadores</div>
                 </div>
                 <div class="plan-option" data-plan="pro">
                     <div class="plan-option-name">Pro</div>
-                    <div class="plan-option-price" id="pricePro">€30<span>/mes</span></div>
+                    <div class="plan-option-price" id="pricePro">€69<span>/mes</span></div>
                     <div class="plan-option-annual-price" id="annualInfoPro"></div>
                     <div class="plan-option-workers">Hasta 40 trabajadores</div>
                 </div>
                 <div class="plan-option" data-plan="business">
                     <div class="plan-option-name">Business</div>
-                    <div class="plan-option-price" id="priceBusiness">€50<span>/mes</span></div>
+                    <div class="plan-option-price" id="priceBusiness">€129<span>/mes</span></div>
                     <div class="plan-option-annual-price" id="annualInfoBusiness"></div>
-                    <div class="plan-option-workers">Trabajadores ilimitados</div>
+                    <div class="plan-option-workers">Multi-centro · hasta 100 trabajadores</div>
                 </div>
             </div>
 
             <button class="plan-checkout-btn" id="planCheckoutBtn" type="button" disabled>Selecciona un plan</button>
-            <span class="plan-manage-link" id="manageSubLink" style="display:none;" onclick="openBillingPortal()">Gestionar suscripción actual</span>
-            <p style="font-family: var(--ds-font-sans); color: var(--ds-text-subtle); font-size: var(--ds-text-xs); margin: 14px 0 0; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 días.</p>
+            <span class="plan-manage-link" id="manageSubLink" style="display:none;" onclick="contactSales('billing')">Escribir a soporte</span>
+            <p style="font-family: var(--ds-font-sans); color: var(--ds-text-subtle); font-size: var(--ds-text-xs); margin: 14px 0 0; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 días. Contratación por llamada previa.</p>
         </div>
     </div>
 
@@ -1798,19 +1797,22 @@
         let currentUser = null;
         const PLAN_INFO = {
             trial:      { name: 'Sin plan activo', cost: null, workers: 25 },
-            starter:    { name: 'Starter', cost: 20, workers: 15 },
-            pro:        { name: 'Pro', cost: 30, workers: 40 },
-            business:   { name: 'Business', cost: 50, workers: -1 },
-            enterprise: { name: 'Business', cost: 50, workers: -1 }   // legacy alias
+            starter:    { name: 'Esencial', cost: 29, workers: 15 },
+            pro:        { name: 'Pro', cost: 69, workers: 40 },
+            business:   { name: 'Business', cost: 129, workers: 100 },
+            enterprise: { name: 'Enterprise', cost: null, workers: -1 }
         };
 
         // ===== ONBOARDING =====
+        // hasActivePlan reemplaza al antiguo hasStripeSubscription: ahora la
+        // contratación se cierra por llamada y el plan se promociona desde
+        // 'trial' a 'starter'/'pro'/'business' directamente en el backoffice.
         function initOnboarding(user) {
             const plan = user.plan || 'trial';
-            const hasStripeSubscription = user.stripe_subscription_id;
+            const hasActivePlan = plan !== 'trial';
             const isDismissed = localStorage.getItem('shiftia_onboarding_dismissed');
 
-            if (plan === 'trial' && !hasStripeSubscription && !isDismissed) {
+            if (!hasActivePlan && !isDismissed) {
                 const bar = document.getElementById('onboardingBar');
                 if (bar) {
                     bar.style.display = 'block';
@@ -1821,7 +1823,7 @@
 
         function updateOnboardingProgress(user) {
             const plan = user.plan || 'trial';
-            const hasStripeSubscription = user.stripe_subscription_id;
+            const planCompleted = plan !== 'trial';
 
             const profileStep = document.querySelector('[data-step="profile"]');
             const planStep = document.querySelector('[data-step="plan"]');
@@ -1830,7 +1832,6 @@
             if (profileStep) {
                 profileStep.querySelector('.ob-step-dot').classList.add('completed');
             }
-            const planCompleted = plan !== 'trial' || hasStripeSubscription;
             if (planCompleted && planStep) {
                 planStep.querySelector('.ob-step-dot').classList.add('completed');
             }
@@ -1875,16 +1876,14 @@
         // ===== EMPTY STATES =====
         function updateBillingDisplay(user) {
             const plan = user.plan || 'trial';
-            const hasContent = plan !== 'trial' || (user.stripe_subscription_id);
-
             const billingContent = document.getElementById('billingContent');
             const billingEmpty = document.getElementById('billingEmptyState');
 
             if (billingContent && billingEmpty) {
-                if (hasContent && plan !== 'trial') {
+                if (plan !== 'trial') {
                     billingContent.style.display = 'block';
                     billingEmpty.style.display = 'none';
-                } else if (plan === 'trial' && !user.stripe_subscription_id) {
+                } else {
                     billingContent.style.display = 'none';
                     billingEmpty.style.display = 'block';
                 }
@@ -2039,7 +2038,7 @@
                 pricePeriod.style.display = 'none';
                 monthlyCostHidden.textContent = 'Selecciona un plan';
             } else if (isAnnualPlan) {
-                const annualPrices = { starter: 192, pro: 288, business: 540 };
+                const annualPrices = { starter: 276, pro: 660, business: 1236 };
                 const annualTotal = annualPrices[plan] || info.cost * 12;
                 const monthEquiv = Math.round(annualTotal / 12);
                 priceEmpty.style.display = 'none';
@@ -2070,9 +2069,11 @@
             statusEl.textContent = statusLabels[status] || status;
             statusEl.className = 'status-badge ' + (status === 'active' ? 'badge-active' : status === 'past_due' ? 'badge-warning' : 'badge-inactive');
 
-            // Manage subscription button
-            const hasStripe = u.stripe_subscription_id;
-            document.getElementById('manageSubBtn').style.display = hasStripe ? 'inline-flex' : 'none';
+            // El botón "Portal de facturación" (Stripe) ya no existe en el HTML
+            // — la gestión es por contacto directo. El getElementById queda como
+            // null-safe por si quedan caches viejos en clientes.
+            const manageSubBtn = document.getElementById('manageSubBtn');
+            if (manageSubBtn) manageSubBtn.style.display = 'none';
 
             // Next billing
             if (u.next_billing_date) {
@@ -2183,15 +2184,14 @@
                 return;
             }
 
-            // Plan de pago activo: la integración con Stripe para listar facturas
-            // reales todavía no está. Mostramos "coming soon" honesto en lugar de
-            // facturas demo calculadas en el cliente (que no son fiscalmente válidas).
+            // Plan de pago activo: las facturas se envían por email tras la
+            // llamada de contratación; el "coming soon" invita a pedirlas por
+            // correo en lugar de mostrar facturas demo no fiscales.
             if (billingComingSoon) billingComingSoon.style.display = 'block';
         }
 
-        // downloadInvoice() y SHIFTIA_ISSUER se conservan listos para cuando se
-        // conecte la integración real con Stripe (endpoint /api/stripe/invoices o
-        // hosted_invoice_url) y reactivemos la sección de facturación.
+        // downloadInvoice() y SHIFTIA_ISSUER se mantienen disponibles para
+        // generar previews PDF en cliente cuando el backoffice lo pida.
         function downloadInvoice(invoiceId) {
             if (!window.jspdf) {
                 // Toast en lugar de alert nativo
@@ -2493,7 +2493,7 @@
                     el.classList.add('current');
                     selectedModalPlan = plan;
                     const btn = document.getElementById('planCheckoutBtn');
-                    if (userPlan === plan && currentUser && currentUser.stripe_subscription_id) {
+                    if (userPlan === plan && currentUser && currentUser.plan && currentUser.plan !== 'trial') {
                         btn.textContent = 'Plan actual';
                         btn.disabled = true;
                     } else {
@@ -2532,9 +2532,9 @@
         let selectedModalPlan = null;
 
         const PLAN_PRICES = {
-            starter:  { monthly: 20,  annual: 192,  monthlyEquiv: 16 },
-            pro:      { monthly: 30,  annual: 288,  monthlyEquiv: 24 },
-            business: { monthly: 50,  annual: 540,  monthlyEquiv: 45 }
+            starter:  { monthly: 29,  annual: 276,  monthlyEquiv: 23 },
+            pro:      { monthly: 69,  annual: 660,  monthlyEquiv: 55 },
+            business: { monthly: 129, annual: 1236, monthlyEquiv: 103 }
         };
 
         function toggleBilling() {
@@ -2569,8 +2569,9 @@
             document.getElementById('planModal').classList.add('show');
             updatePlanPrices();
             markCurrentPlan();
-            const hasSubscription = currentUser && currentUser.stripe_subscription_id;
-            document.getElementById('manageSubLink').style.display = hasSubscription ? 'block' : 'none';
+            const hasActivePlan = currentUser && currentUser.plan && currentUser.plan !== 'trial';
+            const manageSubLink = document.getElementById('manageSubLink');
+            if (manageSubLink) manageSubLink.style.display = hasActivePlan ? 'block' : 'none';
             const btn = document.getElementById('planCheckoutBtn');
             btn.textContent = 'Selecciona un plan';
             btn.disabled = true;
@@ -2584,52 +2585,41 @@
             });
         }
 
-        async function startCheckout(plan) {
-            const btn = document.getElementById('planCheckoutBtn');
-            btn.disabled = true;
-            btn.textContent = 'Redirigiendo a Stripe…';
-
-            try {
-                const token = localStorage.getItem('shiftia_token');
-                const billing = isBillingAnnual ? 'annual' : 'monthly';
-                const res = await fetch('/api/stripe/checkout', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan, billing })
-                });
-                const data = await res.json();
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    throw new Error(data.error || 'Error al crear sesión de pago');
-                }
-            } catch (err) {
-                btn.disabled = false;
-                btn.textContent = 'Reintentar pago';
-                showAlert('supportMsgBox', 'error', err.message || 'Error al conectar con Stripe');
-                document.getElementById('planModal').classList.remove('show');
-            }
+        // Contratación y cambios de plan se gestionan por llamada previa.
+        // El botón "Confirmar plan" del modal abre un mailto con el plan
+        // seleccionado para que ventas lo procese fuera del flujo Stripe.
+        function startCheckout(plan) {
+            const billing = isBillingAnnual ? 'anual' : 'mensual';
+            const labels = { starter: 'Esencial', pro: 'Pro', business: 'Business', enterprise: 'Enterprise' };
+            const label = labels[plan] || plan;
+            const subject = encodeURIComponent('Cambio de plan: ' + label + ' (' + billing + ')');
+            const body = encodeURIComponent(
+                'Hola,\n\nQuiero cambiar mi plan a ' + label + ' con facturación ' + billing + '.\n\n' +
+                'Por favor, contactadme para confirmar la contratación.\n\nGracias.'
+            );
+            window.location.href = 'mailto:info@shiftia.es?subject=' + subject + '&body=' + body;
+            document.getElementById('planModal').classList.remove('show');
         }
 
-        async function openBillingPortal() {
-            try {
-                const token = localStorage.getItem('shiftia_token');
-                const res = await fetch('/api/stripe/portal', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-                });
-                const data = await res.json();
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    throw new Error(data.error || 'Error');
-                }
-            } catch (err) {
-                showAlert('supportMsgBox', 'error', err.message || 'Error al abrir el portal de pagos');
-            }
+        function contactSales(reason) {
+            const subjects = {
+                plan: 'Cambio de plan',
+                billing: 'Gestión de facturación',
+                upgrade: 'Mejora de plan'
+            };
+            const subject = encodeURIComponent(subjects[reason] || 'Soporte de cuenta');
+            window.location.href = 'mailto:info@shiftia.es?subject=' + subject;
         }
 
-        // Check URL for checkout result
+        function openBillingPortal() {
+            // La gestión de facturación (cambio de método de pago, datos
+            // fiscales) se hace por contacto directo desde que Stripe se
+            // sacó del flujo. Antes abría /api/stripe/portal.
+            contactSales('billing');
+        }
+
+        // Check URL for legacy checkout result params (clientes históricos que
+        // todavía llegaran con ?checkout=success|cancel desde el flujo Stripe).
         {
             const params = new URLSearchParams(window.location.search);
             if (params.get('checkout') === 'success') {

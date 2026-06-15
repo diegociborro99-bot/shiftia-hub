@@ -6,7 +6,6 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
-const Stripe = require('stripe');
 const rateLimit = require('express-rate-limit');
 
 const compression = require('compression');
@@ -82,271 +81,8 @@ if (!BOOKING_CANCEL_SECRET) {
 // Single source of truth for bcrypt cost. OWASP 2024 recommends >=10; we use 12.
 const BCRYPT_ROUNDS = Math.max(10, parseInt(process.env.BCRYPT_ROUNDS, 10) || 12);
 
-// ====== STRIPE CONFIG ======
-const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+// ====== APP CONFIG ======
 const APP_URL = process.env.APP_URL || 'https://shiftia.es';
-
-// Stripe price IDs — set these in Railway after creating products in Stripe dashboard
-const STRIPE_PRICES = {
-  starter_monthly:  process.env.STRIPE_PRICE_STARTER_MONTHLY  || '',
-  starter_annual:   process.env.STRIPE_PRICE_STARTER_ANNUAL   || '',
-  pro_monthly:      process.env.STRIPE_PRICE_PRO_MONTHLY      || '',
-  pro_annual:       process.env.STRIPE_PRICE_PRO_ANNUAL       || '',
-  business_monthly: process.env.STRIPE_PRICE_BUSINESS_MONTHLY || '',
-  business_annual:  process.env.STRIPE_PRICE_BUSINESS_ANNUAL  || '',
-};
-
-// Stripe webhook MUST receive raw body — register BEFORE express.json()
-app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
-  // Requerimos firma SIEMPRE — sin excepción dev, para evitar que el webhook
-  // se convierta en un panel de admin abierto en cualquier entorno.
-  if (!STRIPE_WEBHOOK_SECRET) {
-    console.error('Stripe webhook rejected: STRIPE_WEBHOOK_SECRET not configured');
-    return res.status(503).json({ error: 'Webhook secret not configured' });
-  }
-
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
-    console.error('Stripe webhook signature failed:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  // Idempotencia: si ya procesamos este event.id, ack inmediato.
-  // Stripe reintenta hasta 3 días si no devolvemos 2xx — sin esto, cada retry
-  // duplicaba updates de plan y emails de confirmación.
-  try {
-    const ins = await pool.query(
-      'INSERT INTO stripe_processed_events (event_id, event_type) VALUES ($1, $2) ON CONFLICT (event_id) DO NOTHING RETURNING event_id',
-      [event.id, event.type]
-    );
-    if (ins.rowCount === 0) {
-      console.log('Stripe webhook duplicate (already processed):', event.id, event.type);
-      return res.json({ received: true, duplicate: true });
-    }
-  } catch (dedupErr) {
-    // Si la tabla aún no existe (primer arranque), seguimos — initializeDatabase la creará.
-    if (!/does not exist/i.test(dedupErr.message)) {
-      console.error('Stripe dedup error:', dedupErr.message);
-      return res.status(500).json({ error: 'dedup' }); // Stripe reintentará
-    }
-  }
-
-  console.log('Stripe webhook:', event.type, event.id);
-
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object;
-        const userId = session.metadata?.user_id;
-        const plan = session.metadata?.plan;
-        const billing = session.metadata?.billing;
-        const stripeCustomerId = session.customer;
-        const subscriptionId = session.subscription;
-
-        if (userId && plan) {
-          const workersMap = { starter: 15, pro: 40, business: -1 };
-          await pool.query(
-            `UPDATE users SET plan = $1, plan_status = 'active', workers_limit = $2,
-             stripe_customer_id = $3, stripe_subscription_id = $4, billing_cycle = $5,
-             next_billing_date = NOW() + INTERVAL '1 ${billing === 'annual' ? 'year' : 'month'}'
-             WHERE id = $6`,
-            [plan, workersMap[plan] || 15, stripeCustomerId, subscriptionId, billing || 'monthly', userId]
-          );
-          console.log(`Plan updated: user ${userId} → ${plan} (${billing})`);
-
-          // Fire-and-forget payment confirmation email
-          const userInfo = await pool.query('SELECT email, name FROM users WHERE id = $1', [userId]);
-          if (userInfo.rows.length > 0) {
-            const { email, name } = userInfo.rows[0];
-            const planNames = { starter: 'Starter', pro: 'Pro', business: 'Business' };
-            const planPrices = {
-              starter: { monthly: '20€/mes', annual: '192€/año' },
-              pro: { monthly: '30€/mes', annual: '288€/año' },
-              business: { monthly: '50€/mes', annual: '480€/año' }
-            };
-            const amount = planPrices[plan] ? planPrices[plan][billing === 'annual' ? 'annual' : 'monthly'] : 'contactar';
-            const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-            sendMail({
-              from: RESEND_FROM,
-              to: email,
-              subject: `Tu plan Shiftia ${planNames[plan]} está activo`,
-              html: emailTemplate({
-                preheader: 'Tu suscripción a Shiftia ha sido activada correctamente',
-                headline: 'Plan activado',
-                body: `
-                  <p style="margin:0 0 16px;">Hola ${esc(name)},</p>
-                  <p style="margin:0 0 20px;">Tu suscripción a Shiftia ha sido activada correctamente. Gracias por confiar en nosotros.</p>
-                  <div style="margin:24px 0;padding:24px;background:#faf9f6;border-radius:10px;border:1px solid #ece9e2;">
-                    <p style="color:#7a766f;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 14px;">Detalles de tu suscripción</p>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                      <tr><td style="font-size:13px;color:#7a766f;padding:6px 16px 6px 0;width:140px;">Plan</td><td style="font-size:15px;color:#0e0f0f;">${planNames[plan]}</td></tr>
-                      <tr><td style="font-size:13px;color:#7a766f;padding:6px 16px 6px 0;">Ciclo</td><td style="font-size:15px;color:#1a1a1a;">${billing === 'annual' ? 'Anual' : 'Mensual'}</td></tr>
-                      <tr><td style="font-size:13px;color:#7a766f;padding:6px 16px 6px 0;">Importe</td><td style="font-size:15px;color:#0e0f0f;">${amount}</td></tr>
-                    </table>
-                  </div>
-                  <p style="margin:0 0 20px;">Tienes acceso completo a todas las características de tu plan. Si en los próximos 30 días no estás completamente satisfecho, podemos devolverte el dinero sin preguntas.</p>
-                  <p style="margin:24px 0 0;font-size:14px;color:#7a766f;">Si tienes alguna pregunta sobre tu suscripción, no dudes en responder a este email. Estamos aquí para ayudarte.</p>
-                `,
-                ctaText: 'Ir a mi dashboard',
-                ctaUrl: `${APP_URL}/dashboard`
-              })
-            }).then(() => console.log('Payment confirmation email sent to', email)).catch(err => console.error('Payment confirmation email failed:', err.message));
-          }
-        }
-        break;
-      }
-
-      case 'customer.subscription.updated': {
-        const sub = event.data.object;
-        const status = sub.status; // active, past_due, canceled, unpaid
-        const planStatus = status === 'active' ? 'active' : (status === 'canceled' ? 'cancelled' : 'past_due');
-
-        // C6: Refresh plan / workers_limit / billing_cycle / next_billing_date from price.id.
-        // Stripe sends this event on plan upgrades, downgrades, and renewal cycles.
-        const priceId = sub.items?.data?.[0]?.price?.id;
-        let matched = null; // { plan, billing }
-        if (priceId) {
-          for (const [key, val] of Object.entries(STRIPE_PRICES)) {
-            if (val && val === priceId) {
-              const idx = key.lastIndexOf('_');
-              if (idx > 0) {
-                matched = { plan: key.slice(0, idx), billing: key.slice(idx + 1) };
-              }
-              break;
-            }
-          }
-        }
-
-        if (matched) {
-          const workersMap = { starter: 15, pro: 40, business: -1 };
-          const workersLimit = workersMap[matched.plan] != null ? workersMap[matched.plan] : 15;
-          // Use parameterized UPDATE; match by stripe_subscription_id (reliable) instead of metadata.user_id.
-          await pool.query(
-            `UPDATE users
-               SET plan = $1,
-                   workers_limit = $2,
-                   billing_cycle = $3,
-                   plan_status = $4,
-                   next_billing_date = ${sub.current_period_end ? 'TO_TIMESTAMP($6)' : 'next_billing_date'}
-             WHERE stripe_subscription_id = $5`,
-            sub.current_period_end
-              ? [matched.plan, workersLimit, matched.billing, planStatus, sub.id, Number(sub.current_period_end)]
-              : [matched.plan, workersLimit, matched.billing, planStatus, sub.id]
-          );
-          console.log(`Subscription updated → ${matched.plan} (${matched.billing}) status=${status} sub=${sub.id}`);
-        } else {
-          // Fallback: only refresh plan_status (previous behaviour). Match by sub id (more reliable than metadata).
-          await pool.query(
-            `UPDATE users SET plan_status = $1 WHERE stripe_subscription_id = $2`,
-            [planStatus, sub.id]
-          );
-          if (sub.metadata?.user_id) {
-            await pool.query(
-              `UPDATE users SET plan_status = $1 WHERE id = $2`,
-              [planStatus, sub.metadata.user_id]
-            );
-          }
-          console.log(`Subscription ${status} (no price match) for sub ${sub.id}`);
-        }
-        break;
-      }
-
-      case 'customer.subscription.deleted': {
-        const sub = event.data.object;
-        if (sub.metadata?.user_id) {
-          const prevUser = await pool.query('SELECT email, name, plan FROM users WHERE id = $1', [sub.metadata.user_id]);
-          await pool.query(
-            `UPDATE users SET plan = 'trial', plan_status = 'active', workers_limit = 25,
-             stripe_subscription_id = NULL, billing_cycle = NULL WHERE id = $1`,
-            [sub.metadata.user_id]
-          );
-          console.log(`Subscription cancelled → trial for user ${sub.metadata.user_id}`);
-
-          // Send cancellation confirmation email
-          if (prevUser.rows.length > 0) {
-            const { email, name, plan } = prevUser.rows[0];
-            const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-            const planNames = { starter: 'Starter', pro: 'Pro', business: 'Business' };
-            sendMail({
-              from: RESEND_FROM,
-              to: email,
-              replyTo: process.env.SUPPORT_EMAIL || GMAIL_USER,
-              subject: 'Tu suscripción a Shiftia ha sido cancelada',
-              html: emailTemplate({
-                preheader: 'Tu suscripción ha sido cancelada. Puedes reactivarla cuando quieras.',
-                headline: 'Suscripción cancelada',
-                body: `
-                  <p style="margin:0 0 16px;">Hola ${esc(name)},</p>
-                  <p style="margin:0 0 16px;">Te confirmamos que tu plan <span style="color:#0e0f0f;">${planNames[plan] || plan}</span> ha sido cancelado. Tu cuenta seguirá activa pero con funcionalidad limitada.</p>
-                  <p style="margin:0 0 20px;">Si quieres volver, puedes reactivar tu suscripción en cualquier momento desde tu panel.</p>
-                  <p style="margin:24px 0 0;font-size:14px;color:#7a766f;">Te echamos de menos. Si necesitas ayuda, responde a este email.</p>
-                `,
-                ctaText: 'Reactivar suscripción',
-                ctaUrl: `${APP_URL}/dashboard`
-              })
-            }).then(() => console.log('Cancellation email sent to', email)).catch(err => console.error('Cancellation email failed:', err.message));
-          }
-        }
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object;
-        console.warn('Payment failed for customer:', invoice.customer);
-
-        // Fire-and-forget payment failed dunning email
-        const custResult = await pool.query('SELECT id, email, name, plan FROM users WHERE stripe_customer_id = $1', [invoice.customer]);
-        if (custResult.rows.length > 0) {
-          const { email, name, plan } = custResult.rows[0];
-          const planNames = { starter: 'Starter', pro: 'Pro', business: 'Business' };
-          const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-          sendMail({
-            from: RESEND_FROM,
-            to: email,
-            subject: 'Hay un problema con tu pago — Shiftia',
-            html: emailTemplate({
-              preheader: 'Actualiza tu método de pago para mantener tu cuenta activa',
-              headline: 'Problema con el pago',
-              body: `
-                <p style="margin:0 0 16px;">Hola ${esc(name)},</p>
-                <p style="margin:0 0 20px;">No hemos podido procesar el pago de tu suscripción a Shiftia ${planNames[plan] || plan}. Esto suele ocurrir por una tarjeta caducada o fondos insuficientes — no te preocupes, es fácil de resolver.</p>
-                <div style="margin:24px 0;padding:24px;background:#faf9f6;border-radius:10px;border:1px solid #ece9e2;">
-                  <p style="color:#7a766f;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 14px;">Pago no procesado</p>
-                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                    <tr><td style="font-size:13px;color:#7a766f;padding:6px 16px 6px 0;width:160px;">Plan</td><td style="font-size:15px;color:#0e0f0f;">${planNames[plan] || plan}</td></tr>
-                    <tr><td style="font-size:13px;color:#7a766f;padding:6px 16px 6px 0;">Fecha del intento</td><td style="font-size:15px;color:#1a1a1a;">${new Date().toLocaleDateString('es-ES')}</td></tr>
-                  </table>
-                </div>
-                <p style="margin:0 0 20px;">Reintentaremos el cobro en 3 días. Para evitar interrupciones en tu servicio, puedes actualizar tu método de pago ahora.</p>
-                <p style="margin:24px 0 0;font-size:14px;color:#7a766f;">Si tienes alguna pregunta, responde a este email y te ayudamos.</p>
-              `,
-              ctaText: 'Actualizar método de pago',
-              ctaUrl: `${APP_URL}/dashboard`
-            })
-          }).then(() => console.log('Payment failed email sent to', email)).catch(err => console.error('Payment failed email failed:', err.message));
-        }
-        break;
-      }
-    }
-  } catch (err) {
-    console.error('Webhook handler error:', event && event.id, event && event.type, err.message);
-    // Devolver 500 → Stripe reintentará. Y borramos la fila de dedup para que el
-    // retry se procese (en caso contrario el siguiente intento pensaría que ya
-    // fue procesado).
-    try {
-      await pool.query('DELETE FROM stripe_processed_events WHERE event_id = $1', [event.id]);
-    } catch (_) { /* swallow */ }
-    return res.status(500).json({ error: 'Internal webhook error' });
-  }
-
-  res.json({ received: true });
-});
 
 // ====== THIRD-PARTY ANALYTICS / CHAT (server-side injection) ======
 // Snippets are injected into the <head> of every HTML response ONLY if the env
@@ -427,7 +163,7 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   // Plan: nonce-based CSP to drop 'unsafe-inline' on script-src once the bundle is split.
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdnjs.cloudflare.com https://client.crisp.chat https://*.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat; font-src 'self' https://fonts.gstatic.com https://client.crisp.chat data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://client.crisp.chat wss://client.relay.crisp.chat https://*.posthog.com; frame-src https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://client.crisp.chat; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://client.crisp.chat https://*.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat; font-src 'self' https://fonts.gstatic.com https://client.crisp.chat data:; img-src 'self' data: https:; connect-src 'self' https://client.crisp.chat wss://client.relay.crisp.chat https://*.posthog.com; frame-src https://client.crisp.chat; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests");
   // Strict Transport Security (HTTPS only) — 2-year max-age + preload
   if (IS_PRODUCTION) {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
@@ -1288,7 +1024,7 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
 app.get('/api/auth/me', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, email, name, company, plan, plan_status, workers_limit, next_billing_date, billing_cycle, stripe_customer_id, stripe_subscription_id, created_at, updated_at FROM users WHERE id = $1',
+      'SELECT id, email, name, company, plan, plan_status, workers_limit, next_billing_date, billing_cycle, created_at, updated_at FROM users WHERE id = $1',
       [req.user.id]
     );
 
@@ -1491,103 +1227,6 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     console.error('Support ticket error:', err.message);
     res.status(500).json({ error: 'Error sending support request' });
   }
-});
-
-// ====== STRIPE CHECKOUT API ======
-
-// Create Checkout Session (requires auth)
-app.post('/api/stripe/checkout', authMiddleware, async (req, res) => {
-  if (!stripe) return res.status(400).json({ error: 'Stripe no configurado. Contacta con soporte.' });
-
-  try {
-    const userResult = await pool.query('SELECT id, email, name, plan, stripe_customer_id FROM users WHERE id = $1', [req.user.id]);
-    if (userResult.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
-    const user = userResult.rows[0];
-
-    const { plan, billing } = req.body;
-
-    // Validate plan and billing values
-    const validPlans = ['starter', 'pro', 'business'];
-    const validBillings = ['monthly', 'annual'];
-    if (!validPlans.includes(plan) || !validBillings.includes(billing)) {
-      return res.status(400).json({ error: 'Plan o período de facturación no válido' });
-    }
-
-    const priceKey = `${plan}_${billing}`;
-    const priceId = STRIPE_PRICES[priceKey];
-
-    if (!priceId) return res.status(400).json({ error: `Precio no configurado para: ${plan} (${billing})` });
-
-    // Reuse or create Stripe customer
-    let customerId = user.stripe_customer_id;
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: user.name,
-        metadata: { user_id: String(user.id) }
-      });
-      customerId = customer.id;
-      await pool.query('UPDATE users SET stripe_customer_id = $1 WHERE id = $2', [customerId, user.id]);
-    }
-
-    // Create Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      payment_method_types: ['card'],
-      mode: 'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
-      metadata: { user_id: String(user.id), plan, billing },
-      subscription_data: {
-        metadata: { user_id: String(user.id), plan, billing }
-      },
-      success_url: `${APP_URL}/dashboard?checkout=success&plan=${plan}`,
-      cancel_url: `${APP_URL}/dashboard?checkout=cancel`,
-      locale: 'es',
-      allow_promotion_codes: true,
-    });
-
-    console.log(`Checkout session created: user ${user.id} → ${plan} (${billing}) — ${session.id}`);
-    res.json({ url: session.url });
-
-  } catch (err) {
-    console.error('Stripe checkout error:', err.message);
-    res.status(500).json({ error: 'Error al crear sesión de pago' });
-  }
-});
-
-// Customer portal (manage subscription, cancel, update card)
-app.post('/api/stripe/portal', authMiddleware, async (req, res) => {
-  if (!stripe) return res.status(400).json({ error: 'Stripe no configurado' });
-
-  try {
-    const userResult = await pool.query('SELECT stripe_customer_id FROM users WHERE id = $1', [req.user.id]);
-    if (userResult.rows.length === 0 || !userResult.rows[0].stripe_customer_id) {
-      return res.status(400).json({ error: 'No tienes una suscripción activa' });
-    }
-
-    const portalSession = await stripe.billingPortal.sessions.create({
-      customer: userResult.rows[0].stripe_customer_id,
-      return_url: `${APP_URL}/dashboard`,
-    });
-
-    res.json({ url: portalSession.url });
-  } catch (err) {
-    console.error('Stripe portal error:', err.message);
-    res.status(500).json({ error: 'Error al abrir el portal de pagos' });
-  }
-});
-
-// Get available prices for frontend
-app.get('/api/stripe/prices', (req, res) => {
-  const configured = Object.values(STRIPE_PRICES).some(v => v);
-  res.json({
-    configured,
-    plans: {
-      starter:  { monthly: 20,  annual: 192,  monthlyEquiv: 16 },
-      pro:      { monthly: 30,  annual: 288,  monthlyEquiv: 24 },
-      business: { monthly: 50,  annual: 480,  monthlyEquiv: 40 }
-    }
-  });
 });
 
 // ====== CONTACT FORM API ======
@@ -2465,7 +2104,7 @@ async function startServer() {
       console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`  Auth: enabled | Compression: enabled`);
       console.log(`  Email: ${RESEND_KEY ? 'Resend' : (GMAIL_PASS ? 'Gmail SMTP' : 'DISABLED')}`);
-      console.log(`  Stripe: ${stripe ? 'configured' : 'NOT configured'}`);
+      console.log(`  Billing: por llamada (Stripe deshabilitado)`);
       console.log(`  APP_URL: ${APP_URL}`);
     });
   } catch (err) {
