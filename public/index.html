@@ -188,11 +188,17 @@
 <title>Shiftia — Planificación inteligente de turnos y planillas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- DNS prefetch for runtime-injected third-party (Crisp chat, PostHog analytics) -->
+<link rel="dns-prefetch" href="https://client.crisp.chat">
+<link rel="dns-prefetch" href="https://eu.i.posthog.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
 <link rel="preload" as="style" href="/design-system.css">
 <link rel="stylesheet" href="/design-system.css">
+<link rel="preload" as="style" href="/v36.css?v=362">
 <link rel="stylesheet" href="/v36.css?v=362">
+<!-- Preload the main bundle so it starts fetching during HTML parse, not after -->
+<link rel="preload" as="script" href="/v36.min.js?v=382" fetchpriority="high">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -386,7 +392,62 @@ a { text-decoration: none; color: inherit; }
 .back-top:hover { background: var(--bg); border-color: #d0d0d0; }
 
 /* ====== HERO ====== */
-.hero { position: relative; overflow: hidden; }
+.hero { position: relative; overflow: hidden; isolation: isolate; }
+/* ---- Hero aurora: subtle brand-colored blobs floating behind the title ---- */
+.hero-aurora {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.hero-aurora .ha-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+  will-change: transform;
+}
+.hero-aurora .ha-blob-1 {
+  top: -10%; left: -8%;
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, rgba(78,205,196,0.55), rgba(78,205,196,0) 70%);
+}
+.hero-aurora .ha-blob-2 {
+  top: 20%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(41,128,185,0.45), rgba(41,128,185,0) 70%);
+}
+.hero-aurora .ha-blob-3 {
+  bottom: -15%; left: 30%;
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(93,173,226,0.40), rgba(93,173,226,0) 70%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-aurora .ha-blob-1 { animation: auroraDrift1 22s ease-in-out infinite; }
+  .hero-aurora .ha-blob-2 { animation: auroraDrift2 28s ease-in-out infinite; }
+  .hero-aurora .ha-blob-3 { animation: auroraDrift3 24s ease-in-out infinite; }
+}
+@keyframes auroraDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(60px, 40px) scale(1.08); }
+}
+@keyframes auroraDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-50px, 60px) scale(1.05); }
+}
+@keyframes auroraDrift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(40px, -50px) scale(1.1); }
+}
+/* Keep hero content above the aurora */
+.hero > .hero-inner, .hero > .hero-particles, .hero > .container { position: relative; z-index: 1; }
+@media (max-width: 768px) {
+  .hero-aurora .ha-blob { filter: blur(70px); opacity: 0.32; }
+  .hero-aurora .ha-blob-1 { width: 320px; height: 320px; }
+  .hero-aurora .ha-blob-2 { width: 360px; height: 360px; }
+  .hero-aurora .ha-blob-3 { width: 280px; height: 280px; }
+}
 .hero::before {
   content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
   background: radial-gradient(ellipse at 20% 50%, rgba(78,205,196,0.08) 0%, transparent 50%),
@@ -1696,6 +1757,52 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
 .reveal.d4 { transition-delay: 0.4s; }
 .reveal.d5 { transition-delay: 0.5s; }
 
+/* ---- Auto-stagger for reveal cards inside common grids
+       (only kicks in when the card has no manual .dN delay class) ---- */
+.features-grid > .reveal:not([class*=" d"]):nth-child(1),
+.pricing-grid > .reveal:not([class*=" d"]):nth-child(1) { transition-delay: 0s; }
+.features-grid > .reveal:not([class*=" d"]):nth-child(2),
+.pricing-grid > .reveal:not([class*=" d"]):nth-child(2) { transition-delay: 0.08s; }
+.features-grid > .reveal:not([class*=" d"]):nth-child(3),
+.pricing-grid > .reveal:not([class*=" d"]):nth-child(3) { transition-delay: 0.16s; }
+.features-grid > .reveal:not([class*=" d"]):nth-child(4) { transition-delay: 0.24s; }
+.features-grid > .reveal:not([class*=" d"]):nth-child(5) { transition-delay: 0.32s; }
+.features-grid > .reveal:not([class*=" d"]):nth-child(6) { transition-delay: 0.40s; }
+
+/* ---- Premium section dividers: thin gradient line + radial halo top ---- */
+section + section { position: relative; }
+section + section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: min(82%, 820px);
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(78,205,196,0.28) 30%,
+    rgba(41,128,185,0.28) 70%,
+    transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.impact, .features, .faq, .pricing, .compare, .show {
+  position: relative;
+  isolation: isolate;
+}
+.impact::after, .features::after, .faq::after, .pricing::after,
+.compare::after, .show::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 320px;
+  background: radial-gradient(ellipse 70% 100% at 50% 0%,
+    rgba(78,205,196,0.045),
+    transparent 75%);
+  pointer-events: none;
+  z-index: -1;
+}
+
 /* ====== RESPONSIVE ====== */
 @media (max-width: 1024px) {
   section { padding: 100px 32px; }
@@ -2871,6 +2978,43 @@ h1 *, h2 *, .section-h2 * {
   transform: translateY(-1px);
   box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 8px 24px rgba(15,15,15,0.10) !important;
 }
+/* ---- Mobile sticky CTA (floating "Pedir demo" on mobile only) ----- */
+.mobile-sticky-cta {
+  display: none;
+  position: fixed;
+  left: 16px; right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  align-items: center; justify-content: center;
+  gap: 10px;
+  padding: 14px 22px;
+  background: var(--ds-bg-inverse, #0e0f0f);
+  color: var(--ds-bg, #faf9f6);
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  box-shadow: 0 10px 32px rgba(15,15,15,0.22);
+  transform: translateY(140%);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.3s ease;
+  pointer-events: none;
+}
+.mobile-sticky-cta svg {
+  width: 18px; height: 18px;
+  stroke: currentColor; fill: none; stroke-width: 2.5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+@media (max-width: 768px) {
+  .mobile-sticky-cta { display: inline-flex; }
+  .mobile-sticky-cta.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 /* ----- Premium shine sweep on primary CTAs ----- */
 .nav-cta, .hero-cta, .form-submit, .price-cta, .btn-primary {
   position: relative;
@@ -4770,6 +4914,11 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 <main id="main">
 <!-- HERO -->
 <section class="hero">
+  <div class="hero-aurora" aria-hidden="true">
+    <span class="ha-blob ha-blob-1"></span>
+    <span class="ha-blob ha-blob-2"></span>
+    <span class="ha-blob ha-blob-3"></span>
+  </div>
   <div class="hero-particles"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <div class="hero-inner">
     <div class="hero-text">
@@ -6075,6 +6224,12 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </div>
 </section>
 </main>
+
+<!-- Mobile sticky CTA — only mobile, shown after first viewport, hidden when #contact is visible -->
+<a href="#contact" class="mobile-sticky-cta" aria-label="Solicitar demo" data-i18n-aria="hero_cta">
+  <span data-i18n="hero_cta">Solicitar demo</span>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+</a>
 
 <!-- FOOTER -->
 <footer class="footer">

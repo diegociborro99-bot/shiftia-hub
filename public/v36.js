@@ -358,6 +358,39 @@
   }
 
   // ===========================================================================
+  // 6. MOBILE STICKY CTA — show floating "Pedir demo" after first viewport,
+  //    hide when the #contact section is in view (avoid double-CTA)
+  // ===========================================================================
+  function initMobileStickyCta() {
+    var el = document.querySelector('.mobile-sticky-cta');
+    if (!el) return;
+    if (window.matchMedia && !window.matchMedia('(max-width: 768px)').matches) return;
+
+    var contact = document.getElementById('contact');
+    var contactVisible = false;
+    if (contact && 'IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        contactVisible = entries[0].isIntersecting;
+        update();
+      }, { threshold: 0.05 });
+      io.observe(contact);
+    }
+
+    function update() {
+      var pastHero = window.scrollY > window.innerHeight * 0.5;
+      el.classList.toggle('is-visible', pastHero && !contactVisible);
+    }
+    var raf = null;
+    function onScroll() {
+      if (raf) return;
+      raf = requestAnimationFrame(function () { raf = null; update(); });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  // ===========================================================================
   // BOOT
   // ===========================================================================
   function boot() {
@@ -366,6 +399,7 @@
     try { initMagnetic(); } catch (e) {}
     try { initVsAnimation(); } catch (e) {}
     try { initNavScrollSpy(); } catch (e) {}
+    try { initMobileStickyCta(); } catch (e) {}
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
