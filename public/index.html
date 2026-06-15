@@ -261,6 +261,9 @@ a { text-decoration: none; color: inherit; }
   --radius-sm: 12px;
   --radius-pill: 999px;
 
+  /* Vertical rhythm between large sections (was undefined → some sections collapsed to padding:0) */
+  --section-pad: clamp(80px, 9vw, 130px);
+
   /* Z-Index Scale */
   --z-bg: 0;
   --z-content: 1;
