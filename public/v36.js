@@ -324,6 +324,40 @@
   }
 
   // ===========================================================================
+  // 5. NAV SCROLL-SPY — highlight the link of the section currently in view
+  // ===========================================================================
+  function initNavScrollSpy() {
+    var links = document.querySelectorAll('.nav-links a[data-section]');
+    if (!links.length || !('IntersectionObserver' in window)) return;
+
+    var bySection = {};
+    var sections = [];
+    links.forEach(function (a) {
+      var id = a.getAttribute('data-section');
+      var sec = document.getElementById(id);
+      if (sec) { bySection[id] = a; sections.push(sec); }
+    });
+    if (!sections.length) return;
+
+    function clearActive() {
+      links.forEach(function (a) { a.classList.remove('is-active'); });
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      var visible = entries
+        .filter(function (e) { return e.isIntersecting; })
+        .sort(function (a, b) { return b.intersectionRatio - a.intersectionRatio; })[0];
+      if (!visible) return;
+      var id = visible.target.id;
+      if (!bySection[id]) return;
+      clearActive();
+      bySection[id].classList.add('is-active');
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: [0.15, 0.4, 0.7] });
+
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  // ===========================================================================
   // BOOT
   // ===========================================================================
   function boot() {
@@ -331,6 +365,7 @@
     try { initCounters(); } catch (e) {}
     try { initMagnetic(); } catch (e) {}
     try { initVsAnimation(); } catch (e) {}
+    try { initNavScrollSpy(); } catch (e) {}
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
