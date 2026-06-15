@@ -2959,7 +2959,9 @@ h1 *, h2 *, .section-h2 * {
 .hero-label::before, .hero-eyebrow::before {
   content: ''; width: 24px; height: 1px; background: currentColor; opacity: 0.55; display: block;
 }
-.hero-label-dot, .hero-eyebrow-dot { display: none !important; }
+/* Eyebrow dots in other sections stay hidden, but the hero "live" dot is back. */
+.hero-eyebrow-dot { display: none !important; }
+.hero-label-dot { display: inline-block !important; }
 
 /* ----- Botones premium (matar gradient teal→blue) ----- */
 .nav-cta, .hero-cta, .form-submit, .price-cta, .btn-primary {
@@ -4922,7 +4924,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   <div class="hero-particles"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-label"><span class="hero-label-dot"></span> <span data-i18n="hero_badge">ShiftiaOS v5.3</span></div>
+      <div class="hero-label"><span class="hero-label-dot" aria-hidden="true"></span> <span data-i18n="hero_badge">Shiftia v8.0.1 · LIVE</span></div>
       <h1><span data-i18n="hero_title_1">Planificación de turnos y planillas,</span> <span class="rotating-words"><span class="rw-word active">simplificada</span><span class="rw-word" aria-hidden="true">automatizada</span><span class="rw-word" aria-hidden="true">inteligente</span><span class="rw-word" aria-hidden="true">sin esfuerzo</span></span></h1>
       <p class="hero-desc" data-i18n="hero_desc">Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.</p>
       <div class="hero-actions">
@@ -6771,7 +6773,7 @@ const translations = {
   es: {
     nav_features: 'Funciones', nav_usecases: 'Uso', nav_pricing: 'Planes',
     nav_contact: 'Contacto', nav_login: 'Iniciar sesión', nav_cta: 'Pedir demo',
-    hero_badge: 'ShiftiaOS v5.3',
+    hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Planificación de turnos y planillas,',
     hero_title_2: 'simplificada',
     hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.',
@@ -6878,7 +6880,7 @@ const translations = {
   en: {
     nav_features: 'Features', nav_usecases: 'Use', nav_pricing: 'Pricing',
     nav_contact: 'Contact', nav_login: 'Sign in', nav_cta: 'Get a demo',
-    hero_badge: 'ShiftiaOS v5.3',
+    hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Shift scheduling and rosters,',
     hero_title_2: 'simplified',
     hero_desc: 'Shiftia automates shift planning, manages absences with AI, and ensures team equity. For hospitals, clinics, care homes, factories, and any business with rosters. Less Excel, more control.',
@@ -6985,7 +6987,7 @@ const translations = {
   de: {
     nav_features: 'Funktionen', nav_usecases: 'Einsatz', nav_pricing: 'Preise',
     nav_contact: 'Kontakt', nav_login: 'Anmelden', nav_cta: 'Demo anfragen',
-    hero_badge: 'ShiftiaOS v5.3',
+    hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Schichtplanung und Dienstplane,',
     hero_title_2: 'vereinfacht',
     hero_desc: 'Shiftia automatisiert Schichten, verwaltet Abwesenheiten mit KI und garantiert die Fairness Ihres Teams. Fur Krankenhäuser, Kliniken, Pflegeheime, Fabriken und jedes Unternehmen mit Dienstplanen.',
@@ -7092,7 +7094,7 @@ const translations = {
   fr: {
     nav_features: 'Fonctionnalites', nav_usecases: 'Usage', nav_pricing: 'Tarifs',
     nav_contact: 'Contact', nav_login: 'Connexion', nav_cta: 'Demander une demo',
-    hero_badge: 'ShiftiaOS v5.3',
+    hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Planification des equipes et des plannings,',
     hero_title_2: 'simplifiee',
     hero_desc: 'Shiftia automatise les plannings, gere les absences avec l\'IA et garantit l\'equite de votre equipe. Pour hopitaux, cliniques, EHPAD, usines et toute entreprise avec des plannings.',
