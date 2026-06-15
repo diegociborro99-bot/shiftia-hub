@@ -4,7 +4,11 @@
   "description": "Shiftia HUB — Landing + back-office (Express + Stripe + Postgres)",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

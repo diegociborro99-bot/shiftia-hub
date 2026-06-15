@@ -3,12 +3,12 @@
  * Estrategia: stale-while-revalidate REAL para assets estáticos + offline fallback.
  * Excluye /api/*, /dashboard y métodos no-GET (siempre van a red).
  * ============================================================================ */
-const CACHE_NAME = 'shiftia-v3.8';
+const CACHE_NAME = 'shiftia-v3.9';
 const PRECACHE = [
   '/',
   '/design-system.css',
   '/v36.css?v=362',
-  '/v36.js?v=362',
+  '/v36.min.js?v=381',
   '/favicon.svg',
   '/apple-touch-icon.svg',
   '/og-image.svg',
