@@ -11,14 +11,14 @@ fábricas, seguridad privada y hostelería. Caso de uso típico: empresas de 10 
 continuada (mes a mes, todo el año), no coberturas puntuales.
 
 Capacidades principales:
-- Cuadrantes mensuales y anuales generados y optimizados con IA (planificación continuada).
-- Gestión de ausencias y bajas, con sustituciones sugeridas por IA en menos de 1 segundo — siempre entre la propia plantilla del cliente.
-- Gestión de vacaciones con balance por persona y verificación de cobertura.
+- Auto-generación de cuadrantes mensuales y anuales con IA (ShiftiaCore): la IA crea el cuadrante desde cero respetando convenio, equidad nocturna y restricciones individuales.
+- Motor IA de coberturas: cuando alguien falta propone 3 candidatos en menos de 1 segundo analizando 7 criterios — siempre entre la propia plantilla del cliente.
+- Gestión de vacaciones y ausencias con balance por persona y verificación de cobertura por IA.
 - Rotaciones de mañana/tarde/noche equilibradas; equidad nocturna medida automáticamente.
 - Reglas complejas de convenio colectivo configurables: descansos mínimos entre turnos, máximo de noches, jornadas reducidas, conciliación, restricciones individuales.
 - Detección de conflictos antes de publicar, dashboard de KPIs, histórico y auditoría exportable (CSV/PDF).
-- Importación del cuadrante existente desde PDF con IA.
-- App web responsive (móvil/tablet/escritorio), RGPD, opción on-premise.
+- Lector PDF con IA: importa tu cuadrante existente y rellena la app automáticamente.
+- App web responsive (móvil/tablet/escritorio), RGPD, opción on-premise (Enterprise).
 
 ## Qué NO es Shiftia
 
@@ -29,9 +29,18 @@ Capacidades principales:
 
 ## Precios
 
-Desde 20 €/mes (Starter, hasta 15 trabajadores), 30 €/mes (Pro, hasta 40),
-50 €/mes (Business, ilimitado, on-premise opcional). Sin permanencia.
-Garantía de devolución de 30 días. Implantación en 5-7 días laborables.
+Tarifa plana sin coste por trabajador. Cuatro planes:
+
+- Esencial — 29 €/mes (23 €/mes anual), hasta 15 trabajadores. Planilla visual, equipo y roles, convenio inteligente, multidispositivo, vacaciones y ausencias, detección de conflictos, dashboard básico, nube + RGPD.
+- Pro — 69 €/mes (55 €/mes anual), hasta 40 trabajadores. Todo Esencial + auto-generación de cuadrantes con IA (ShiftiaCore), motor IA de coberturas, equidad nocturna avanzada, lector PDF con IA, vacaciones IA, radar de riesgo, historial y auditoría, personalización gráfica.
+- Business — 129 €/mes (103 €/mes anual), multi-centro hasta 100 trabajadores. Todo Pro + multi-servicio, mapa de cobertura por sede, informes y briefing diario IA, integración con nómina, roles avanzados, API.
+- Enterprise — precio a medida. On-premise o nube privada, SLA garantizado, integraciones a medida (HIS, ERP, fichaje), seguridad reforzada.
+
+Sin permanencia. Garantía de devolución de 30 días. Implantación en 5-7 días laborables.
+
+## Contratación
+
+Toda contratación se cierra por llamada previa: se elige el plan, se acuerda forma de pago (transferencia o domiciliación SEPA) y se inicia la implantación. No hay checkout online.
 
 ## Enlaces
 

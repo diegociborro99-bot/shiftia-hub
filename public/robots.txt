@@ -1,5 +1,56 @@
+# Shiftia — robots
+# Permitimos explícitamente a los bots de IA modernos (ChatGPT, Claude,
+# Perplexity, Google-Extended) porque queremos que nos citen y nos
+# referencien con datos correctos (precios, planes, llms.txt, JSON-LD).
+# Si en algún momento decides bloquearlos, cambia Allow por Disallow.
+
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Bots de modelos LLM/IA (entrenamiento + búsqueda)
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
 
 Sitemap: https://www.shiftia.es/sitemap.xml
