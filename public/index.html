@@ -2052,6 +2052,9 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
     justify-self: center;
     gap: 6px;
   }
+  /* The mobile-only login link must stay hidden on desktop — the right-side
+     ghost button already does the job. */
+  .nav-links a.nav-mobile-login { display: none !important; }
   .nav-links a {
     display: inline-flex;
     align-items: center;
