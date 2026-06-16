@@ -5253,7 +5253,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           </svg>
         </span>
         <h3 data-i18n="bespoke_card2_title">Motor Shiftia v8 como base</h3>
-        <p data-i18n="bespoke_card2_desc">IA de cuadrantes, equidad, normativa laboral, exportaciones y auditoría: el núcleo viene probado en producción. Tú no estrenas software, estrenas <em>tu</em> versión de él.</p>
+        <p data-i18n-html="bespoke_card2_desc">IA de cuadrantes, equidad, normativa laboral, exportaciones y auditoría: el núcleo viene probado en producción. Tú no estrenas software, estrenas <em>tu</em> versión de él.</p>
       </div>
 
       <div class="bespoke-card reveal">
@@ -5269,7 +5269,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       </div>
     </div>
 
-    <p class="bespoke-footnote reveal" data-i18n="bespoke_footnote">
+    <p class="bespoke-footnote reveal" data-i18n-html="bespoke_footnote">
       <strong>Una app por cliente.</strong> Un solo motor detrás. Cero compromisos de “configuración estándar”.
     </p>
   </div>
@@ -7029,6 +7029,12 @@ const translations = {
     imp4_num: '24/7', imp4_label: 'Acceso total', imp4_sub: 'Desde cualquier dispositivo',
     show_eyebrow: 'Interfaz', show_title: 'Mira Shiftia en acción', show_desc: 'Una herramienta visual, rápida e intuitiva. Esto es lo que ven tus supervisores cada día.',
     tab_planilla: 'Planilla', tab_dashboard: 'Dashboard', tab_ai: 'Cobertura IA',
+    bespoke_pill: 'Sobre Shiftia v8', bespoke_eyebrow: 'Fabricado a medida', bespoke_title: 'Tu app, no una plantilla.',
+    bespoke_desc: 'No vendemos un SaaS genérico. Construimos una app personalizada al 100% para cada cliente sobre el motor Shiftia v8: el mismo núcleo robusto que ya planifica miles de turnos, adaptado a tu negocio para que encaje como un guante desde el primer día.',
+    bespoke_card1_title: 'Tu negocio define el producto', bespoke_card1_desc: 'Analizamos cómo trabajas tú —no cómo trabajan los demás— y modelamos la app a tu medida: tus roles, tu vocabulario, tus reglas, tus reportes.',
+    bespoke_card2_title: 'Motor Shiftia v8 como base', bespoke_card2_desc: 'IA de cuadrantes, equidad, normativa laboral, exportaciones y auditoría: el núcleo viene probado en producción. Tú no estrenas software, estrenas <em>tu</em> versión de él.',
+    bespoke_card3_title: 'Encaja como un guante', bespoke_card3_desc: 'Nada de configurar a la fuerza ni renombrar campos: la app habla tu idioma operativo y se ajusta a tus flujos reales, no al revés.',
+    bespoke_footnote: '<strong>Una app por cliente.</strong> Un solo motor detrás. Cero compromisos de “configuración estándar”.',
   },
   en: {
     nav_features: 'Features', nav_usecases: 'Use', nav_pricing: 'Pricing',
@@ -7135,6 +7141,26 @@ const translations = {
     imp4_num: '24/7', imp4_label: 'Full access', imp4_sub: 'From any device',
     show_eyebrow: 'Interface', show_title: 'See Shiftia in action', show_desc: 'A visual, fast, and intuitive tool. This is what your supervisors see every day.',
     tab_planilla: 'Roster', tab_dashboard: 'Dashboard', tab_ai: 'AI Coverage',
+    hero_cta_signup: 'View plans', hero_cta_signup_label: 'View plans',
+    bespoke_pill: 'About Shiftia v8', bespoke_eyebrow: 'Built to measure', bespoke_title: 'Your app, not a template.',
+    bespoke_desc: 'We don\'t sell a generic SaaS. We build a 100% custom app for each client on top of the Shiftia v8 engine: the same robust core that already plans thousands of shifts, tailored to your business so it fits like a glove from day one.',
+    bespoke_card1_title: 'Your business defines the product', bespoke_card1_desc: 'We analyze how you work —not how others work— and shape the app to fit you: your roles, your vocabulary, your rules, your reports.',
+    bespoke_card2_title: 'Shiftia v8 engine as the base', bespoke_card2_desc: 'Scheduling AI, equity, labor compliance, exports and auditing: the core is proven in production. You\'re not launching new software, you\'re launching <em>your</em> version of it.',
+    bespoke_card3_title: 'Fits like a glove', bespoke_card3_desc: 'No forced configuration or renaming fields: the app speaks your operational language and adapts to your real workflows, not the other way around.',
+    bespoke_footnote: '<strong>One app per client.</strong> A single engine behind it. Zero “standard configuration” compromises.',
+    p1_billing: 'or €23/mo billed annually', p1_head: 'The core, always',
+    p1_f5: 'Holidays and absences', p1_f6: 'Conflict detection', p1_f7: 'Basic dashboard', p1_f8: 'Cloud + GDPR · email support',
+    price_btn_starter: 'Get started',
+    p2_badge: '★ Most chosen', p2_billing: 'or €55/mo billed annually', p2_head: 'Everything in Essential, plus',
+    p2_fcore: '★ AI schedule auto-generation — ShiftiaCore', p2_f6: 'History and audit (CSV/PDF export)', p2_f7: 'Visual customization (your brand and terms)', p2_f8: 'Guided onboarding in 5-7 business days · priority support',
+    price_btn_pro: 'Request a demo',
+    p3_billing: 'or €103/mo billed annually', p3_head: 'Everything in Pro, plus',
+    p3_f3: 'AI reports + AI daily briefing', p3_f6: 'API access', p3_f7: 'Dedicated onboarding + account manager', p3_f8: 'Priority support with SLA',
+    price_btn_business: 'Subscribe',
+    p4_n: 'Enterprise', p4_p: 'Custom pricing', p4_d: 'Hospitals, groups and the public sector. More than 100 workers, multiple sites or your own deployment requirements.',
+    p4_f1: 'Everything in Business included', p4_f2: 'On-premise or private cloud', p4_f3: 'Guaranteed SLA · optional 24/7 support', p4_f4: 'Custom integrations (HIS, ERP, time clock)', p4_f5: 'Enhanced security and auditing', p4_f6: 'On-site training + tailored contract',
+    price_btn_enterprise: 'Talk to sales',
+    chip_nopermanencia: 'No lock-in', chip_garantia: '30-day guarantee', chip_sincoste: 'No per-worker cost', chip_implantacion: 'Setup in 5-7 business days',
   },
   de: {
     nav_features: 'Funktionen', nav_usecases: 'Einsatz', nav_pricing: 'Preise',
@@ -7241,6 +7267,26 @@ const translations = {
     imp4_num: '24/7', imp4_label: 'Voller Zugang', imp4_sub: 'Von jedem Gerat',
     show_eyebrow: 'Oberflache', show_title: 'Shiftia in Aktion erleben', show_desc: 'Ein visuelles, schnelles und intuitives Tool. Das sehen Ihre Teamleiter jeden Tag.',
     tab_planilla: 'Dienstplan', tab_dashboard: 'Dashboard', tab_ai: 'KI-Vertretung',
+    hero_cta_signup: 'Pläne ansehen', hero_cta_signup_label: 'Pläne ansehen',
+    bespoke_pill: 'Über Shiftia v8', bespoke_eyebrow: 'Maßgefertigt', bespoke_title: 'Ihre App, keine Vorlage.',
+    bespoke_desc: 'Wir verkaufen kein generisches SaaS. Wir bauen für jeden Kunden eine zu 100% individuelle App auf Basis der Shiftia-v8-Engine: derselbe robuste Kern, der bereits Tausende Schichten plant, auf Ihr Unternehmen zugeschnitten, damit er vom ersten Tag an wie angegossen passt.',
+    bespoke_card1_title: 'Ihr Geschäft bestimmt das Produkt', bespoke_card1_desc: 'Wir analysieren, wie Sie arbeiten —nicht wie andere arbeiten— und formen die App nach Ihren Anforderungen: Ihre Rollen, Ihr Vokabular, Ihre Regeln, Ihre Berichte.',
+    bespoke_card2_title: 'Shiftia-v8-Engine als Basis', bespoke_card2_desc: 'Dienstplan-KI, Gerechtigkeit, Arbeitsrecht, Exporte und Auditierung: der Kern ist in der Produktion bewährt. Sie führen keine neue Software ein, sondern <em>Ihre</em> Version davon.',
+    bespoke_card3_title: 'Passt wie angegossen', bespoke_card3_desc: 'Keine erzwungene Konfiguration, kein Umbenennen von Feldern: die App spricht Ihre operative Sprache und passt sich Ihren realen Abläufen an, nicht umgekehrt.',
+    bespoke_footnote: '<strong>Eine App pro Kunde.</strong> Eine einzige Engine dahinter. Null Kompromisse bei der „Standardkonfiguration“.',
+    p1_billing: 'oder 23 €/Monat, jährlich abgerechnet', p1_head: 'Der Kern, immer',
+    p1_f5: 'Urlaub und Abwesenheiten', p1_f6: 'Konflikterkennung', p1_f7: 'Basis-Dashboard', p1_f8: 'Cloud + DSGVO · E-Mail-Support',
+    price_btn_starter: 'Loslegen',
+    p2_badge: '★ Am häufigsten gewählt', p2_billing: 'oder 55 €/Monat, jährlich abgerechnet', p2_head: 'Alles aus Essential, plus',
+    p2_fcore: '★ KI-Dienstplan-Autogenerierung — ShiftiaCore', p2_f6: 'Verlauf und Audit (CSV/PDF-Export)', p2_f7: 'Visuelle Anpassung (Ihre Marke und Begriffe)', p2_f8: 'Geführte Einführung in 5-7 Werktagen · Priority-Support',
+    price_btn_pro: 'Demo anfragen',
+    p3_billing: 'oder 103 €/Monat, jährlich abgerechnet', p3_head: 'Alles aus Pro, plus',
+    p3_f3: 'KI-Berichte + tägliches KI-Briefing', p3_f6: 'API-Zugang', p3_f7: 'Dediziertes Onboarding + Account-Manager', p3_f8: 'Priority-Support mit SLA',
+    price_btn_business: 'Abonnieren',
+    p4_n: 'Enterprise', p4_p: 'Preis auf Anfrage', p4_d: 'Krankenhäuser, Gruppen und öffentlicher Sektor. Mehr als 100 Mitarbeiter, mehrere Standorte oder eigene Bereitstellungsanforderungen.',
+    p4_f1: 'Alles aus Business inklusive', p4_f2: 'On-Premise oder Private Cloud', p4_f3: 'Garantiertes SLA · optionaler 24/7-Support', p4_f4: 'Individuelle Integrationen (HIS, ERP, Zeiterfassung)', p4_f5: 'Erhöhte Sicherheit und Auditierung', p4_f6: 'Schulung vor Ort + angepasster Vertrag',
+    price_btn_enterprise: 'Mit dem Vertrieb sprechen',
+    chip_nopermanencia: 'Keine Mindestlaufzeit', chip_garantia: '30 Tage Garantie', chip_sincoste: 'Keine Kosten pro Mitarbeiter', chip_implantacion: 'Einführung in 5-7 Werktagen',
   },
   fr: {
     nav_features: 'Fonctionnalites', nav_usecases: 'Usage', nav_pricing: 'Tarifs',
@@ -7347,6 +7393,26 @@ const translations = {
     imp4_num: '24/7', imp4_label: 'Acces total', imp4_sub: 'Depuis n\'importe quel appareil',
     show_eyebrow: 'Interface', show_title: 'Decouvrez Shiftia en action', show_desc: 'Un outil visuel, rapide et intuitif. C\'est ce que vos cadres voient chaque jour.',
     tab_planilla: 'Planning', tab_dashboard: 'Tableau de bord', tab_ai: 'Couverture IA',
+    hero_cta_signup: 'Voir les forfaits', hero_cta_signup_label: 'Voir les forfaits',
+    bespoke_pill: 'À propos de Shiftia v8', bespoke_eyebrow: 'Fait sur mesure', bespoke_title: 'Votre app, pas un modèle.',
+    bespoke_desc: 'Nous ne vendons pas un SaaS générique. Nous construisons une app 100% personnalisée pour chaque client sur le moteur Shiftia v8 : le même noyau robuste qui planifie déjà des milliers de postes, adapté à votre activité pour qu\'il s\'ajuste parfaitement dès le premier jour.',
+    bespoke_card1_title: 'Votre activité définit le produit', bespoke_card1_desc: 'Nous analysons votre façon de travailler —pas celle des autres— et façonnons l\'app à votre mesure : vos rôles, votre vocabulaire, vos règles, vos rapports.',
+    bespoke_card2_title: 'Le moteur Shiftia v8 comme base', bespoke_card2_desc: 'IA de planning, équité, conformité au droit du travail, exports et audit : le noyau est éprouvé en production. Vous ne lancez pas un nouveau logiciel, vous lancez <em>votre</em> version.',
+    bespoke_card3_title: 'S\'ajuste parfaitement', bespoke_card3_desc: 'Pas de configuration forcée ni de champs à renommer : l\'app parle votre langage opérationnel et s\'adapte à vos flux réels, et non l\'inverse.',
+    bespoke_footnote: '<strong>Une app par client.</strong> Un seul moteur derrière. Zéro compromis de « configuration standard ».',
+    p1_billing: 'ou 23 €/mois facturé annuellement', p1_head: 'Le noyau, toujours',
+    p1_f5: 'Congés et absences', p1_f6: 'Détection de conflits', p1_f7: 'Tableau de bord basique', p1_f8: 'Cloud + RGPD · support par e-mail',
+    price_btn_starter: 'Commencer',
+    p2_badge: '★ Le plus choisi', p2_billing: 'ou 55 €/mois facturé annuellement', p2_head: 'Tout Essentiel, et en plus',
+    p2_fcore: '★ Auto-génération de plannings par IA — ShiftiaCore', p2_f6: 'Historique et audit (export CSV/PDF)', p2_f7: 'Personnalisation visuelle (votre marque et vos termes)', p2_f8: 'Mise en place guidée en 5-7 jours ouvrés · support prioritaire',
+    price_btn_pro: 'Demander une démo',
+    p3_billing: 'ou 103 €/mois facturé annuellement', p3_head: 'Tout Pro, et en plus',
+    p3_f3: 'Rapports IA + briefing quotidien IA', p3_f6: 'Accès API', p3_f7: 'Onboarding dédié + gestionnaire de compte', p3_f8: 'Support prioritaire avec SLA',
+    price_btn_business: 'Souscrire',
+    p4_n: 'Enterprise', p4_p: 'Prix sur mesure', p4_d: 'Hôpitaux, groupes et secteur public. Plus de 100 travailleurs, plusieurs centres ou vos propres exigences de déploiement.',
+    p4_f1: 'Tout Business inclus', p4_f2: 'Sur site ou cloud privé', p4_f3: 'SLA garanti · support 24/7 en option', p4_f4: 'Intégrations sur mesure (HIS, ERP, pointage)', p4_f5: 'Sécurité renforcée et audit', p4_f6: 'Formation sur site + contrat adapté',
+    price_btn_enterprise: 'Parler aux ventes',
+    chip_nopermanencia: 'Sans engagement', chip_garantia: 'Garantie 30 jours', chip_sincoste: 'Sans coût par travailleur', chip_implantacion: 'Mise en place en 5-7 jours ouvrés',
   }
 };
 
@@ -7354,24 +7420,48 @@ const flagMap = { es: '🇪🇸', en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷'
 const labelMap = { es: 'ES', en: 'EN', de: 'DE', fr: 'FR' };
 
 function setLang(lang) {
+  if (!translations[lang]) lang = 'es';
   currentLang = lang;
   document.documentElement.lang = lang;
   const t = translations[lang];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (t[key]) el.textContent = t[key];
+    if (t[key] != null) el.textContent = t[key];
+  });
+  // Variante para textos con marcado interno (<b>, <em>, <strong>...)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (t[key] != null) el.innerHTML = t[key];
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const key = el.getAttribute('data-i18n-ph');
-    if (t[key]) el.placeholder = t[key];
+    if (t[key] != null) el.placeholder = t[key];
   });
-  document.getElementById('currentFlag').textContent = flagMap[lang];
-  document.getElementById('currentLang').textContent = labelMap[lang];
-  document.getElementById('langSelector').classList.remove('open');
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const key = el.getAttribute('data-i18n-aria');
+    if (t[key] != null) el.setAttribute('aria-label', t[key]);
+  });
+  const cf = document.getElementById('currentFlag'); if (cf) cf.textContent = flagMap[lang];
+  const cl = document.getElementById('currentLang'); if (cl) cl.textContent = labelMap[lang];
+  const ls = document.getElementById('langSelector'); if (ls) ls.classList.remove('open');
   document.querySelectorAll('.lang-option').forEach(opt => {
     opt.classList.toggle('active', opt.textContent.trim().startsWith(flagMap[lang]));
   });
+  try { localStorage.setItem('shiftia-lang', lang); } catch(e){}
 }
+
+// Aplicar idioma guardado (o del navegador) al cargar. El español es el
+// contenido por defecto del HTML, así que solo conmutamos si es otro idioma
+// para no sobrescribir el copy original.
+(function initLang(){
+  let lang = null;
+  try { lang = localStorage.getItem('shiftia-lang'); } catch(e){}
+  if (!lang) {
+    const nav = (navigator.language || '').slice(0,2).toLowerCase();
+    if (translations[nav] && nav !== 'es') lang = nav;
+  }
+  if (lang && translations[lang] && lang !== 'es') setLang(lang);
+})();
 
 // Close lang dropdown on outside click
 document.addEventListener('click', e => {
@@ -8292,31 +8382,34 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   }
 
   // ─── 10) Module configurator inside form ──────────────
+  function updateFmCounter(){
+    const grid = document.getElementById('form-modules');
+    if (!grid) return;
+    const counter = document.getElementById('fm-count-num');
+    const hiddenMods = document.getElementById('cf-modules');
+    const active = grid.querySelectorAll('.fm-chip.required, .fm-chip.active');
+    const names = [];
+    active.forEach(c => {
+      const n = c.getAttribute('data-mod');
+      if (n) names.push(n);
+    });
+    if (counter) counter.textContent = String(names.length);
+    if (hiddenMods) hiddenMods.value = names.join(',');
+  }
   function initFormModules(){
-    try {
-      const grid = document.getElementById('form-modules');
-      if (!grid) return;
-      const counter = document.getElementById('fm-count-num');
-      const hiddenMods = document.getElementById('cf-modules');
-      function updateCounter(){
-        const active = grid.querySelectorAll('.fm-chip.required, .fm-chip.active');
-        const names = [];
-        active.forEach(c => {
-          const n = c.getAttribute('data-mod');
-          if (n) names.push(n);
-        });
-        if (counter) counter.textContent = String(names.length);
-        if (hiddenMods) hiddenMods.value = names.join(',');
-      }
-      grid.addEventListener('click', (e) => {
-        const chip = e.target && e.target.closest && e.target.closest('.fm-chip');
-        if (!chip) return;
-        if (chip.classList.contains('required')) return;
-        chip.classList.toggle('active');
-        updateCounter();
-      });
-      updateCounter();
-    } catch(e){}
+    try { updateFmCounter(); } catch(e){}
+  }
+  // Delegación de clics a nivel de documento: se registra de inmediato y
+  // funciona aunque boot() falle antes o el contenedor se renderice tarde.
+  if (!window.__fmChipBound) {
+    window.__fmChipBound = true;
+    document.addEventListener('click', (e) => {
+      const chip = e.target && e.target.closest && e.target.closest('.fm-chip');
+      if (!chip) return;
+      if (chip.classList.contains('required')) return;
+      chip.classList.toggle('active');
+      try { updateFmCounter(); } catch(err){}
+    });
   }
 
   function boot(){
