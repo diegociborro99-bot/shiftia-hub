@@ -461,6 +461,7 @@ a { text-decoration: none; color: inherit; }
 @media (max-width: 768px) {
   .hamburger { display: block; }
   .nav-links {
+    display: flex;
     position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; height: 100dvh;
     background: var(--bg); flex-direction: column;
     padding: 80px 32px 32px; gap: 8px;
@@ -2089,8 +2090,8 @@ section + section::before {
 }
 @media (max-width: 768px) {
   .nav { padding: 14px 20px; }
-  .nav-links { display: none; }
-  .nav-mobile { display: block; }
+  /* .nav-links NO se oculta en móvil: es el drawer lateral (ver bloque de arriba,
+     position:fixed + .open). El menú legacy .nav-mobile sigue oculto. */
   .nav-right .nav-btn-ghost { display: none; }
   section { padding: 80px 20px; }
   .hero { padding: 120px 20px 80px; }
