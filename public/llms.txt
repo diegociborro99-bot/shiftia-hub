@@ -49,3 +49,13 @@ Toda contratación se cierra por llamada previa: se elige el plan, se acuerda fo
 - Documentación: https://www.shiftia.es/docs
 - Recursos sobre planificación de turnos: https://www.shiftia.es/recursos
 - Estado del servicio: https://www.shiftia.es/status
+
+## Preguntas frecuentes
+
+- ¿Cuánto tiempo tarda la implantación? La puesta en marcha completa lleva 5-7 días laborables; puedes empezar a planificar en minutos tras configurar tu equipo.
+- ¿Tiene coste por trabajador? No. La tarifa es plana por plan, sin coste por trabajador y sin permanencia.
+- ¿Mis datos están seguros? Sí. Datos alojados en la UE, cumplimiento RGPD, cifrado y auditoría. Si cancelas, sigues teniendo acceso para exportar tus datos.
+- ¿Cómo se contrata? Por llamada previa: se elige el plan, se acuerda la forma de pago (transferencia o domiciliación SEPA) y se inicia la implantación. No hay checkout online.
+- ¿Es una ETT o aporta personal? No. Shiftia solo planifica la plantilla interna del propio cliente; no aporta trabajadores ni es un marketplace de personal.
+- ¿Para qué sectores sirve? Cualquier organización con trabajo a turnos: hospitales, clínicas, residencias, fábricas, seguridad privada y hostelería.
+- ¿Hay garantía? Sí, devolución de 30 días.
