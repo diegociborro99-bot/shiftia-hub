@@ -1437,12 +1437,21 @@ section { padding: 140px 48px; }
   color: #15847d;
 }
 .form-modules .fm-chip.active {
-  background: linear-gradient(135deg, rgba(78,205,196,0.16), rgba(41,128,185,0.08));
-  border-color: #4ecdc4;
-  color: #15847d;
-  box-shadow: 0 0 0 2px rgba(78,205,196,0.16);
+  background: linear-gradient(135deg, rgba(78,205,196,0.24), rgba(41,128,185,0.13));
+  border-color: #2bb3a8;
+  color: #0f6e66;
+  box-shadow: 0 0 0 2px rgba(78,205,196,0.40), 0 6px 16px rgba(78,205,196,0.20);
 }
-.form-modules .fm-chip.active svg { transform: scale(1.08); }
+.form-modules .fm-chip.active svg { transform: scale(1.08); color: #15847d; }
+.form-modules .fm-chip.active::after {
+  content: '✓';
+  position: absolute; top: 5px; right: 6px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #2bb3a8; color: #fff;
+  font-size: 9px; font-weight: 800; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 3px rgba(15,110,102,0.4);
+}
 .form-modules .fm-chip.required {
   background: rgba(78,205,196,0.07);
   border-color: rgba(78,205,196,0.45);
@@ -6149,6 +6158,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
               <div class="fm-title" data-i18n-html="fm_title">Configura tu Shiftia <span class="fm-badge">opcional</span></div>
               <div class="fm-sub" data-i18n="fm_sub">Los CORE vienen incluidos siempre (plan Esencial). Marca el resto para preparar la demo con tu configuración.</div>
             </div>
+            <div class="fm-count"><span id="fm-count-num">8</span> <span data-i18n="fm_count_label">seleccionadas</span></div>
           </div>
 
           <div class="fm-group-label" data-i18n="fm_g_core">Incluido siempre — plan Esencial</div>
@@ -6959,6 +6969,7 @@ const translations = {
     fm_title: 'Configura tu Shiftia <span class="fm-badge">opcional</span>',
     fm_sub: 'Los CORE vienen incluidos siempre (plan Esencial). Marca el resto para preparar la demo con tu configuración.',
     fm_g_core: 'Incluido siempre — plan Esencial',
+    fm_count_label: 'seleccionadas',
     fm_g_pro: 'Activables del plan Pro',
     fm_g_business: 'Activables del plan Business',
     fm_g_optional: 'Módulos opcionales sobre cualquier plan',
@@ -7220,6 +7231,7 @@ const translations = {
     fm_title: 'Set up your Shiftia <span class="fm-badge">optional</span>',
     fm_sub: 'The CORE modules are always included (Essential plan). Check the rest to prepare the demo with your setup.',
     fm_g_core: 'Always included — Essential plan',
+    fm_count_label: 'selected',
     fm_g_pro: 'Pro plan add-ons',
     fm_g_business: 'Business plan add-ons',
     fm_g_optional: 'Optional modules for any plan',
@@ -7453,6 +7465,7 @@ const translations = {
     fm_title: 'Richten Sie Ihr Shiftia ein <span class="fm-badge">optional</span>',
     fm_sub: 'Die CORE-Module sind immer enthalten (Essential-Plan). Wählen Sie den Rest, um die Demo mit Ihrer Konfiguration vorzubereiten.',
     fm_g_core: 'Immer enthalten — Essential-Plan',
+    fm_count_label: 'ausgewählt',
     fm_g_pro: 'Pro-Plan-Erweiterungen',
     fm_g_business: 'Business-Plan-Erweiterungen',
     fm_g_optional: 'Optionale Module für jeden Plan',
@@ -7686,6 +7699,7 @@ const translations = {
     fm_title: 'Configurez votre Shiftia <span class="fm-badge">optionnel</span>',
     fm_sub: 'Les modules CORE sont toujours inclus (forfait Essentiel). Cochez le reste pour préparer la démo avec votre configuration.',
     fm_g_core: 'Toujours inclus — forfait Essentiel',
+    fm_count_label: 'sélectionnées',
     fm_g_pro: 'Options du forfait Pro',
     fm_g_business: 'Options du forfait Business',
     fm_g_optional: 'Modules optionnels sur tout forfait',
