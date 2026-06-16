@@ -1740,6 +1740,14 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
             <p style="margin:12px 0 0;font-size:12px;color:#9a958c;">Hora de Madrid (Europe/Madrid)</p>
           </div>
           <p style="margin:0 0 16px;">Te llamaremos al teléfono <span style="color:#0e0f0f;">${ESC_HTML(phone)}</span>. Adjuntamos un evento de calendario para que lo añadas a Google, Outlook o Apple en un clic.</p>
+          ${modulesList.length ? `
+          <div style="margin:24px 0;padding:20px;background:linear-gradient(135deg,#f0fdfa,#e0f2fe);border-radius:10px;border:1px solid #99f6e4;">
+            <p style="color:#0f766e;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;font-weight:700;">Funciones que te interesan · ${modulesList.length}</p>
+            <div style="display:block;line-height:1.9;">
+              ${modulesList.map(m => `<span style="display:inline-block;padding:5px 12px;margin:3px 4px 3px 0;background:#fff;border:1px solid #5eead4;border-radius:999px;font-size:13px;color:#0f766e;font-weight:600;">${ESC_HTML(m)}</span>`).join('')}
+            </div>
+            <p style="color:#0f766e;font-size:11px;margin:12px 0 0;opacity:0.7;">Prepararemos la demo centrándonos en estas funciones.</p>
+          </div>` : ''}
           <p style="margin:20px 0 0;font-size:14px;color:#7a766f;">¿Necesitas cambiarla? <a href="${cancelUrl}" style="color:#0f7a6d;">Cancelar o reagendar</a>.</p>
           <p style="color:#33312d;margin:24px 0 0;">Un saludo,<br><span style="color:#0e0f0f;">El equipo de Shiftia</span></p>
         `
