@@ -357,12 +357,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .reveal { opacity: 1 !important; transform: none !important; }
   .cursor-glow { display: none !important; }
 }
-/* Justified text globally */
+/* Texto alineado a la izquierda: evita los huecos/ríos del justify en columnas estrechas */
 p, .hero-desc, .section-p, .faq-a-inner, .proof-text, .bento-card p,
 .feat-card p, .step p, .step-flow p, .cperk p, .price-desc, .form-note,
 .contact-left p, .footer-brand p, .chat-msg-text {
-  text-align: justify;
-  -webkit-hyphens: auto; hyphens: auto;
+  text-align: left;
+  -webkit-hyphens: none; hyphens: none;
   text-wrap: pretty;
 }
 /* Smooth global transitions */
@@ -3168,20 +3168,18 @@ h3, h4, h5, h6, .nav-links a, .nav-cta, .form-submit, .price-cta {
   color: var(--ds-text-muted, #4a4a47);
   letter-spacing: -0.005em;
 }
-/* Justified body copy — only on long-form descriptive paragraphs, never on
-   the hero (which deserves a tighter, more visual treatment), short labels,
-   badges, chat bubbles, or tight UI text. Mobile keeps left alignment via
-   the existing @media (max-width: …) rule below. */
+/* Body copy alineado a la izquierda: el justify generaba huecos/ríos entre
+   palabras en columnas estrechas que rompían la estética. Mantenemos
+   text-wrap: pretty para un ragged-right equilibrado. */
 .section-p, .compare-desc, .show-desc, .orbit-desc,
 .bento-card p, .feat-desc, .feat-card p, .step p, .step-flow p,
 .cperk p, .proof-text, .price-desc, .form-note,
 .footer-brand p, .contact-left p, .faq-a-inner {
-  text-align: justify;
-  text-justify: inter-word;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
-  hyphens: auto;
-  hanging-punctuation: first last;
+  text-align: left;
+  -webkit-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  text-wrap: pretty;
 }
 /* Hero desc — tighter, more visual, no justify gaps */
 .hero-desc {
@@ -6799,7 +6797,7 @@ async function handleSubmit(e) {
   btn.disabled = true;
 
   // Recoger módulos activos (CORE + activables seleccionados)
-  const fmChips = document.querySelectorAll('#fm-grid .fm-chip');
+  const fmChips = document.querySelectorAll('#form-modules .fm-chip');
   const modulesSelected = [];
   fmChips.forEach(c => {
     if (c.classList.contains('required') || c.classList.contains('active')) {
@@ -8296,7 +8294,7 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   // ─── 10) Module configurator inside form ──────────────
   function initFormModules(){
     try {
-      const grid = document.getElementById('fm-grid');
+      const grid = document.getElementById('form-modules');
       if (!grid) return;
       const counter = document.getElementById('fm-count-num');
       const hiddenMods = document.getElementById('cf-modules');
