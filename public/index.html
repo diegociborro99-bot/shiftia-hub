@@ -7895,13 +7895,19 @@ function setLang(lang) {
 
 // Aplicar idioma guardado (o del navegador) al cargar. El español es el
 // contenido por defecto del HTML, así que solo conmutamos si es otro idioma
-// para no sobrescribir el copy original.
+// para no sobrescribir el copy original. Prioridad: elección manual previa
+// (localStorage) > idioma(s) preferido(s) del navegador.
 (function initLang(){
   let lang = null;
   try { lang = localStorage.getItem('shiftia-lang'); } catch(e){}
   if (!lang) {
-    const nav = (navigator.language || '').slice(0,2).toLowerCase();
-    if (translations[nav] && nav !== 'es') lang = nav;
+    const prefs = (navigator.languages && navigator.languages.length)
+      ? navigator.languages
+      : [navigator.language || navigator.userLanguage || ''];
+    for (const p of prefs) {
+      const code = String(p).slice(0, 2).toLowerCase();
+      if (translations[code]) { lang = code; break; }
+    }
   }
   if (lang && translations[lang] && lang !== 'es') setLang(lang);
 })();
