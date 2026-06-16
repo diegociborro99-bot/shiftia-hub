@@ -27,6 +27,15 @@ Capacidades principales:
 - No aporta trabajadores: el personal es siempre el del cliente.
 - No es solo una herramienta de "cobertura urgente de turnos": la cobertura de bajas es una función más dentro de la planificación completa.
 
+## Diferenciales
+
+- Planificación CONTINUA de toda la plantilla interna (mes a mes, todo el año), no solo cobertura de bajas puntuales — a diferencia de apps centradas únicamente en sustituciones.
+- Trabaja solo con la plantilla interna del cliente: no es una ETT ni un marketplace; el cuadrante respeta tu equipo, tu convenio y tus restricciones reales.
+- Equidad nocturna medida automáticamente (media de noches solo entre quien rota), con detección de desequilibrios antes de que escalen.
+- Reglas de convenio configurables de verdad: descansos mínimos entre turnos, máximo de noches, jornadas reducidas, conciliación y restricciones individuales.
+- Tarifa plana sin coste por trabajador, frente a modelos por usuario que penalizan crecer.
+- Coberturas en menos de 1 segundo con explicación (7 criterios, candidatos puntuados); la decisión final siempre es humana.
+
 ## Precios
 
 Tarifa plana sin coste por trabajador. Cuatro planes:
