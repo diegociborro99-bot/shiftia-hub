@@ -1070,36 +1070,6 @@ section { padding: 140px 48px; }
 .proof .section-eyebrow { color: rgba(255,255,255,0.4); }
 .proof .section-h2 { color: white; }
 .proof .section-p { color: rgba(255,255,255,0.5); }
-.proof-carousel { position: relative; overflow: hidden; max-width: 900px; margin: 0 auto; }
-.proof-track { display: flex; transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
-.proof-slide { min-width: 100%; padding: 0 20px; box-sizing: border-box; }
-.proof-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-}
-.proof-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius); padding: 36px 32px;
-  transition: all 0.3s; position: relative;
-}
-.proof-card:hover { background: rgba(255,255,255,0.08); }
-.proof-dots { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
-.proof-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); border: none; cursor: pointer; transition: all 0.3s; }
-.proof-dot.active { background: white; transform: scale(1.2); }
-.proof-arrows { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
-.proof-arrow { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: all 0.3s; }
-.proof-arrow:hover { background: rgba(255,255,255,0.2); }
-.proof-stars { color: #f59e0b; margin-bottom: 16px; font-size: 0.85rem; letter-spacing: 3px; }
-.proof-text { font-size: 0.92rem; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 24px; font-style: italic; }
-.proof-author { display: flex; align-items: center; gap: 12px; }
-.proof-avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.85rem; color: rgba(255,255,255,0.6);
-}
-.proof-name { font-weight: 600; font-size: 0.88rem; }
-.proof-role { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
 
 /* ====== PRICING ====== */
 .pricing { background: var(--bg-warm); position: relative; overflow: hidden; }
@@ -3928,125 +3898,118 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--ds-text-muted, #4a4a47) !important;
 }
 
-.proof-carousel { padding-top: 24px; }
-.proof-card {
-  background: var(--ds-bg-elev, #fff) !important;
-  border: 1px solid var(--ds-border, #e8e6df) !important;
-  border-radius: 20px !important;
-  padding: 36px 32px !important;
-  color: var(--ds-text, #0e0f0f) !important;
-  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 12px 36px rgba(15,15,15,0.05) !important;
+/* ----- Trusted-by grid (empresas + sector) ----- */
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 920px;
+  margin: 40px auto 0;
+}
+.trust-card {
+  --tint: #0f7a6d;
   position: relative;
-  transform-style: flat !important;
-}
-.proof-card::before {
-  content: '\201C';
-  position: absolute;
-  top: 16px; left: 24px;
-  font-family: var(--ds-font-display, 'Instrument Serif', serif);
-  font-size: 96px;
-  line-height: 1;
-  color: var(--ds-accent, #0f7a6d);
-  opacity: 0.18;
-  pointer-events: none;
-}
-.proof-stars {
-  color: #f5b301 !important;
-  font-size: 16px !important;
-  letter-spacing: 2px !important;
-  margin-bottom: 16px !important;
-  position: relative; z-index: 1;
-}
-.proof-text {
-  font-family: var(--ds-font-display, 'Instrument Serif', serif) !important;
-  font-size: clamp(1.35rem, 2.4vw, 1.65rem) !important;
-  line-height: 1.4 !important;
-  color: var(--ds-text, #0e0f0f) !important;
-  letter-spacing: -0.015em !important;
-  margin-bottom: 24px !important;
-  text-align: left !important;
-  font-weight: 400 !important;
-  position: relative; z-index: 1;
-  font-style: italic;
-}
-.proof-author {
-  display: flex !important;
-  align-items: center !important;
-  gap: 14px !important;
-  padding-top: 20px !important;
-  border-top: 1px solid var(--ds-border, #e8e6df) !important;
-}
-.proof-avatar {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  background: var(--ds-accent-soft, #e9f5f2);
-  color: var(--ds-accent-text, #0a5950);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--ds-font-sans, 'Geist', sans-serif);
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: -0.01em;
-  border: 1px solid rgba(15,122,109,0.18);
-  flex-shrink: 0;
-}
-.proof-name {
-  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
-  font-weight: 600 !important;
-  color: var(--ds-text, #0e0f0f) !important;
-  font-size: 15px !important;
-  margin-bottom: 2px !important;
-}
-.proof-role {
-  font-family: var(--ds-font-sans, 'Geist', sans-serif) !important;
-  font-size: 13px !important;
-  color: var(--ds-text-subtle, #8a8a85) !important;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 20px;
+  background: var(--ds-bg-elev, #fff);
+  border: 1px solid var(--ds-border, #e8e6df);
+  border-radius: 18px;
+  padding: 24px 26px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 12px 36px rgba(15,15,15,0.05);
+  transition: transform 360ms cubic-bezier(0.16,1,0.3,1), box-shadow 360ms cubic-bezier(0.16,1,0.3,1), border-color 360ms;
 }
-.proof-role::after {
-  content: 'verificado';
+/* Barra de acento de marca a la izquierda, crece en hover */
+.trust-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--tint);
+  transform: scaleY(0.4);
+  transform-origin: center;
+  opacity: 0.55;
+  transition: transform 360ms cubic-bezier(0.16,1,0.3,1), opacity 360ms;
+}
+/* Halo de marca muy sutil al fondo */
+.trust-card::after {
+  content: '';
+  position: absolute;
+  right: -40px; top: -40px;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--tint) 16%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 420ms ease;
+  pointer-events: none;
+}
+.trust-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--tint) 35%, var(--ds-border, #e8e6df));
+  box-shadow: 0 1px 2px rgba(15,15,15,0.05), 0 22px 52px color-mix(in srgb, var(--tint) 14%, rgba(15,15,15,0.06));
+}
+.trust-card:hover::before { transform: scaleY(1); opacity: 1; }
+.trust-card:hover::after { opacity: 1; }
+.trust-card:hover .trust-logo { transform: scale(1.05) rotate(-2deg); }
+.trust-logo {
+  position: relative;
+  width: 62px; height: 62px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--tint) 12%, transparent);
+  color: var(--tint);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid color-mix(in srgb, var(--tint) 24%, transparent);
+  flex-shrink: 0;
+  transition: transform 360ms cubic-bezier(0.16,1,0.3,1);
+}
+.trust-logo svg { width: 26px; height: 26px; }
+.trust-mono {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+.trust-info { min-width: 0; }
+.trust-name {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-weight: 600;
+  color: var(--ds-text, #0e0f0f);
+  font-size: 16.5px;
+  letter-spacing: -0.01em;
+  margin-bottom: 9px;
+}
+.trust-sector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.trust-tag {
   font-family: var(--ds-font-mono, 'Geist Mono', monospace);
-  font-size: 10px;
-  color: var(--ds-accent-text, #0a5950);
-  background: var(--ds-accent-soft, #e9f5f2);
-  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--tint);
+  background: color-mix(in srgb, var(--tint) 11%, transparent);
+  padding: 3px 10px;
   border-radius: 999px;
-  letter-spacing: 0.04em;
-  margin-left: 4px;
+  letter-spacing: 0.02em;
 }
-.proof-dots {
-  display: flex; gap: 8px; justify-content: center; margin-top: 28px;
+.trust-loc {
+  font-family: var(--ds-font-sans, 'Geist', sans-serif);
+  font-size: 12px;
+  color: var(--ds-text-subtle, #8a8a85);
 }
-.proof-dot {
-  width: 32px !important; height: 4px !important;
-  border-radius: 2px !important;
-  border: 0 !important;
-  background: var(--ds-border, #e8e6df) !important;
-  cursor: pointer;
-  transition: background 220ms cubic-bezier(0.4,0,0.2,1), width 220ms;
-  padding: 0 !important;
-  min-height: auto !important;
+@media (prefers-reduced-motion: reduce) {
+  .trust-card, .trust-card::before, .trust-logo { transition: none; }
 }
-.proof-dot.active {
-  background: var(--ds-accent, #0f7a6d) !important;
-  width: 56px !important;
+@media (max-width: 768px) {
+  .trust-grid { grid-template-columns: 1fr; max-width: 480px; gap: 16px; }
 }
-.proof-arrows { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
-.proof-arrow {
-  width: 40px !important; height: 40px !important;
-  border-radius: 50% !important;
-  background: var(--ds-bg-elev, #fff) !important;
-  border: 1px solid var(--ds-border, #e8e6df) !important;
-  color: var(--ds-text, #0e0f0f) !important;
-  font-size: 18px !important;
-  cursor: pointer;
-  transition: background 200ms, border-color 200ms, transform 200ms cubic-bezier(0.16,1,0.3,1);
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.proof-arrow:hover { background: var(--ds-bg-subtle, #f4f2ec) !important; border-color: var(--ds-text, #0e0f0f) !important; transform: scale(1.05); }
 
 /* Override del wave-divider que apuntaba a --text1 oscuro: ahora va a bg principal */
 .proof + .wave-divider svg path { fill: var(--ds-bg, #faf9f6) !important; }
@@ -4096,17 +4059,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .hero-actions { justify-content: center !important; margin: 0 auto !important; }
   .hero-product-svg, .hero-visual { margin: 32px auto 0 !important; max-width: 100% !important; }
 
-  /* Proof: testimonios serif más cómodos en móvil */
+  /* Proof: trusted-by más cómodo en móvil */
   .proof { padding: 64px 16px !important; }
-  .proof-card { padding: 28px 22px !important; }
-  .proof-card::before { font-size: 64px !important; top: 8px; left: 16px; }
-  .proof-text {
-    font-size: 1.08rem !important;
-    line-height: 1.45 !important;
-    margin-bottom: 18px !important;
-  }
-  .proof-author { gap: 10px !important; padding-top: 14px !important; }
-  .proof-avatar { width: 38px !important; height: 38px !important; font-size: 13px !important; }
+  .trust-card { padding: 18px 18px !important; gap: 14px !important; }
+  .trust-logo { width: 50px !important; height: 50px !important; font-size: 13px !important; }
+  .trust-name { font-size: 15px !important; }
   .proof-name { font-size: 14px !important; }
   .proof-role { font-size: 12px !important; flex-wrap: wrap; gap: 4px; }
   .proof-role::after { font-size: 9px !important; padding: 2px 6px !important; }
@@ -5829,55 +5786,63 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </div>
 </section>
 
-<!-- USE CASES -->
+<!-- TRUSTED BY -->
 <section class="proof">
   <div class="container centered">
-    <div class="section-eyebrow reveal" data-i18n="proof_eyebrow">Testimonios</div>
-    <h2 class="section-h2 reveal" data-i18n="proof_title">Profesionales que ya usan Shiftia</h2>
-    <p class="section-p reveal" data-i18n="proof_desc">Feedback real de supervisores y responsables de equipo en distintos sectores.</p>
+    <div class="section-eyebrow reveal" data-i18n="proof_eyebrow">Confianza</div>
+    <h2 class="section-h2 reveal" data-i18n="proof_title">Confiado por profesionales de:</h2>
+    <p class="section-p reveal" data-i18n="proof_desc">Equipos de distintos sectores ya planifican sus turnos con Shiftia.</p>
   </div>
   <div class="container">
-    <div class="proof-carousel">
-      <div class="proof-track" id="proofTrack">
-        <div class="proof-slide">
-          <div class="proof-card reveal">
-            <div class="proof-stars">★★★★★</div>
-            <div class="proof-text" data-i18n="t1">"Shiftia nos ha cambiado la forma de organizar los turnos. Lo que antes era un caos de llamadas y emails ahora se resuelve en un par de clics. El equipo está mucho más contento con el reparto."</div>
-            <div class="proof-author">
-              <div class="proof-avatar">MC</div>
-              <div><div class="proof-name">Maria C.</div><div class="proof-role" data-i18n="t1_role">Supervisora de Enfermería</div></div>
-            </div>
-          </div>
+    <div class="trust-grid">
+      <div class="trust-card reveal" style="--tint:#d6232a;">
+        <div class="trust-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2.3l2.2 12.1a1.6 1.6 0 0 0 1.6 1.3h8.5a1.6 1.6 0 0 0 1.5-1.2L21 7H5.2"/></svg>
+          <span class="trust-mono">SPAR</span>
         </div>
-        <div class="proof-slide">
-          <div class="proof-card reveal d1">
-            <div class="proof-stars">★★★★★</div>
-            <div class="proof-text" data-i18n="t2">"Por fin hay transparencia en el reparto de noches. El equipo está más contento porque ve que es justo. Los conflictos han bajado drásticamente."</div>
-            <div class="proof-author">
-              <div class="proof-avatar">JR</div>
-              <div><div class="proof-name">Javier R.</div><div class="proof-role" data-i18n="t2_role">Jefe de Servicio</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="proof-slide">
-          <div class="proof-card reveal d2">
-            <div class="proof-stars">★★★★★</div>
-            <div class="proof-text" data-i18n="t3">"Lo mejor es que respeta las conciliaciones automáticamente. No tengo que estar pendiente de quien tiene reducción. Shiftia lo sabe."</div>
-            <div class="proof-author">
-              <div class="proof-avatar">LP</div>
-              <div><div class="proof-name">Laura P.</div><div class="proof-role" data-i18n="t3_role">Coordinadora Laboratorio</div></div>
-            </div>
+        <div class="trust-info">
+          <div class="trust-name">SPAR Supermercados</div>
+          <div class="trust-sector">
+            <span class="trust-tag" data-i18n="trust1_sector">Retail · Supermercados</span>
+            <span class="trust-loc">Gran Canaria</span>
           </div>
         </div>
       </div>
-      <div class="proof-dots">
-        <button class="proof-dot active" onclick="goSlide(0)"></button>
-        <button class="proof-dot" onclick="goSlide(1)"></button>
-        <button class="proof-dot" onclick="goSlide(2)"></button>
+      <div class="trust-card reveal d1" style="--tint:#2980b9;">
+        <div class="trust-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/><path d="M12 2l2.5 2.5M12 2 9.5 4.5M12 22l2.5-2.5M12 22l-2.5-2.5M3.5 7l.3 3.4M3.5 7l3.3-.6M20.5 17l-.3-3.4M20.5 17l-3.3.6M20.5 7l-.3 3.4M20.5 7l-3.3-.6M3.5 17l.3-3.4M3.5 17l3.3.6"/></svg>
+        </div>
+        <div class="trust-info">
+          <div class="trust-name">NONWATIO</div>
+          <div class="trust-sector">
+            <span class="trust-tag" data-i18n="trust2_sector">Gestión de cámaras de frío</span>
+            <span class="trust-loc">Valencia</span>
+          </div>
+        </div>
       </div>
-      <div class="proof-arrows">
-        <button class="proof-arrow" onclick="prevSlide()">‹</button>
-        <button class="proof-arrow" onclick="nextSlide()">›</button>
+      <div class="trust-card reveal d2" style="--tint:#c0833a;">
+        <div class="trust-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13v4.5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8z"/><path d="M17 9h2.2a2.5 2.5 0 0 1 0 5H17"/><path d="M7 2v2.4M11 2v2.4M15 2v2.4"/></svg>
+        </div>
+        <div class="trust-info">
+          <div class="trust-name">La Otra Abacería</div>
+          <div class="trust-sector">
+            <span class="trust-tag" data-i18n="trust3_sector">Hostelería</span>
+            <span class="trust-loc">León</span>
+          </div>
+        </div>
+      </div>
+      <div class="trust-card reveal d3" style="--tint:#0f7a6d;">
+        <div class="trust-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3h4v5h5v4h-5v9h-4v-9H5V8h5z"/></svg>
+        </div>
+        <div class="trust-info">
+          <div class="trust-name" data-i18n="trust4_name">Hospital de Asturias</div>
+          <div class="trust-sector">
+            <span class="trust-tag" data-i18n="trust4_sector">Sanidad</span>
+            <span class="trust-loc">Asturias · <span data-i18n="trust4_note">confidencial por convenio</span></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -6495,21 +6460,6 @@ const counterObs = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 document.querySelectorAll('.impact-num').forEach(el => counterObs.observe(el));
 
-// Testimonials carousel
-let currentSlide = 0;
-const totalSlides = 3;
-let autoSlide = setInterval(() => nextSlide(), 5000);
-
-function goSlide(n) {
-  currentSlide = n;
-  document.getElementById('proofTrack').style.transform = `translateX(-${n * 100}%)`;
-  document.querySelectorAll('.proof-dot').forEach((d, i) => d.classList.toggle('active', i === n));
-  resetAuto();
-}
-function nextSlide() { goSlide((currentSlide + 1) % totalSlides); }
-function prevSlide() { goSlide((currentSlide - 1 + totalSlides) % totalSlides); }
-function resetAuto() { clearInterval(autoSlide); autoSlide = setInterval(() => nextSlide(), 5000); }
-
 // FAQ accordion
 function toggleFaq(el) {
   const item = el.parentElement;
@@ -7018,14 +6968,14 @@ const translations = {
     uc2_t: 'Fábricas e industria', uc2_d: 'Turnos rotativos con producción continua. Controla que cada línea tenga cobertura mínima, gestiona festivos y detecta sobrecargas antes de que impacten en la producción.',
     uc3_t: 'Residencias y socio-sanitario', uc3_d: 'Personal de atención directa con alta rotación. Shiftia asegura cobertura mínima por planta y respeta descansos obligatorios entre turnos.',
     uc4_t: 'Seguridad y hostelería', uc4_d: 'Vigilantes, personal de hotel, restaurantes. Cualquier negocio con planillas por turnos. Control de vacaciones, permisos y balance de horas en tiempo real.',
-    proof_eyebrow: 'Testimonios', proof_title: 'Profesionales que ya usan Shiftia',
-    proof_desc: 'Feedback real de supervisores y responsables de equipo en distintos sectores.',
-    t1: '"Shiftia nos ha cambiado la forma de organizar los turnos. Lo que antes era un caos de llamadas y emails ahora se resuelve en un par de clics. El equipo está mucho más contento con el reparto."',
-    t1_role: 'Supervisora de Enfermería',
-    t2: '"Por fin hay transparencia en el reparto de noches. El equipo está más contento porque ve que es justo. Los conflictos han bajado drásticamente."',
-    t2_role: 'Jefe de Servicio',
-    t3: '"Lo mejor es que respeta las conciliaciones automáticamente. No tengo que estar pendiente de quien tiene reducción. Shiftia lo sabe."',
-    t3_role: 'Coordinadora Laboratorio',
+    proof_eyebrow: 'Confianza', proof_title: 'Confiado por profesionales de:',
+    proof_desc: 'Equipos de distintos sectores ya planifican sus turnos con Shiftia.',
+    trust1_sector: 'Retail · Supermercados',
+    trust2_sector: 'Gestión de cámaras de frío',
+    trust3_sector: 'Hostelería',
+    trust4_name: 'Hospital de Asturias',
+    trust4_sector: 'Sanidad',
+    trust4_note: 'confidencial por convenio',
     faq_eyebrow: 'Preguntas frecuentes', faq_title: 'Resolvemos tus dudas',
     faq1_q: '¿Puedo importar mi Excel o cuadrante actual?', faq1_a: 'Sí. Puedes importar tu planilla actual en PDF y Shiftia extrae los datos automáticamente. También puedes crear la planilla desde cero en minutos, o Shiftia lo hace por ti.',
     faq2_q: '¿Funciona sin conexión a internet?', faq2_a: 'Shiftia es una app web que requiere conexión. Una vez cargada, puedes trabajar temporalmente offline y los cambios se sincronizarán al reconectar.',
@@ -7279,14 +7229,14 @@ const translations = {
     uc2_t: 'Factories & industry', uc2_d: 'Rotating shifts with continuous production. Ensure minimum coverage per line, manage holidays, and detect overloads before they impact production.',
     uc3_t: 'Care homes & social care', uc3_d: 'Direct care staff with high turnover. Shiftia ensures minimum coverage per floor and respects mandatory rest between shifts.',
     uc4_t: 'Security & hospitality', uc4_d: 'Security guards, hotel staff, restaurants. Any shift-based business. Vacation control, permits, and hour balance in real time.',
-    proof_eyebrow: 'Testimonials', proof_title: 'Professionals already using Shiftia',
-    proof_desc: 'Real feedback from supervisors and team leads across different sectors.',
-    t1: '"Shiftia changed how we organize shifts. What used to be chaos with calls and emails now gets solved in a couple of clicks. The team is much happier with the distribution."',
-    t1_role: 'Nursing Supervisor',
-    t2: '"Finally there\'s transparency in night distribution. The team is happier because they can see it\'s fair. Conflicts have dropped dramatically."',
-    t2_role: 'Head of Service',
-    t3: '"The best part is it respects work-life balance rules automatically. I don\'t have to track who has reduced hours. Shiftia knows."',
-    t3_role: 'Lab Coordinator',
+    proof_eyebrow: 'Trust', proof_title: 'Trusted by professionals from:',
+    proof_desc: 'Teams across different sectors already plan their shifts with Shiftia.',
+    trust1_sector: 'Retail · Supermarkets',
+    trust2_sector: 'Cold storage management',
+    trust3_sector: 'Hospitality',
+    trust4_name: 'Hospital in Asturias',
+    trust4_sector: 'Healthcare',
+    trust4_note: 'confidential by agreement',
     faq_eyebrow: 'FAQ', faq_title: 'Common questions answered',
     faq1_q: 'Can I import my current Excel or schedule?', faq1_a: 'Yes. Import your schedule as PDF and Shiftia extracts data automatically. Or create from scratch in minutes.',
     faq2_q: 'Does it work offline?', faq2_a: 'Shiftia is a web app requiring connection. Once loaded, you can work temporarily offline and changes sync when reconnected.',
@@ -7513,14 +7463,14 @@ const translations = {
     uc2_t: 'Fabriken & Industrie', uc2_d: 'Wechselschichten mit Dauerproduktion. Mindestbesetzung pro Linie sicherstellen, Feiertage verwalten.',
     uc3_t: 'Pflegeheime & Sozialwesen', uc3_d: 'Betreuungspersonal mit hoher Fluktuation. Mindestbesetzung pro Etage und Einhaltung der Ruhezeiten.',
     uc4_t: 'Sicherheit & Gastronomie', uc4_d: 'Wachpersonal, Hotel, Restaurants. Jedes Unternehmen mit Schichtplanen. Urlaubs- und Stundenausgleich in Echtzeit.',
-    proof_eyebrow: 'Referenzen', proof_title: 'Fachleute die Shiftia bereits nutzen',
-    proof_desc: 'Echtes Feedback von Teamleitern aus verschiedenen Branchen.',
-    t1: '"Shiftia hat unsere Schichtplanung komplett verandert. Was fruher Chaos mit Anrufen und E-Mails war, losen wir jetzt mit ein paar Klicks. Das Team ist viel zufriedener mit der Verteilung."',
-    t1_role: 'Pflegeleitung',
-    t2: '"Endlich gibt es Transparenz bei der Nachtverteilung. Das Team ist zufriedener, weil es fair ist. Konflikte sind drastisch gesunken."',
-    t2_role: 'Abteilungsleiter',
-    t3: '"Das Beste ist, dass Vereinbarkeitsregeln automatisch beachtet werden. Ich muss nicht mehr nachhalten, wer Teilzeit hat."',
-    t3_role: 'Laborkoordinatorin',
+    proof_eyebrow: 'Vertrauen', proof_title: 'Vertraut von Fachleuten aus:',
+    proof_desc: 'Teams aus verschiedenen Branchen planen ihre Schichten bereits mit Shiftia.',
+    trust1_sector: 'Einzelhandel · Supermärkte',
+    trust2_sector: 'Kühlraumverwaltung',
+    trust3_sector: 'Gastronomie',
+    trust4_name: 'Krankenhaus in Asturien',
+    trust4_sector: 'Gesundheitswesen',
+    trust4_note: 'vertraulich laut Vereinbarung',
     faq_eyebrow: 'Häufige Fragen', faq_title: 'Wir beantworten Ihre Fragen',
     faq1_q: 'Kann ich meinen aktuellen Dienstplan importieren?', faq1_a: 'Ja. PDF importieren oder von Grund auf erstellen.',
     faq2_q: 'Funktioniert es offline?', faq2_a: 'Shiftia ist eine Web-App. Einmal geladen, können Sie vorübergehend offline arbeiten.',
@@ -7747,14 +7697,14 @@ const translations = {
     uc2_t: 'Usines & industrie', uc2_d: 'Equipes en rotation avec production continue. Couverture minimale par ligne, gestion des feries.',
     uc3_t: 'EHPAD & médico-social', uc3_d: 'Personnel de soins avec turnover eleve. Couverture minimale par etage et respect des repos obligatoires.',
     uc4_t: 'Securite & hotellerie', uc4_d: 'Agents de securite, personnel hotelier, restaurants. Tout business avec des plannings. Conges et heures en temps reel.',
-    proof_eyebrow: 'Temoignages', proof_title: 'Des professionnels utilisent deja Shiftia',
-    proof_desc: 'Retours reels de cadres et responsables d\'equipe de differents secteurs.',
-    t1: '"Shiftia a change notre facon d\'organiser les plannings. Ce qui etait un chaos d\'appels et de mails se resout maintenant en quelques clics. L\'equipe est beaucoup plus satisfaite."',
-    t1_role: 'Cadre de sante',
-    t2: '"Enfin de la transparence dans la repartition des nuits. L\'equipe est plus contente car c\'est equitable. Les conflits ont drastiquement baisse."',
-    t2_role: 'Chef de service',
-    t3: '"Le mieux c\'est qu\'il respecte les amenagements automatiquement. Je n\'ai plus a suivre qui est a temps partiel."',
-    t3_role: 'Coordinatrice laboratoire',
+    proof_eyebrow: 'Confiance', proof_title: 'La confiance de professionnels de :',
+    proof_desc: 'Des equipes de differents secteurs planifient deja leurs plannings avec Shiftia.',
+    trust1_sector: 'Retail · Supermarches',
+    trust2_sector: 'Gestion de chambres froides',
+    trust3_sector: 'Hotellerie-restauration',
+    trust4_name: 'Hopital des Asturies',
+    trust4_sector: 'Sante',
+    trust4_note: 'confidentiel par convention',
     faq_eyebrow: 'Questions frequentes', faq_title: 'Vos questions, nos reponses',
     faq1_q: 'Puis-je importer mon planning actuel ?', faq1_a: 'Oui. Importez en PDF ou creez de zero en quelques minutes.',
     faq2_q: 'Fonctionne-t-il hors ligne ?', faq2_a: 'Shiftia est une app web. Une fois chargee, vous pouvez travailler temporairement hors ligne.',
@@ -8179,7 +8129,6 @@ let spInterval = null;
 // Cleanup intervals on page unload to prevent memory leaks
 window.addEventListener('beforeunload', () => {
   if (rwInterval) clearInterval(rwInterval);
-  if (autoSlide) clearInterval(autoSlide);
   if (spInterval) clearInterval(spInterval);
 });
 
