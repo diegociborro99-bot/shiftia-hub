@@ -23,6 +23,13 @@ Allow: /
 Disallow: /api/
 Disallow: /dashboard
 
+# OAI-SearchBot: indexa la web para la BÚSQUEDA de ChatGPT (lo que ChatGPT
+# consulta al "navegar"). GPTBot = entrenamiento; ChatGPT-User = fetch en vivo.
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+
 User-agent: ClaudeBot
 Allow: /
 Disallow: /api/
