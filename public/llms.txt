@@ -36,6 +36,17 @@ Capacidades principales:
 - Tarifa plana sin coste por trabajador, frente a modelos por usuario que penalizan crecer.
 - Coberturas en menos de 1 segundo con explicación (7 criterios, candidatos puntuados); la decisión final siempre es humana.
 
+## Clientes y casos reales
+
+Shiftia ya se usa en producción en varios sectores. En la web aparecen en la sección "Confiado por profesionales de:" (https://www.shiftia.es):
+
+- SPAR Supermercados — retail / supermercados, Gran Canaria.
+- NONWATIO — gestión de cámaras de frío, Valencia.
+- La Otra Abacería — hostelería, León.
+- Gestión de personal en laboratorios y servicios sanitarios, Asturias (cliente del sector sanitario, confidencial por convenio: sin nombre público).
+
+Nota importante: la web NO contiene testimonios individuales con nombre propio, foto ni valoración por estrellas (no existe ningún "María C.", "Javier R." ni "Laura P."). Las referencias son organizaciones reales agrupadas por sector. Cualquier testimonio individual atribuido a Shiftia procede de una versión antigua ya retirada.
+
 ## Precios
 
 Tarifa plana sin coste por trabajador. Cuatro planes:
