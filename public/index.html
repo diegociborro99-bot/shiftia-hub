@@ -5278,6 +5278,13 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cg-slot.code-M { background:#fef3c7; border-color:#fcd34d; color:#92400e; }
 .cg-slot.code-T { background:#dbeafe; border-color:#93c5fd; color:#1e40af; }
 .cg-slot.code-D { background:#eef2f6; border-color:#cbd5e1; color:#64748b; }
+.cg-toth { font-size:10px; color:var(--ds-text-subtle,#8a8a85); height:24px; }
+.cg-covh { font-size:10px; color:var(--ds-text-subtle,#8a8a85); height:22px; display:flex; align-items:center; justify-content:flex-start; }
+.cg-tot { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.72rem; font-weight:600; color:var(--ds-text-muted,#4a4a47); }
+.cg-cov { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:10px; color:var(--ds-text-subtle,#8a8a85); height:22px; }
+.cg-cov-closed { color:#b45309; font-weight:600; }
+.cg-day.cg-closed { color:#b45309; }
+.cg-redtag { font-size:8.5px; background:var(--ds-accent-soft,#e9f5f2); color:var(--ds-accent-text,#0a5950); padding:1px 5px; border-radius:999px; margin-left:5px; }
 .cgen2-valid { margin-top:12px; display:flex; align-items:flex-start; gap:8px; font-size:.78rem; color:#15803d; background:rgba(22,163,74,.07); border:1px solid rgba(22,163,74,.25); border-radius:10px; padding:9px 12px; line-height:1.45; }
 .cgen2-valid .cgv-ic { width:14px; height:14px; flex-shrink:0; margin-top:1px; }
 
@@ -6287,13 +6294,20 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     }
     var FALLBACK=[['M','T','M','T','D','M','T'],['M','T','T','D','M','T','M'],['T','M','D','M','T','M','T'],['T','D','M','T','M','T','D'],['D','M','T','M','T','D','M']];
     function maxRun(g){ var m=0; g.forEach(function(row){ var c=0; row.forEach(function(x){ if(x!=='D'){ c++; if(c>m)m=c; } else c=0; }); }); return m; }
-    function buildEmpty(){
+    function buildEmpty(r){
+      gridEl.style.gridTemplateColumns='auto repeat(7,minmax(0,1fr)) auto';
       var h='<div class="cg-cell cg-corner"></div>';
-      days.forEach(function(d){ h+='<div class="cg-cell cg-day">'+d+'</div>'; });
-      people.forEach(function(p,r){
-        h+='<div class="cg-cell cg-name">'+p+'</div>';
-        for(var c=0;c<7;c++){ h+='<div class="cg-cell cg-slot" data-r="'+r+'" data-c="'+c+'"></div>'; }
+      for(var d=0;d<7;d++){ var cl=(r&&r.minT[d]===0); h+='<div class="cg-cell cg-day'+(cl?' cg-closed':'')+'">'+days[d]+'</div>'; }
+      h+='<div class="cg-cell cg-toth">Días</div>';
+      people.forEach(function(p,row){
+        var tag=(r&&r.partTime&&r.partTime.idx===row)?'<span class="cg-redtag">red.</span>':'';
+        h+='<div class="cg-cell cg-name">'+p+tag+'</div>';
+        for(var c=0;c<7;c++){ h+='<div class="cg-cell cg-slot" data-r="'+row+'" data-c="'+c+'"></div>'; }
+        h+='<div class="cg-cell cg-tot" data-tr="'+row+'">0</div>';
       });
+      h+='<div class="cg-cell cg-covh">Cob.</div>';
+      for(var d=0;d<7;d++){ h+='<div class="cg-cell cg-cov" data-cc="'+d+'">·</div>'; }
+      h+='<div class="cg-cell"></div>';
       gridEl.innerHTML=h;
     }
     buildEmpty();
@@ -6305,16 +6319,20 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       if(running) return;
       var r=parseRules(input.textContent);
       var g=gen(r)||FALLBACK; variant++;
-      buildEmpty();
+      buildEmpty(r);
       running=true; go.disabled=true; go.textContent='Generando…';
       metrics.hidden=false; bars.hidden=false; bars.classList.remove('show'); if(valid) valid.hidden=true;
       var slots=gridEl.querySelectorAll('.cg-slot'), i=0, total=slots.length, wk=0;
+      var tot=[0,0,0,0,0], covM=[0,0,0,0,0,0,0], covT=[0,0,0,0,0,0,0];
       var tConf=93+Math.floor(Math.random()*6), tGaps=8+Math.floor(Math.random()*7);
       var t=setInterval(function(){
         if(i<total){
           var s=slots[i], rr=+s.getAttribute('data-r'), cc=+s.getAttribute('data-c'), code=g[rr][cc];
           s.className='cg-cell cg-slot fill code-'+code; s.textContent=LBL[code];
-          if(code!=='D') wk++;
+          if(code==='M') covM[cc]++; else if(code==='T') covT[cc]++;
+          if(code!=='D'){ wk++; tot[rr]++; var tc=gridEl.querySelector('.cg-tot[data-tr="'+rr+'"]'); if(tc) tc.textContent=tot[rr]; }
+          var ce=gridEl.querySelector('.cg-cov[data-cc="'+cc+'"]');
+          if(ce){ var closed=r.minT[cc]===0; ce.textContent=covM[cc]+'·'+(closed?'—':covT[cc]); if(closed) ce.classList.add('cg-cov-closed'); }
           i++;
           var pr=i/total;
           conf.textContent=Math.round(tConf*pr)+'%';
