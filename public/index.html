@@ -5197,6 +5197,39 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .ceq-dev.ok strong { color:#15803d; }
 @media (max-width:760px){ .fdemo-grid{grid-template-columns:1fr; max-width:520px;} }
 @media (prefers-reduced-motion: reduce){ .cgen-bar i,.ceq-track i{transition:none;} }
+/* lector PDF/Excel */
+.cimp-drop { width:100%; border:1.5px dashed var(--ds-border,#cfd0c8); background:var(--ds-bg,#faf9f6); border-radius:14px; padding:22px 16px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; font-family:inherit; font-size:.86rem; color:var(--ds-text-muted,#4a4a47); transition:border-color .2s,background .2s; }
+.cimp-drop:hover { border-color:var(--ds-accent,#0f7a6d); background:var(--ds-accent-soft,#e9f5f2); }
+.cimp-drop.loading { opacity:.7; cursor:default; }
+.cimp-up { font-size:22px; color:var(--ds-accent-text,#0a5950); }
+.cimp-drop u { color:var(--ds-accent-text,#0a5950); }
+.cimp-result { margin-top:14px; }
+.cimp-prog { height:5px; border-radius:999px; background:var(--ds-border,#e8e6df); overflow:hidden; margin-bottom:12px; }
+.cimp-prog span { display:block; height:100%; width:0; background:linear-gradient(90deg,#4ecdc4,#2980b9); border-radius:999px; animation:cimpFill 1.1s linear forwards; }
+@keyframes cimpFill { to{ width:100%; } }
+.cimp-rows { display:grid; gap:6px; }
+.cimp-row { display:flex; justify-content:space-between; gap:10px; padding:8px 12px; border:1px solid var(--ds-border,#e8e6df); border-radius:10px; background:var(--ds-bg-elev,#fff); opacity:0; transform:translateX(-6px); transition:opacity .25s,transform .25s; }
+.cimp-row.show { opacity:1; transform:none; }
+.cimp-name { font-size:.84rem; color:var(--ds-text,#0e0f0f); }
+.cimp-role { font-size:11px; color:var(--ds-accent-text,#0a5950); background:var(--ds-accent-soft,#e9f5f2); padding:2px 8px; border-radius:999px; align-self:center; }
+.cimp-done { margin-top:12px; font-size:.86rem; color:#15803d; }
+.cimp-done strong { font-family:var(--ds-font-display,'Instrument Serif',serif); }
+/* conflictos */
+.cconf-issue { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.3); color:#92400e; border-radius:12px; padding:12px 14px; font-size:.84rem; margin-bottom:14px; line-height:1.5; transition:background .3s,border-color .3s,color .3s; }
+.cconf-issue.resolved { background:rgba(22,163,74,.08); border-color:rgba(22,163,74,.3); color:#15803d; }
+.cconf-result { margin-top:14px; }
+.cconf-title { font-size:.82rem; font-weight:600; color:var(--ds-text,#0e0f0f); margin-bottom:10px; }
+.cconf-changes { display:grid; gap:8px; margin-bottom:14px; }
+.cconf-change { display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:.82rem; padding:8px 12px; border:1px solid var(--ds-border,#e8e6df); border-radius:10px; background:var(--ds-bg-elev,#fff); }
+.cconf-who { font-weight:600; color:var(--ds-text,#0e0f0f); }
+.cconf-when { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:11px; color:var(--ds-text-subtle,#8a8a85); }
+.cconf-flow { display:inline-flex; align-items:center; gap:6px; margin-left:auto; }
+.cconf-arrow { color:var(--ds-text-subtle,#8a8a85); }
+.cconf-pill { font-style:normal; font-size:10.5px; padding:2px 8px; border-radius:999px; }
+.cconf-pill.m { background:#fef3c7; color:#92400e; }
+.cconf-pill.d { background:#e2e8f0; color:#475569; }
+.cconf-done { margin-top:6px; font-size:.84rem; color:#15803d; }
+@media (prefers-reduced-motion: reduce){ .cimp-prog span{animation-duration:.01s;} .cimp-row{transition:none;} }
 
 </style>
 </head>
@@ -5929,6 +5962,42 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         </div>
       </div>
 
+      <!-- Lector PDF/Excel con IA -->
+      <div class="fdemo-card reveal d2">
+        <div class="fdemo-card-head">
+          <span class="fdemo-ico">📄</span>
+          <div><h3>Lector PDF/Excel con IA</h3><p>Sube tu cuadrante actual y la IA rellena la app sola.</p></div>
+        </div>
+        <button class="cimp-drop" id="cimpDrop" type="button">
+          <span class="cimp-up">⬆</span>
+          <span>Arrastra tu PDF/Excel o <u>usa un ejemplo</u></span>
+        </button>
+        <div class="cimp-result" id="cimpResult" hidden>
+          <div class="cimp-prog"><span></span></div>
+          <div class="cimp-rows" id="cimpRows"></div>
+          <div class="cimp-done" id="cimpDone" hidden><span class="cdemo-check">✓</span> <strong>6</strong> empleados detectados y listos para importar</div>
+        </div>
+      </div>
+
+      <!-- Detección y resolución de conflictos -->
+      <div class="fdemo-card reveal d3">
+        <div class="fdemo-card-head">
+          <span class="fdemo-ico">⚠️</span>
+          <div><h3>Conflictos resueltos por IA</h3><p>Detecta choques de convenio y propone el arreglo.</p></div>
+        </div>
+        <div class="cconf-issue" id="cconfIssue"><strong>Lucía P.</strong> encadena 7 días seguidos — supera el máximo de convenio (6).</div>
+        <button class="fdemo-btn" id="cconfGo" type="button">Resolver con IA</button>
+        <div class="cconf-result" id="cconfResult" hidden>
+          <div class="cconf-title">✨ Propuesta de resolución</div>
+          <div class="cconf-changes">
+            <div class="cconf-change"><span class="cconf-who">Lucía P.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill m">Mañana</i><span class="cconf-arrow">→</span><i class="cconf-pill d">Descanso</i></span></div>
+            <div class="cconf-change"><span class="cconf-who">Iván T.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill d">Descanso</i><span class="cconf-arrow">→</span><i class="cconf-pill m">Mañana</i></span></div>
+          </div>
+          <button class="fdemo-btn" id="cconfApply" type="button">Aplicar cambios</button>
+          <div class="cconf-done" id="cconfDone" hidden><span class="cdemo-check">✓</span> Conflicto resuelto · convenio respetado</div>
+        </div>
+      </div>
+
     </div>
     <p class="cdemo-note reveal">Datos de ejemplo. En tu Shiftia trabaja sobre tu plantilla y tu convenio reales.</p>
   </div>
@@ -5978,6 +6047,43 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       dev.textContent=balanced?'0.4':'2.4';
       devWrap.classList.toggle('ok',balanced);
       eqGo.textContent=balanced?'↺ Ver desequilibrio':'Equilibrar con IA';
+    });
+  }
+  // ── Lector PDF/Excel ──
+  var drop=document.getElementById('cimpDrop'), impRes=document.getElementById('cimpResult'),
+      impRows=document.getElementById('cimpRows'), impDone=document.getElementById('cimpDone');
+  if(drop){
+    var sample=[['Empleado Uno','Encargada'],['Empleada Dos','Encargada'],['Empleado Tres','2ª resp.'],['Empleado Cuatro','Logística'],['Empleado Cinco','Rotación'],['Empleada Seis','Rotación']];
+    var impBusy=false;
+    drop.addEventListener('click',function(){
+      if(impBusy) return; impBusy=true;
+      impRes.hidden=false; impDone.hidden=true; impRows.innerHTML='';
+      drop.classList.add('loading');
+      var i=0;
+      var t=setInterval(function(){
+        if(i>=sample.length){ clearInterval(t); impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return; }
+        var r=sample[i];
+        var el=document.createElement('div'); el.className='cimp-row';
+        el.innerHTML='<span class="cimp-name">'+r[0]+'</span><span class="cimp-role">'+r[1]+'</span>';
+        impRows.appendChild(el);
+        requestAnimationFrame(function(){ el.classList.add('show'); });
+        i++;
+      },180);
+    });
+  }
+  // ── Resolución de conflictos ──
+  var cGo=document.getElementById('cconfGo'), cRes=document.getElementById('cconfResult'),
+      cApply=document.getElementById('cconfApply'), cDone=document.getElementById('cconfDone'),
+      cIssue=document.getElementById('cconfIssue');
+  if(cGo){
+    cGo.addEventListener('click',function(){
+      cRes.hidden=false; cGo.disabled=true; cGo.textContent='Analizando…';
+      setTimeout(function(){ cGo.hidden=true; },300);
+    });
+    if(cApply) cApply.addEventListener('click',function(){
+      cDone.hidden=false; cApply.hidden=true;
+      cIssue.classList.add('resolved');
+      cIssue.innerHTML='<span class="cdemo-check">✓</span> <strong>Lucía P.</strong> ya no supera el máximo de convenio.';
     });
   }
 })();
