@@ -3905,6 +3905,46 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   gap: 20px;
   max-width: 920px;
   margin: 40px auto 0;
+  position: relative;
+  z-index: 1;
+}
+/* Aurora de marca muy sutil detrás de las tarjetas de confianza */
+.trust-aura {
+  position: absolute;
+  inset: -20px -4%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.trust-aura::before, .trust-aura::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.16;
+  will-change: transform;
+}
+.trust-aura::before {
+  width: 420px; height: 420px;
+  top: -130px; left: 6%;
+  background: radial-gradient(circle, rgba(78,205,196,0.65), transparent 70%);
+}
+.trust-aura::after {
+  width: 460px; height: 460px;
+  bottom: -170px; right: 4%;
+  background: radial-gradient(circle, rgba(41,128,185,0.55), transparent 70%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .trust-aura::before { animation: trustAura1 26s ease-in-out infinite; }
+  .trust-aura::after  { animation: trustAura2 31s ease-in-out infinite; }
+}
+@keyframes trustAura1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(44px, 30px) scale(1.08); }
+}
+@keyframes trustAura2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-38px, -26px) scale(1.06); }
 }
 .trust-card {
   --tint: #0f7a6d;
@@ -5794,6 +5834,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <p class="section-p reveal" data-i18n="proof_desc">Equipos de distintos sectores ya planifican sus turnos con Shiftia.</p>
   </div>
   <div class="container">
+    <div class="trust-aura" aria-hidden="true"></div>
     <div class="trust-grid">
       <div class="trust-card reveal" style="--tint:#d6232a;">
         <div class="trust-logo">
