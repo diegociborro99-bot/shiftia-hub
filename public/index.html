@@ -5280,7 +5280,10 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cg-slot.code-D { background:#eef2f6; border-color:#cbd5e1; color:#64748b; }
 .cg-toth { font-size:10px; color:var(--ds-text-subtle,#8a8a85); height:24px; }
 .cg-covh { font-size:10px; color:var(--ds-text-subtle,#8a8a85); height:22px; display:flex; align-items:center; justify-content:flex-start; }
-.cg-tot { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.72rem; font-weight:600; color:var(--ds-text-muted,#4a4a47); }
+.cg-tot { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; }
+.cg-totd { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.78rem; font-weight:600; color:var(--ds-text,#0e0f0f); line-height:1.1; }
+.cg-tothrs { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:9px; color:var(--ds-text-subtle,#8a8a85); line-height:1; }
+.cg-slot.cg-run { box-shadow:inset 0 0 0 2px var(--ds-accent,#0f7a6d); }
 .cg-cov { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:10px; color:var(--ds-text-subtle,#8a8a85); height:22px; }
 .cg-cov-closed { color:#b45309; font-weight:600; }
 .cg-day.cg-closed { color:#b45309; }
@@ -6303,7 +6306,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         var tag=(r&&r.partTime&&r.partTime.idx===row)?'<span class="cg-redtag">red.</span>':'';
         h+='<div class="cg-cell cg-name">'+p+tag+'</div>';
         for(var c=0;c<7;c++){ h+='<div class="cg-cell cg-slot" data-r="'+row+'" data-c="'+c+'"></div>'; }
-        h+='<div class="cg-cell cg-tot" data-tr="'+row+'">0</div>';
+        h+='<div class="cg-cell cg-tot" data-tr="'+row+'"><span class="cg-totd">0</span><span class="cg-tothrs">0h</span></div>';
       });
       h+='<div class="cg-cell cg-covh">Cob.</div>';
       for(var d=0;d<7;d++){ h+='<div class="cg-cell cg-cov" data-cc="'+d+'">·</div>'; }
@@ -6330,7 +6333,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           var s=slots[i], rr=+s.getAttribute('data-r'), cc=+s.getAttribute('data-c'), code=g[rr][cc];
           s.className='cg-cell cg-slot fill code-'+code; s.textContent=LBL[code];
           if(code==='M') covM[cc]++; else if(code==='T') covT[cc]++;
-          if(code!=='D'){ wk++; tot[rr]++; var tc=gridEl.querySelector('.cg-tot[data-tr="'+rr+'"]'); if(tc) tc.textContent=tot[rr]; }
+          if(code!=='D'){ wk++; tot[rr]++; var tc=gridEl.querySelector('.cg-tot[data-tr="'+rr+'"]'); if(tc) tc.innerHTML='<span class="cg-totd">'+tot[rr]+'</span><span class="cg-tothrs">'+(tot[rr]*8)+'h</span>'; }
           var ce=gridEl.querySelector('.cg-cov[data-cc="'+cc+'"]');
           if(ce){ var closed=r.minT[cc]===0; ce.textContent=covM[cc]+'·'+(closed?'—':covT[cc]); if(closed) ce.classList.add('cg-cov-closed'); }
           i++;
@@ -6341,9 +6344,14 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           ring.style.background='conic-gradient(var(--ds-accent,#0f7a6d) '+(tConf*pr*3.6)+'deg, var(--ds-border,#e8e6df) 0deg)';
         } else {
           clearInterval(t); bars.classList.add('show'); running=false;
-          var mr=maxRun(g);
+          var mr=maxRun(g), hi=(r.maxConsec<6);
+          if(hi){
+            var bL=0,bR=-1,bS=0;
+            for(var pp=0;pp<5;pp++){ var run=0,st=0; for(var dd=0;dd<7;dd++){ if(g[pp][dd]!=='D'){ if(run===0)st=dd; run++; if(run>bL){bL=run;bR=pp;bS=st;} } else run=0; } }
+            for(var dd2=bS; dd2<bS+bL; dd2++){ var rc=gridEl.querySelector('.cg-slot[data-r="'+bR+'"][data-c="'+dd2+'"]'); if(rc) rc.classList.add('cg-run'); }
+          }
           if(valid){ valid.hidden=false;
-            valid.innerHTML=OKICON+' Variante '+variant+' · convenio respetado: máx. '+mr+' días seguidos (límite '+r.maxConsec+') · cobertura mínima cumplida'+(r.notes.length?' · '+r.notes.join(' · '):'')+'.';
+            valid.innerHTML=OKICON+' Variante '+variant+' · convenio respetado: máx. '+mr+' días seguidos (límite '+r.maxConsec+')'+(hi?' — racha más larga resaltada':'')+' · cobertura mínima cumplida'+(r.notes.length?' · '+r.notes.join(' · '):'')+'.';
           }
           go.disabled=false; go.innerHTML=REFRESH+' Generar otra variante';
         }
