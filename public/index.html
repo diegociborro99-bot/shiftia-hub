@@ -3946,6 +3946,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   0%, 100% { transform: translate(0, 0) scale(1); }
   50%      { transform: translate(-38px, -26px) scale(1.06); }
 }
+/* Rendimiento: pausar animaciones decorativas cuando su sección no está visible
+   (las activa/desactiva un IntersectionObserver añadiendo .anim-paused). */
+.hero.anim-paused::before,
+.hero.anim-paused .ha-blob,
+.proof.anim-paused .trust-aura::before,
+.proof.anim-paused .trust-aura::after { animation-play-state: paused !important; }
 .trust-card {
   --tint: #0f7a6d;
   position: relative;
@@ -6510,12 +6516,53 @@ function toggleFaq(el) {
   document.querySelectorAll('.faq-item').forEach(i => {
     i.classList.remove('open');
     i.querySelector('.faq-a').style.maxHeight = null;
+    const q = i.querySelector('.faq-q');
+    if (q) q.setAttribute('aria-expanded', 'false');
   });
   if (!isOpen) {
     item.classList.add('open');
     answer.style.maxHeight = answer.scrollHeight + 'px';
+    el.setAttribute('aria-expanded', 'true');
   }
 }
+
+// A11y: las FAQ y el selector de idioma son <div> con onclick. Sin tocar el
+// HTML, les damos rol de botón, foco por teclado y estado para lectores.
+(function enhanceClickableA11y() {
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.setAttribute('role', 'button');
+    q.setAttribute('tabindex', '0');
+    const item = q.parentElement;
+    q.setAttribute('aria-expanded', item && item.classList.contains('open') ? 'true' : 'false');
+    const ans = item && item.querySelector('.faq-a');
+    if (ans) {
+      if (!ans.id) ans.id = 'faq-a-' + Math.random().toString(36).slice(2, 8);
+      q.setAttribute('aria-controls', ans.id);
+    }
+  });
+  document.querySelectorAll('.lang-option').forEach(o => {
+    o.setAttribute('role', 'button');
+    o.setAttribute('tabindex', '0');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    const t = e.target;
+    if (!t || !t.classList) return;
+    if (t.classList.contains('faq-q')) { e.preventDefault(); toggleFaq(t); }
+    else if (t.classList.contains('lang-option')) { e.preventDefault(); t.click(); }
+  });
+})();
+
+// Rendimiento: pausa las animaciones decorativas (aurora/mesh) cuando su
+// sección sale de pantalla — ahorra CPU/batería, sobre todo en móvil.
+(function pauseOffscreenAnimations() {
+  const sections = document.querySelectorAll('.hero, .proof');
+  if (!('IntersectionObserver' in window) || !sections.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => e.target.classList.toggle('anim-paused', !e.isIntersecting));
+  }, { threshold: 0, rootMargin: '120px' });
+  sections.forEach(s => io.observe(s));
+})();
 
 // Pricing toggle
 // Las contrataciones se gestionan por llamada previa: el CTA de cada plan

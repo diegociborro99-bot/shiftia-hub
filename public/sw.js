@@ -3,7 +3,10 @@
  * Estrategia: stale-while-revalidate REAL para assets estáticos + offline fallback.
  * Excluye /api/*, /dashboard y métodos no-GET (siempre van a red).
  * ============================================================================ */
-const CACHE_NAME = 'shiftia-v4.3';
+/* CACHE_NAME se versiona solo: el servidor sustituye __BUILD__ por un hash de
+ * build (ver ruta /sw.js en server.js). Si se sirviera el fichero estático sin
+ * procesar, queda 'shiftia-__BUILD__', que sigue siendo un nombre válido. */
+const CACHE_NAME = 'shiftia-__BUILD__';
 const PRECACHE = [
   '/',
   '/design-system.css',

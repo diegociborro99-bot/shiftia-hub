@@ -18,6 +18,13 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 // ====== VERSION BANNER ======
 // Visible en logs de Railway para confirmar qué build está corriendo.
 const PKG_VERSION = require('./package.json').version;
+// BUILD_ID: identifica el contenido publicado. Cambia cuando cambia index.html,
+// así el service worker se reversiona solo (sin tocar CACHE_NAME a mano).
+let BUILD_ID = PKG_VERSION;
+try {
+  const idx = fs.readFileSync(path.join(__dirname, 'public', 'index.html'));
+  BUILD_ID = PKG_VERSION + '-' + crypto.createHash('sha1').update(idx).digest('hex').slice(0, 8);
+} catch (_) { /* fallback a PKG_VERSION */ }
 console.log('========================================');
 console.log(`  Shiftia HUB v${PKG_VERSION} starting`);
 console.log(`  NODE_ENV=${process.env.NODE_ENV || 'development'}`);
@@ -175,6 +182,19 @@ app.use(express.json({ limit: '50kb' }));
 
 // Inject Crisp/PostHog snippets into HTML responses BEFORE express.static serves the raw file.
 app.use(injectThirdPartySnippets);
+
+// Service worker dinámico: inyecta BUILD_ID en CACHE_NAME para invalidar la
+// caché en cada build automáticamente. DEBE ir antes de express.static.
+app.get('/sw.js', (req, res, next) => {
+  fs.promises.readFile(path.join(PUBLIC_DIR, 'sw.js'), 'utf8')
+    .then((js) => {
+      res.type('application/javascript');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Service-Worker-Allowed', '/');
+      res.send(js.split('__BUILD__').join(BUILD_ID));
+    })
+    .catch(() => next());
+});
 
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
