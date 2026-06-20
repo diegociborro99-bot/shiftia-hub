@@ -5340,6 +5340,66 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   .cimp-name { font-size:.8rem; }
 }
 
+/* ===== Lector PDF/Excel (full-width) ===== */
+.cimp2, .cconf2 { max-width:980px; margin:24px auto 0; background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); border-radius:22px; padding:28px; box-shadow:0 1px 2px rgba(15,15,15,.04),0 22px 60px rgba(15,15,15,.07); }
+.cimp2-head, .cconf2-head { display:flex; gap:14px; align-items:flex-start; margin-bottom:22px; }
+.cimp2-head h3, .cconf2-head h3 { font-family:var(--ds-font-sans,'Geist',sans-serif); font-size:1.25rem; font-weight:600; color:var(--ds-text,#0e0f0f); margin:0 0 4px; letter-spacing:-.01em; }
+.cimp2-head p, .cconf2-head p { font-size:.9rem; color:var(--ds-text-muted,#4a4a47); margin:0; line-height:1.6; max-width:64ch; }
+.cimp2-body { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:26px; align-items:start; }
+.cimp2-file { display:block; margin-top:8px; font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:11px; color:var(--ds-accent-text,#0a5950); }
+.cimp2-steps { margin-top:16px; display:grid; gap:9px; }
+.cimp2-step { display:flex; align-items:center; gap:9px; font-size:.84rem; color:var(--ds-text-subtle,#8a8a85); transition:color .3s; }
+.cimp2-step .cimp2-dot { width:14px; height:14px; border-radius:50%; border:2px solid var(--ds-border,#cfd0c8); flex-shrink:0; transition:all .3s; }
+.cimp2-step.active { color:var(--ds-text,#0e0f0f); }
+.cimp2-step.active .cimp2-dot { border-color:var(--ds-accent,#0f7a6d); border-right-color:transparent; animation:cimpSpin .7s linear infinite; }
+@keyframes cimpSpin { to { transform:rotate(360deg); } }
+.cimp2-step.done { color:var(--ds-text,#0e0f0f); }
+.cimp2-step.done .cimp2-dot { background:var(--ds-accent,#0f7a6d); border-color:var(--ds-accent,#0f7a6d); }
+.cimp2-summary { margin-top:16px; font-size:.86rem; color:#15803d; display:flex; align-items:center; gap:6px; }
+.cimp2-summary .cdemo-check svg { width:14px; height:14px; }
+.cimp2-summary strong { font-family:var(--ds-font-display,'Instrument Serif',serif); }
+.cimp2-placeholder { border:1.5px dashed var(--ds-border,#e1e0d8); border-radius:14px; padding:40px 16px; text-align:center; font-size:.84rem; color:var(--ds-text-subtle,#8a8a85); }
+.cimp2-table { border:1px solid var(--ds-border,#e8e6df); border-radius:14px; overflow:hidden; }
+.cimp2-thead, .cimp2-row { display:grid; grid-template-columns:1.4fr 1fr .6fr 1.2fr; gap:8px; align-items:center; padding:9px 14px; }
+.cimp2-thead { background:var(--ds-bg,#f4f2ec); font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--ds-text-subtle,#8a8a85); }
+.cimp2-row { border-top:1px solid var(--ds-border,#eceae3); font-size:.82rem; color:var(--ds-text,#0e0f0f); opacity:0; transform:translateX(-6px); transition:opacity .25s,transform .25s; }
+.cimp2-row.show { opacity:1; transform:none; }
+.cimp2-c.dni { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.76rem; color:var(--ds-text-muted,#4a4a47); }
+.cimp2-c.rolecell { display:flex; align-items:center; gap:6px; justify-content:space-between; }
+.cimp2-role { font-size:10.5px; color:var(--ds-accent-text,#0a5950); background:var(--ds-accent-soft,#e9f5f2); padding:2px 8px; border-radius:999px; white-space:nowrap; }
+.cimp2-chk { width:13px; height:13px; color:#15803d; flex-shrink:0; }
+
+/* ===== Conflictos (full-width) ===== */
+.cconf2-body { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); gap:26px; align-items:start; }
+.cconf2-issues { display:grid; gap:9px; margin:8px 0 16px; }
+.cconf2-issue { display:flex; align-items:flex-start; gap:9px; font-size:.84rem; color:var(--ds-text,#0e0f0f); line-height:1.45; background:var(--ds-bg,#faf9f6); border:1px solid var(--ds-border,#e8e6df); border-radius:10px; padding:10px 12px; transition:background .3s,border-color .3s,opacity .3s; }
+.cconf2-issue.resolved { background:rgba(22,163,74,.07); border-color:rgba(22,163,74,.3); opacity:.85; }
+.cconf2-issue.resolved .cconf2-sev { background:#dcfce7; color:#15803d; }
+.cconf2-sev { flex-shrink:0; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:2px 8px; border-radius:999px; }
+.cconf2-sev.high { background:#fee2e2; color:#b91c1c; }
+.cconf2-sev.mid { background:#fef3c7; color:#92400e; }
+.cconf2-valid { margin-top:14px; display:flex; align-items:flex-start; gap:8px; font-size:.8rem; color:#15803d; background:rgba(22,163,74,.07); border:1px solid rgba(22,163,74,.25); border-radius:10px; padding:10px 12px; line-height:1.45; }
+.cconf2-valid .cdemo-check svg { width:14px; height:14px; }
+.cconf2-week { display:grid; gap:6px; margin:8px 0 4px; }
+.cconf2-daywrap { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.cconf2-dl { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:10px; color:var(--ds-text-subtle,#8a8a85); }
+.cconf2-cell { width:100%; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:600; border:1px solid var(--ds-border,#e8e6df); transition:all .4s cubic-bezier(.16,1,.3,1); }
+.cconf2-cell.code-M { background:#fef3c7; border-color:#fcd34d; color:#92400e; }
+.cconf2-cell.code-T { background:#dbeafe; border-color:#93c5fd; color:#1e40af; }
+.cconf2-cell.code-D { background:#eef2f6; border-color:#cbd5e1; color:#64748b; }
+.cconf2-cell.bad { box-shadow:0 0 0 2px rgba(185,28,28,.45); }
+.cconf2-cell.target { box-shadow:0 0 0 3px rgba(15,122,109,.55); transform:translateY(-2px); }
+.cconf2-prop { margin-top:14px; border-top:1px solid var(--ds-border,#eceae3); padding-top:14px; }
+
+@media (max-width:820px){ .cimp2-body, .cconf2-body { grid-template-columns:1fr; gap:20px; } .cimp2-right, .cconf2-right { order:-1; } }
+@media (max-width:600px){
+  .cimp2, .cconf2 { padding:20px 16px; }
+  .cimp2-thead, .cimp2-row { grid-template-columns:1.3fr 1fr .5fr 1.1fr; padding:8px 10px; gap:6px; font-size:.74rem; }
+  .cimp2-role { font-size:9.5px; padding:2px 6px; }
+  .cconf2-cell { height:32px; font-size:.72rem; }
+  .cconf2-dl { font-size:9px; }
+}
+
 </style>
 </head>
 <body>
@@ -6103,44 +6163,69 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       </div>
     </div>
 
-    <div class="fdemo-grid">
-
-      <!-- Lector PDF/Excel con IA -->
-      <div class="fdemo-card reveal d2">
-        <div class="fdemo-card-head">
-          <span class="fdemo-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
-          <div><h3>Lector PDF/Excel con IA</h3><p>Sube tu cuadrante actual y la IA rellena la app sola.</p></div>
-        </div>
-        <button class="cimp-drop" id="cimpDrop" type="button">
-          <span class="cimp-up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V6M8 10l4-4 4 4M5 19h14"/></svg></span>
-          <span>Arrastra tu PDF/Excel o <u>usa un ejemplo</u></span>
-        </button>
-        <div class="cimp-result" id="cimpResult" hidden>
-          <div class="cimp-prog"><span></span></div>
-          <div class="cimp-rows" id="cimpRows"></div>
-          <div class="cimp-done" id="cimpDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>6</strong> empleados detectados y listos para importar</div>
+    <!-- Lector PDF/Excel con IA -->
+    <div class="cimp2 reveal">
+      <div class="cimp2-head">
+        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
+        <div>
+          <h3>Lector de PDF/Excel con IA</h3>
+          <p>Sube tu cuadrante o tu lista de personal en PDF/Excel y la IA detecta las columnas, valida los DNIs y rellena la app — sin teclear nada.</p>
         </div>
       </div>
-
-      <!-- Detección y resolución de conflictos -->
-      <div class="fdemo-card reveal d3">
-        <div class="fdemo-card-head">
-          <span class="fdemo-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
-          <div><h3>Conflictos resueltos por IA</h3><p>Detecta choques de convenio y propone el arreglo.</p></div>
+      <div class="cimp2-body">
+        <div class="cimp2-left">
+          <button class="cimp-drop" id="cimpDrop" type="button">
+            <span class="cimp-up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V6M8 10l4-4 4 4M5 19h14"/></svg></span>
+            <span class="cimp-drop-txt">Arrastra tu <strong>PDF/Excel</strong> o <u>usa un ejemplo</u></span>
+            <span class="cimp2-file" id="cimpFile" hidden>plantilla_personal.xlsx · 6 filas</span>
+          </button>
+          <div class="cimp2-steps" id="cimpSteps" hidden>
+            <div class="cimp2-step" data-s="0"><span class="cimp2-dot"></span>Leyendo documento</div>
+            <div class="cimp2-step" data-s="1"><span class="cimp2-dot"></span>Detectando columnas: Nombre · DNI · Grupo · Rol</div>
+            <div class="cimp2-step" data-s="2"><span class="cimp2-dot"></span>Validando DNIs y duplicados</div>
+          </div>
+          <div class="cimp2-summary" id="cimpDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>6</strong> empleados · <strong>0</strong> duplicados · listos para importar</div>
         </div>
-        <div class="cconf-issue" id="cconfIssue"><strong>Lucía P.</strong> encadena 7 días seguidos — supera el máximo de convenio (6).</div>
-        <button class="fdemo-btn" id="cconfGo" type="button">Resolver con IA</button>
-        <div class="cconf-result" id="cconfResult" hidden>
-          <div class="cconf-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg> Propuesta de resolución</div>
-          <div class="cconf-changes">
+        <div class="cimp2-right">
+          <div class="cimp2-placeholder" id="cimpPh">La tabla detectada aparecerá aquí</div>
+          <div class="cimp2-table" id="cimpTable" hidden>
+            <div class="cimp2-thead"><span>Nombre</span><span>DNI</span><span>Grupo</span><span>Rol</span></div>
+            <div class="cimp2-rows" id="cimpRows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detección y resolución de conflictos -->
+    <div class="cconf2 reveal">
+      <div class="cconf2-head">
+        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <div>
+          <h3>Detección y resolución de conflictos</h3>
+          <p>Shiftia vigila el cuadrante en tiempo real: detecta choques de convenio y propone el arreglo exacto, que tú apruebas con un clic.</p>
+        </div>
+      </div>
+      <div class="cconf2-body">
+        <div class="cconf2-left">
+          <span class="cgen2-label">Conflictos detectados</span>
+          <div class="cconf2-issues" id="cconfIssues">
+            <div class="cconf2-issue" id="cconfIssue0"><span class="cconf2-sev high">Crítico</span> <span>Lucía P. encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).</span></div>
+            <div class="cconf2-issue" id="cconfIssue1"><span class="cconf2-sev mid">Aviso</span> <span>Sábado tarde: <strong>1 persona</strong> por debajo del mínimo.</span></div>
+          </div>
+          <button class="fdemo-btn" id="cconfGo" type="button">Resolver con IA</button>
+          <div class="cconf2-valid" id="cconfDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> 2 conflictos resueltos · convenio respetado · cobertura cubierta.</div>
+        </div>
+        <div class="cconf2-right">
+          <span class="cgen2-label">Semana de Lucía P.</span>
+          <div class="cconf2-week" id="cconfWeek"></div>
+          <div class="cconf2-prop" id="cconfProp" hidden>
+            <div class="cconf-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg> Propuesta de resolución</div>
             <div class="cconf-change"><span class="cconf-who">Lucía P.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill m">Mañana</i><span class="cconf-arrow">→</span><i class="cconf-pill d">Descanso</i></span></div>
             <div class="cconf-change"><span class="cconf-who">Iván T.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill d">Descanso</i><span class="cconf-arrow">→</span><i class="cconf-pill m">Mañana</i></span></div>
+            <button class="fdemo-btn" id="cconfApply" type="button">Aplicar cambios</button>
           </div>
-          <button class="fdemo-btn" id="cconfApply" type="button">Aplicar cambios</button>
-          <div class="cconf-done" id="cconfDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> Conflicto resuelto · convenio respetado</div>
         </div>
       </div>
-
     </div>
     <p class="cdemo-note reveal">Datos de ejemplo. En tu Shiftia trabaja sobre tu plantilla y tu convenio reales.</p>
   </div>
@@ -6283,41 +6368,70 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       if(eqValid){ eqValid.hidden=!eqBalanced; if(eqBalanced) eqValid.innerHTML=OKICON+' Noches cuadradas (3·3·3·3·2) · desviación 0,4 · todas las noches cubiertas y descansos respetados.'; }
     });
   }
-  // ── Lector PDF/Excel ──
-  var drop=document.getElementById('cimpDrop'), impRes=document.getElementById('cimpResult'),
-      impRows=document.getElementById('cimpRows'), impDone=document.getElementById('cimpDone');
+  // ── Lector PDF/Excel: pasos + columnas detectadas + validación ──
+  var drop=document.getElementById('cimpDrop'), impFile=document.getElementById('cimpFile'),
+      impSteps=document.getElementById('cimpSteps'), impTable=document.getElementById('cimpTable'),
+      impRows=document.getElementById('cimpRows'), impDone=document.getElementById('cimpDone'),
+      impPh=document.getElementById('cimpPh');
   if(drop){
-    var sample=[['Empleado Uno','Encargada'],['Empleada Dos','Encargada'],['Empleado Tres','2ª resp.'],['Empleado Cuatro','Logística'],['Empleado Cinco','Rotación'],['Empleada Seis','Rotación']];
+    var CHK='<svg class="cimp2-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var sample=[['Empleado Uno','····0001A','1','Encargada'],['Empleada Dos','····0002B','2','Encargada'],['Empleado Tres','····0003C','1','2ª resp.'],['Empleado Cuatro','····0004D','1','Logística'],['Empleado Cinco','····0005E','1','Rotación'],['Empleada Seis','····0006F','2','Rotación']];
     var impBusy=false;
     drop.addEventListener('click',function(){
       if(impBusy) return; impBusy=true;
-      impRes.hidden=false; impDone.hidden=true; impRows.innerHTML='';
-      drop.classList.add('loading');
-      var i=0;
-      var t=setInterval(function(){
-        if(i>=sample.length){ clearInterval(t); impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return; }
-        var r=sample[i];
-        var el=document.createElement('div'); el.className='cimp-row';
-        el.innerHTML='<span class="cimp-name">'+r[0]+'</span><span class="cimp-role">'+r[1]+'</span>';
-        impRows.appendChild(el);
-        requestAnimationFrame(function(){ el.classList.add('show'); });
-        i++;
-      },180);
+      impFile.hidden=false; drop.classList.add('loading');
+      impSteps.hidden=false; impDone.hidden=true; impTable.hidden=true; if(impPh) impPh.hidden=true; impRows.innerHTML='';
+      var steps=impSteps.querySelectorAll('.cimp2-step');
+      Array.prototype.forEach.call(steps,function(s){ s.className='cimp2-step'; });
+      var si=0;
+      var st=setInterval(function(){
+        if(si>0){ steps[si-1].classList.remove('active'); steps[si-1].classList.add('done'); }
+        if(si<steps.length){ steps[si].classList.add('active'); si++; }
+        else {
+          clearInterval(st); impTable.hidden=false;
+          var i=0;
+          var t=setInterval(function(){
+            if(i>=sample.length){ clearInterval(t); impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return; }
+            var r=sample[i];
+            var el=document.createElement('div'); el.className='cimp2-row';
+            el.innerHTML='<span class="cimp2-c name">'+r[0]+'</span><span class="cimp2-c dni">'+r[1]+'</span><span class="cimp2-c grp">'+r[2]+'</span><span class="cimp2-c rolecell"><span class="cimp2-role">'+r[3]+'</span>'+CHK+'</span>';
+            impRows.appendChild(el);
+            requestAnimationFrame(function(){ el.classList.add('show'); });
+            i++;
+          },150);
+        }
+      },430);
     });
   }
-  // ── Resolución de conflictos ──
-  var cGo=document.getElementById('cconfGo'), cRes=document.getElementById('cconfResult'),
-      cApply=document.getElementById('cconfApply'), cDone=document.getElementById('cconfDone'),
-      cIssue=document.getElementById('cconfIssue');
-  if(cGo){
+  // ── Conflictos: semana real, detección y resolución ──
+  var cGo=document.getElementById('cconfGo'), cApply=document.getElementById('cconfApply'),
+      cDone=document.getElementById('cconfDone'), cProp=document.getElementById('cconfProp'),
+      cWeek=document.getElementById('cconfWeek'), cI0=document.getElementById('cconfIssue0'),
+      cI1=document.getElementById('cconfIssue1');
+  if(cGo && cWeek){
+    var cd=['L','M','X','J','V','S','D'];
+    var luc=['M','M','M','M','M','M','M'];
+    function renderWeek(hiThu, flagBad){
+      cWeek.style.gridTemplateColumns='repeat(7,minmax(0,1fr))';
+      var h='';
+      for(var i=0;i<7;i++){
+        var code=luc[i], cls='cconf2-cell code-'+code;
+        if(flagBad && code!=='D') cls+=' bad';
+        if(hiThu && i===3) cls+=' target';
+        h+='<div class="cconf2-daywrap"><span class="cconf2-dl">'+cd[i]+'</span><div class="'+cls+'">'+(code==='D'?'L':code)+'</div></div>';
+      }
+      cWeek.innerHTML=h;
+    }
+    renderWeek(false,true);
     cGo.addEventListener('click',function(){
-      cRes.hidden=false; cGo.disabled=true; cGo.textContent='Analizando…';
+      cProp.hidden=false; cGo.disabled=true; cGo.textContent='Analizando…';
+      renderWeek(true,true);
       setTimeout(function(){ cGo.hidden=true; },300);
     });
-    if(cApply) cApply.addEventListener('click',function(){
-      cDone.hidden=false; cApply.hidden=true;
-      cIssue.classList.add('resolved');
-      cIssue.innerHTML='<span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>Lucía P.</strong> ya no supera el máximo de convenio.';
+    cApply.addEventListener('click',function(){
+      luc[3]='D'; renderWeek(false,false);
+      cProp.hidden=true; cDone.hidden=false;
+      cI0.classList.add('resolved'); cI1.classList.add('resolved');
     });
   }
 })();
