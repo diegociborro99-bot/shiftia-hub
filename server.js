@@ -189,7 +189,10 @@ app.get('/sw.js', (req, res, next) => {
   fs.promises.readFile(path.join(PUBLIC_DIR, 'sw.js'), 'utf8')
     .then((js) => {
       res.type('application/javascript');
-      res.setHeader('Cache-Control', 'no-cache');
+      // El navegador revalida siempre; y a Cloudflare le decimos explícitamente
+      // que NO cachee el SW (CDN-Cache-Control tiene prioridad en su edge).
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+      res.setHeader('CDN-Cache-Control', 'no-store');
       res.setHeader('Service-Worker-Allowed', '/');
       res.send(js.split('__BUILD__').join(BUILD_ID));
     })
