@@ -5545,6 +5545,440 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </div>
 </section>
 
+<!-- DEMOS: funciones en acción (auto-gen + equidad nocturna), anonimizadas -->
+<section class="fdemo-section" id="demo-funciones" aria-labelledby="fdemoTitle">
+  <div class="container centered">
+    <div class="section-eyebrow reveal">Funciones en acción</div>
+    <h2 class="section-h2 reveal" id="fdemoTitle">No te lo contamos: <em>pruébalo</em></h2>
+    <p class="section-p reveal">Dos funciones que más tiempo te ahorran, jugables aquí mismo con datos de ejemplo.</p>
+  </div>
+  <div class="container">
+
+    <div class="demo-tabs" id="demoTabs" role="tablist">
+      <button class="demo-tab active" data-tab="0" type="button">Cubrir una baja</button>
+      <button class="demo-tab" data-tab="1" type="button">Auto-generar</button>
+      <button class="demo-tab" data-tab="2" type="button">Equidad nocturna</button>
+      <button class="demo-tab" data-tab="3" type="button">Lector PDF/Excel</button>
+      <button class="demo-tab" data-tab="4" type="button">Conflictos</button>
+    </div>
+
+    <div class="demo-panel active" data-panel="0">
+      <div class="cdemo-card reveal">
+        <div class="cdemo-head">
+          <span class="cdemo-tag">Cobertura inteligente</span>
+          <span class="cdemo-model">modelo local · <span id="cdemoUpdates">3</span> correcciones aprendidas</span>
+        </div>
+        <div class="cdemo-gap" id="cdemoGap">
+          <div class="cdemo-gap-info">
+            <strong>Sábado</strong>
+            <span class="cdemo-chip bad" id="cdemoChip">Tarde · falta 1</span>
+            <span class="cdemo-gap-sub">Marina L. ha causado baja — falta 1 persona para el mínimo del turno</span>
+          </div>
+          <button class="cdemo-btn" id="cdemoSuggest" type="button">Sugerir con IA</button>
+        </div>
+        <div class="cdemo-analyzing" id="cdemoAnalyzing" hidden>
+          <div class="cdemo-bar"><span></span></div>
+          <span class="cdemo-analyzing-text">Analizando 7 criterios entre tu plantilla… (carga, convenio, descansos, historial)</span>
+        </div>
+        <div class="cdemo-candidates" id="cdemoCandidates" hidden></div>
+        <div class="cdemo-applied" id="cdemoApplied" hidden></div>
+        <div class="cdemo-foot">
+          <span>Objetivos (carga, convenio) + subjetivos (valoraciones) + historial.</span>
+          <button class="cdemo-reset" id="cdemoReset" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg> Probar otra vez</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-panel" data-panel="1">
+
+    <!-- FLAGSHIP: Auto-generar el cuadrante con IA (cuadrante en vivo) -->
+    <div class="cgen2 reveal">
+      <div class="cgen2-head">
+        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg></span>
+        <div>
+          <h3>Auto-generar el cuadrante con IA</h3>
+          <p>Describe en una frase cómo quieres el mes y la IA construye el cuadrante completo: respeta el convenio, equilibra cargas y resuelve los huecos en segundos. Tú solo revisas y publicas.</p>
+        </div>
+      </div>
+      <div class="cgen2-body">
+        <div class="cgen2-left">
+          <span class="cgen2-label">Instrucción en lenguaje natural</span>
+          <div class="cgen2-input" id="cgenInput">Cuadrante semanal equilibrado, respetando convenio</div>
+          <div class="cgen2-examples">
+            <button class="cgen-ex" type="button">Refuerza las tardes del finde</button>
+            <button class="cgen-ex" type="button">Cierra la tarde del sábado</button>
+            <button class="cgen-ex" type="button">Máximo 5 días seguidos</button>
+            <button class="cgen-ex" type="button">Respeta las reducciones de jornada</button>
+          </div>
+          <button class="fdemo-btn cgen2-go" id="cgenGo" type="button">Generar cuadrante</button>
+          <div class="cgen2-metrics" id="cgenMetrics" hidden>
+            <div class="cgen2-ring" id="cgenRing"><div class="cgen2-ring-in"><strong id="cgenConf">0%</strong><span>confianza</span></div></div>
+            <div class="cgen2-kpis">
+              <div class="cgen2-kpi"><strong id="cgenAssigned">0</strong><span>turnos asignados</span></div>
+              <div class="cgen2-kpi"><strong id="cgenGaps">0</strong><span>huecos resueltos</span></div>
+              <div class="cgen2-kpi ok"><strong>0</strong><span>conflictos de convenio</span></div>
+            </div>
+          </div>
+          <div class="cgen2-bars" id="cgenBars" hidden>
+            <div class="cgen-bar" style="--w:97%"><label>Cobertura mínima</label><i></i></div>
+            <div class="cgen-bar" style="--w:91%"><label>Equidad de carga</label><i></i></div>
+            <div class="cgen-bar" style="--w:100%"><label>Descansos legales</label><i></i></div>
+            <div class="cgen-bar" style="--w:84%"><label>Preferencias de turno</label><i></i></div>
+          </div>
+        </div>
+        <div class="cgen2-right">
+          <div class="cgen2-grid-head">
+            <span class="cgen2-gh-title">Cuadrante semanal · 5 personas</span>
+            <span class="cgen2-legend"><i class="lg M"></i>Mañana <i class="lg T"></i>Tarde <i class="lg D"></i>Libre</span>
+          </div>
+          <div class="cgen2-grid" id="cgenGrid"></div>
+          <div class="cgen2-valid" id="cgenValid" hidden></div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="demo-panel" data-panel="2">
+    <!-- Equidad nocturna: redistribución de planilla -->
+    <div class="ceq2 reveal">
+      <div class="ceq2-head">
+        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+        <div>
+          <h3>Equidad nocturna: redistribución automática</h3>
+          <p>Cuando alguien acumula demasiadas noches, Shiftia redistribuye la planilla para cuadrar las noches entre quienes rotan — sin dejar turnos sin cubrir ni romper descansos.</p>
+        </div>
+      </div>
+      <div class="ceq2-body">
+        <div class="ceq2-left">
+          <span class="cgen2-label">Reparto de noches · últimas 2 semanas</span>
+          <div class="ceq2-grid" id="ceqGrid"></div>
+          <div class="ceq2-legend"><span class="ceq2-lg-on"></span>Noche asignada <span class="ceq2-lg-off"></span>Libre</div>
+        </div>
+        <div class="ceq2-right">
+          <span class="cgen2-label">Noches por persona</span>
+          <div class="ceq2-totals" id="ceqTotals"></div>
+          <div class="ceq2-metrics">
+            <div class="ceq2-metric"><strong id="ceqDev">2.2</strong><span>desviación típica</span></div>
+            <div class="ceq2-metric"><strong id="ceqRange">6</strong><span>diferencia máx-mín</span></div>
+          </div>
+          <button class="fdemo-btn ceq2-go" id="ceqGo" type="button">Redistribuir noches con IA</button>
+          <div class="ceq2-valid" id="ceqValid" hidden></div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="demo-panel" data-panel="3">
+    <!-- Lector PDF/Excel con IA -->
+    <div class="cimp2 reveal">
+      <div class="cimp2-head">
+        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
+        <div>
+          <h3>Lector de PDF/Excel con IA</h3>
+          <p>Sube tu cuadrante o tu lista de personal en PDF/Excel y la IA detecta las columnas, valida los DNIs y rellena la app — sin teclear nada.</p>
+        </div>
+      </div>
+      <div class="cimp2-body">
+        <div class="cimp2-left">
+          <button class="cimp-drop" id="cimpDrop" type="button">
+            <span class="cimp-up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V6M8 10l4-4 4 4M5 19h14"/></svg></span>
+            <span class="cimp-drop-txt">Arrastra tu <strong>PDF/Excel</strong> o <u>usa un ejemplo</u></span>
+            <span class="cimp2-file" id="cimpFile" hidden>plantilla_personal.xlsx · 6 filas</span>
+          </button>
+          <div class="cimp2-steps" id="cimpSteps" hidden>
+            <div class="cimp2-step" data-s="0"><span class="cimp2-dot"></span>Leyendo documento</div>
+            <div class="cimp2-step" data-s="1"><span class="cimp2-dot"></span>Detectando columnas: Nombre · DNI · Grupo · Rol</div>
+            <div class="cimp2-step" data-s="2"><span class="cimp2-dot"></span>Validando DNIs y duplicados</div>
+          </div>
+          <div class="cimp2-summary" id="cimpDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>6</strong> empleados · <strong>0</strong> duplicados · listos para importar</div>
+        </div>
+        <div class="cimp2-right">
+          <div class="cimp2-placeholder" id="cimpPh">La tabla detectada aparecerá aquí</div>
+          <div class="cimp2-table" id="cimpTable" hidden>
+            <div class="cimp2-thead"><span>Nombre</span><span>DNI</span><span>Grupo</span><span>Rol</span></div>
+            <div class="cimp2-rows" id="cimpRows"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="demo-panel" data-panel="4">
+    <!-- Detección y resolución de conflictos -->
+    <div class="cconf2 reveal">
+      <div class="cconf2-head">
+        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+        <div>
+          <h3>Detección y resolución de conflictos</h3>
+          <p>Shiftia vigila el cuadrante en tiempo real: detecta choques de convenio y propone el arreglo exacto, que tú apruebas con un clic.</p>
+        </div>
+      </div>
+      <div class="cconf2-body">
+        <div class="cconf2-left">
+          <span class="cgen2-label">Conflictos detectados</span>
+          <div class="cconf2-issues" id="cconfIssues">
+            <div class="cconf2-issue" id="cconfIssue0"><span class="cconf2-sev high">Crítico</span> <span>Lucía P. encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).</span></div>
+            <div class="cconf2-issue" id="cconfIssue1"><span class="cconf2-sev mid">Aviso</span> <span>Sábado tarde: <strong>1 persona</strong> por debajo del mínimo.</span></div>
+          </div>
+          <button class="fdemo-btn" id="cconfGo" type="button">Resolver con IA</button>
+          <div class="cconf2-valid" id="cconfDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> 2 conflictos resueltos · convenio respetado · cobertura cubierta.</div>
+        </div>
+        <div class="cconf2-right">
+          <span class="cgen2-label">Semana de Lucía P.</span>
+          <div class="cconf2-week" id="cconfWeek"></div>
+          <div class="cconf2-prop" id="cconfProp" hidden>
+            <div class="cconf-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg> Propuesta de resolución</div>
+            <div class="cconf-change"><span class="cconf-who">Lucía P.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill m">Mañana</i><span class="cconf-arrow">→</span><i class="cconf-pill d">Descanso</i></span></div>
+            <div class="cconf-change"><span class="cconf-who">Iván T.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill d">Descanso</i><span class="cconf-arrow">→</span><i class="cconf-pill m">Mañana</i></span></div>
+            <button class="fdemo-btn" id="cconfApply" type="button">Aplicar cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <p class="cdemo-note reveal">Datos de ejemplo. En tu Shiftia trabaja sobre tu plantilla y tu convenio reales.</p>
+    <div class="demo-cta reveal">
+      <span>¿Lo quieres funcionando con tu plantilla y tu convenio?</span>
+      <a href="#contact" class="fdemo-btn demo-cta-btn">Pedir mi demo</a>
+    </div>
+  </div>
+</section>
+<script>
+(function fdemoInit(){
+  var REFRESH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg>';
+  var OKICON='<svg class="cgv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  // ── Auto-generar cuadrante: generador real que respeta la instrucción ──
+  var go=document.getElementById('cgenGo'), gridEl=document.getElementById('cgenGrid'),
+      metrics=document.getElementById('cgenMetrics'), bars=document.getElementById('cgenBars'),
+      ring=document.getElementById('cgenRing'), conf=document.getElementById('cgenConf'),
+      gaps=document.getElementById('cgenGaps'), assigned=document.getElementById('cgenAssigned'),
+      input=document.getElementById('cgenInput'), valid=document.getElementById('cgenValid');
+  if(go && gridEl){
+    var people=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.'];
+    var days=['L','M','X','J','V','S','D'];
+    var LBL={M:'M',T:'T',D:'L'};
+    function parseRules(txt){
+      txt=(txt||'').toLowerCase();
+      var r={minM:[2,2,2,2,2,2,2],minT:[2,2,2,2,2,2,2],maxConsec:6,partTime:null,notes:[]};
+      if(txt.indexOf('finde')>=0){ r.minT[5]=3; r.minT[6]=3; r.notes.push('tardes de finde reforzadas (3)'); }
+      if(txt.indexOf('sábado')>=0||txt.indexOf('sabado')>=0){ r.minT[5]=0; r.notes.push('tarde del sábado cerrada'); }
+      if(txt.indexOf('5 día')>=0||txt.indexOf('5 dia')>=0||txt.indexOf('máximo 5')>=0||txt.indexOf('maximo 5')>=0){ r.maxConsec=5; r.notes.push('máximo 5 días seguidos'); }
+      if(txt.indexOf('reduc')>=0){ r.partTime={idx:2,max:4}; r.notes.push('jornada reducida de Lucía P. (≤4 días)'); }
+      return r;
+    }
+    function gen(r){
+      var best=null;
+      for(var att=0; att<400; att++){
+        var g=[[],[],[],[],[]], streak=[0,0,0,0,0], work=[0,0,0,0,0], ok=true;
+        for(var p=0;p<5;p++) for(var d=0;d<7;d++) g[p][d]='D';
+        for(var d=0;d<7;d++){
+          var need=r.minM[d]+r.minT[d], avail=[];
+          for(var p=0;p<5;p++){
+            if(streak[p]>=r.maxConsec) continue;
+            if(r.partTime && r.partTime.idx===p && work[p]>=r.partTime.max) continue;
+            avail.push(p);
+          }
+          if(avail.length<need){ ok=false; break; }
+          avail.sort(function(a,b){ return (work[a]-work[b])+(Math.random()-0.5); });
+          var workers=avail.slice(0,need);
+          workers.sort(function(){ return Math.random()-0.5; });
+          for(var k=0;k<workers.length;k++) g[workers[k]][d]=(k<r.minM[d])?'M':'T';
+          for(var p=0;p<5;p++){ if(g[p][d]!=='D'){ streak[p]++; work[p]++; } else streak[p]=0; }
+        }
+        if(!ok) continue;
+        var mn=99,mx=0,bad=false;
+        for(var p=0;p<5;p++){
+          if(r.partTime && r.partTime.idx===p) continue;
+          if(work[p]<2) bad=true;
+          if(work[p]<mn)mn=work[p]; if(work[p]>mx)mx=work[p];
+        }
+        if(bad) continue;
+        if(!best) best=g;
+        if(mx-mn<=2) return g;
+      }
+      return best;
+    }
+    var FALLBACK=[['M','T','M','T','D','M','T'],['M','T','T','D','M','T','M'],['T','M','D','M','T','M','T'],['T','D','M','T','M','T','D'],['D','M','T','M','T','D','M']];
+    function maxRun(g){ var m=0; g.forEach(function(row){ var c=0; row.forEach(function(x){ if(x!=='D'){ c++; if(c>m)m=c; } else c=0; }); }); return m; }
+    function buildEmpty(r){
+      gridEl.style.gridTemplateColumns='auto repeat(7,minmax(0,1fr)) auto';
+      var h='<div class="cg-cell cg-corner"></div>';
+      for(var d=0;d<7;d++){ var cl=(r&&r.minT[d]===0); h+='<div class="cg-cell cg-day'+(cl?' cg-closed':'')+'">'+days[d]+'</div>'; }
+      h+='<div class="cg-cell cg-toth">Días</div>';
+      people.forEach(function(p,row){
+        var tag=(r&&r.partTime&&r.partTime.idx===row)?'<span class="cg-redtag">red.</span>':'';
+        h+='<div class="cg-cell cg-name">'+p+tag+'</div>';
+        for(var c=0;c<7;c++){ h+='<div class="cg-cell cg-slot" data-r="'+row+'" data-c="'+c+'"></div>'; }
+        h+='<div class="cg-cell cg-tot" data-tr="'+row+'"><span class="cg-totd">0</span><span class="cg-tothrs">0h</span></div>';
+      });
+      h+='<div class="cg-cell cg-covh">Cob.</div>';
+      for(var d=0;d<7;d++){ h+='<div class="cg-cell cg-cov" data-cc="'+d+'">·</div>'; }
+      h+='<div class="cg-cell"></div>';
+      gridEl.innerHTML=h;
+    }
+    buildEmpty();
+    Array.prototype.forEach.call(document.querySelectorAll('.cgen-ex'),function(b){
+      b.addEventListener('click',function(){ input.textContent=b.textContent; });
+    });
+    var running=false, variant=0;
+    go.addEventListener('click',function(){
+      if(running) return;
+      var r=parseRules(input.textContent);
+      var g=gen(r)||FALLBACK; variant++;
+      buildEmpty(r);
+      running=true; go.disabled=true; go.textContent='Generando…';
+      metrics.hidden=false; bars.hidden=false; bars.classList.remove('show'); if(valid) valid.hidden=true;
+      var slots=gridEl.querySelectorAll('.cg-slot'), i=0, total=slots.length, wk=0;
+      var tot=[0,0,0,0,0], covM=[0,0,0,0,0,0,0], covT=[0,0,0,0,0,0,0];
+      var tConf=93+Math.floor(Math.random()*6), tGaps=8+Math.floor(Math.random()*7);
+      var t=setInterval(function(){
+        if(i<total){
+          var s=slots[i], rr=+s.getAttribute('data-r'), cc=+s.getAttribute('data-c'), code=g[rr][cc];
+          s.className='cg-cell cg-slot fill code-'+code; s.textContent=LBL[code];
+          if(code==='M') covM[cc]++; else if(code==='T') covT[cc]++;
+          if(code!=='D'){ wk++; tot[rr]++; var tc=gridEl.querySelector('.cg-tot[data-tr="'+rr+'"]'); if(tc) tc.innerHTML='<span class="cg-totd">'+tot[rr]+'</span><span class="cg-tothrs">'+(tot[rr]*8)+'h</span>'; }
+          var ce=gridEl.querySelector('.cg-cov[data-cc="'+cc+'"]');
+          if(ce){ var closed=r.minT[cc]===0; ce.textContent=covM[cc]+'·'+(closed?'—':covT[cc]); if(closed) ce.classList.add('cg-cov-closed'); }
+          i++;
+          var pr=i/total;
+          conf.textContent=Math.round(tConf*pr)+'%';
+          assigned.textContent=wk;
+          gaps.textContent=Math.round(tGaps*pr);
+          ring.style.background='conic-gradient(var(--ds-accent,#0f7a6d) '+(tConf*pr*3.6)+'deg, var(--ds-border,#e8e6df) 0deg)';
+        } else {
+          clearInterval(t); bars.classList.add('show'); running=false;
+          var mr=maxRun(g), hi=(r.maxConsec<6);
+          if(hi){
+            var bL=0,bR=-1,bS=0;
+            for(var pp=0;pp<5;pp++){ var run=0,st=0; for(var dd=0;dd<7;dd++){ if(g[pp][dd]!=='D'){ if(run===0)st=dd; run++; if(run>bL){bL=run;bR=pp;bS=st;} } else run=0; } }
+            for(var dd2=bS; dd2<bS+bL; dd2++){ var rc=gridEl.querySelector('.cg-slot[data-r="'+bR+'"][data-c="'+dd2+'"]'); if(rc) rc.classList.add('cg-run'); }
+          }
+          if(valid){ valid.hidden=false;
+            valid.innerHTML=OKICON+' Variante '+variant+' · convenio respetado: máx. '+mr+' días seguidos (límite '+r.maxConsec+')'+(hi?' — racha más larga resaltada':'')+' · cobertura mínima cumplida'+(r.notes.length?' · '+r.notes.join(' · '):'')+'.';
+          }
+          go.disabled=false; go.innerHTML=REFRESH+' Generar otra variante';
+        }
+      },42);
+    });
+  }
+  // ── Equidad nocturna: redistribución de noches ──
+  var eqGrid=document.getElementById('ceqGrid'), eqTotals=document.getElementById('ceqTotals'),
+      eqGo=document.getElementById('ceqGo'), eqDev=document.getElementById('ceqDev'),
+      eqRange=document.getElementById('ceqRange'), eqValid=document.getElementById('ceqValid');
+  if(eqGrid && eqGo){
+    var eqPpl=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.'];
+    var EN=14;
+    var eqInit=[0,0,0,0,0,0,0,1,2,2,2,3,4,4];
+    var eqBal=[0,0,0,1,1,1,2,2,2,3,3,3,4,4];
+    function eqCounts(o){ var c=[0,0,0,0,0]; o.forEach(function(x){ c[x]++; }); return c; }
+    function eqStd(c){ var m=c.reduce(function(a,b){return a+b;},0)/c.length; var v=c.reduce(function(a,b){return a+(b-m)*(b-m);},0)/c.length; return Math.sqrt(v); }
+    function eqBuild(o){
+      eqGrid.style.gridTemplateColumns='auto repeat('+EN+',minmax(0,1fr))';
+      var h='';
+      eqPpl.forEach(function(p,r){
+        h+='<div class="ceq2-name">'+p+'</div>';
+        for(var n=0;n<EN;n++){ h+='<div class="ceq2-cell'+(o[n]===r?' on':'')+'"></div>'; }
+      });
+      eqGrid.innerHTML=h;
+    }
+    function eqTot(o){
+      var c=eqCounts(o), mx=Math.max.apply(null,c);
+      eqTotals.innerHTML=eqPpl.map(function(p,r){
+        return '<div class="ceq2-trow"><span class="ceq2-tname">'+p+'</span><span class="ceq2-tbar"><i style="width:'+Math.round(c[r]/mx*100)+'%"></i></span><span class="ceq2-tval">'+c[r]+'</span></div>';
+      }).join('');
+    }
+    function eqShow(o){ eqBuild(o); eqTot(o); var c=eqCounts(o); eqDev.textContent=eqStd(c).toFixed(1); eqRange.textContent=(Math.max.apply(null,c)-Math.min.apply(null,c)); }
+    eqShow(eqInit);
+    var eqBalanced=false;
+    eqGo.addEventListener('click',function(){
+      eqBalanced=!eqBalanced;
+      eqShow(eqBalanced?eqBal:eqInit);
+      eqGo.innerHTML=eqBalanced?(REFRESH+' Ver desequilibrio inicial'):'Redistribuir noches con IA';
+      if(eqValid){ eqValid.hidden=!eqBalanced; if(eqBalanced) eqValid.innerHTML=OKICON+' Noches cuadradas (3·3·3·3·2) · desviación 0,4 · todas las noches cubiertas y descansos respetados.'; }
+    });
+  }
+  // ── Lector PDF/Excel: pasos + columnas detectadas + validación ──
+  var drop=document.getElementById('cimpDrop'), impFile=document.getElementById('cimpFile'),
+      impSteps=document.getElementById('cimpSteps'), impTable=document.getElementById('cimpTable'),
+      impRows=document.getElementById('cimpRows'), impDone=document.getElementById('cimpDone'),
+      impPh=document.getElementById('cimpPh');
+  if(drop){
+    var CHK='<svg class="cimp2-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var sample=[['Empleado Uno','····0001A','1','Encargada'],['Empleada Dos','····0002B','2','Encargada'],['Empleado Tres','····0003C','1','2ª resp.'],['Empleado Cuatro','····0004D','1','Logística'],['Empleado Cinco','····0005E','1','Rotación'],['Empleada Seis','····0006F','2','Rotación']];
+    var impBusy=false;
+    drop.addEventListener('click',function(){
+      if(impBusy) return; impBusy=true;
+      impFile.hidden=false; drop.classList.add('loading');
+      impSteps.hidden=false; impDone.hidden=true; impTable.hidden=true; if(impPh) impPh.hidden=true; impRows.innerHTML='';
+      var steps=impSteps.querySelectorAll('.cimp2-step');
+      Array.prototype.forEach.call(steps,function(s){ s.className='cimp2-step'; });
+      var si=0;
+      var st=setInterval(function(){
+        if(si>0){ steps[si-1].classList.remove('active'); steps[si-1].classList.add('done'); }
+        if(si<steps.length){ steps[si].classList.add('active'); si++; }
+        else {
+          clearInterval(st); impTable.hidden=false;
+          var i=0;
+          var t=setInterval(function(){
+            if(i>=sample.length){ clearInterval(t); impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return; }
+            var r=sample[i];
+            var el=document.createElement('div'); el.className='cimp2-row';
+            el.innerHTML='<span class="cimp2-c name">'+r[0]+'</span><span class="cimp2-c dni">'+r[1]+'</span><span class="cimp2-c grp">'+r[2]+'</span><span class="cimp2-c rolecell"><span class="cimp2-role">'+r[3]+'</span>'+CHK+'</span>';
+            impRows.appendChild(el);
+            requestAnimationFrame(function(){ el.classList.add('show'); });
+            i++;
+          },150);
+        }
+      },430);
+    });
+  }
+  // ── Conflictos: semana real, detección y resolución ──
+  var cGo=document.getElementById('cconfGo'), cApply=document.getElementById('cconfApply'),
+      cDone=document.getElementById('cconfDone'), cProp=document.getElementById('cconfProp'),
+      cWeek=document.getElementById('cconfWeek'), cI0=document.getElementById('cconfIssue0'),
+      cI1=document.getElementById('cconfIssue1');
+  if(cGo && cWeek){
+    var cd=['L','M','X','J','V','S','D'];
+    var luc=['M','M','M','M','M','M','M'];
+    function renderWeek(hiThu, flagBad){
+      cWeek.style.gridTemplateColumns='repeat(7,minmax(0,1fr))';
+      var h='';
+      for(var i=0;i<7;i++){
+        var code=luc[i], cls='cconf2-cell code-'+code;
+        if(flagBad && code!=='D') cls+=' bad';
+        if(hiThu && i===3) cls+=' target';
+        h+='<div class="cconf2-daywrap"><span class="cconf2-dl">'+cd[i]+'</span><div class="'+cls+'">'+(code==='D'?'L':code)+'</div></div>';
+      }
+      cWeek.innerHTML=h;
+    }
+    renderWeek(false,true);
+    cGo.addEventListener('click',function(){
+      cProp.hidden=false; cGo.disabled=true; cGo.textContent='Analizando…';
+      renderWeek(true,true);
+      setTimeout(function(){ cGo.hidden=true; },300);
+    });
+    cApply.addEventListener('click',function(){
+      luc[3]='D'; renderWeek(false,false);
+      cProp.hidden=true; cDone.hidden=false;
+      cI0.classList.add('resolved'); cI1.classList.add('resolved');
+    });
+  }
+  // ── Pestañas "Pruébalo" ──
+  var tabsEl=document.getElementById('demoTabs');
+  if(tabsEl){
+    var tabBtns=tabsEl.querySelectorAll('.demo-tab');
+    var panels=document.querySelectorAll('.demo-panel');
+    Array.prototype.forEach.call(tabBtns,function(b){
+      b.addEventListener('click',function(){
+        var n=b.getAttribute('data-tab');
+        Array.prototype.forEach.call(tabBtns,function(x){ x.classList.toggle('active', x===b); });
+        Array.prototype.forEach.call(panels,function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===n); });
+      });
+    });
+  }
+})();
+</script>
+
 <!-- DEMO INTERACTIVA: cobertura inteligente (réplica anonimizada del producto real) -->
 <script>
 (function cdemoInit(){
@@ -6084,439 +6518,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </div>
 </section>
 
-<!-- DEMOS: funciones en acción (auto-gen + equidad nocturna), anonimizadas -->
-<section class="fdemo-section" id="demo-funciones" aria-labelledby="fdemoTitle">
-  <div class="container centered">
-    <div class="section-eyebrow reveal">Funciones en acción</div>
-    <h2 class="section-h2 reveal" id="fdemoTitle">No te lo contamos: <em>pruébalo</em></h2>
-    <p class="section-p reveal">Dos funciones que más tiempo te ahorran, jugables aquí mismo con datos de ejemplo.</p>
-  </div>
-  <div class="container">
 
-    <div class="demo-tabs" id="demoTabs" role="tablist">
-      <button class="demo-tab active" data-tab="0" type="button">Cubrir una baja</button>
-      <button class="demo-tab" data-tab="1" type="button">Auto-generar</button>
-      <button class="demo-tab" data-tab="2" type="button">Equidad nocturna</button>
-      <button class="demo-tab" data-tab="3" type="button">Lector PDF/Excel</button>
-      <button class="demo-tab" data-tab="4" type="button">Conflictos</button>
-    </div>
-
-    <div class="demo-panel active" data-panel="0">
-      <div class="cdemo-card reveal">
-        <div class="cdemo-head">
-          <span class="cdemo-tag">Cobertura inteligente</span>
-          <span class="cdemo-model">modelo local · <span id="cdemoUpdates">3</span> correcciones aprendidas</span>
-        </div>
-        <div class="cdemo-gap" id="cdemoGap">
-          <div class="cdemo-gap-info">
-            <strong>Sábado</strong>
-            <span class="cdemo-chip bad" id="cdemoChip">Tarde · falta 1</span>
-            <span class="cdemo-gap-sub">Marina L. ha causado baja — falta 1 persona para el mínimo del turno</span>
-          </div>
-          <button class="cdemo-btn" id="cdemoSuggest" type="button">Sugerir con IA</button>
-        </div>
-        <div class="cdemo-analyzing" id="cdemoAnalyzing" hidden>
-          <div class="cdemo-bar"><span></span></div>
-          <span class="cdemo-analyzing-text">Analizando 7 criterios entre tu plantilla… (carga, convenio, descansos, historial)</span>
-        </div>
-        <div class="cdemo-candidates" id="cdemoCandidates" hidden></div>
-        <div class="cdemo-applied" id="cdemoApplied" hidden></div>
-        <div class="cdemo-foot">
-          <span>Objetivos (carga, convenio) + subjetivos (valoraciones) + historial.</span>
-          <button class="cdemo-reset" id="cdemoReset" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg> Probar otra vez</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="demo-panel" data-panel="1">
-
-    <!-- FLAGSHIP: Auto-generar el cuadrante con IA (cuadrante en vivo) -->
-    <div class="cgen2 reveal">
-      <div class="cgen2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg></span>
-        <div>
-          <h3>Auto-generar el cuadrante con IA</h3>
-          <p>Describe en una frase cómo quieres el mes y la IA construye el cuadrante completo: respeta el convenio, equilibra cargas y resuelve los huecos en segundos. Tú solo revisas y publicas.</p>
-        </div>
-      </div>
-      <div class="cgen2-body">
-        <div class="cgen2-left">
-          <span class="cgen2-label">Instrucción en lenguaje natural</span>
-          <div class="cgen2-input" id="cgenInput">Cuadrante semanal equilibrado, respetando convenio</div>
-          <div class="cgen2-examples">
-            <button class="cgen-ex" type="button">Refuerza las tardes del finde</button>
-            <button class="cgen-ex" type="button">Cierra la tarde del sábado</button>
-            <button class="cgen-ex" type="button">Máximo 5 días seguidos</button>
-            <button class="cgen-ex" type="button">Respeta las reducciones de jornada</button>
-          </div>
-          <button class="fdemo-btn cgen2-go" id="cgenGo" type="button">Generar cuadrante</button>
-          <div class="cgen2-metrics" id="cgenMetrics" hidden>
-            <div class="cgen2-ring" id="cgenRing"><div class="cgen2-ring-in"><strong id="cgenConf">0%</strong><span>confianza</span></div></div>
-            <div class="cgen2-kpis">
-              <div class="cgen2-kpi"><strong id="cgenAssigned">0</strong><span>turnos asignados</span></div>
-              <div class="cgen2-kpi"><strong id="cgenGaps">0</strong><span>huecos resueltos</span></div>
-              <div class="cgen2-kpi ok"><strong>0</strong><span>conflictos de convenio</span></div>
-            </div>
-          </div>
-          <div class="cgen2-bars" id="cgenBars" hidden>
-            <div class="cgen-bar" style="--w:97%"><label>Cobertura mínima</label><i></i></div>
-            <div class="cgen-bar" style="--w:91%"><label>Equidad de carga</label><i></i></div>
-            <div class="cgen-bar" style="--w:100%"><label>Descansos legales</label><i></i></div>
-            <div class="cgen-bar" style="--w:84%"><label>Preferencias de turno</label><i></i></div>
-          </div>
-        </div>
-        <div class="cgen2-right">
-          <div class="cgen2-grid-head">
-            <span class="cgen2-gh-title">Cuadrante semanal · 5 personas</span>
-            <span class="cgen2-legend"><i class="lg M"></i>Mañana <i class="lg T"></i>Tarde <i class="lg D"></i>Libre</span>
-          </div>
-          <div class="cgen2-grid" id="cgenGrid"></div>
-          <div class="cgen2-valid" id="cgenValid" hidden></div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-    <div class="demo-panel" data-panel="2">
-    <!-- Equidad nocturna: redistribución de planilla -->
-    <div class="ceq2 reveal">
-      <div class="ceq2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
-        <div>
-          <h3>Equidad nocturna: redistribución automática</h3>
-          <p>Cuando alguien acumula demasiadas noches, Shiftia redistribuye la planilla para cuadrar las noches entre quienes rotan — sin dejar turnos sin cubrir ni romper descansos.</p>
-        </div>
-      </div>
-      <div class="ceq2-body">
-        <div class="ceq2-left">
-          <span class="cgen2-label">Reparto de noches · últimas 2 semanas</span>
-          <div class="ceq2-grid" id="ceqGrid"></div>
-          <div class="ceq2-legend"><span class="ceq2-lg-on"></span>Noche asignada <span class="ceq2-lg-off"></span>Libre</div>
-        </div>
-        <div class="ceq2-right">
-          <span class="cgen2-label">Noches por persona</span>
-          <div class="ceq2-totals" id="ceqTotals"></div>
-          <div class="ceq2-metrics">
-            <div class="ceq2-metric"><strong id="ceqDev">2.2</strong><span>desviación típica</span></div>
-            <div class="ceq2-metric"><strong id="ceqRange">6</strong><span>diferencia máx-mín</span></div>
-          </div>
-          <button class="fdemo-btn ceq2-go" id="ceqGo" type="button">Redistribuir noches con IA</button>
-          <div class="ceq2-valid" id="ceqValid" hidden></div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-    <div class="demo-panel" data-panel="3">
-    <!-- Lector PDF/Excel con IA -->
-    <div class="cimp2 reveal">
-      <div class="cimp2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
-        <div>
-          <h3>Lector de PDF/Excel con IA</h3>
-          <p>Sube tu cuadrante o tu lista de personal en PDF/Excel y la IA detecta las columnas, valida los DNIs y rellena la app — sin teclear nada.</p>
-        </div>
-      </div>
-      <div class="cimp2-body">
-        <div class="cimp2-left">
-          <button class="cimp-drop" id="cimpDrop" type="button">
-            <span class="cimp-up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V6M8 10l4-4 4 4M5 19h14"/></svg></span>
-            <span class="cimp-drop-txt">Arrastra tu <strong>PDF/Excel</strong> o <u>usa un ejemplo</u></span>
-            <span class="cimp2-file" id="cimpFile" hidden>plantilla_personal.xlsx · 6 filas</span>
-          </button>
-          <div class="cimp2-steps" id="cimpSteps" hidden>
-            <div class="cimp2-step" data-s="0"><span class="cimp2-dot"></span>Leyendo documento</div>
-            <div class="cimp2-step" data-s="1"><span class="cimp2-dot"></span>Detectando columnas: Nombre · DNI · Grupo · Rol</div>
-            <div class="cimp2-step" data-s="2"><span class="cimp2-dot"></span>Validando DNIs y duplicados</div>
-          </div>
-          <div class="cimp2-summary" id="cimpDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>6</strong> empleados · <strong>0</strong> duplicados · listos para importar</div>
-        </div>
-        <div class="cimp2-right">
-          <div class="cimp2-placeholder" id="cimpPh">La tabla detectada aparecerá aquí</div>
-          <div class="cimp2-table" id="cimpTable" hidden>
-            <div class="cimp2-thead"><span>Nombre</span><span>DNI</span><span>Grupo</span><span>Rol</span></div>
-            <div class="cimp2-rows" id="cimpRows"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-    <div class="demo-panel" data-panel="4">
-    <!-- Detección y resolución de conflictos -->
-    <div class="cconf2 reveal">
-      <div class="cconf2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
-        <div>
-          <h3>Detección y resolución de conflictos</h3>
-          <p>Shiftia vigila el cuadrante en tiempo real: detecta choques de convenio y propone el arreglo exacto, que tú apruebas con un clic.</p>
-        </div>
-      </div>
-      <div class="cconf2-body">
-        <div class="cconf2-left">
-          <span class="cgen2-label">Conflictos detectados</span>
-          <div class="cconf2-issues" id="cconfIssues">
-            <div class="cconf2-issue" id="cconfIssue0"><span class="cconf2-sev high">Crítico</span> <span>Lucía P. encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).</span></div>
-            <div class="cconf2-issue" id="cconfIssue1"><span class="cconf2-sev mid">Aviso</span> <span>Sábado tarde: <strong>1 persona</strong> por debajo del mínimo.</span></div>
-          </div>
-          <button class="fdemo-btn" id="cconfGo" type="button">Resolver con IA</button>
-          <div class="cconf2-valid" id="cconfDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> 2 conflictos resueltos · convenio respetado · cobertura cubierta.</div>
-        </div>
-        <div class="cconf2-right">
-          <span class="cgen2-label">Semana de Lucía P.</span>
-          <div class="cconf2-week" id="cconfWeek"></div>
-          <div class="cconf2-prop" id="cconfProp" hidden>
-            <div class="cconf-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg> Propuesta de resolución</div>
-            <div class="cconf-change"><span class="cconf-who">Lucía P.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill m">Mañana</i><span class="cconf-arrow">→</span><i class="cconf-pill d">Descanso</i></span></div>
-            <div class="cconf-change"><span class="cconf-who">Iván T.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill d">Descanso</i><span class="cconf-arrow">→</span><i class="cconf-pill m">Mañana</i></span></div>
-            <button class="fdemo-btn" id="cconfApply" type="button">Aplicar cambios</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-    <p class="cdemo-note reveal">Datos de ejemplo. En tu Shiftia trabaja sobre tu plantilla y tu convenio reales.</p>
-    <div class="demo-cta reveal">
-      <span>¿Lo quieres funcionando con tu plantilla y tu convenio?</span>
-      <a href="#contact" class="fdemo-btn demo-cta-btn">Pedir mi demo</a>
-    </div>
-  </div>
-</section>
-<script>
-(function fdemoInit(){
-  var REFRESH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg>';
-  var OKICON='<svg class="cgv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-  // ── Auto-generar cuadrante: generador real que respeta la instrucción ──
-  var go=document.getElementById('cgenGo'), gridEl=document.getElementById('cgenGrid'),
-      metrics=document.getElementById('cgenMetrics'), bars=document.getElementById('cgenBars'),
-      ring=document.getElementById('cgenRing'), conf=document.getElementById('cgenConf'),
-      gaps=document.getElementById('cgenGaps'), assigned=document.getElementById('cgenAssigned'),
-      input=document.getElementById('cgenInput'), valid=document.getElementById('cgenValid');
-  if(go && gridEl){
-    var people=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.'];
-    var days=['L','M','X','J','V','S','D'];
-    var LBL={M:'M',T:'T',D:'L'};
-    function parseRules(txt){
-      txt=(txt||'').toLowerCase();
-      var r={minM:[2,2,2,2,2,2,2],minT:[2,2,2,2,2,2,2],maxConsec:6,partTime:null,notes:[]};
-      if(txt.indexOf('finde')>=0){ r.minT[5]=3; r.minT[6]=3; r.notes.push('tardes de finde reforzadas (3)'); }
-      if(txt.indexOf('sábado')>=0||txt.indexOf('sabado')>=0){ r.minT[5]=0; r.notes.push('tarde del sábado cerrada'); }
-      if(txt.indexOf('5 día')>=0||txt.indexOf('5 dia')>=0||txt.indexOf('máximo 5')>=0||txt.indexOf('maximo 5')>=0){ r.maxConsec=5; r.notes.push('máximo 5 días seguidos'); }
-      if(txt.indexOf('reduc')>=0){ r.partTime={idx:2,max:4}; r.notes.push('jornada reducida de Lucía P. (≤4 días)'); }
-      return r;
-    }
-    function gen(r){
-      var best=null;
-      for(var att=0; att<400; att++){
-        var g=[[],[],[],[],[]], streak=[0,0,0,0,0], work=[0,0,0,0,0], ok=true;
-        for(var p=0;p<5;p++) for(var d=0;d<7;d++) g[p][d]='D';
-        for(var d=0;d<7;d++){
-          var need=r.minM[d]+r.minT[d], avail=[];
-          for(var p=0;p<5;p++){
-            if(streak[p]>=r.maxConsec) continue;
-            if(r.partTime && r.partTime.idx===p && work[p]>=r.partTime.max) continue;
-            avail.push(p);
-          }
-          if(avail.length<need){ ok=false; break; }
-          avail.sort(function(a,b){ return (work[a]-work[b])+(Math.random()-0.5); });
-          var workers=avail.slice(0,need);
-          workers.sort(function(){ return Math.random()-0.5; });
-          for(var k=0;k<workers.length;k++) g[workers[k]][d]=(k<r.minM[d])?'M':'T';
-          for(var p=0;p<5;p++){ if(g[p][d]!=='D'){ streak[p]++; work[p]++; } else streak[p]=0; }
-        }
-        if(!ok) continue;
-        var mn=99,mx=0,bad=false;
-        for(var p=0;p<5;p++){
-          if(r.partTime && r.partTime.idx===p) continue;
-          if(work[p]<2) bad=true;
-          if(work[p]<mn)mn=work[p]; if(work[p]>mx)mx=work[p];
-        }
-        if(bad) continue;
-        if(!best) best=g;
-        if(mx-mn<=2) return g;
-      }
-      return best;
-    }
-    var FALLBACK=[['M','T','M','T','D','M','T'],['M','T','T','D','M','T','M'],['T','M','D','M','T','M','T'],['T','D','M','T','M','T','D'],['D','M','T','M','T','D','M']];
-    function maxRun(g){ var m=0; g.forEach(function(row){ var c=0; row.forEach(function(x){ if(x!=='D'){ c++; if(c>m)m=c; } else c=0; }); }); return m; }
-    function buildEmpty(r){
-      gridEl.style.gridTemplateColumns='auto repeat(7,minmax(0,1fr)) auto';
-      var h='<div class="cg-cell cg-corner"></div>';
-      for(var d=0;d<7;d++){ var cl=(r&&r.minT[d]===0); h+='<div class="cg-cell cg-day'+(cl?' cg-closed':'')+'">'+days[d]+'</div>'; }
-      h+='<div class="cg-cell cg-toth">Días</div>';
-      people.forEach(function(p,row){
-        var tag=(r&&r.partTime&&r.partTime.idx===row)?'<span class="cg-redtag">red.</span>':'';
-        h+='<div class="cg-cell cg-name">'+p+tag+'</div>';
-        for(var c=0;c<7;c++){ h+='<div class="cg-cell cg-slot" data-r="'+row+'" data-c="'+c+'"></div>'; }
-        h+='<div class="cg-cell cg-tot" data-tr="'+row+'"><span class="cg-totd">0</span><span class="cg-tothrs">0h</span></div>';
-      });
-      h+='<div class="cg-cell cg-covh">Cob.</div>';
-      for(var d=0;d<7;d++){ h+='<div class="cg-cell cg-cov" data-cc="'+d+'">·</div>'; }
-      h+='<div class="cg-cell"></div>';
-      gridEl.innerHTML=h;
-    }
-    buildEmpty();
-    Array.prototype.forEach.call(document.querySelectorAll('.cgen-ex'),function(b){
-      b.addEventListener('click',function(){ input.textContent=b.textContent; });
-    });
-    var running=false, variant=0;
-    go.addEventListener('click',function(){
-      if(running) return;
-      var r=parseRules(input.textContent);
-      var g=gen(r)||FALLBACK; variant++;
-      buildEmpty(r);
-      running=true; go.disabled=true; go.textContent='Generando…';
-      metrics.hidden=false; bars.hidden=false; bars.classList.remove('show'); if(valid) valid.hidden=true;
-      var slots=gridEl.querySelectorAll('.cg-slot'), i=0, total=slots.length, wk=0;
-      var tot=[0,0,0,0,0], covM=[0,0,0,0,0,0,0], covT=[0,0,0,0,0,0,0];
-      var tConf=93+Math.floor(Math.random()*6), tGaps=8+Math.floor(Math.random()*7);
-      var t=setInterval(function(){
-        if(i<total){
-          var s=slots[i], rr=+s.getAttribute('data-r'), cc=+s.getAttribute('data-c'), code=g[rr][cc];
-          s.className='cg-cell cg-slot fill code-'+code; s.textContent=LBL[code];
-          if(code==='M') covM[cc]++; else if(code==='T') covT[cc]++;
-          if(code!=='D'){ wk++; tot[rr]++; var tc=gridEl.querySelector('.cg-tot[data-tr="'+rr+'"]'); if(tc) tc.innerHTML='<span class="cg-totd">'+tot[rr]+'</span><span class="cg-tothrs">'+(tot[rr]*8)+'h</span>'; }
-          var ce=gridEl.querySelector('.cg-cov[data-cc="'+cc+'"]');
-          if(ce){ var closed=r.minT[cc]===0; ce.textContent=covM[cc]+'·'+(closed?'—':covT[cc]); if(closed) ce.classList.add('cg-cov-closed'); }
-          i++;
-          var pr=i/total;
-          conf.textContent=Math.round(tConf*pr)+'%';
-          assigned.textContent=wk;
-          gaps.textContent=Math.round(tGaps*pr);
-          ring.style.background='conic-gradient(var(--ds-accent,#0f7a6d) '+(tConf*pr*3.6)+'deg, var(--ds-border,#e8e6df) 0deg)';
-        } else {
-          clearInterval(t); bars.classList.add('show'); running=false;
-          var mr=maxRun(g), hi=(r.maxConsec<6);
-          if(hi){
-            var bL=0,bR=-1,bS=0;
-            for(var pp=0;pp<5;pp++){ var run=0,st=0; for(var dd=0;dd<7;dd++){ if(g[pp][dd]!=='D'){ if(run===0)st=dd; run++; if(run>bL){bL=run;bR=pp;bS=st;} } else run=0; } }
-            for(var dd2=bS; dd2<bS+bL; dd2++){ var rc=gridEl.querySelector('.cg-slot[data-r="'+bR+'"][data-c="'+dd2+'"]'); if(rc) rc.classList.add('cg-run'); }
-          }
-          if(valid){ valid.hidden=false;
-            valid.innerHTML=OKICON+' Variante '+variant+' · convenio respetado: máx. '+mr+' días seguidos (límite '+r.maxConsec+')'+(hi?' — racha más larga resaltada':'')+' · cobertura mínima cumplida'+(r.notes.length?' · '+r.notes.join(' · '):'')+'.';
-          }
-          go.disabled=false; go.innerHTML=REFRESH+' Generar otra variante';
-        }
-      },42);
-    });
-  }
-  // ── Equidad nocturna: redistribución de noches ──
-  var eqGrid=document.getElementById('ceqGrid'), eqTotals=document.getElementById('ceqTotals'),
-      eqGo=document.getElementById('ceqGo'), eqDev=document.getElementById('ceqDev'),
-      eqRange=document.getElementById('ceqRange'), eqValid=document.getElementById('ceqValid');
-  if(eqGrid && eqGo){
-    var eqPpl=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.'];
-    var EN=14;
-    var eqInit=[0,0,0,0,0,0,0,1,2,2,2,3,4,4];
-    var eqBal=[0,0,0,1,1,1,2,2,2,3,3,3,4,4];
-    function eqCounts(o){ var c=[0,0,0,0,0]; o.forEach(function(x){ c[x]++; }); return c; }
-    function eqStd(c){ var m=c.reduce(function(a,b){return a+b;},0)/c.length; var v=c.reduce(function(a,b){return a+(b-m)*(b-m);},0)/c.length; return Math.sqrt(v); }
-    function eqBuild(o){
-      eqGrid.style.gridTemplateColumns='auto repeat('+EN+',minmax(0,1fr))';
-      var h='';
-      eqPpl.forEach(function(p,r){
-        h+='<div class="ceq2-name">'+p+'</div>';
-        for(var n=0;n<EN;n++){ h+='<div class="ceq2-cell'+(o[n]===r?' on':'')+'"></div>'; }
-      });
-      eqGrid.innerHTML=h;
-    }
-    function eqTot(o){
-      var c=eqCounts(o), mx=Math.max.apply(null,c);
-      eqTotals.innerHTML=eqPpl.map(function(p,r){
-        return '<div class="ceq2-trow"><span class="ceq2-tname">'+p+'</span><span class="ceq2-tbar"><i style="width:'+Math.round(c[r]/mx*100)+'%"></i></span><span class="ceq2-tval">'+c[r]+'</span></div>';
-      }).join('');
-    }
-    function eqShow(o){ eqBuild(o); eqTot(o); var c=eqCounts(o); eqDev.textContent=eqStd(c).toFixed(1); eqRange.textContent=(Math.max.apply(null,c)-Math.min.apply(null,c)); }
-    eqShow(eqInit);
-    var eqBalanced=false;
-    eqGo.addEventListener('click',function(){
-      eqBalanced=!eqBalanced;
-      eqShow(eqBalanced?eqBal:eqInit);
-      eqGo.innerHTML=eqBalanced?(REFRESH+' Ver desequilibrio inicial'):'Redistribuir noches con IA';
-      if(eqValid){ eqValid.hidden=!eqBalanced; if(eqBalanced) eqValid.innerHTML=OKICON+' Noches cuadradas (3·3·3·3·2) · desviación 0,4 · todas las noches cubiertas y descansos respetados.'; }
-    });
-  }
-  // ── Lector PDF/Excel: pasos + columnas detectadas + validación ──
-  var drop=document.getElementById('cimpDrop'), impFile=document.getElementById('cimpFile'),
-      impSteps=document.getElementById('cimpSteps'), impTable=document.getElementById('cimpTable'),
-      impRows=document.getElementById('cimpRows'), impDone=document.getElementById('cimpDone'),
-      impPh=document.getElementById('cimpPh');
-  if(drop){
-    var CHK='<svg class="cimp2-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-    var sample=[['Empleado Uno','····0001A','1','Encargada'],['Empleada Dos','····0002B','2','Encargada'],['Empleado Tres','····0003C','1','2ª resp.'],['Empleado Cuatro','····0004D','1','Logística'],['Empleado Cinco','····0005E','1','Rotación'],['Empleada Seis','····0006F','2','Rotación']];
-    var impBusy=false;
-    drop.addEventListener('click',function(){
-      if(impBusy) return; impBusy=true;
-      impFile.hidden=false; drop.classList.add('loading');
-      impSteps.hidden=false; impDone.hidden=true; impTable.hidden=true; if(impPh) impPh.hidden=true; impRows.innerHTML='';
-      var steps=impSteps.querySelectorAll('.cimp2-step');
-      Array.prototype.forEach.call(steps,function(s){ s.className='cimp2-step'; });
-      var si=0;
-      var st=setInterval(function(){
-        if(si>0){ steps[si-1].classList.remove('active'); steps[si-1].classList.add('done'); }
-        if(si<steps.length){ steps[si].classList.add('active'); si++; }
-        else {
-          clearInterval(st); impTable.hidden=false;
-          var i=0;
-          var t=setInterval(function(){
-            if(i>=sample.length){ clearInterval(t); impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return; }
-            var r=sample[i];
-            var el=document.createElement('div'); el.className='cimp2-row';
-            el.innerHTML='<span class="cimp2-c name">'+r[0]+'</span><span class="cimp2-c dni">'+r[1]+'</span><span class="cimp2-c grp">'+r[2]+'</span><span class="cimp2-c rolecell"><span class="cimp2-role">'+r[3]+'</span>'+CHK+'</span>';
-            impRows.appendChild(el);
-            requestAnimationFrame(function(){ el.classList.add('show'); });
-            i++;
-          },150);
-        }
-      },430);
-    });
-  }
-  // ── Conflictos: semana real, detección y resolución ──
-  var cGo=document.getElementById('cconfGo'), cApply=document.getElementById('cconfApply'),
-      cDone=document.getElementById('cconfDone'), cProp=document.getElementById('cconfProp'),
-      cWeek=document.getElementById('cconfWeek'), cI0=document.getElementById('cconfIssue0'),
-      cI1=document.getElementById('cconfIssue1');
-  if(cGo && cWeek){
-    var cd=['L','M','X','J','V','S','D'];
-    var luc=['M','M','M','M','M','M','M'];
-    function renderWeek(hiThu, flagBad){
-      cWeek.style.gridTemplateColumns='repeat(7,minmax(0,1fr))';
-      var h='';
-      for(var i=0;i<7;i++){
-        var code=luc[i], cls='cconf2-cell code-'+code;
-        if(flagBad && code!=='D') cls+=' bad';
-        if(hiThu && i===3) cls+=' target';
-        h+='<div class="cconf2-daywrap"><span class="cconf2-dl">'+cd[i]+'</span><div class="'+cls+'">'+(code==='D'?'L':code)+'</div></div>';
-      }
-      cWeek.innerHTML=h;
-    }
-    renderWeek(false,true);
-    cGo.addEventListener('click',function(){
-      cProp.hidden=false; cGo.disabled=true; cGo.textContent='Analizando…';
-      renderWeek(true,true);
-      setTimeout(function(){ cGo.hidden=true; },300);
-    });
-    cApply.addEventListener('click',function(){
-      luc[3]='D'; renderWeek(false,false);
-      cProp.hidden=true; cDone.hidden=false;
-      cI0.classList.add('resolved'); cI1.classList.add('resolved');
-    });
-  }
-  // ── Pestañas "Pruébalo" ──
-  var tabsEl=document.getElementById('demoTabs');
-  if(tabsEl){
-    var tabBtns=tabsEl.querySelectorAll('.demo-tab');
-    var panels=document.querySelectorAll('.demo-panel');
-    Array.prototype.forEach.call(tabBtns,function(b){
-      b.addEventListener('click',function(){
-        var n=b.getAttribute('data-tab');
-        Array.prototype.forEach.call(tabBtns,function(x){ x.classList.toggle('active', x===b); });
-        Array.prototype.forEach.call(panels,function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===n); });
-      });
-    });
-  }
-})();
-</script>
 
 <div class="wave-divider" aria-hidden="true">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
