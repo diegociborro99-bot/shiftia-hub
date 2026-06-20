@@ -5437,6 +5437,23 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 @media (max-width:600px){ .demo-tab{ font-size:.78rem; padding:8px 12px; } .demo-cta{ flex-direction:column; gap:12px; } }
 @media (prefers-reduced-motion: reduce){ .demo-panel.active{ animation:none; } }
 
+/* ===== Personalización del hub de demos ===== */
+.demo-perso { max-width:980px; margin:30px auto 4px; display:flex; flex-wrap:wrap; gap:26px; align-items:center; justify-content:center; }
+.dp-group { display:flex; align-items:center; gap:10px; }
+.dp-label { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ds-text-subtle,#8a8a85); }
+.dp-chips { display:flex; gap:6px; flex-wrap:wrap; }
+.dp-chip { font-family:inherit; font-size:.82rem; color:var(--ds-text-muted,#4a4a47); background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); padding:7px 13px; border-radius:999px; cursor:pointer; transition:background .2s,border-color .2s,color .2s; }
+.dp-chip:hover { border-color:var(--ds-accent,#0f7a6d); color:var(--ds-accent-text,#0a5950); }
+.dp-chip.active { background:var(--ds-accent,#0f7a6d); border-color:var(--ds-accent,#0f7a6d); color:#fff; }
+.dp-stepper { display:flex; align-items:center; gap:8px; }
+.dp-stepper button { width:30px; height:30px; border-radius:8px; border:1px solid var(--ds-border,#e8e6df); background:var(--ds-bg-elev,#fff); color:var(--ds-text,#0e0f0f); font-size:1.1rem; line-height:1; cursor:pointer; transition:border-color .2s,color .2s; }
+.dp-stepper button:hover { border-color:var(--ds-accent,#0f7a6d); color:var(--ds-accent-text,#0a5950); }
+.dp-stepper #demoTeamVal { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.3rem; min-width:22px; text-align:center; color:var(--ds-text,#0e0f0f); }
+.dp-unit { font-size:.82rem; color:var(--ds-text-subtle,#8a8a85); }
+.cg-slot.code-N { background:#ede9fe; border-color:#c4b5fd; color:#6d28d9; }
+.cgen2-legend .lg.N { background:#c4b5fd; }
+@media (max-width:600px){ .demo-perso{ gap:14px; } .dp-group{ flex-direction:column; align-items:flex-start; gap:6px; } }
+
 </style>
 </head>
 <body>
@@ -5553,6 +5570,26 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <p class="section-p reveal">Dos funciones que más tiempo te ahorran, jugables aquí mismo con datos de ejemplo.</p>
   </div>
   <div class="container">
+
+    <div class="demo-perso reveal">
+      <div class="dp-group">
+        <span class="dp-label">Tu sector</span>
+        <div class="dp-chips" id="demoSector">
+          <button type="button" class="dp-chip active" data-s="sanidad">Hospital / Residencia</button>
+          <button type="button" class="dp-chip" data-s="retail">Retail</button>
+          <button type="button" class="dp-chip" data-s="hosteleria">Hostelería</button>
+        </div>
+      </div>
+      <div class="dp-group">
+        <span class="dp-label">Tu equipo</span>
+        <div class="dp-stepper">
+          <button type="button" id="demoTeamMinus" aria-label="Menos personas">−</button>
+          <span id="demoTeamVal">6</span>
+          <button type="button" id="demoTeamPlus" aria-label="Más personas">+</button>
+          <span class="dp-unit">personas</span>
+        </div>
+      </div>
+    </div>
 
     <div class="demo-tabs" id="demoTabs" role="tablist">
       <button class="demo-tab active" data-tab="0" type="button">Cubrir una baja</button>
@@ -5747,6 +5784,15 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 (function fdemoInit(){
   var REFRESH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg>';
   var OKICON='<svg class="cgv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  // ── Config de personalización (sector + tamaño de equipo) ──
+  var SECTORS={
+    sanidad:{label:'Hospital / Residencia', roles:['Enfermería','Auxiliar','Celador','T.C.A.E.'], night:true, min:6},
+    retail:{label:'Retail', roles:['Cajera','Reponedor','Encargada','Mozo'], night:false, min:5},
+    hosteleria:{label:'Hostelería', roles:['Camarero/a','Cocina','Office','Barra'], night:false, min:5}
+  };
+  var POOL=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.','Diego N.','Marta V.','Pablo R.'];
+  var CFG={ sector:'sanidad', team:6 };
+  window.__demoCfg=CFG; window.__SECTORS=SECTORS;
   // ── Auto-generar cuadrante: generador real que respeta la instrucción ──
   var go=document.getElementById('cgenGo'), gridEl=document.getElementById('cgenGrid'),
       metrics=document.getElementById('cgenMetrics'), bars=document.getElementById('cgenBars'),
@@ -5754,26 +5800,28 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       gaps=document.getElementById('cgenGaps'), assigned=document.getElementById('cgenAssigned'),
       input=document.getElementById('cgenInput'), valid=document.getElementById('cgenValid');
   if(go && gridEl){
-    var people=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.'];
     var days=['L','M','X','J','V','S','D'];
-    var LBL={M:'M',T:'T',D:'L'};
+    var legendEl=document.querySelector('.cgen2-legend');
+    function people(){ return POOL.slice(0, CFG.team); }
     function parseRules(txt){
       txt=(txt||'').toLowerCase();
-      var r={minM:[2,2,2,2,2,2,2],minT:[2,2,2,2,2,2,2],maxConsec:6,partTime:null,notes:[]};
+      var night=SECTORS[CFG.sector].night;
+      var r={minM:[2,2,2,2,2,2,2],minT:[2,2,2,2,2,2,2],minN:[0,0,0,0,0,0,0],maxConsec:6,partTime:null,notes:[]};
+      if(night){ for(var d=0;d<7;d++) r.minN[d]=1; r.notes.push('cobertura de noche 24/7'); }
       if(txt.indexOf('finde')>=0){ r.minT[5]=3; r.minT[6]=3; r.notes.push('tardes de finde reforzadas (3)'); }
       if(txt.indexOf('sábado')>=0||txt.indexOf('sabado')>=0){ r.minT[5]=0; r.notes.push('tarde del sábado cerrada'); }
       if(txt.indexOf('5 día')>=0||txt.indexOf('5 dia')>=0||txt.indexOf('máximo 5')>=0||txt.indexOf('maximo 5')>=0){ r.maxConsec=5; r.notes.push('máximo 5 días seguidos'); }
-      if(txt.indexOf('reduc')>=0){ r.partTime={idx:2,max:4}; r.notes.push('jornada reducida de Lucía P. (≤4 días)'); }
+      if(txt.indexOf('reduc')>=0){ r.partTime={idx:2,max:4}; r.notes.push('jornada reducida (≤4 días)'); }
       return r;
     }
     function gen(r){
-      var best=null;
-      for(var att=0; att<400; att++){
-        var g=[[],[],[],[],[]], streak=[0,0,0,0,0], work=[0,0,0,0,0], ok=true;
-        for(var p=0;p<5;p++) for(var d=0;d<7;d++) g[p][d]='D';
+      var N=CFG.team, best=null;
+      for(var att=0; att<500; att++){
+        var g=[], streak=[], work=[], ok=true;
+        for(var p=0;p<N;p++){ g[p]=['D','D','D','D','D','D','D']; streak[p]=0; work[p]=0; }
         for(var d=0;d<7;d++){
-          var need=r.minM[d]+r.minT[d], avail=[];
-          for(var p=0;p<5;p++){
+          var need=r.minM[d]+r.minT[d]+r.minN[d], avail=[];
+          for(var p=0;p<N;p++){
             if(streak[p]>=r.maxConsec) continue;
             if(r.partTime && r.partTime.idx===p && work[p]>=r.partTime.max) continue;
             avail.push(p);
@@ -5782,12 +5830,12 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           avail.sort(function(a,b){ return (work[a]-work[b])+(Math.random()-0.5); });
           var workers=avail.slice(0,need);
           workers.sort(function(){ return Math.random()-0.5; });
-          for(var k=0;k<workers.length;k++) g[workers[k]][d]=(k<r.minM[d])?'M':'T';
-          for(var p=0;p<5;p++){ if(g[p][d]!=='D'){ streak[p]++; work[p]++; } else streak[p]=0; }
+          for(var k=0;k<workers.length;k++){ g[workers[k]][d]=(k<r.minM[d])?'M':((k<r.minM[d]+r.minT[d])?'T':'N'); }
+          for(var p=0;p<N;p++){ if(g[p][d]!=='D'){ streak[p]++; work[p]++; } else streak[p]=0; }
         }
         if(!ok) continue;
         var mn=99,mx=0,bad=false;
-        for(var p=0;p<5;p++){
+        for(var p=0;p<N;p++){
           if(r.partTime && r.partTime.idx===p) continue;
           if(work[p]<2) bad=true;
           if(work[p]<mn)mn=work[p]; if(work[p]>mx)mx=work[p];
@@ -5798,14 +5846,14 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       }
       return best;
     }
-    var FALLBACK=[['M','T','M','T','D','M','T'],['M','T','T','D','M','T','M'],['T','M','D','M','T','M','T'],['T','D','M','T','M','T','D'],['D','M','T','M','T','D','M']];
     function maxRun(g){ var m=0; g.forEach(function(row){ var c=0; row.forEach(function(x){ if(x!=='D'){ c++; if(c>m)m=c; } else c=0; }); }); return m; }
     function buildEmpty(r){
+      var ppl=people();
       gridEl.style.gridTemplateColumns='auto repeat(7,minmax(0,1fr)) auto';
       var h='<div class="cg-cell cg-corner"></div>';
       for(var d=0;d<7;d++){ var cl=(r&&r.minT[d]===0); h+='<div class="cg-cell cg-day'+(cl?' cg-closed':'')+'">'+days[d]+'</div>'; }
       h+='<div class="cg-cell cg-toth">Días</div>';
-      people.forEach(function(p,row){
+      ppl.forEach(function(p,row){
         var tag=(r&&r.partTime&&r.partTime.idx===row)?'<span class="cg-redtag">red.</span>':'';
         h+='<div class="cg-cell cg-name">'+p+tag+'</div>';
         for(var c=0;c<7;c++){ h+='<div class="cg-cell cg-slot" data-r="'+row+'" data-c="'+c+'"></div>'; }
@@ -5815,8 +5863,11 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       for(var d=0;d<7;d++){ h+='<div class="cg-cell cg-cov" data-cc="'+d+'">·</div>'; }
       h+='<div class="cg-cell"></div>';
       gridEl.innerHTML=h;
+      if(legendEl) legendEl.innerHTML='<i class="lg M"></i>Mañana <i class="lg T"></i>Tarde '+(SECTORS[CFG.sector].night?'<i class="lg N"></i>Noche ':'')+'<i class="lg D"></i>Libre';
     }
-    buildEmpty();
+    function freshGrid(){ buildEmpty(parseRules('')); if(metrics) metrics.hidden=true; if(bars){ bars.hidden=true; bars.classList.remove('show'); } if(valid) valid.hidden=true; go.disabled=false; go.textContent='Generar cuadrante'; }
+    freshGrid();
+    window.__autogenReset=freshGrid;
     Array.prototype.forEach.call(document.querySelectorAll('.cgen-ex'),function(b){
       b.addEventListener('click',function(){ input.textContent=b.textContent; });
     });
@@ -5824,21 +5875,23 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     go.addEventListener('click',function(){
       if(running) return;
       var r=parseRules(input.textContent);
-      var g=gen(r)||FALLBACK; variant++;
+      var g=gen(r); if(!g) return; variant++;
       buildEmpty(r);
       running=true; go.disabled=true; go.textContent='Generando…';
       metrics.hidden=false; bars.hidden=false; bars.classList.remove('show'); if(valid) valid.hidden=true;
+      var night=SECTORS[CFG.sector].night, N=CFG.team;
       var slots=gridEl.querySelectorAll('.cg-slot'), i=0, total=slots.length, wk=0;
-      var tot=[0,0,0,0,0], covM=[0,0,0,0,0,0,0], covT=[0,0,0,0,0,0,0];
+      var tot=[]; for(var z=0;z<N;z++) tot[z]=0;
+      var covM=[0,0,0,0,0,0,0], covT=[0,0,0,0,0,0,0], covN=[0,0,0,0,0,0,0];
       var tConf=93+Math.floor(Math.random()*6), tGaps=8+Math.floor(Math.random()*7);
       var t=setInterval(function(){
         if(i<total){
           var s=slots[i], rr=+s.getAttribute('data-r'), cc=+s.getAttribute('data-c'), code=g[rr][cc];
-          s.className='cg-cell cg-slot fill code-'+code; s.textContent=LBL[code];
-          if(code==='M') covM[cc]++; else if(code==='T') covT[cc]++;
+          s.className='cg-cell cg-slot fill code-'+code; s.textContent=(code==='D'?'L':code);
+          if(code==='M') covM[cc]++; else if(code==='T') covT[cc]++; else if(code==='N') covN[cc]++;
           if(code!=='D'){ wk++; tot[rr]++; var tc=gridEl.querySelector('.cg-tot[data-tr="'+rr+'"]'); if(tc) tc.innerHTML='<span class="cg-totd">'+tot[rr]+'</span><span class="cg-tothrs">'+(tot[rr]*8)+'h</span>'; }
           var ce=gridEl.querySelector('.cg-cov[data-cc="'+cc+'"]');
-          if(ce){ var closed=r.minT[cc]===0; ce.textContent=covM[cc]+'·'+(closed?'—':covT[cc]); if(closed) ce.classList.add('cg-cov-closed'); }
+          if(ce){ var closed=r.minT[cc]===0; ce.textContent=covM[cc]+'·'+(closed?'—':covT[cc])+(night?'·'+covN[cc]:''); if(closed) ce.classList.add('cg-cov-closed'); }
           i++;
           var pr=i/total;
           conf.textContent=Math.round(tConf*pr)+'%';
@@ -5850,7 +5903,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           var mr=maxRun(g), hi=(r.maxConsec<6);
           if(hi){
             var bL=0,bR=-1,bS=0;
-            for(var pp=0;pp<5;pp++){ var run=0,st=0; for(var dd=0;dd<7;dd++){ if(g[pp][dd]!=='D'){ if(run===0)st=dd; run++; if(run>bL){bL=run;bR=pp;bS=st;} } else run=0; } }
+            for(var pp=0;pp<N;pp++){ var run=0,st=0; for(var dd=0;dd<7;dd++){ if(g[pp][dd]!=='D'){ if(run===0)st=dd; run++; if(run>bL){bL=run;bR=pp;bS=st;} } else run=0; } }
             for(var dd2=bS; dd2<bS+bL; dd2++){ var rc=gridEl.querySelector('.cg-slot[data-r="'+bR+'"][data-c="'+dd2+'"]'); if(rc) rc.classList.add('cg-run'); }
           }
           if(valid){ valid.hidden=false;
@@ -5904,10 +5957,14 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       impPh=document.getElementById('cimpPh');
   if(drop){
     var CHK='<svg class="cimp2-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-    var sample=[['Empleado Uno','····0001A','1','Encargada'],['Empleada Dos','····0002B','2','Encargada'],['Empleado Tres','····0003C','1','2ª resp.'],['Empleado Cuatro','····0004D','1','Logística'],['Empleado Cinco','····0005E','1','Rotación'],['Empleada Seis','····0006F','2','Rotación']];
+    function impSample(){
+      var R=(SECTORS[CFG.sector]||{}).roles||['Rol A','Rol B','Rol C','Rol D'];
+      return [['Empleado Uno','····0001A','1',R[0]],['Empleada Dos','····0002B','2',R[0]],['Empleado Tres','····0003C','1',R[1]],['Empleado Cuatro','····0004D','1',R[3]||R[1]],['Empleado Cinco','····0005E','1',R[2]],['Empleada Seis','····0006F','2',R[1]]];
+    }
     var impBusy=false;
     drop.addEventListener('click',function(){
       if(impBusy) return; impBusy=true;
+      var sample=impSample();
       impFile.hidden=false; drop.classList.add('loading');
       impSteps.hidden=false; impDone.hidden=true; impTable.hidden=true; if(impPh) impPh.hidden=true; impRows.innerHTML='';
       var steps=impSteps.querySelectorAll('.cimp2-step');
@@ -5992,20 +6049,24 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   var chip=document.getElementById('cdemoChip');
   if(!gap||!suggestBtn) return;
   var CRIT=['Carga','Descanso','Convenio','Noches','Poliv.','Fiab.','Hist.'];
+  function cfgRoles(){ return (window.__SECTORS&&window.__demoCfg)?window.__SECTORS[window.__demoCfg.sector].roles:['Cajera','Reponedor','Encargada','Mozo']; }
+  function shiftLbl(){ return (window.__SECTORS&&window.__demoCfg&&window.__SECTORS[window.__demoCfg.sector].night)?'Noche':'Tarde'; }
   var candidates=[
-    {rank:1,name:'Ana G.',role:'Cajera · polivalente',score:94,crit:[92,96,100,80,88,95,84]},
-    {rank:2,name:'Marcos R.',role:'Reponedor',score:88,crit:[85,90,100,70,92,80,88]},
-    {rank:3,name:'Lucía P.',role:'Cajera',score:79,crit:[78,84,95,75,70,90,82]}
+    {rank:1,name:'Ana G.',ri:0,score:94,crit:[92,96,100,80,88,95,84]},
+    {rank:2,name:'Marcos R.',ri:1,score:88,crit:[85,90,100,70,92,80,88]},
+    {rank:3,name:'Lucía P.',ri:3,score:79,crit:[78,84,95,75,70,90,82]}
   ];
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   function render(){
+    var roles=cfgRoles();
     list.innerHTML=candidates.map(function(c,i){
+      var role=roles[c.ri]||roles[0];
       var bars=CRIT.map(function(lbl,j){
         return '<span class="cdemo-cc" title="'+esc(lbl)+': '+c.crit[j]+'/100"><span class="cdemo-cc-bar"><i data-h="'+c.crit[j]+'%"></i></span><span class="cdemo-cc-l">'+esc(lbl)+'</span></span>';
       }).join('');
       return '<button class="cdemo-cand" type="button" data-i="'+i+'" style="transition-delay:'+(i*90)+'ms">'+
         '<span class="cdemo-cand-top">'+
-          '<span class="cdemo-cand-name"><span class="rk">#'+c.rank+'</span>'+esc(c.name)+' <span class="cdemo-cand-role">· '+esc(c.role)+'</span></span>'+
+          '<span class="cdemo-cand-name"><span class="rk">#'+c.rank+'</span>'+esc(c.name)+' <span class="cdemo-cand-role">· '+esc(role)+'</span></span>'+
           '<span class="cdemo-score">'+c.score+'</span>'+
         '</span>'+
         '<span class="cdemo-crit">'+bars+'</span>'+
@@ -6014,6 +6075,13 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){
       el.addEventListener('click',function(){choose(+el.getAttribute('data-i'));});
     });
+  }
+  function setGapText(){
+    var sl=shiftLbl();
+    if(chip.className.indexOf('good')>=0){ chip.textContent=sl+' · cubierto'; }
+    else { chip.textContent=sl+' · falta 1'; }
+    var sub=gap.querySelector('.cdemo-gap-sub');
+    if(sub) sub.textContent='Marina L. ha causado baja — falta 1 persona para el turno de '+sl.toLowerCase();
   }
   var busy=false;
   suggestBtn.addEventListener('click',function(){
@@ -6034,17 +6102,61 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     list.hidden=true; applied.hidden=false;
     applied.innerHTML='<span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>'+esc(c.name)+'</strong> asignada al turno · el modelo aprende de tu elección para la próxima';
     gap.classList.add('is-covered');
-    chip.className='cdemo-chip good'; chip.textContent='Tarde · cubierto';
+    chip.className='cdemo-chip good'; setGapText();
     suggestBtn.hidden=true;
     if(updatesEl) updatesEl.textContent=((parseInt(updatesEl.textContent,10)||3)+1);
     resetBtn.hidden=false;
   }
-  resetBtn.addEventListener('click',function(){
+  function resetDemo(){
     applied.hidden=true; list.hidden=true; resetBtn.hidden=true;
     gap.classList.remove('is-covered');
-    chip.className='cdemo-chip bad'; chip.textContent='Tarde · falta 1';
+    chip.className='cdemo-chip bad'; setGapText();
     suggestBtn.hidden=false; suggestBtn.disabled=false; suggestBtn.textContent='Sugerir con IA';
-  });
+  }
+  resetBtn.addEventListener('click',resetDemo);
+  window.__coverageReset=resetDemo;
+  setGapText();
+  // Auto-play: al entrar el hub en pantalla, lanza la 1ª demo (si no hay reduced-motion)
+  (function(){
+    var hub=document.getElementById('demo-funciones'); if(!hub) return;
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if(!('IntersectionObserver' in window)) return;
+    var fired=false;
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting && !fired){
+          fired=true; io.disconnect();
+          var p0=document.querySelector('.demo-panel[data-panel="0"]');
+          if(p0 && p0.classList.contains('active') && !busy && suggestBtn && !suggestBtn.disabled && !suggestBtn.hidden){
+            setTimeout(function(){ if(!busy) suggestBtn.click(); }, 700);
+          }
+        }
+      });
+    },{threshold:0.35});
+    io.observe(hub);
+  })();
+})();
+</script>
+<script>
+(function demoPerso(){
+  var cfg=window.__demoCfg, SEC=window.__SECTORS;
+  if(!cfg||!SEC) return;
+  var sectorEl=document.getElementById('demoSector');
+  var minus=document.getElementById('demoTeamMinus'), plus=document.getElementById('demoTeamPlus'), val=document.getElementById('demoTeamVal');
+  function clampTeam(){ var min=SEC[cfg.sector].min||5, max=8; if(cfg.team<min)cfg.team=min; if(cfg.team>max)cfg.team=max; if(val) val.textContent=cfg.team; }
+  function apply(){ clampTeam(); if(window.__autogenReset) window.__autogenReset(); if(window.__coverageReset) window.__coverageReset(); }
+  if(sectorEl){
+    Array.prototype.forEach.call(sectorEl.querySelectorAll('.dp-chip'),function(b){
+      b.addEventListener('click',function(){
+        cfg.sector=b.getAttribute('data-s');
+        Array.prototype.forEach.call(sectorEl.querySelectorAll('.dp-chip'),function(x){ x.classList.toggle('active',x===b); });
+        apply();
+      });
+    });
+  }
+  if(minus) minus.addEventListener('click',function(){ cfg.team--; apply(); });
+  if(plus) plus.addEventListener('click',function(){ cfg.team++; apply(); });
+  clampTeam();
 })();
 </script>
 
