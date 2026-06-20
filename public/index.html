@@ -5154,6 +5154,50 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 @media (max-width:600px){ .cdemo-head{flex-direction:column; align-items:flex-start; gap:4px;} .cdemo-model{text-align:left;} .cdemo-gap{flex-direction:column; align-items:flex-start;} .cdemo-btn{width:100%;} .cdemo-score{font-size:1.4rem;} }
 @media (prefers-reduced-motion: reduce){ .cdemo-cand{transition:opacity .2s;} .cdemo-bar span{animation-duration:.01s;} }
 
+/* ===== Demos "funciones en acción": auto-gen + equidad ===== */
+.fdemo-section { padding: 88px 0; background: var(--ds-bg, #faf9f6); }
+.fdemo-section .section-h2 em { font-style:normal; background:linear-gradient(135deg,#4ecdc4,#2980b9); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.fdemo-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; max-width:920px; margin:36px auto 0; }
+.fdemo-card { background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); border-radius:20px; padding:24px; box-shadow:0 1px 2px rgba(15,15,15,.04),0 14px 40px rgba(15,15,15,.05); display:flex; flex-direction:column; }
+.fdemo-card-head { display:flex; gap:12px; align-items:flex-start; margin-bottom:16px; }
+.fdemo-ico { width:40px; height:40px; flex-shrink:0; border-radius:11px; background:var(--ds-accent-soft,#e9f5f2); display:inline-flex; align-items:center; justify-content:center; font-size:18px; }
+.fdemo-card-head h3 { font-family:var(--ds-font-sans,'Geist',sans-serif); font-size:1.05rem; font-weight:600; color:var(--ds-text,#0e0f0f); margin:0 0 2px; }
+.fdemo-card-head p { font-size:.84rem; color:var(--ds-text-subtle,#8a8a85); margin:0; line-height:1.5; }
+.fdemo-btn { background:var(--ds-accent,#0f7a6d); color:#fff; border:0; border-radius:10px; padding:10px 18px; font-weight:600; font-size:.86rem; cursor:pointer; font-family:inherit; transition:transform .2s cubic-bezier(.16,1,.3,1),filter .2s; }
+.fdemo-btn:hover { transform:translateY(-1px); filter:brightness(1.06); }
+.fdemo-btn[disabled] { opacity:.6; cursor:default; transform:none; }
+/* auto-gen */
+.cgen-input { background:var(--ds-bg,#f4f2ec); border:1px dashed var(--ds-border,#e8e6df); border-radius:10px; padding:11px 14px; font-size:.88rem; color:var(--ds-text,#0e0f0f); margin-bottom:10px; font-style:italic; }
+.cgen-examples { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px; }
+.cgen-ex { font-size:11px; border:1px solid var(--ds-border,#e8e6df); background:var(--ds-bg-elev,#fff); color:var(--ds-text-muted,#4a4a47); padding:4px 10px; border-radius:999px; cursor:pointer; font-family:inherit; transition:border-color .2s,color .2s; }
+.cgen-ex:hover { border-color:var(--ds-accent,#0f7a6d); color:var(--ds-accent-text,#0a5950); }
+.cgen-result { margin-top:16px; display:flex; gap:18px; align-items:center; }
+.cgen-ring { width:84px; height:84px; flex-shrink:0; border-radius:50%; background:conic-gradient(var(--ds-border,#e8e6df) 0deg, var(--ds-border,#e8e6df) 0deg); display:flex; align-items:center; justify-content:center; }
+.cgen-ring-in { width:64px; height:64px; border-radius:50%; background:var(--ds-bg-elev,#fff); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.cgen-ring-in strong { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.4rem; line-height:1; color:var(--ds-accent-text,#0a5950); }
+.cgen-ring-in span { font-size:9px; text-transform:uppercase; letter-spacing:.08em; color:var(--ds-text-subtle,#8a8a85); }
+.cgen-stats { flex:1; min-width:0; font-size:.82rem; color:var(--ds-text-muted,#4a4a47); }
+.cgen-stat { margin-bottom:4px; }
+.cgen-stat.ok { color:#15803d; font-weight:600; }
+.cgen-stat strong { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.1rem; color:var(--ds-text,#0e0f0f); }
+.cgen-bars { margin-top:10px; display:grid; gap:7px; }
+.cgen-bar label { display:block; font-size:10px; color:var(--ds-text-subtle,#8a8a85); margin-bottom:3px; }
+.cgen-bar i { display:block; height:5px; border-radius:999px; background:linear-gradient(90deg,#4ecdc4,#2980b9); width:0; transition:width .9s cubic-bezier(.16,1,.3,1); }
+.cgen-result.show .cgen-bar i { width:var(--w); }
+/* equidad */
+.ceq-rows { display:grid; gap:10px; margin-bottom:16px; }
+.ceq-row { display:flex; align-items:center; gap:10px; }
+.ceq-name { font-size:.82rem; color:var(--ds-text,#0e0f0f); width:78px; flex-shrink:0; }
+.ceq-track { flex:1; height:10px; border-radius:999px; background:var(--ds-bg,#f4f2ec); overflow:hidden; }
+.ceq-track i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#4ecdc4,#2980b9); transition:width .7s cubic-bezier(.16,1,.3,1); }
+.ceq-val { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.8rem; color:var(--ds-text-muted,#4a4a47); width:18px; text-align:right; }
+.ceq-foot { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.ceq-dev { font-size:.82rem; color:var(--ds-text-subtle,#8a8a85); }
+.ceq-dev strong { color:#b45309; }
+.ceq-dev.ok strong { color:#15803d; }
+@media (max-width:760px){ .fdemo-grid{grid-template-columns:1fr; max-width:520px;} }
+@media (prefers-reduced-motion: reduce){ .cgen-bar i,.ceq-track i{transition:none;} }
+
 </style>
 </head>
 <body>
@@ -5833,6 +5877,111 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     </div>
   </div>
 </section>
+
+<!-- DEMOS: funciones en acción (auto-gen + equidad nocturna), anonimizadas -->
+<section class="fdemo-section" id="demo-funciones" aria-labelledby="fdemoTitle">
+  <div class="container centered">
+    <div class="section-eyebrow reveal">Funciones en acción</div>
+    <h2 class="section-h2 reveal" id="fdemoTitle">No te lo contamos: <em>pruébalo</em></h2>
+    <p class="section-p reveal">Dos funciones que más tiempo te ahorran, jugables aquí mismo con datos de ejemplo.</p>
+  </div>
+  <div class="container">
+    <div class="fdemo-grid">
+
+      <!-- Auto-generación -->
+      <div class="fdemo-card reveal">
+        <div class="fdemo-card-head">
+          <span class="fdemo-ico">✦</span>
+          <div><h3>Auto-generar con IA</h3><p>Escribe en lenguaje natural y la IA crea el mes entero.</p></div>
+        </div>
+        <div class="cgen-input" id="cgenInput">De lunes a viernes, 3 personas por la mañana</div>
+        <div class="cgen-examples">
+          <button class="cgen-ex" type="button">Refuerza las tardes del finde</button>
+          <button class="cgen-ex" type="button">Cierra la tarde del sábado</button>
+          <button class="cgen-ex" type="button">Menos gente el domingo</button>
+        </div>
+        <button class="fdemo-btn" id="cgenGo" type="button">Generar mes</button>
+        <div class="cgen-result" id="cgenResult" hidden>
+          <div class="cgen-ring" id="cgenRing"><div class="cgen-ring-in"><strong id="cgenConf">0%</strong><span>confianza</span></div></div>
+          <div class="cgen-stats">
+            <div class="cgen-stat"><strong id="cgenGaps">0</strong> huecos resueltos</div>
+            <div class="cgen-stat ok">✓ sin conflictos críticos</div>
+            <div class="cgen-bars">
+              <div class="cgen-bar" style="--w:97%"><label>Cobertura mínima</label><i></i></div>
+              <div class="cgen-bar" style="--w:91%"><label>Equidad de carga</label><i></i></div>
+              <div class="cgen-bar" style="--w:100%"><label>Descansos legales</label><i></i></div>
+              <div class="cgen-bar" style="--w:84%"><label>Preferencias</label><i></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Equidad nocturna -->
+      <div class="fdemo-card reveal d1">
+        <div class="fdemo-card-head">
+          <span class="fdemo-ico">🌙</span>
+          <div><h3>Equidad nocturna</h3><p>Reparte las noches de forma justa entre quien rota.</p></div>
+        </div>
+        <div class="ceq-rows" id="ceqRows"></div>
+        <div class="ceq-foot">
+          <span class="ceq-dev" id="ceqDevWrap">Desviación de noches: <strong id="ceqDev">2.4</strong></span>
+          <button class="fdemo-btn" id="ceqGo" type="button">Equilibrar con IA</button>
+        </div>
+      </div>
+
+    </div>
+    <p class="cdemo-note reveal">Datos de ejemplo. En tu Shiftia trabaja sobre tu plantilla y tu convenio reales.</p>
+  </div>
+</section>
+<script>
+(function fdemoInit(){
+  // ── Auto-generación ──
+  var go=document.getElementById('cgenGo'), res=document.getElementById('cgenResult'),
+      ring=document.getElementById('cgenRing'), conf=document.getElementById('cgenConf'),
+      gaps=document.getElementById('cgenGaps'), input=document.getElementById('cgenInput');
+  if(go){
+    Array.prototype.forEach.call(document.querySelectorAll('.cgen-ex'),function(b){
+      b.addEventListener('click',function(){ input.textContent=b.textContent; });
+    });
+    var running=false;
+    go.addEventListener('click',function(){
+      if(running) return; running=true;
+      go.disabled=true; go.textContent='Generando…'; res.hidden=false;
+      requestAnimationFrame(function(){ res.classList.add('show'); });
+      var target=96, gapsTarget=32, c=0;
+      var t=setInterval(function(){
+        c+=4; if(c>target) c=target;
+        conf.textContent=c+'%';
+        gaps.textContent=Math.round(gapsTarget*(c/target));
+        ring.style.background='conic-gradient(var(--ds-accent,#0f7a6d) '+(c*3.6)+'deg, var(--ds-border,#e8e6df) 0deg)';
+        if(c>=target){ clearInterval(t); running=false; go.disabled=false; go.textContent='↺ Generar otra vez'; }
+      },28);
+    });
+  }
+  // ── Equidad nocturna ──
+  var rows=document.getElementById('ceqRows'), eqGo=document.getElementById('ceqGo'),
+      dev=document.getElementById('ceqDev'), devWrap=document.getElementById('ceqDevWrap');
+  if(rows&&eqGo){
+    var ppl=[{n:'Ana G.',u:8,b:5},{n:'Marcos R.',u:3,b:5},{n:'Lucía P.',u:6,b:5},{n:'Iván T.',u:2,b:4},{n:'Sara M.',u:5,b:5}];
+    var max=8, balanced=false;
+    function paint(key){
+      rows.innerHTML=ppl.map(function(p){
+        var v=p[key], pct=Math.round(v/max*100);
+        return '<div class="ceq-row"><span class="ceq-name">'+p.n+'</span>'+
+          '<span class="ceq-track"><i style="width:'+pct+'%"></i></span>'+
+          '<span class="ceq-val">'+v+'</span></div>';
+      }).join('');
+    }
+    paint('u');
+    eqGo.addEventListener('click',function(){
+      balanced=!balanced; paint(balanced?'b':'u');
+      dev.textContent=balanced?'0.4':'2.4';
+      devWrap.classList.toggle('ok',balanced);
+      eqGo.textContent=balanced?'↺ Ver desequilibrio':'Equilibrar con IA';
+    });
+  }
+})();
+</script>
 
 <div class="wave-divider" aria-hidden="true">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
