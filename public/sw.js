@@ -47,6 +47,28 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname.startsWith('/api/')) return;
   if (url.pathname.startsWith('/dashboard')) return;
 
+  // Documentos HTML (navegación): SIEMPRE red primero, para que el contenido
+  // (copy, demos, precios) nunca quede obsoleto por la caché. Cae a caché solo
+  // si no hay red (offline).
+  const isDoc = req.mode === 'navigate' ||
+    (req.destination === 'document') ||
+    (req.headers.get('accept') || '').includes('text/html');
+  if (isDoc) {
+    event.respondWith(
+      fetch(req).then((response) => {
+        if (response && response.status === 200 && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(req, copy)).catch(() => {});
+        }
+        return response;
+      }).catch(() =>
+        caches.match(req).then((r) => r || caches.match('/')).then((r) => r || caches.match('/404.html'))
+      )
+    );
+    return;
+  }
+
+  // Resto de assets estáticos: stale-while-revalidate (rápido + se refresca solo).
   event.respondWith(
     caches.open(CACHE_NAME).then(async (cache) => {
       const cached = await cache.match(req);
