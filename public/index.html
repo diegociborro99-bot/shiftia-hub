@@ -5284,6 +5284,16 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cg-totd { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.78rem; font-weight:600; color:var(--ds-text,#0e0f0f); line-height:1.1; }
 .cg-tothrs { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:9px; color:var(--ds-text-subtle,#8a8a85); line-height:1; }
 .cg-slot.cg-run { box-shadow:inset 0 0 0 2px var(--ds-accent,#0f7a6d); }
+/* Coberturas: desglose por criterios en cada candidato */
+.cdemo-cand { flex-direction:column; align-items:stretch; gap:11px; }
+.cdemo-cand-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.cdemo-crit { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+.cdemo-cc { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.cdemo-cc-bar { width:100%; height:32px; display:flex; align-items:flex-end; background:var(--ds-bg,#f4f2ec); border:1px solid var(--ds-border,#e8e6df); border-radius:5px; overflow:hidden; }
+.cdemo-cc-bar i { width:100%; height:0; background:linear-gradient(180deg,#4ecdc4,#2980b9); transition:height .6s cubic-bezier(.16,1,.3,1); }
+.cdemo-cc-l { font-size:8.5px; color:var(--ds-text-subtle,#8a8a85); white-space:nowrap; }
+@media (max-width:600px){ .cdemo-cc-l{ font-size:7px; } .cdemo-cc-bar{ height:26px; } .cdemo-crit{ gap:4px; } }
+@media (prefers-reduced-motion: reduce){ .cdemo-cc-bar i{ transition:none; } }
 .cg-cov { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:10px; color:var(--ds-text-subtle,#8a8a85); height:22px; }
 .cg-cov-closed { color:#b45309; font-weight:600; }
 .cg-day.cg-closed { color:#b45309; }
@@ -5568,20 +5578,24 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   var updatesEl=document.getElementById('cdemoUpdates');
   var chip=document.getElementById('cdemoChip');
   if(!gap||!suggestBtn) return;
+  var CRIT=['Carga','Descanso','Convenio','Noches','Poliv.','Fiab.','Hist.'];
   var candidates=[
-    {rank:1,name:'Ana G.',role:'Cajera · polivalente',score:94,reasons:['Equidad de carga semanal','Descanso tarde→mañana','No sobreutilizada']},
-    {rank:2,name:'Marcos R.',role:'Reponedor',score:88,reasons:['Margen de convenio','Suele aceptar coberturas','Polivalencia']},
-    {rank:3,name:'Lucía P.',role:'Cajera',score:79,reasons:['Preferencia de turno (tarde)','Fiabilidad','Pocas ausencias ese día']}
+    {rank:1,name:'Ana G.',role:'Cajera · polivalente',score:94,crit:[92,96,100,80,88,95,84]},
+    {rank:2,name:'Marcos R.',role:'Reponedor',score:88,crit:[85,90,100,70,92,80,88]},
+    {rank:3,name:'Lucía P.',role:'Cajera',score:79,crit:[78,84,95,75,70,90,82]}
   ];
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
   function render(){
     list.innerHTML=candidates.map(function(c,i){
+      var bars=CRIT.map(function(lbl,j){
+        return '<span class="cdemo-cc" title="'+esc(lbl)+': '+c.crit[j]+'/100"><span class="cdemo-cc-bar"><i data-h="'+c.crit[j]+'%"></i></span><span class="cdemo-cc-l">'+esc(lbl)+'</span></span>';
+      }).join('');
       return '<button class="cdemo-cand" type="button" data-i="'+i+'" style="transition-delay:'+(i*90)+'ms">'+
-        '<span class="cdemo-cand-main">'+
+        '<span class="cdemo-cand-top">'+
           '<span class="cdemo-cand-name"><span class="rk">#'+c.rank+'</span>'+esc(c.name)+' <span class="cdemo-cand-role">· '+esc(c.role)+'</span></span>'+
-          '<span class="cdemo-reasons">'+c.reasons.map(function(r){return '<span class="cdemo-reason">'+esc(r)+'</span>';}).join('')+'</span>'+
+          '<span class="cdemo-score">'+c.score+'</span>'+
         '</span>'+
-        '<span class="cdemo-score">'+c.score+'</span>'+
+        '<span class="cdemo-crit">'+bars+'</span>'+
       '</button>';
     }).join('');
     Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){
@@ -5597,6 +5611,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       analyzing.hidden=true; render(); list.hidden=false;
       requestAnimationFrame(function(){
         Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){el.classList.add('show');});
+        Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cc-bar i'),function(b){ b.style.height=b.getAttribute('data-h'); });
       });
       busy=false;
     },850);
