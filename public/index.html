@@ -4298,9 +4298,9 @@ a.hero-cta:not(.ghost):not(.hero-cta-secondary):hover {
   position: relative !important;          /* re-asegurar — esto resolvía el pill negro */
 }
 .price-list li[data-tip] .tooltip {
-  width: max-content !important;
-  max-width: 240px !important;
-  white-space: nowrap !important;
+  width: 240px !important;
+  max-width: calc(100vw - 32px) !important;
+  white-space: normal !important;
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) translateY(6px) !important;
