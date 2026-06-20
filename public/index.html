@@ -5106,6 +5106,54 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   .fcy-track-labels { font-size: 0.64rem; }
 }
 
+/* ===== Demo interactiva: cobertura inteligente ===== */
+.cdemo-section { background: var(--ds-bg, #faf9f6); padding: 88px 0; }
+.cdemo-section .section-h2 em { font-style: normal; background: linear-gradient(135deg,#4ecdc4,#2980b9); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.cdemo-card {
+  max-width: 680px; margin: 36px auto 0;
+  background: var(--ds-bg-elev, #fff);
+  border: 1px solid var(--ds-border, #e8e6df);
+  border-radius: 20px; padding: 24px;
+  box-shadow: 0 1px 2px rgba(15,15,15,.04), 0 18px 48px rgba(15,15,15,.06);
+}
+.cdemo-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:18px; }
+.cdemo-tag { font-family: var(--ds-font-mono,'Geist Mono',monospace); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color: var(--ds-accent-text,#0a5950); background: var(--ds-accent-soft,#e9f5f2); padding:4px 10px; border-radius:999px; }
+.cdemo-model { font-size:.74rem; color: var(--ds-text-subtle,#8a8a85); text-align:right; }
+.cdemo-gap { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:16px; border:1px solid var(--ds-border,#e8e6df); border-radius:14px; background: var(--ds-bg,#faf9f6); transition: background .3s, border-color .3s; }
+.cdemo-gap.is-covered { border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.06); }
+.cdemo-gap-info { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.cdemo-gap-info strong { font-size:1rem; color: var(--ds-text,#0e0f0f); }
+.cdemo-gap-sub { font-size:.78rem; color: var(--ds-text-subtle,#8a8a85); width:100%; }
+.cdemo-chip { font-family: var(--ds-font-mono,'Geist Mono',monospace); font-size:11px; padding:3px 9px; border-radius:999px; }
+.cdemo-chip.bad { color:#b91c1c; background:#fee2e2; }
+.cdemo-chip.good { color:#15803d; background:#dcfce7; }
+.cdemo-btn { background: var(--ds-accent,#0f7a6d); color:#fff; border:0; border-radius:10px; padding:10px 18px; font-weight:600; font-size:.88rem; cursor:pointer; font-family:inherit; transition: transform .2s cubic-bezier(.16,1,.3,1), filter .2s; flex-shrink:0; }
+.cdemo-btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+.cdemo-btn[disabled] { opacity:.6; cursor:default; transform:none; }
+.cdemo-analyzing { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+.cdemo-bar { height:6px; border-radius:999px; background: var(--ds-border,#e8e6df); overflow:hidden; }
+.cdemo-bar span { display:block; height:100%; width:0; background:linear-gradient(90deg,#4ecdc4,#2980b9); border-radius:999px; animation: cdemoFill .82s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes cdemoFill { to { width:100%; } }
+.cdemo-analyzing-text { font-size:.8rem; color: var(--ds-text-subtle,#8a8a85); }
+.cdemo-candidates { margin-top:16px; display:grid; gap:10px; }
+.cdemo-cand { display:flex; align-items:center; justify-content:space-between; gap:14px; width:100%; text-align:left; padding:14px 16px; border:1px solid var(--ds-border,#e8e6df); border-radius:14px; background: var(--ds-bg-elev,#fff); cursor:pointer; font-family:inherit; opacity:0; transform:translateY(8px); transition: transform .3s cubic-bezier(.16,1,.3,1), border-color .25s, box-shadow .25s, opacity .3s; }
+.cdemo-cand.show { opacity:1; transform:none; }
+.cdemo-cand:hover { border-color: var(--ds-accent,#0f7a6d); box-shadow:0 10px 28px rgba(15,122,109,.10); transform:translateY(-2px); }
+.cdemo-cand-main { display:flex; flex-direction:column; gap:8px; min-width:0; }
+.cdemo-cand-name { font-weight:600; font-size:.95rem; color: var(--ds-text,#0e0f0f); }
+.cdemo-cand-name .rk { color: var(--ds-accent-text,#0a5950); margin-right:6px; }
+.cdemo-cand-role { font-weight:400; font-size:.8rem; color: var(--ds-text-subtle,#8a8a85); }
+.cdemo-reasons { display:flex; flex-wrap:wrap; gap:6px; }
+.cdemo-reason { font-size:10.5px; color: var(--ds-text-muted,#4a4a47); background: var(--ds-bg,#f4f2ec); border:1px solid var(--ds-border,#e8e6df); padding:2px 8px; border-radius:999px; }
+.cdemo-score { font-family: var(--ds-font-display,'Instrument Serif',serif); font-size:1.7rem; line-height:1; color: var(--ds-accent-text,#0a5950); flex-shrink:0; }
+.cdemo-applied { margin-top:16px; padding:14px 16px; border-radius:14px; background: rgba(22,163,74,.07); border:1px solid rgba(22,163,74,.3); color:#15803d; font-size:.9rem; }
+.cdemo-applied .cdemo-check { font-weight:800; margin-right:4px; }
+.cdemo-foot { margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:.74rem; color: var(--ds-text-subtle,#8a8a85); }
+.cdemo-reset { background:none; border:0; color: var(--ds-accent-text,#0a5950); font-weight:600; cursor:pointer; font-size:.8rem; font-family:inherit; }
+.cdemo-note { text-align:center; margin-top:16px; font-size:.76rem; color: var(--ds-text-subtle,#8a8a85); }
+@media (max-width:600px){ .cdemo-head{flex-direction:column; align-items:flex-start; gap:4px;} .cdemo-model{text-align:left;} .cdemo-gap{flex-direction:column; align-items:flex-start;} .cdemo-btn{width:100%;} .cdemo-score{font-size:1.4rem;} }
+@media (prefers-reduced-motion: reduce){ .cdemo-cand{transition:opacity .2s;} .cdemo-bar span{animation-duration:.01s;} }
+
 </style>
 </head>
 <body>
@@ -5213,6 +5261,108 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
   </div>
 </section>
+
+<!-- DEMO INTERACTIVA: cobertura inteligente (réplica anonimizada del producto real) -->
+<section class="cdemo-section" id="demo-cobertura" aria-labelledby="cdemoTitle">
+  <div class="container centered">
+    <div class="section-eyebrow reveal">Demo en vivo</div>
+    <h2 class="section-h2 reveal" id="cdemoTitle">Cubre una baja en <em>menos de 1 segundo</em></h2>
+    <p class="section-p reveal">Pruébalo tú mismo: simula una ausencia y mira cómo el motor propone candidatos <strong>legales, puntuados y explicados</strong> entre tu propia plantilla. La decisión final siempre es humana.</p>
+  </div>
+  <div class="container">
+    <div class="cdemo-card reveal">
+      <div class="cdemo-head">
+        <span class="cdemo-tag">Cobertura inteligente</span>
+        <span class="cdemo-model">modelo local · <span id="cdemoUpdates">3</span> correcciones aprendidas</span>
+      </div>
+
+      <div class="cdemo-gap" id="cdemoGap">
+        <div class="cdemo-gap-info">
+          <strong>Sábado</strong>
+          <span class="cdemo-chip bad" id="cdemoChip">Tarde · falta 1</span>
+          <span class="cdemo-gap-sub">Marina L. ha causado baja — falta 1 persona para el mínimo del turno</span>
+        </div>
+        <button class="cdemo-btn" id="cdemoSuggest" type="button">Sugerir con IA</button>
+      </div>
+
+      <div class="cdemo-analyzing" id="cdemoAnalyzing" hidden>
+        <div class="cdemo-bar"><span></span></div>
+        <span class="cdemo-analyzing-text">Analizando 7 criterios entre tu plantilla… (carga, convenio, descansos, historial)</span>
+      </div>
+
+      <div class="cdemo-candidates" id="cdemoCandidates" hidden></div>
+      <div class="cdemo-applied" id="cdemoApplied" hidden></div>
+
+      <div class="cdemo-foot">
+        <span>Objetivos (carga, convenio) + subjetivos (valoraciones) + historial.</span>
+        <button class="cdemo-reset" id="cdemoReset" type="button" hidden>↺ Probar otra vez</button>
+      </div>
+    </div>
+    <p class="cdemo-note reveal">Datos de ejemplo. En tu Shiftia, el motor analiza tu plantilla real respetando tu convenio.</p>
+  </div>
+</section>
+<script>
+(function cdemoInit(){
+  var gap=document.getElementById('cdemoGap');
+  var suggestBtn=document.getElementById('cdemoSuggest');
+  var analyzing=document.getElementById('cdemoAnalyzing');
+  var list=document.getElementById('cdemoCandidates');
+  var applied=document.getElementById('cdemoApplied');
+  var resetBtn=document.getElementById('cdemoReset');
+  var updatesEl=document.getElementById('cdemoUpdates');
+  var chip=document.getElementById('cdemoChip');
+  if(!gap||!suggestBtn) return;
+  var candidates=[
+    {rank:1,name:'Ana G.',role:'Cajera · polivalente',score:94,reasons:['Equidad de carga semanal','Descanso tarde→mañana','No sobreutilizada']},
+    {rank:2,name:'Marcos R.',role:'Reponedor',score:88,reasons:['Margen de convenio','Suele aceptar coberturas','Polivalencia']},
+    {rank:3,name:'Lucía P.',role:'Cajera',score:79,reasons:['Preferencia de turno (tarde)','Fiabilidad','Pocas ausencias ese día']}
+  ];
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function render(){
+    list.innerHTML=candidates.map(function(c,i){
+      return '<button class="cdemo-cand" type="button" data-i="'+i+'" style="transition-delay:'+(i*90)+'ms">'+
+        '<span class="cdemo-cand-main">'+
+          '<span class="cdemo-cand-name"><span class="rk">#'+c.rank+'</span>'+esc(c.name)+' <span class="cdemo-cand-role">· '+esc(c.role)+'</span></span>'+
+          '<span class="cdemo-reasons">'+c.reasons.map(function(r){return '<span class="cdemo-reason">'+esc(r)+'</span>';}).join('')+'</span>'+
+        '</span>'+
+        '<span class="cdemo-score">'+c.score+'</span>'+
+      '</button>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){
+      el.addEventListener('click',function(){choose(+el.getAttribute('data-i'));});
+    });
+  }
+  var busy=false;
+  suggestBtn.addEventListener('click',function(){
+    if(busy) return; busy=true;
+    suggestBtn.disabled=true; suggestBtn.textContent='Analizando…';
+    analyzing.hidden=false; list.hidden=true; applied.hidden=true;
+    setTimeout(function(){
+      analyzing.hidden=true; render(); list.hidden=false;
+      requestAnimationFrame(function(){
+        Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){el.classList.add('show');});
+      });
+      busy=false;
+    },850);
+  });
+  function choose(i){
+    var c=candidates[i];
+    list.hidden=true; applied.hidden=false;
+    applied.innerHTML='<span class="cdemo-check">✓</span> <strong>'+esc(c.name)+'</strong> asignada al turno · el modelo aprende de tu elección para la próxima';
+    gap.classList.add('is-covered');
+    chip.className='cdemo-chip good'; chip.textContent='Tarde · cubierto';
+    suggestBtn.hidden=true;
+    if(updatesEl) updatesEl.textContent=((parseInt(updatesEl.textContent,10)||3)+1);
+    resetBtn.hidden=false;
+  }
+  resetBtn.addEventListener('click',function(){
+    applied.hidden=true; list.hidden=true; resetBtn.hidden=true;
+    gap.classList.remove('is-covered');
+    chip.className='cdemo-chip bad'; chip.textContent='Tarde · falta 1';
+    suggestBtn.hidden=false; suggestBtn.disabled=false; suggestBtn.textContent='Sugerir con IA';
+  });
+})();
+</script>
 
 <!-- BESPOKE: app a medida sobre Shiftia v8 -->
 <section class="bespoke-section" id="bespoke" aria-labelledby="bespoke-title">
