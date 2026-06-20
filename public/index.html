@@ -1488,7 +1488,8 @@ section { padding: 140px 48px; }
 }
 .lang-option:hover { background: var(--bg); }
 .lang-option.active { color: var(--primary); font-weight: 600; }
-.lang-flag { font-size: 1rem; }
+.lang-flag { font-size: 1rem; display: inline-flex; align-items: center; }
+.flagsvg { width: 18px; height: 13px; border-radius: 2px; display: inline-block; vertical-align: -2px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
 
 /* ====== FOOTER ====== */
 .footer {
@@ -5495,15 +5496,15 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 
     <div class="lang-selector" id="langSelector">
       <button class="lang-btn" onclick="document.getElementById('langSelector').classList.toggle('open')">
-        <span class="lang-flag" id="currentFlag">🇪🇸</span>
+        <span class="lang-flag" id="currentFlag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#c60b1e"/><rect y="3" width="16" height="6" fill="#ffc400"/></svg></span>
         <span id="currentLang">ES</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="lang-dropdown">
-        <div class="lang-option active" onclick="setLang('es')"><span class="lang-flag">🇪🇸</span> Español</div>
-        <div class="lang-option" onclick="setLang('en')"><span class="lang-flag">🇬🇧</span> English</div>
-        <div class="lang-option" onclick="setLang('de')"><span class="lang-flag">🇩🇪</span> Deutsch</div>
-        <div class="lang-option" onclick="setLang('fr')"><span class="lang-flag">🇫🇷</span> Français</div>
+        <div class="lang-option active" data-lang="es" onclick="setLang('es')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#c60b1e"/><rect y="3" width="16" height="6" fill="#ffc400"/></svg></span> Español</div>
+        <div class="lang-option" data-lang="en" onclick="setLang('en')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#012169"/><path d="M0 0L16 12M16 0L0 12" stroke="#fff" stroke-width="2.4"/><path d="M0 0L16 12M16 0L0 12" stroke="#c8102e" stroke-width="1.2"/><path d="M8 0V12M0 6H16" stroke="#fff" stroke-width="3.4"/><path d="M8 0V12M0 6H16" stroke="#c8102e" stroke-width="1.9"/></svg></span> English</div>
+        <div class="lang-option" data-lang="de" onclick="setLang('de')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#000"/><rect y="4" width="16" height="4" fill="#dd0000"/><rect y="8" width="16" height="4" fill="#ffce00"/></svg></span> Deutsch</div>
+        <div class="lang-option" data-lang="fr" onclick="setLang('fr')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#fff"/><rect width="5.34" height="12" fill="#0055a4"/><rect x="10.66" width="5.34" height="12" fill="#ef4135"/></svg></span> Français</div>
       </div>
     </div>
     <button class="nav-btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})" data-i18n="nav_cta">Solicitar llamada</button>
@@ -8824,7 +8825,12 @@ const translations = {
   }
 };
 
-const flagMap = { es: '🇪🇸', en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷' };
+const flagMap = {
+  es: '<svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#c60b1e"/><rect y="3" width="16" height="6" fill="#ffc400"/></svg>',
+  en: '<svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#012169"/><path d="M0 0L16 12M16 0L0 12" stroke="#fff" stroke-width="2.4"/><path d="M0 0L16 12M16 0L0 12" stroke="#c8102e" stroke-width="1.2"/><path d="M8 0V12M0 6H16" stroke="#fff" stroke-width="3.4"/><path d="M8 0V12M0 6H16" stroke="#c8102e" stroke-width="1.9"/></svg>',
+  de: '<svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#000"/><rect y="4" width="16" height="4" fill="#dd0000"/><rect y="8" width="16" height="4" fill="#ffce00"/></svg>',
+  fr: '<svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#fff"/><rect width="5.34" height="12" fill="#0055a4"/><rect x="10.66" width="5.34" height="12" fill="#ef4135"/></svg>'
+};
 const labelMap = { es: 'ES', en: 'EN', de: 'DE', fr: 'FR' };
 
 function setLang(lang) {
@@ -8849,11 +8855,11 @@ function setLang(lang) {
     const key = el.getAttribute('data-i18n-aria');
     if (t[key] != null) el.setAttribute('aria-label', t[key]);
   });
-  const cf = document.getElementById('currentFlag'); if (cf) cf.textContent = flagMap[lang];
+  const cf = document.getElementById('currentFlag'); if (cf) cf.innerHTML = flagMap[lang];
   const cl = document.getElementById('currentLang'); if (cl) cl.textContent = labelMap[lang];
   const ls = document.getElementById('langSelector'); if (ls) ls.classList.remove('open');
   document.querySelectorAll('.lang-option').forEach(opt => {
-    opt.classList.toggle('active', opt.textContent.trim().startsWith(flagMap[lang]));
+    opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
   });
   if (window.__roiRecalc) { try { window.__roiRecalc(); } catch(e){} }
   try { localStorage.setItem('shiftia-lang', lang); } catch(e){}
