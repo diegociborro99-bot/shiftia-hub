@@ -5229,6 +5229,8 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cconf-pill { font-style:normal; font-size:10.5px; padding:2px 8px; border-radius:999px; }
 .cconf-pill.m { background:#fef3c7; color:#92400e; }
 .cconf-pill.d { background:#e2e8f0; color:#475569; }
+.cconf-pill.n { background:#ede9fe; color:#6d28d9; }
+.cconf2-cell.code-N { background:#ede9fe; border-color:#c4b5fd; color:#6d28d9; }
 .cconf-done { margin-top:6px; font-size:.84rem; color:#15803d; }
 @media (prefers-reduced-motion: reduce){ .cimp-prog span{animation-duration:.01s;} .cimp-row{transition:none;} }
 
@@ -5915,40 +5917,51 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       },42);
     });
   }
-  // ── Equidad nocturna: redistribución de noches ──
+  // ── Equidad nocturna/festivos: redistribución (sector + equipo) ──
   var eqGrid=document.getElementById('ceqGrid'), eqTotals=document.getElementById('ceqTotals'),
       eqGo=document.getElementById('ceqGo'), eqDev=document.getElementById('ceqDev'),
       eqRange=document.getElementById('ceqRange'), eqValid=document.getElementById('ceqValid');
   if(eqGrid && eqGo){
-    var eqPpl=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.'];
     var EN=14;
-    var eqInit=[0,0,0,0,0,0,0,1,2,2,2,3,4,4];
-    var eqBal=[0,0,0,1,1,1,2,2,2,3,3,3,4,4];
-    function eqCounts(o){ var c=[0,0,0,0,0]; o.forEach(function(x){ c[x]++; }); return c; }
+    function nightWord(cap){ var w=(SECTORS[CFG.sector]&&SECTORS[CFG.sector].night)?'noches':'festivos'; return cap?(w.charAt(0).toUpperCase()+w.slice(1)):w; }
+    function eqPeople(){ return POOL.slice(0, CFG.team); }
+    function genDist(team, balanced){
+      var o=[];
+      if(balanced){ for(var n=0;n<EN;n++) o.push(n%team); }
+      else { var heavy=Math.max(5,Math.round(EN*0.45)); for(var n=0;n<heavy;n++) o.push(0); var p=1; for(var n=heavy;n<EN;n++){ o.push(p); p++; if(p>=team)p=1; } }
+      return o;
+    }
+    function eqCounts(o,team){ var c=[]; for(var i=0;i<team;i++)c[i]=0; o.forEach(function(x){ if(x<team)c[x]++; }); return c; }
     function eqStd(c){ var m=c.reduce(function(a,b){return a+b;},0)/c.length; var v=c.reduce(function(a,b){return a+(b-m)*(b-m);},0)/c.length; return Math.sqrt(v); }
     function eqBuild(o){
+      var ppl=eqPeople();
       eqGrid.style.gridTemplateColumns='auto repeat('+EN+',minmax(0,1fr))';
       var h='';
-      eqPpl.forEach(function(p,r){
-        h+='<div class="ceq2-name">'+p+'</div>';
-        for(var n=0;n<EN;n++){ h+='<div class="ceq2-cell'+(o[n]===r?' on':'')+'"></div>'; }
-      });
+      ppl.forEach(function(p,r){ h+='<div class="ceq2-name">'+p+'</div>'; for(var n=0;n<EN;n++){ h+='<div class="ceq2-cell'+(o[n]===r?' on':'')+'"></div>'; } });
       eqGrid.innerHTML=h;
     }
     function eqTot(o){
-      var c=eqCounts(o), mx=Math.max.apply(null,c);
-      eqTotals.innerHTML=eqPpl.map(function(p,r){
-        return '<div class="ceq2-trow"><span class="ceq2-tname">'+p+'</span><span class="ceq2-tbar"><i style="width:'+Math.round(c[r]/mx*100)+'%"></i></span><span class="ceq2-tval">'+c[r]+'</span></div>';
-      }).join('');
+      var ppl=eqPeople(), c=eqCounts(o,ppl.length), mx=Math.max.apply(null,c)||1;
+      eqTotals.innerHTML=ppl.map(function(p,r){ return '<div class="ceq2-trow"><span class="ceq2-tname">'+p+'</span><span class="ceq2-tbar"><i style="width:'+Math.round(c[r]/mx*100)+'%"></i></span><span class="ceq2-tval">'+c[r]+'</span></div>'; }).join('');
     }
-    function eqShow(o){ eqBuild(o); eqTot(o); var c=eqCounts(o); eqDev.textContent=eqStd(c).toFixed(1); eqRange.textContent=(Math.max.apply(null,c)-Math.min.apply(null,c)); }
-    eqShow(eqInit);
+    function eqShow(o){ eqBuild(o); eqTot(o); var c=eqCounts(o,eqPeople().length); eqDev.textContent=eqStd(c).toFixed(1); eqRange.textContent=(Math.max.apply(null,c)-Math.min.apply(null,c)); }
+    function eqLabels(){
+      var W=nightWord(false), Wc=nightWord(true);
+      var h3=document.querySelector('.ceq2-head h3'); if(h3) h3.textContent='Equidad de '+W+': redistribución automática';
+      var lblL=document.querySelector('.ceq2-left .cgen2-label'); if(lblL) lblL.textContent='Reparto de '+W+' · últimas 2 semanas';
+      var lblR=document.querySelector('.ceq2-right .cgen2-label'); if(lblR) lblR.textContent=Wc+' por persona';
+      var leg=document.querySelector('.ceq2-legend'); if(leg) leg.innerHTML='<span class="ceq2-lg-on"></span>'+Wc+' asignado <span class="ceq2-lg-off"></span>Libre';
+    }
     var eqBalanced=false;
+    function eqReset(){ eqBalanced=false; eqLabels(); eqShow(genDist(eqPeople().length,false)); eqGo.innerHTML='Redistribuir '+nightWord(false)+' con IA'; if(eqValid) eqValid.hidden=true; }
+    eqReset();
+    window.__equityReset=eqReset;
     eqGo.addEventListener('click',function(){
       eqBalanced=!eqBalanced;
-      eqShow(eqBalanced?eqBal:eqInit);
-      eqGo.innerHTML=eqBalanced?(REFRESH+' Ver desequilibrio inicial'):'Redistribuir noches con IA';
-      if(eqValid){ eqValid.hidden=!eqBalanced; if(eqBalanced) eqValid.innerHTML=OKICON+' Noches cuadradas (3·3·3·3·2) · desviación 0,4 · todas las noches cubiertas y descansos respetados.'; }
+      var team=eqPeople().length;
+      eqShow(genDist(team, eqBalanced));
+      eqGo.innerHTML=eqBalanced?(REFRESH+' Ver desequilibrio inicial'):('Redistribuir '+nightWord(false)+' con IA');
+      if(eqValid){ eqValid.hidden=!eqBalanced; if(eqBalanced){ var c=eqCounts(genDist(team,true),team); eqValid.innerHTML=OKICON+' '+nightWord(true)+' cuadrados · desviación '+eqStd(c).toFixed(1).replace('.',',')+' · todo cubierto y descansos respetados.'; } }
     });
   }
   // ── Lector PDF/Excel: pasos + columnas detectadas + validación ──
@@ -5990,14 +6003,15 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       },430);
     });
   }
-  // ── Conflictos: semana real, detección y resolución ──
+  // ── Conflictos: semana real (sector + equipo) ──
   var cGo=document.getElementById('cconfGo'), cApply=document.getElementById('cconfApply'),
       cDone=document.getElementById('cconfDone'), cProp=document.getElementById('cconfProp'),
       cWeek=document.getElementById('cconfWeek'), cI0=document.getElementById('cconfIssue0'),
       cI1=document.getElementById('cconfIssue1');
   if(cGo && cWeek){
     var cd=['L','M','X','J','V','S','D'];
-    var luc=['M','M','M','M','M','M','M'];
+    var luc=[];
+    function cShift(){ return (SECTORS[CFG.sector]&&SECTORS[CFG.sector].night)?{code:'N',label:'Noche',pill:'n'}:{code:'M',label:'Mañana',pill:'m'}; }
     function renderWeek(hiThu, flagBad){
       cWeek.style.gridTemplateColumns='repeat(7,minmax(0,1fr))';
       var h='';
@@ -6009,7 +6023,23 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       }
       cWeek.innerHTML=h;
     }
-    renderWeek(false,true);
+    function changeRow(who,day,from,to,fc,tc){
+      return '<div class="cconf-change"><span class="cconf-who">'+who+'</span><span class="cconf-when">'+day+'</span><span class="cconf-flow"><i class="cconf-pill '+fc+'">'+from+'</i><span class="cconf-arrow">→</span><i class="cconf-pill '+tc+'">'+to+'</i></span></div>';
+    }
+    function cReset(){
+      var sh=cShift(), p0=POOL[0], p1=POOL[1];
+      luc=[sh.code,sh.code,sh.code,sh.code,sh.code,sh.code,sh.code];
+      var lbl=document.querySelector('.cconf2-right .cgen2-label'); if(lbl) lbl.textContent='Semana de '+p0;
+      if(cI0) cI0.innerHTML='<span class="cconf2-sev high">Crítico</span> <span>'+p0+' encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).</span>';
+      if(cI1) cI1.innerHTML='<span class="cconf2-sev mid">Aviso</span> <span>'+(sh.label==='Noche'?'Noche del sábado':'Sábado tarde')+': <strong>1 persona</strong> por debajo del mínimo.</span>';
+      if(cI0) cI0.classList.remove('resolved'); if(cI1) cI1.classList.remove('resolved');
+      Array.prototype.forEach.call(cProp.querySelectorAll('.cconf-change'),function(n){ n.parentNode.removeChild(n); });
+      cApply.insertAdjacentHTML('beforebegin', changeRow(p0,'Jue',sh.label,'Descanso',sh.pill,'d')+changeRow(p1,'Jue','Descanso',sh.label,'d',sh.pill));
+      cProp.hidden=true; cDone.hidden=true; cGo.hidden=false; cGo.disabled=false; cGo.textContent='Resolver con IA';
+      renderWeek(false,true);
+    }
+    cReset();
+    window.__conflictReset=cReset;
     cGo.addEventListener('click',function(){
       cProp.hidden=false; cGo.disabled=true; cGo.textContent='Analizando…';
       renderWeek(true,true);
@@ -6018,7 +6048,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     cApply.addEventListener('click',function(){
       luc[3]='D'; renderWeek(false,false);
       cProp.hidden=true; cDone.hidden=false;
-      cI0.classList.add('resolved'); cI1.classList.add('resolved');
+      if(cI0) cI0.classList.add('resolved'); if(cI1) cI1.classList.add('resolved');
     });
   }
   // ── Pestañas "Pruébalo" ──
@@ -6145,7 +6175,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   var sectorEl=document.getElementById('demoSector');
   var minus=document.getElementById('demoTeamMinus'), plus=document.getElementById('demoTeamPlus'), val=document.getElementById('demoTeamVal');
   function clampTeam(){ var min=SEC[cfg.sector].min||5, max=8; if(cfg.team<min)cfg.team=min; if(cfg.team>max)cfg.team=max; if(val) val.textContent=cfg.team; }
-  function apply(){ clampTeam(); if(window.__autogenReset) window.__autogenReset(); if(window.__coverageReset) window.__coverageReset(); }
+  function apply(){ clampTeam(); if(window.__autogenReset) window.__autogenReset(); if(window.__coverageReset) window.__coverageReset(); if(window.__equityReset) window.__equityReset(); if(window.__conflictReset) window.__conflictReset(); }
   if(sectorEl){
     Array.prototype.forEach.call(sectorEl.querySelectorAll('.dp-chip'),function(b){
       b.addEventListener('click',function(){
