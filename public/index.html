@@ -5457,6 +5457,35 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cgen2-legend .lg.N { background:#c4b5fd; }
 @media (max-width:600px){ .demo-perso{ gap:14px; } .dp-group{ flex-direction:column; align-items:flex-start; gap:6px; } }
 
+/* ===== Pricing: precio por trabajador + ahorro anual ===== */
+.price-perworker { margin-top:10px; font-size:.82rem; color:var(--ds-text-muted,#4a4a47); }
+.price-perworker .pw-val { font-family:var(--ds-font-display,'Instrument Serif',serif); font-weight:700; color:var(--primary,#2980b9); font-size:1.02rem; }
+.price-yearsave { display:none; margin-top:8px; font-size:.8rem; color:#15803d; background:rgba(22,163,74,.09); border:1px solid rgba(22,163,74,.28); border-radius:999px; padding:4px 12px; align-self:flex-start; }
+.price-yearsave strong { font-weight:800; }
+.pricing-grid.annual-on .price-yearsave { display:inline-block; }
+.pricing-grid.annual-on .price-billing-note { opacity:.55; }
+
+/* ===== Pricing: escasez ética ===== */
+.price-scarcity { display:inline-flex; align-items:center; gap:8px; margin:14px auto 0; font-size:.85rem; font-weight:600; color:#92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:999px; padding:7px 16px; }
+.price-scarcity svg { width:15px; height:15px; flex-shrink:0; }
+
+/* ===== CTA fija en móvil ===== */
+.sticky-cta { display:none; }
+@media (max-width:768px){
+  .sticky-cta {
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    position:fixed; left:14px; right:14px; bottom:14px; z-index:1200;
+    padding:14px 20px; border-radius:14px; text-decoration:none;
+    font-family:inherit; font-size:1rem; font-weight:600; color:#fff;
+    background:var(--ds-accent,#0f7a6d); box-shadow:0 10px 28px rgba(15,122,109,.38);
+    transform:translateY(140%); opacity:0;
+    transition:transform .35s cubic-bezier(.16,1,.3,1), opacity .35s;
+  }
+  .sticky-cta.show { transform:translateY(0); opacity:1; }
+  .sticky-cta svg { width:17px; height:17px; }
+}
+@media (prefers-reduced-motion: reduce){ .sticky-cta { transition:none; } }
+
 </style>
 </head>
 <body>
@@ -5516,6 +5545,11 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </button>
 </nav>
 
+<a class="sticky-cta" href="#contact" id="stickyCta" data-event="sticky_cta_click">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  <span data-i18n="sticky_cta_label">Solicitar demo</span>
+</a>
+
 <main id="main">
 <!-- HERO -->
 <section class="hero">
@@ -5541,7 +5575,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         </a>
       </div>
       <div class="hero-trial-badge">
-        <span data-i18n="hero_trial">Garantía de devolución de 30 días</span>
+        <span data-i18n="hero_trial">Sin tarjeta · Respuesta en 24 h · Garantía de 30 días</span>
         <span class="hero-trial-sep" aria-hidden="true">·</span>
         <a href="#how" class="hero-trial-link" data-i18n="hero_cta2">Ver cómo funciona</a>
       </div>
@@ -6931,6 +6965,10 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <div class="section-eyebrow reveal" data-i18n="price_eyebrow">Planes</div>
     <h2 class="section-h2 reveal" data-i18n="price_title">Tarifa plana. Sin coste por trabajador.</h2>
     <p class="section-p reveal" data-i18n="price_desc">Sin permanencia. Garantía de devolución de 30 días. Implantación en 5-7 días laborables.</p>
+    <div class="price-scarcity reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <span data-i18n="price_scarcity">Plazas de implantación limitadas cada mes · onboarding guiado en 5-7 días</span>
+    </div>
   </div>
   <div class="price-toggle-wrap reveal">
     <span class="price-toggle-label active" id="ptMonthly" data-i18n="price_monthly">Mensual</span>
@@ -6944,6 +6982,8 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <div class="price-name" data-i18n="p1_n">Esencial</div>
       <div class="price-amount"><span class="price-val" data-monthly="29" data-annual="23">29</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
       <div class="price-billing-note" data-i18n="p1_billing">o 23€/mes facturado anual</div>
+      <div class="price-perworker"><span data-i18n="pw_pre">desde</span> <strong class="pw-val" data-pw-m="1,9" data-pw-a="1,5">1,9</strong><span data-i18n="pw_unit">€/trabajador al mes</span></div>
+      <div class="price-yearsave"><span data-i18n="pw_save_label">Ahorro anual</span>: <strong>72€</strong></div>
       <div class="price-desc" data-i18n="p1_d">Clínicas y equipos pequeños · hasta 15 trabajadores</div>
       <div class="price-list-head" data-i18n="p1_head">El núcleo, siempre</div>
       <ul class="price-list">
@@ -6956,13 +6996,15 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         <li data-i18n="p1_f7">Dashboard básico</li>
         <li data-i18n="p1_f8">Nube + RGPD · soporte por email</li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn_starter" onclick="scrollToContact('esencial')">Empezar</button>
+      <button class="price-btn outline" data-i18n="price_btn_starter" onclick="scrollToContact('esencial')">Solicitar demo</button>
     </div>
     <div class="price-card pop reveal d1">
       <div class="price-pop-badge" data-i18n="p2_badge">★ Más elegido</div>
       <div class="price-name" data-i18n="p2_n">Pro</div>
       <div class="price-amount"><span class="price-val" data-monthly="69" data-annual="55">69</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
       <div class="price-billing-note" data-i18n="p2_billing">o 55€/mes facturado anual</div>
+      <div class="price-perworker"><span data-i18n="pw_pre">desde</span> <strong class="pw-val" data-pw-m="1,7" data-pw-a="1,4">1,7</strong><span data-i18n="pw_unit">€/trabajador al mes</span></div>
+      <div class="price-yearsave"><span data-i18n="pw_save_label">Ahorro anual</span>: <strong>168€</strong></div>
       <div class="price-desc" data-i18n="p2_d">El plan con IA · hasta 40 trabajadores</div>
       <div class="price-list-head" data-i18n="p2_head">Todo Esencial, y además</div>
       <ul class="price-list">
@@ -6982,6 +7024,8 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <div class="price-name" data-i18n="p3_n">Business</div>
       <div class="price-amount"><span class="price-val" data-monthly="129" data-annual="103">129</span><span class="price-currency">€</span><span class="price-per">/mes</span></div>
       <div class="price-billing-note" data-i18n="p3_billing">o 103€/mes facturado anual</div>
+      <div class="price-perworker"><span data-i18n="pw_pre">desde</span> <strong class="pw-val" data-pw-m="1,3" data-pw-a="1,0">1,3</strong><span data-i18n="pw_unit">€/trabajador al mes</span></div>
+      <div class="price-yearsave"><span data-i18n="pw_save_label">Ahorro anual</span>: <strong>312€</strong></div>
       <div class="price-desc" data-i18n="p3_d">Multi-centro · hasta 100 trabajadores</div>
       <div class="price-list-head" data-i18n="p3_head">Todo Pro, y además</div>
       <ul class="price-list">
@@ -6994,7 +7038,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         <li data-i18n="p3_f7">Onboarding dedicado + gestor de cuenta</li>
         <li data-i18n="p3_f8">Soporte prioritario con SLA</li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn_business" onclick="scrollToContact('business')">Contratar</button>
+      <button class="price-btn outline" data-i18n="price_btn_business" onclick="scrollToContact('business')">Solicitar demo</button>
     </div>
   </div>
 
@@ -7572,6 +7616,12 @@ function togglePricing() {
   document.getElementById('priceToggle').classList.toggle('annual', isAnnual);
   document.getElementById('ptMonthly').classList.toggle('active', !isAnnual);
   document.getElementById('ptAnnual').classList.toggle('active', isAnnual);
+  // Precio por trabajador (cambia con el ciclo) + revela el ahorro anual.
+  var grid = document.querySelector('.pricing-grid');
+  if (grid) grid.classList.toggle('annual-on', isAnnual);
+  document.querySelectorAll('.pw-val').forEach(el => {
+    el.textContent = isAnnual ? el.dataset.pwA : el.dataset.pwM;
+  });
   document.querySelectorAll('.price-val').forEach(el => {
     const target = isAnnual ? el.dataset.annual : el.dataset.monthly;
     const current = parseInt(el.textContent);
@@ -7586,6 +7636,25 @@ function togglePricing() {
     }, 20);
   });
 }
+
+// CTA fija en móvil: aparece al salir el hero de pantalla y se esconde al
+// llegar al formulario de contacto (donde ya es redundante).
+(function () {
+  var cta = document.getElementById('stickyCta');
+  if (!cta) return;
+  var hero = document.querySelector('.hero');
+  var contact = document.getElementById('contact');
+  var pastHero = false, atContact = false;
+  function sync() { cta.classList.toggle('show', pastHero && !atContact); }
+  if ('IntersectionObserver' in window) {
+    if (hero) new IntersectionObserver(function (e) {
+      pastHero = !e[0].isIntersecting; sync();
+    }, { threshold: 0 }).observe(hero);
+    if (contact) new IntersectionObserver(function (e) {
+      atContact = e[0].isIntersecting; sync();
+    }, { threshold: 0.12 }).observe(contact);
+  }
+})();
 
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -8005,7 +8074,8 @@ const translations = {
     hero_title_1: 'Planificación de turnos y planillas,',
     hero_title_2: 'simplificada',
     hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.',
-    hero_cta: 'Solicitar demo', hero_cta2: 'Como funciona', hero_trial: 'Garantía de devolución de 30 días',
+    hero_cta: 'Solicitar demo', hero_cta2: 'Como funciona', hero_trial: 'Sin tarjeta · Respuesta en 24 h · Garantía de 30 días',
+    pw_pre: 'desde', pw_unit: '€/trabajador al mes', pw_save_label: 'Ahorro anual', price_scarcity: 'Plazas de implantación limitadas cada mes · onboarding guiado en 5-7 días', sticky_cta_label: 'Solicitar demo',
     stat1: 'Trabajadores', stat2: 'Tiempo ahorrado', stat3: 'Conflictos sin resolver',
     orbit_eyebrow: 'Ecosistema', orbit_title: 'Todo conectado. Todo inteligente.', orbit_desc: 'Shiftia integra cada aspecto de la gestión de turnos en un único sistema inteligente.',
     orb_ai: 'Motor IA', orb_schedule: 'Planilla', orb_equity: 'Equidad', orb_dashboard: 'Dashboard', orb_alerts: 'Alertas', orb_coverage: 'Coberturas', orb_nights: 'Noches', orb_mobile: 'App móvil', orb_sync: 'Sincronización', orb_gdpr: 'RGPD', orb_pdf: 'Import PDF', orb_conciliation: 'Conciliación', orb_holidays: 'Vacaciones',
@@ -8108,8 +8178,8 @@ const translations = {
     p4_f4: 'Integraciones a medida (HIS, ERP, fichaje)',
     p4_f5: 'Seguridad reforzada y auditoría',
     p4_f6: 'Formación on-site + contrato adaptado',
-    price_btn_starter: 'Empezar', price_btn_pro: 'Solicitar demo',
-    price_btn_business: 'Contratar', price_btn_enterprise: 'Hablar con ventas',
+    price_btn_starter: 'Solicitar demo', price_btn_pro: 'Solicitar demo',
+    price_btn_business: 'Solicitar demo', price_btn_enterprise: 'Hablar con ventas',
     chip_nopermanencia: 'Sin permanencia', chip_garantia: 'Garantía 30 días',
     chip_sincoste: 'Sin coste por trabajador', chip_implantacion: 'Implantación 5-7 días laborables',
     pc_title: 'Por qué cuesta lo que cuesta',
@@ -8266,7 +8336,8 @@ const translations = {
     hero_title_1: 'Shift scheduling and rosters,',
     hero_title_2: 'simplified',
     hero_desc: 'Shiftia automates shift planning, manages absences with AI, and ensures team equity. For hospitals, clinics, care homes, factories, and any business with rosters. Less Excel, more control.',
-    hero_cta: 'Request demo', hero_cta2: 'How it works', hero_trial: '30-day money-back guarantee',
+    hero_cta: 'Request demo', hero_cta2: 'How it works', hero_trial: 'No card · Reply within 24 h · 30-day guarantee',
+    pw_pre: 'from', pw_unit: '€/worker per month', pw_save_label: 'Annual saving', price_scarcity: 'Limited onboarding slots each month · guided setup in 5-7 days', sticky_cta_label: 'Request a demo',
     stat1: 'Workers', stat2: 'Time saved', stat3: 'Unresolved conflicts',
     orbit_eyebrow: 'Ecosystem', orbit_title: 'All connected. All intelligent.', orbit_desc: 'Shiftia integrates every aspect of shift management into a single smart system.',
     orb_ai: 'AI Engine', orb_schedule: 'Schedule', orb_equity: 'Equity', orb_dashboard: 'Dashboard', orb_alerts: 'Alerts', orb_coverage: 'Coverage', orb_nights: 'Nights', orb_mobile: 'Mobile app', orb_sync: 'Sync', orb_gdpr: 'GDPR', orb_pdf: 'PDF Import', orb_conciliation: 'Work-life', orb_holidays: 'Holidays',
@@ -8373,13 +8444,13 @@ const translations = {
     bespoke_footnote: '<strong>One app per client.</strong> A single engine behind it. Zero “standard configuration” compromises.',
     p1_billing: 'or €23/mo billed annually', p1_head: 'The core, always',
     p1_f5: 'Holidays and absences', p1_f6: 'Conflict detection', p1_f7: 'Basic dashboard', p1_f8: 'Cloud + GDPR · email support',
-    price_btn_starter: 'Get started',
+    price_btn_starter: 'Request a demo',
     p2_badge: '★ Most chosen', p2_billing: 'or €55/mo billed annually', p2_head: 'Everything in Essential, plus',
     p2_fcore: '★ AI schedule auto-generation — ShiftiaCore', p2_f6: 'History and audit (CSV/PDF export)', p2_f7: 'Visual customization (your brand and terms)', p2_f8: 'Guided onboarding in 5-7 business days · priority support',
     price_btn_pro: 'Request a demo',
     p3_billing: 'or €103/mo billed annually', p3_head: 'Everything in Pro, plus',
     p3_f3: 'AI reports + AI daily briefing', p3_f6: 'API access', p3_f7: 'Dedicated onboarding + account manager', p3_f8: 'Priority support with SLA',
-    price_btn_business: 'Subscribe',
+    price_btn_business: 'Request a demo',
     p4_n: 'Enterprise', p4_p: 'Custom pricing', p4_d: 'Hospitals, groups and the public sector. More than 100 workers, multiple sites or your own deployment requirements.',
     p4_f1: 'Everything in Business included', p4_f2: 'On-premise or private cloud', p4_f3: 'Guaranteed SLA · optional 24/7 support', p4_f4: 'Custom integrations (HIS, ERP, time clock)', p4_f5: 'Enhanced security and auditing', p4_f6: 'On-site training + tailored contract',
     price_btn_enterprise: 'Talk to sales',
@@ -8500,7 +8571,8 @@ const translations = {
     hero_title_1: 'Schichtplanung und Dienstplane,',
     hero_title_2: 'vereinfacht',
     hero_desc: 'Shiftia automatisiert Schichten, verwaltet Abwesenheiten mit KI und garantiert die Fairness Ihres Teams. Fur Krankenhäuser, Kliniken, Pflegeheime, Fabriken und jedes Unternehmen mit Dienstplanen.',
-    hero_cta: 'Demo anfragen', hero_cta2: 'So funktioniert es', hero_trial: '30 Tage Geld-zuruck-Garantie',
+    hero_cta: 'Demo anfragen', hero_cta2: 'So funktioniert es', hero_trial: 'Ohne Karte · Antwort in 24 h · 30 Tage Garantie',
+    pw_pre: 'ab', pw_unit: '€/Mitarbeiter pro Monat', pw_save_label: 'Jährliche Ersparnis', price_scarcity: 'Begrenzte Onboarding-Plätze pro Monat · geführt in 5-7 Tagen', sticky_cta_label: 'Demo anfragen',
     stat1: 'Mitarbeiter', stat2: 'Zeitersparnis', stat3: 'Offene Konflikte',
     orbit_eyebrow: 'Okosystem', orbit_title: 'Alles verbunden. Alles intelligent.', orbit_desc: 'Shiftia integriert jeden Aspekt der Schichtplanung in ein einziges intelligentes System.',
     orb_ai: 'KI-Engine', orb_schedule: 'Dienstplan', orb_equity: 'Fairness', orb_dashboard: 'Dashboard', orb_alerts: 'Warnungen', orb_coverage: 'Vertretung', orb_nights: 'Nachtdienst', orb_mobile: 'Mobile App', orb_sync: 'Synchronisation', orb_gdpr: 'DSGVO', orb_pdf: 'PDF-Import', orb_conciliation: 'Vereinbarkeit', orb_holidays: 'Urlaub',
@@ -8607,13 +8679,13 @@ const translations = {
     bespoke_footnote: '<strong>Eine App pro Kunde.</strong> Eine einzige Engine dahinter. Null Kompromisse bei der „Standardkonfiguration“.',
     p1_billing: 'oder 23 €/Monat, jährlich abgerechnet', p1_head: 'Der Kern, immer',
     p1_f5: 'Urlaub und Abwesenheiten', p1_f6: 'Konflikterkennung', p1_f7: 'Basis-Dashboard', p1_f8: 'Cloud + DSGVO · E-Mail-Support',
-    price_btn_starter: 'Loslegen',
+    price_btn_starter: 'Demo anfragen',
     p2_badge: '★ Am häufigsten gewählt', p2_billing: 'oder 55 €/Monat, jährlich abgerechnet', p2_head: 'Alles aus Essential, plus',
     p2_fcore: '★ KI-Dienstplan-Autogenerierung — ShiftiaCore', p2_f6: 'Verlauf und Audit (CSV/PDF-Export)', p2_f7: 'Visuelle Anpassung (Ihre Marke und Begriffe)', p2_f8: 'Geführte Einführung in 5-7 Werktagen · Priority-Support',
     price_btn_pro: 'Demo anfragen',
     p3_billing: 'oder 103 €/Monat, jährlich abgerechnet', p3_head: 'Alles aus Pro, plus',
     p3_f3: 'KI-Berichte + tägliches KI-Briefing', p3_f6: 'API-Zugang', p3_f7: 'Dediziertes Onboarding + Account-Manager', p3_f8: 'Priority-Support mit SLA',
-    price_btn_business: 'Abonnieren',
+    price_btn_business: 'Demo anfragen',
     p4_n: 'Enterprise', p4_p: 'Preis auf Anfrage', p4_d: 'Krankenhäuser, Gruppen und öffentlicher Sektor. Mehr als 100 Mitarbeiter, mehrere Standorte oder eigene Bereitstellungsanforderungen.',
     p4_f1: 'Alles aus Business inklusive', p4_f2: 'On-Premise oder Private Cloud', p4_f3: 'Garantiertes SLA · optionaler 24/7-Support', p4_f4: 'Individuelle Integrationen (HIS, ERP, Zeiterfassung)', p4_f5: 'Erhöhte Sicherheit und Auditierung', p4_f6: 'Schulung vor Ort + angepasster Vertrag',
     price_btn_enterprise: 'Mit dem Vertrieb sprechen',
@@ -8734,7 +8806,8 @@ const translations = {
     hero_title_1: 'Planification des equipes et des plannings,',
     hero_title_2: 'simplifiee',
     hero_desc: 'Shiftia automatise les plannings, gere les absences avec l\'IA et garantit l\'equite de votre equipe. Pour hopitaux, cliniques, EHPAD, usines et toute entreprise avec des plannings.',
-    hero_cta: 'Demander une demo', hero_cta2: 'Comment ca marche', hero_trial: 'Garantie de remboursement de 30 jours',
+    hero_cta: 'Demander une demo', hero_cta2: 'Comment ca marche', hero_trial: 'Sans carte · Réponse sous 24 h · Garantie 30 jours',
+    pw_pre: 'à partir de', pw_unit: '€/employé par mois', pw_save_label: 'Économie annuelle', price_scarcity: 'Places d\'intégration limitées chaque mois · accompagnement en 5-7 jours', sticky_cta_label: 'Demander une démo',
     stat1: 'Collaborateurs', stat2: 'Temps economise', stat3: 'Conflits non resolus',
     orbit_eyebrow: 'Ecosysteme', orbit_title: 'Tout connecte. Tout intelligent.', orbit_desc: 'Shiftia integre chaque aspect de la gestion des postes dans un seul systeme intelligent.',
     orb_ai: 'Moteur IA', orb_schedule: 'Planning', orb_equity: 'Equite', orb_dashboard: 'Tableau de bord', orb_alerts: 'Alertes', orb_coverage: 'Couverture', orb_nights: 'Nuits', orb_mobile: 'App mobile', orb_sync: 'Synchronisation', orb_gdpr: 'RGPD', orb_pdf: 'Import PDF', orb_conciliation: 'Conciliation', orb_holidays: 'Conges',
@@ -8841,13 +8914,13 @@ const translations = {
     bespoke_footnote: '<strong>Une app par client.</strong> Un seul moteur derrière. Zéro compromis de « configuration standard ».',
     p1_billing: 'ou 23 €/mois facturé annuellement', p1_head: 'Le noyau, toujours',
     p1_f5: 'Congés et absences', p1_f6: 'Détection de conflits', p1_f7: 'Tableau de bord basique', p1_f8: 'Cloud + RGPD · support par e-mail',
-    price_btn_starter: 'Commencer',
+    price_btn_starter: 'Demander une démo',
     p2_badge: '★ Le plus choisi', p2_billing: 'ou 55 €/mois facturé annuellement', p2_head: 'Tout Essentiel, et en plus',
     p2_fcore: '★ Auto-génération de plannings par IA — ShiftiaCore', p2_f6: 'Historique et audit (export CSV/PDF)', p2_f7: 'Personnalisation visuelle (votre marque et vos termes)', p2_f8: 'Mise en place guidée en 5-7 jours ouvrés · support prioritaire',
     price_btn_pro: 'Demander une démo',
     p3_billing: 'ou 103 €/mois facturé annuellement', p3_head: 'Tout Pro, et en plus',
     p3_f3: 'Rapports IA + briefing quotidien IA', p3_f6: 'Accès API', p3_f7: 'Onboarding dédié + gestionnaire de compte', p3_f8: 'Support prioritaire avec SLA',
-    price_btn_business: 'Souscrire',
+    price_btn_business: 'Demander une démo',
     p4_n: 'Enterprise', p4_p: 'Prix sur mesure', p4_d: 'Hôpitaux, groupes et secteur public. Plus de 100 travailleurs, plusieurs centres ou vos propres exigences de déploiement.',
     p4_f1: 'Tout Business inclus', p4_f2: 'Sur site ou cloud privé', p4_f3: 'SLA garanti · support 24/7 en option', p4_f4: 'Intégrations sur mesure (HIS, ERP, pointage)', p4_f5: 'Sécurité renforcée et audit', p4_f6: 'Formation sur site + contrat adapté',
     price_btn_enterprise: 'Parler aux ventes',
