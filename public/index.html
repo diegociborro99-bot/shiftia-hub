@@ -5486,6 +5486,47 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 }
 @media (prefers-reduced-motion: reduce){ .sticky-cta { transition:none; } }
 
+/* ===== Calculadora de ahorro ===== */
+.calc-section { position:relative; padding:90px 0; overflow:hidden; }
+.calc-card { max-width:980px; margin:36px auto 0; display:grid; grid-template-columns:1fr 1fr; gap:0; background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); border-radius:22px; overflow:hidden; box-shadow:0 18px 50px rgba(15,23,42,.07); }
+.calc-inputs { padding:30px 30px; display:flex; flex-direction:column; gap:24px; border-right:1px solid var(--ds-border,#eceae3); }
+.calc-field { display:flex; flex-direction:column; gap:10px; }
+.calc-flabel { display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-size:.88rem; color:var(--ds-text-muted,#4a4a47); font-weight:500; }
+.calc-fval { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.35rem; color:var(--primary,#2980b9); font-weight:700; white-space:nowrap; }
+.calc-range { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:999px; background:var(--ds-border,#e1e0d8); outline:none; cursor:pointer; }
+.calc-range::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%; background:var(--ds-accent,#0f7a6d); border:3px solid #fff; box-shadow:0 2px 8px rgba(15,122,109,.4); cursor:pointer; transition:transform .15s; }
+.calc-range::-webkit-slider-thumb:hover { transform:scale(1.12); }
+.calc-range::-moz-range-thumb { width:18px; height:18px; border-radius:50%; background:var(--ds-accent,#0f7a6d); border:3px solid #fff; box-shadow:0 2px 8px rgba(15,122,109,.4); cursor:pointer; }
+.calc-assume { display:flex; gap:8px; align-items:flex-start; margin:4px 0 0; font-size:.76rem; line-height:1.5; color:var(--ds-text-subtle,#8a8a85); }
+.calc-assume svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; }
+.calc-output { padding:30px 30px; display:flex; flex-direction:column; gap:18px; background:var(--ds-bg,#faf9f6); }
+.calc-result-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.calc-kpi { display:flex; flex-direction:column; align-items:center; text-align:center; gap:5px; padding:16px 8px; background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); border-radius:14px; }
+.calc-kpi.accent { background:var(--ds-accent,#0f7a6d); border-color:var(--ds-accent,#0f7a6d); }
+.calc-kpi-ic { width:20px; height:20px; color:var(--ds-text-subtle,#8a8a85); }
+.calc-kpi.accent .calc-kpi-ic, .calc-kpi.accent .calc-kpi-val, .calc-kpi.accent .calc-kpi-lbl { color:#fff; }
+.calc-kpi-val { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.5rem; font-weight:700; color:var(--ds-text,#0e0f0f); line-height:1.1; }
+.calc-kpi-lbl { font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ds-text-subtle,#8a8a85); line-height:1.3; }
+.calc-roi { display:flex; flex-direction:column; gap:8px; padding:14px 16px; background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); border-radius:14px; }
+.calc-roi-line { font-size:.9rem; color:var(--ds-text-muted,#4a4a47); }
+.calc-roi-line strong { color:var(--ds-text,#0e0f0f); font-weight:700; }
+.calc-roi-line strong#calcRoi { color:#15803d; font-size:1.05rem; }
+.calc-roi-bar { height:8px; border-radius:999px; background:var(--ds-border,#eceae3); overflow:hidden; }
+.calc-roi-fill { height:100%; width:48%; border-radius:999px; background:linear-gradient(90deg,#0f7a6d,#15803d); transition:width .5s cubic-bezier(.16,1,.3,1); }
+.calc-cta { display:flex; align-items:center; justify-content:center; gap:9px; width:100%; padding:14px 20px; border:none; border-radius:13px; cursor:pointer; font-family:inherit; font-size:.98rem; font-weight:600; color:#fff; background:var(--ds-accent,#0f7a6d); box-shadow:0 8px 22px rgba(15,122,109,.32); transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s; }
+.calc-cta:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(15,122,109,.4); }
+.calc-cta svg { width:17px; height:17px; }
+.calc-help { margin:0; font-size:.76rem; line-height:1.5; color:var(--ds-text-subtle,#8a8a85); text-align:center; }
+@media (max-width:760px){
+  .calc-section { padding:64px 0; }
+  .calc-card { grid-template-columns:1fr; }
+  .calc-inputs { border-right:none; border-bottom:1px solid var(--ds-border,#eceae3); padding:24px 20px; }
+  .calc-output { padding:24px 20px; }
+  .calc-kpi-val { font-size:1.25rem; }
+  .calc-kpi-lbl { font-size:.64rem; }
+}
+@media (prefers-reduced-motion: reduce){ .calc-roi-fill { transition:none; } }
+
 </style>
 </head>
 <body>
@@ -6959,6 +7000,67 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 </section>
 
 <!-- COMPARISON TABLE — Shiftia vs Excel vs Hojas -->
+<!-- CALCULADORA DE AHORRO -->
+<section class="calc-section" id="calc">
+  <div class="floating-orbs"><div class="orb orb-3" style="left:-60px;"></div></div>
+  <div class="container centered">
+    <div class="section-eyebrow reveal" data-i18n="calc_eyebrow">Tu retorno</div>
+    <h2 class="section-h2 reveal" data-i18n="calc_title">Calcula cuánto ahorras con Shiftia</h2>
+    <p class="section-p reveal" data-i18n="calc_desc">Ajusta los datos de tu equipo y mira el ahorro al instante. Sin registrarte.</p>
+  </div>
+  <div class="container">
+    <div class="calc-card reveal">
+      <div class="calc-inputs">
+        <div class="calc-field">
+          <div class="calc-flabel"><span data-i18n="calc_l_workers">Trabajadores</span><span class="calc-fval" id="calcWorkersVal">20</span></div>
+          <input type="range" id="calcWorkers" class="calc-range" min="3" max="100" value="20" step="1" aria-label="Número de trabajadores">
+        </div>
+        <div class="calc-field">
+          <div class="calc-flabel"><span data-i18n="calc_l_hours">Horas/semana planificando turnos</span><span class="calc-fval" id="calcHoursVal">6 h</span></div>
+          <input type="range" id="calcHours" class="calc-range" min="1" max="25" value="6" step="1" aria-label="Horas a la semana dedicadas a planificar turnos">
+        </div>
+        <div class="calc-field">
+          <div class="calc-flabel"><span data-i18n="calc_l_cost">Coste medio €/hora del responsable</span><span class="calc-fval" id="calcCostVal">22 €</span></div>
+          <input type="range" id="calcCost" class="calc-range" min="12" max="50" value="22" step="1" aria-label="Coste medio por hora del responsable">
+        </div>
+        <p class="calc-assume">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01" stroke-linecap="round"/></svg>
+          <span data-i18n="calc_assume">Estimación basada en una reducción media del 70% del tiempo de planificación gracias a la auto-generación con IA.</span>
+        </p>
+      </div>
+      <div class="calc-output">
+        <div class="calc-result-grid">
+          <div class="calc-kpi">
+            <svg class="calc-kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>
+            <div class="calc-kpi-val" id="calcHoursSaved">18 h</div>
+            <div class="calc-kpi-lbl" data-i18n="calc_k_hours">Horas ahorradas/mes</div>
+          </div>
+          <div class="calc-kpi accent">
+            <svg class="calc-kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="calc-kpi-val" id="calcMoneySaved">400 €</div>
+            <div class="calc-kpi-lbl" data-i18n="calc_k_money">Ahorro al mes</div>
+          </div>
+          <div class="calc-kpi">
+            <svg class="calc-kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            <div class="calc-kpi-val" id="calcYearSaved">4.800 €</div>
+            <div class="calc-kpi-lbl" data-i18n="calc_k_year">Ahorro al año</div>
+          </div>
+        </div>
+        <div class="calc-roi">
+          <div class="calc-roi-line"><span data-i18n="calc_plan_pre">Plan recomendado</span>: <strong id="calcPlan">Pro · 69 €/mes</strong></div>
+          <div class="calc-roi-line"><span data-i18n="calc_roi_pre">Por cada 1€ invertido, recuperas</span> <strong id="calcRoi">5,8×</strong></div>
+          <div class="calc-roi-bar" aria-hidden="true"><div class="calc-roi-fill" id="calcRoiFill"></div></div>
+        </div>
+        <button class="calc-cta" id="calcCta" type="button" onclick="calcToContact()">
+          <span data-i18n="calc_cta">Solicitar demo con estos datos</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <p class="calc-help" data-i18n="calc_help">¿Más de 100 trabajadores? Te corresponde un plan Enterprise a medida — el ahorro real suele ser aún mayor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="pricing" id="pricing">
   <div class="floating-orbs"><div class="orb orb-2" style="right:-80px;left:auto;"></div><div class="orb orb-3"></div></div>
   <div class="container centered">
@@ -7637,6 +7739,75 @@ function togglePricing() {
   });
 }
 
+// Calculadora de ahorro: estima horas y € ahorrados al mes/año a partir del
+// tamaño del equipo, las horas semanales de planificación y el coste/hora.
+// Modelo transparente: reducción media del 70% del tiempo de planificación.
+(function () {
+  var W = document.getElementById('calcWorkers'),
+      H = document.getElementById('calcHours'),
+      C = document.getElementById('calcCost');
+  if (!W || !H || !C) return;
+  var REDUCTION = 0.70, WEEKS = 4.33;
+  function plan(w) {
+    if (w <= 15) return { key: 'esencial', name: 'Esencial', cost: 29 };
+    if (w <= 40) return { key: 'pro', name: 'Pro', cost: 69 };
+    return { key: 'business', name: 'Business', cost: 129 };
+  }
+  function lc() { try { return (typeof currentLang !== 'undefined' && currentLang) ? currentLang : 'es'; } catch (e) { return 'es'; } }
+  function fmt(n) { try { return Math.round(n).toLocaleString(lc()); } catch (e) { return String(Math.round(n)); } }
+  function tr(k, fb) { try { var t = translations[lc()] || translations.es; return t[k] != null ? t[k] : fb; } catch (e) { return fb; } }
+  var last = {};
+  function calc() {
+    var w = +W.value, h = +H.value, c = +C.value;
+    var hoursSaved = h * WEEKS * REDUCTION;
+    var moneyMonth = hoursSaved * c;
+    var p = plan(w);
+    var roi = moneyMonth / p.cost;
+    document.getElementById('calcWorkersVal').textContent = w;
+    document.getElementById('calcHoursVal').textContent = h + ' h';
+    document.getElementById('calcCostVal').textContent = c + ' €';
+    document.getElementById('calcHoursSaved').textContent = fmt(hoursSaved) + ' h';
+    document.getElementById('calcMoneySaved').textContent = fmt(moneyMonth) + ' €';
+    document.getElementById('calcYearSaved').textContent = fmt(moneyMonth * 12) + ' €';
+    document.getElementById('calcPlan').textContent = p.name + ' · ' + p.cost + ' €/mes';
+    var roiR = Math.round(roi * 10) / 10;
+    document.getElementById('calcRoi').textContent = roiR.toLocaleString(lc()) + '×';
+    var fill = document.getElementById('calcRoiFill');
+    if (fill) fill.style.width = Math.max(6, Math.min(100, roi / 12 * 100)) + '%';
+    last = { w: w, h: h, c: c, money: moneyMonth, year: moneyMonth * 12, plan: p };
+  }
+  W.addEventListener('input', calc);
+  H.addEventListener('input', calc);
+  C.addEventListener('input', calc);
+  window.__calcRecalc = calc;
+  window.calcToContact = function () {
+    try {
+      var sel = document.getElementById('cf-plan');
+      if (sel && last.plan) sel.value = last.plan.key;
+      var wsel = document.getElementById('cf-workers');
+      if (wsel) {
+        var w = last.w;
+        var opt = w <= 10 ? '1 – 10' : w <= 25 ? '11 – 25' : w <= 50 ? '26 – 50' : '51 – 100';
+        for (var i = 0; i < wsel.options.length; i++) {
+          if (wsel.options[i].text.trim() === opt) { wsel.selectedIndex = i; break; }
+        }
+      }
+      var ta = document.getElementById('cf-message');
+      if (ta && !ta.value) {
+        ta.value = tr('calc_msg', 'Vengo de la calculadora de ahorro') + ': '
+          + last.w + ' ' + tr('calc_msg_workers', 'trabajadores') + ', '
+          + last.h + ' h/' + tr('calc_msg_week', 'sem') + '. '
+          + tr('calc_msg_save', 'Ahorro estimado') + ' ≈ ' + fmt(last.money) + ' €/'
+          + tr('calc_msg_month', 'mes') + ' (' + fmt(last.year) + ' €/' + tr('calc_msg_year', 'año') + '). '
+          + tr('calc_msg_end', 'Quiero una demo.');
+      }
+    } catch (e) {}
+    var target = document.getElementById('contact');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  calc();
+})();
+
 // CTA fija en móvil: aparece al salir el hero de pantalla y se esconde al
 // llegar al formulario de contacto (donde ya es redundante).
 (function () {
@@ -8076,6 +8247,7 @@ const translations = {
     hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.',
     hero_cta: 'Solicitar demo', hero_cta2: 'Como funciona', hero_trial: 'Sin tarjeta · Respuesta en 24 h · Garantía de 30 días',
     pw_pre: 'desde', pw_unit: '€/trabajador al mes', pw_save_label: 'Ahorro anual', price_scarcity: 'Plazas de implantación limitadas cada mes · onboarding guiado en 5-7 días', sticky_cta_label: 'Solicitar demo',
+    calc_eyebrow: 'Tu retorno', calc_title: 'Calcula cuánto ahorras con Shiftia', calc_desc: 'Ajusta los datos de tu equipo y mira el ahorro al instante. Sin registrarte.', calc_l_workers: 'Trabajadores', calc_l_hours: 'Horas/semana planificando turnos', calc_l_cost: 'Coste medio €/hora del responsable', calc_assume: 'Estimación basada en una reducción media del 70% del tiempo de planificación gracias a la auto-generación con IA.', calc_k_hours: 'Horas ahorradas/mes', calc_k_money: 'Ahorro al mes', calc_k_year: 'Ahorro al año', calc_plan_pre: 'Plan recomendado', calc_roi_pre: 'Por cada 1€ invertido, recuperas', calc_cta: 'Solicitar demo con estos datos', calc_help: '¿Más de 100 trabajadores? Te corresponde un plan Enterprise a medida — el ahorro real suele ser aún mayor.', calc_msg: 'Vengo de la calculadora de ahorro', calc_msg_workers: 'trabajadores', calc_msg_week: 'sem', calc_msg_save: 'Ahorro estimado', calc_msg_month: 'mes', calc_msg_year: 'año', calc_msg_end: 'Quiero una demo.',
     stat1: 'Trabajadores', stat2: 'Tiempo ahorrado', stat3: 'Conflictos sin resolver',
     orbit_eyebrow: 'Ecosistema', orbit_title: 'Todo conectado. Todo inteligente.', orbit_desc: 'Shiftia integra cada aspecto de la gestión de turnos en un único sistema inteligente.',
     orb_ai: 'Motor IA', orb_schedule: 'Planilla', orb_equity: 'Equidad', orb_dashboard: 'Dashboard', orb_alerts: 'Alertas', orb_coverage: 'Coberturas', orb_nights: 'Noches', orb_mobile: 'App móvil', orb_sync: 'Sincronización', orb_gdpr: 'RGPD', orb_pdf: 'Import PDF', orb_conciliation: 'Conciliación', orb_holidays: 'Vacaciones',
@@ -8338,6 +8510,7 @@ const translations = {
     hero_desc: 'Shiftia automates shift planning, manages absences with AI, and ensures team equity. For hospitals, clinics, care homes, factories, and any business with rosters. Less Excel, more control.',
     hero_cta: 'Request demo', hero_cta2: 'How it works', hero_trial: 'No card · Reply within 24 h · 30-day guarantee',
     pw_pre: 'from', pw_unit: '€/worker per month', pw_save_label: 'Annual saving', price_scarcity: 'Limited onboarding slots each month · guided setup in 5-7 days', sticky_cta_label: 'Request a demo',
+    calc_eyebrow: 'Your return', calc_title: 'Calculate how much you save with Shiftia', calc_desc: 'Adjust your team data and see the savings instantly. No sign-up.', calc_l_workers: 'Workers', calc_l_hours: 'Hours/week planning shifts', calc_l_cost: 'Average €/hour of the manager', calc_assume: 'Estimate based on an average 70% reduction in planning time thanks to AI auto-generation.', calc_k_hours: 'Hours saved/month', calc_k_money: 'Monthly saving', calc_k_year: 'Yearly saving', calc_plan_pre: 'Recommended plan', calc_roi_pre: 'For every €1 invested, you get back', calc_cta: 'Request a demo with these figures', calc_help: 'More than 100 workers? You qualify for a tailored Enterprise plan — real savings are usually even higher.', calc_msg: 'Coming from the savings calculator', calc_msg_workers: 'workers', calc_msg_week: 'wk', calc_msg_save: 'Estimated saving', calc_msg_month: 'mo', calc_msg_year: 'yr', calc_msg_end: 'I would like a demo.',
     stat1: 'Workers', stat2: 'Time saved', stat3: 'Unresolved conflicts',
     orbit_eyebrow: 'Ecosystem', orbit_title: 'All connected. All intelligent.', orbit_desc: 'Shiftia integrates every aspect of shift management into a single smart system.',
     orb_ai: 'AI Engine', orb_schedule: 'Schedule', orb_equity: 'Equity', orb_dashboard: 'Dashboard', orb_alerts: 'Alerts', orb_coverage: 'Coverage', orb_nights: 'Nights', orb_mobile: 'Mobile app', orb_sync: 'Sync', orb_gdpr: 'GDPR', orb_pdf: 'PDF Import', orb_conciliation: 'Work-life', orb_holidays: 'Holidays',
@@ -8573,6 +8746,7 @@ const translations = {
     hero_desc: 'Shiftia automatisiert Schichten, verwaltet Abwesenheiten mit KI und garantiert die Fairness Ihres Teams. Fur Krankenhäuser, Kliniken, Pflegeheime, Fabriken und jedes Unternehmen mit Dienstplanen.',
     hero_cta: 'Demo anfragen', hero_cta2: 'So funktioniert es', hero_trial: 'Ohne Karte · Antwort in 24 h · 30 Tage Garantie',
     pw_pre: 'ab', pw_unit: '€/Mitarbeiter pro Monat', pw_save_label: 'Jährliche Ersparnis', price_scarcity: 'Begrenzte Onboarding-Plätze pro Monat · geführt in 5-7 Tagen', sticky_cta_label: 'Demo anfragen',
+    calc_eyebrow: 'Ihr Return', calc_title: 'Berechnen Sie Ihre Ersparnis mit Shiftia', calc_desc: 'Passen Sie Ihre Teamdaten an und sehen Sie die Ersparnis sofort. Ohne Anmeldung.', calc_l_workers: 'Mitarbeitende', calc_l_hours: 'Stunden/Woche für Dienstplanung', calc_l_cost: 'Durchschnittl. €/Stunde der Leitung', calc_assume: 'Schätzung auf Basis einer durchschnittlichen Reduzierung der Planungszeit um 70% dank KI-Autogenerierung.', calc_k_hours: 'Gesparte Std./Monat', calc_k_money: 'Ersparnis pro Monat', calc_k_year: 'Ersparnis pro Jahr', calc_plan_pre: 'Empfohlener Plan', calc_roi_pre: 'Für jeden investierten 1€ erhalten Sie', calc_cta: 'Demo mit diesen Werten anfragen', calc_help: 'Mehr als 100 Mitarbeitende? Sie erhalten einen maßgeschneiderten Enterprise-Plan — die reale Ersparnis ist meist noch höher.', calc_msg: 'Komme vom Ersparnisrechner', calc_msg_workers: 'Mitarbeitende', calc_msg_week: 'Wo', calc_msg_save: 'Geschätzte Ersparnis', calc_msg_month: 'Mon', calc_msg_year: 'Jahr', calc_msg_end: 'Ich möchte eine Demo.',
     stat1: 'Mitarbeiter', stat2: 'Zeitersparnis', stat3: 'Offene Konflikte',
     orbit_eyebrow: 'Okosystem', orbit_title: 'Alles verbunden. Alles intelligent.', orbit_desc: 'Shiftia integriert jeden Aspekt der Schichtplanung in ein einziges intelligentes System.',
     orb_ai: 'KI-Engine', orb_schedule: 'Dienstplan', orb_equity: 'Fairness', orb_dashboard: 'Dashboard', orb_alerts: 'Warnungen', orb_coverage: 'Vertretung', orb_nights: 'Nachtdienst', orb_mobile: 'Mobile App', orb_sync: 'Synchronisation', orb_gdpr: 'DSGVO', orb_pdf: 'PDF-Import', orb_conciliation: 'Vereinbarkeit', orb_holidays: 'Urlaub',
@@ -8808,6 +8982,7 @@ const translations = {
     hero_desc: 'Shiftia automatise les plannings, gere les absences avec l\'IA et garantit l\'equite de votre equipe. Pour hopitaux, cliniques, EHPAD, usines et toute entreprise avec des plannings.',
     hero_cta: 'Demander une demo', hero_cta2: 'Comment ca marche', hero_trial: 'Sans carte · Réponse sous 24 h · Garantie 30 jours',
     pw_pre: 'à partir de', pw_unit: '€/employé par mois', pw_save_label: 'Économie annuelle', price_scarcity: 'Places d\'intégration limitées chaque mois · accompagnement en 5-7 jours', sticky_cta_label: 'Demander une démo',
+    calc_eyebrow: 'Votre retour', calc_title: 'Calculez vos économies avec Shiftia', calc_desc: 'Ajustez les données de votre équipe et voyez les économies instantanément. Sans inscription.', calc_l_workers: 'Employés', calc_l_hours: 'Heures/semaine de planification', calc_l_cost: 'Coût moyen €/heure du responsable', calc_assume: 'Estimation basée sur une réduction moyenne de 70% du temps de planification grâce à l\'auto-génération par IA.', calc_k_hours: 'Heures économisées/mois', calc_k_money: 'Économie par mois', calc_k_year: 'Économie par an', calc_plan_pre: 'Plan recommandé', calc_roi_pre: 'Pour chaque 1€ investi, vous récupérez', calc_cta: 'Demander une démo avec ces données', calc_help: 'Plus de 100 employés ? Vous bénéficiez d\'un plan Enterprise sur mesure — les économies réelles sont souvent encore plus élevées.', calc_msg: 'Je viens du calculateur d\'économies', calc_msg_workers: 'employés', calc_msg_week: 'sem', calc_msg_save: 'Économie estimée', calc_msg_month: 'mois', calc_msg_year: 'an', calc_msg_end: 'Je souhaite une démo.',
     stat1: 'Collaborateurs', stat2: 'Temps economise', stat3: 'Conflits non resolus',
     orbit_eyebrow: 'Ecosysteme', orbit_title: 'Tout connecte. Tout intelligent.', orbit_desc: 'Shiftia integre chaque aspect de la gestion des postes dans un seul systeme intelligent.',
     orb_ai: 'Moteur IA', orb_schedule: 'Planning', orb_equity: 'Equite', orb_dashboard: 'Tableau de bord', orb_alerts: 'Alertes', orb_coverage: 'Couverture', orb_nights: 'Nuits', orb_mobile: 'App mobile', orb_sync: 'Synchronisation', orb_gdpr: 'RGPD', orb_pdf: 'Import PDF', orb_conciliation: 'Conciliation', orb_holidays: 'Conges',
@@ -8965,6 +9140,7 @@ function setLang(lang) {
     opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
   });
   if (window.__roiRecalc) { try { window.__roiRecalc(); } catch(e){} }
+  if (window.__calcRecalc) { try { window.__calcRecalc(); } catch(e){} }
   try { localStorage.setItem('shiftia-lang', lang); } catch(e){}
 }
 
