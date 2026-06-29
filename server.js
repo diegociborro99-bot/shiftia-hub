@@ -581,10 +581,12 @@ if (RESEND_KEY) {
 
 // Resend verified domain — change once you verify shiftia.es in Resend dashboard
 const RESEND_FROM = process.env.RESEND_FROM || 'Shiftia <onboarding@resend.dev>';
-// Remitente para AVISOS INTERNOS (a info@shiftia.es). No debe ser @shiftia.es:
-// M365 pone en cuarentena el correo "de tu propio dominio" enviado desde fuera.
-// Usamos un dominio externo autenticado (resend.dev) para que entre directo.
-const INTERNAL_RESEND_FROM = process.env.INTERNAL_RESEND_FROM || 'Shiftia · Avisos <onboarding@resend.dev>';
+// Remitente para AVISOS INTERNOS (a info@shiftia.es).
+// IMPORTANTE: debe salir del DOMINIO VERIFICADO en Resend (shiftia.es). NO usar
+// onboarding@resend.dev: Resend solo permite enviar desde esa dirección a tu
+// propio email de cuenta, y rechaza el envío a info@shiftia.es.
+// Con DMARC + DKIM ya configurados, hola@shiftia.es entrega bien a info@.
+const INTERNAL_RESEND_FROM = process.env.INTERNAL_RESEND_FROM || RESEND_FROM;
 // Logo incrustado (CID) en todos los emails: se ve aunque el cliente bloquee
 // imágenes remotas (Apple Mail privacy, Gmail, etc.). Se referencia como cid:shiftialogo.
 let LOGO_BUF = null;
