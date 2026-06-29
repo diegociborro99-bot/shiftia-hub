@@ -713,12 +713,14 @@ function emailTemplate(opts) {
 
         <!-- Brand header -->
         <tr>
-          <td class="sh-pad" style="padding:0 40px 32px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+          <td class="sh-pad" align="center" style="padding:0 40px 30px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
               <tr>
-                <td style="vertical-align:middle;font-family:'Instrument Serif','Times New Roman',Georgia,serif;font-size:24px;font-weight:400;color:#0e0f0f;letter-spacing:-0.01em;line-height:1;">Shiftia</td>
-                <td style="vertical-align:middle;padding-left:8px;line-height:1;">
-                  <span style="display:inline-block;width:6px;height:6px;background-color:#0f7a6d;border-radius:50%;vertical-align:middle;"></span>
+                <td style="vertical-align:middle;line-height:1;padding-right:12px;">
+                  <img src="${APP_URL}/email-logo.png" width="50" height="50" alt="Shiftia" style="display:block;border-radius:12px;width:50px;height:50px;">
+                </td>
+                <td style="vertical-align:middle;font-family:'Instrument Serif','Times New Roman',Georgia,serif;font-size:30px;font-weight:400;letter-spacing:-0.01em;line-height:1;">
+                  <span style="color:#0e0f0f;">Shift</span><span style="color:#0f7a6d;">ia</span>
                 </td>
               </tr>
             </table>
@@ -728,9 +730,12 @@ function emailTemplate(opts) {
         <!-- Card -->
         <tr>
           <td class="sh-pad" style="padding:0 40px;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #ece9e2;border-radius:14px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;border:1px solid #ece9e2;border-radius:14px;overflow:hidden;">
               <tr>
-                <td class="sh-pad" style="padding:40px 40px 36px;">
+                <td bgcolor="#2980b9" height="4" style="height:4px;font-size:0;line-height:0;background:linear-gradient(90deg,#4ecdc4 0%,#2980b9 100%);">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="sh-pad" style="padding:38px 40px 36px;">
                   <h1 class="sh-headline">${headline}</h1>
                   <div style="font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:16px;line-height:1.6;color:#33312d;">
                     ${body}
@@ -748,7 +753,7 @@ function emailTemplate(opts) {
           <td class="sh-pad" style="padding:32px 40px 0;">
             ${footerExtra}
             <p style="margin:0 0 10px;font-size:12px;color:#7a766f;line-height:1.55;font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
-              Shiftia &middot; Planificación de turnos para equipos sanitarios.<br>
+              Shiftia &middot; Planificación inteligente de turnos y cuadrantes.<br>
               Asturias, España &middot; <a href="mailto:info@shiftia.es" style="color:#7a766f;text-decoration:underline;">info@shiftia.es</a>
             </p>
             <p style="margin:0;font-size:12px;color:#9a958c;line-height:1.55;font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
