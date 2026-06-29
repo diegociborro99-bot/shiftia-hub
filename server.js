@@ -2225,21 +2225,8 @@ async function scanReminders() {
   if (!RESEND_KEY && !transporter) return;
   __reminderScanRunning = true;
   try {
-    // 24 h antes — solo al cliente (no a quien reserva con menos de 1 h)
-    const due24 = await pool.query(
-      `SELECT id,name,email,phone,company,booking_at,cancel_token FROM bookings
-       WHERE status != 'cancelled' AND booking_at IS NOT NULL AND reminder_24h_at IS NULL
-         AND booking_at > NOW() + INTERVAL '1 hour' AND booking_at <= NOW() + INTERVAL '24 hours'
-       ORDER BY booking_at ASC LIMIT 50`
-    );
-    for (const b of due24.rows) {
-      try {
-        await sendClientReminder(b, '24h');
-        await pool.query('UPDATE bookings SET reminder_24h_at = NOW() WHERE id=$1', [b.id]);
-        console.log('Recordatorio 24h enviado · booking', b.id);
-      } catch (e) { console.error('Recordatorio 24h falló · booking', b.id, e.message); }
-    }
-    // 1 h antes — al cliente y a info@
+    // Recordatorio único: 1 h antes de la llamada — al cliente y a info@.
+    // (La confirmación "al reservar" ya se envía en el momento de la reserva.)
     const due1 = await pool.query(
       `SELECT id,name,email,phone,company,booking_at,cancel_token FROM bookings
        WHERE status != 'cancelled' AND booking_at IS NOT NULL AND reminder_1h_at IS NULL
