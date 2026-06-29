@@ -581,6 +581,10 @@ if (RESEND_KEY) {
 
 // Resend verified domain — change once you verify shiftia.es in Resend dashboard
 const RESEND_FROM = process.env.RESEND_FROM || 'Shiftia <onboarding@resend.dev>';
+// Remitente para AVISOS INTERNOS (a info@shiftia.es). No debe ser @shiftia.es:
+// M365 pone en cuarentena el correo "de tu propio dominio" enviado desde fuera.
+// Usamos un dominio externo autenticado (resend.dev) para que entre directo.
+const INTERNAL_RESEND_FROM = process.env.INTERNAL_RESEND_FROM || 'Shiftia · Avisos <onboarding@resend.dev>';
 
 // Safe send helper — uses Resend API or Gmail SMTP
 function sendMail(options) {
@@ -589,7 +593,12 @@ function sendMail(options) {
     // Extract display name from original "from" for friendlier emails
     const displayMatch = (options.from || '').match(/^"?([^"<]+)"?\s*</);
     const displayName = displayMatch ? displayMatch[1].trim() : 'Shiftia';
-    const fromAddr = RESEND_FROM.includes('<') ? RESEND_FROM : `${displayName} <${RESEND_FROM}>`;
+    // resendFrom: remitente explícito para casos que deben NO salir de @shiftia.es
+    // (avisos internos a info@: si salieran de @shiftia.es, M365 los pone en
+    // cuarentena por "suplantación del propio dominio").
+    const fromAddr = options.resendFrom
+      ? options.resendFrom
+      : (RESEND_FROM.includes('<') ? RESEND_FROM : `${displayName} <${RESEND_FROM}>`);
 
     const payload = {
       from: fromAddr,
@@ -1250,6 +1259,7 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     sendMail({
           from: `"Shiftia Support" <${GMAIL_USER}>`,
           to: NOTIFY_EMAIL,
+          resendFrom: INTERNAL_RESEND_FROM,
           subject: `[Soporte - ${catLabels[cat] || cat}] ${esc(subject)}`,
           html: emailTemplate({
             preheader: `Nuevo ticket de soporte: ${esc(subject)}`,
@@ -1341,6 +1351,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     sendMail({
           from: `"Shiftia HUB" <${GMAIL_USER}>`,
           to: NOTIFY_EMAIL,
+          resendFrom: INTERNAL_RESEND_FROM,
           subject: `Nueva solicitud de demo — ${safeName} (${safeCompany || 'Sin empresa'})`,
           html: emailTemplate({
             preheader: `Nueva solicitud de demo de ${safeName}`,
@@ -1729,6 +1740,7 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     Promise.resolve(sendMail({
       from: `"Shiftia Booking" <${GMAIL_USER}>`,
       to: supportEmail,
+      resendFrom: INTERNAL_RESEND_FROM,
       replyTo: email,
       subject: `Nueva llamada agendada — ${ESC_HTML(name)} (${ESC_HTML(company || 'N/A')}) — ${prettyDate} ${prettyTime}`,
       attachments: [icsAttachment],
@@ -1837,6 +1849,7 @@ app.get('/booking/cancel', async (req, res) => {
     sendMail({
       from: `"Shiftia Booking" <${GMAIL_USER}>`,
       to: NOTIFY_EMAIL,
+      resendFrom: INTERNAL_RESEND_FROM,
       subject: `Cancelación de llamada #${id} — ${b.email}`,
       html: emailTemplate({
         preheader: `Cancelación de llamada #${id}`,
@@ -2201,6 +2214,7 @@ function sendInternalReminder(b) {
     from: `"Shiftia Booking" <${GMAIL_USER}>`,
     replyTo: b.email,
     to: NOTIFY_EMAIL,
+    resendFrom: INTERNAL_RESEND_FROM,
     subject: `Recordatorio: llamada con ${ESC_HTML(b.name)} en 1 hora — ${prettyTime}`,
     attachments: [reminderIcs(b)],
     html: emailTemplate({
