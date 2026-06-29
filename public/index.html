@@ -5344,7 +5344,23 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .ceq2-valid { margin-top:12px; display:flex; align-items:flex-start; gap:8px; font-size:.78rem; color:#15803d; background:rgba(22,163,74,.07); border:1px solid rgba(22,163,74,.25); border-radius:10px; padding:9px 12px; line-height:1.45; }
 .ceq2-valid .cgv-ic { width:14px; height:14px; flex-shrink:0; margin-top:1px; }
 @media (max-width:820px){ .ceq2-body{ grid-template-columns:1fr; gap:20px; } }
-@media (max-width:600px){ .ceq2{ padding:20px 16px; } .ceq2-cell{ height:15px; } .ceq2-name{ font-size:.6rem; } .ceq2-metrics{ gap:16px; } .ceq2-metric strong{ font-size:1.3rem; } }
+@media (max-width:600px){ .ceq2{ padding:20px 16px; } .ceq2-cell{ height:15px; } .ceq2-name{ font-size:.6rem; } .ceq2-metrics{ gap:16px; } .ceq2-metric strong{ font-size:1.3rem; } .ceq2-extag{ display:none; } }
+/* Equidad v2: exenciones + métricas antes/después */
+.ceq2-name.ex { color:var(--ds-text-subtle,#8a8a85); }
+.ceq2-extag { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; color:#8a5a00; background:#fef3c7; border-radius:999px; padding:1px 6px; margin-left:6px; white-space:nowrap; }
+.ceq2-cell.ex, .ceq2-cell.ex.on { background:repeating-linear-gradient(45deg,#f4f2ec,#f4f2ec 3px,#eceae3 3px,#eceae3 6px); border-color:var(--ds-border,#e8e6df); }
+.ceq2-lg-ex { width:11px; height:11px; border-radius:3px; display:inline-block; margin:0 2px 0 10px; background:repeating-linear-gradient(45deg,#f4f2ec,#f4f2ec 2px,#d8d6cf 2px,#d8d6cf 4px); }
+.ceq2-trow.ex .ceq2-tname { color:var(--ds-text-subtle,#8a8a85); }
+.ceq2-trow.ex .ceq2-tbar { opacity:.4; }
+.ceq2-metrics3 { display:grid; gap:9px; margin:4px 0 16px; }
+.ceq2-m { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:.82rem; }
+.ceq2-m-l { color:var(--ds-text-muted,#4a4a47); }
+.ceq2-m-h { color:var(--ds-text-subtle,#8a8a85); font-size:.72rem; }
+.ceq2-m-vals { display:inline-flex; align-items:baseline; gap:7px; font-family:var(--ds-font-mono,'Geist Mono',monospace); }
+.ceq2-m-vals b { font-weight:700; color:var(--ds-text,#0e0f0f); transition:color .3s; }
+.ceq2-m-vals b.bad { color:#b91c1c; }
+.ceq2-arrow { color:var(--ds-text-subtle,#8a8a85); font-family:var(--ds-font-sans,sans-serif); }
+.ceq2-m-vals i { font-style:normal; font-weight:800; color:#15803d; }
 /* rejilla de 3 para las demos restantes */
 .fdemo-grid-3 { grid-template-columns:repeat(3,1fr); margin-top:24px; }
 
@@ -5414,6 +5430,36 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cconf2-sev { flex-shrink:0; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:2px 8px; border-radius:999px; }
 .cconf2-sev.high { background:#fee2e2; color:#b91c1c; }
 .cconf2-sev.mid { background:#fef3c7; color:#92400e; }
+.cconf2-sev.ok { background:#dcfce7; color:#15803d; }
+.cconf-pill.t { background:#dbeafe; color:#1e40af; }
+/* Conflictos v2: badge, grid multi-persona, coste */
+.cconf-count { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:11px; background:#fee2e2; color:#b91c1c; border-radius:999px; padding:1px 8px; margin-left:4px; }
+.cconf-count.zero { background:#dcfce7; color:#15803d; }
+.ccw { display:grid; gap:4px; margin:8px 0 8px; }
+.ccw-dh { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:10px; color:var(--ds-text-subtle,#8a8a85); text-align:center; align-self:end; padding-bottom:2px; }
+.ccw-name { display:flex; flex-direction:column; justify-content:center; padding-right:8px; min-width:0; }
+.ccw-nm { font-size:.74rem; color:var(--ds-text,#0e0f0f); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ccw-role { font-size:9px; color:var(--ds-text-subtle,#8a8a85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ccw-role.resp { color:var(--ds-accent-text,#0a5950); font-weight:600; }
+.ccw-cell { height:34px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:600; border:1px solid var(--ds-border,#e8e6df); transition:all .45s cubic-bezier(.16,1,.3,1); }
+.ccw-cell.code-M { background:#fef3c7; border-color:#fcd34d; color:#92400e; }
+.ccw-cell.code-T { background:#dbeafe; border-color:#93c5fd; color:#1e40af; }
+.ccw-cell.code-N { background:#ede9fe; border-color:#c4b5fd; color:#6d28d9; }
+.ccw-cell.code-D { background:var(--ds-bg,#f4f2ec); border-color:var(--ds-border,#e8e6df); color:#94918a; }
+.ccw-cell.bad { box-shadow:0 0 0 2px rgba(185,28,28,.5); z-index:1; }
+.ccw-cell.run { box-shadow:inset 0 -3px 0 0 rgba(185,28,28,.4); }
+.ccw-cell.target { box-shadow:0 0 0 2px rgba(15,122,109,.6); transform:translateY(-1px); }
+.ccw-legend { display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:11px; color:var(--ds-text-subtle,#8a8a85); margin-bottom:4px; }
+.ccw-lg { width:11px; height:11px; border-radius:3px; display:inline-block; margin-right:2px; }
+.ccw-lg.m { background:#fcd34d; } .ccw-lg.e { background:#93c5fd; } .ccw-lg.n { background:#c4b5fd; } .ccw-lg.d { background:var(--ds-bg,#f4f2ec); border:1px solid var(--ds-border,#e8e6df); }
+.cconf-newzero { margin-left:auto; font-size:10px; font-weight:600; color:#15803d; background:rgba(22,163,74,.1); border-radius:999px; padding:2px 8px; }
+.cconf2-cost { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; padding:10px 14px; border:1px solid var(--ds-border,#e8e6df); border-radius:12px; background:var(--ds-bg-elev,#fff); font-size:.84rem; }
+.cconf-cost-l { color:var(--ds-text-muted,#4a4a47); }
+.cconf-cost-v { display:inline-flex; align-items:baseline; gap:8px; font-family:var(--ds-font-mono,'Geist Mono',monospace); }
+.cconf-cost-v b.bad { color:#b91c1c; font-weight:700; }
+.cconf-cost-v b.ok { color:#15803d; font-weight:800; }
+.cconf-cost-a { color:var(--ds-text-subtle,#8a8a85); }
+@media (max-width:600px){ .ccw-cell{ height:28px; font-size:.72rem; } .ccw-nm{ font-size:.66rem; } .ccw-role{ font-size:8px; } .ccw{ gap:3px; } }
 .cconf2-valid { margin-top:14px; display:flex; align-items:flex-start; gap:8px; font-size:.8rem; color:#15803d; background:rgba(22,163,74,.07); border:1px solid rgba(22,163,74,.25); border-radius:10px; padding:10px 12px; line-height:1.45; }
 .cconf2-valid .cdemo-check svg { width:14px; height:14px; }
 .cconf2-week { display:grid; gap:6px; margin:8px 0 4px; }
@@ -6071,21 +6117,22 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
         <div>
           <h3>Equidad nocturna: redistribución automática</h3>
-          <p>Cuando alguien acumula demasiadas noches, Shiftia redistribuye la planilla para cuadrar las noches entre quienes rotan — sin dejar turnos sin cubrir ni romper descansos.</p>
+          <p>Cuando alguien acumula demasiadas noches, Shiftia las redistribuye entre quienes rotan —respetando exenciones (jornada reducida, lactancia), descansos y cobertura— hasta igualar el reparto.</p>
         </div>
       </div>
       <div class="ceq2-body">
         <div class="ceq2-left">
-          <span class="cgen2-label">Reparto de noches · últimas 2 semanas</span>
+          <span class="cgen2-label">Reparto de noches · últimas 2 semanas (14 noches)</span>
           <div class="ceq2-grid" id="ceqGrid"></div>
-          <div class="ceq2-legend"><span class="ceq2-lg-on"></span>Noche asignada <span class="ceq2-lg-off"></span>Libre</div>
+          <div class="ceq2-legend"><span class="ceq2-lg-on"></span>Noche asignada <span class="ceq2-lg-off"></span>Libre <span class="ceq2-lg-ex"></span>Exenta por convenio</div>
         </div>
         <div class="ceq2-right">
           <span class="cgen2-label">Noches por persona</span>
           <div class="ceq2-totals" id="ceqTotals"></div>
-          <div class="ceq2-metrics">
-            <div class="ceq2-metric"><strong id="ceqDev">2.2</strong><span>desviación típica</span></div>
-            <div class="ceq2-metric"><strong id="ceqRange">6</strong><span>diferencia máx-mín</span></div>
+          <div class="ceq2-metrics3" id="ceqMetrics">
+            <div class="ceq2-m"><span class="ceq2-m-l">Desviación típica</span><span class="ceq2-m-vals"><b id="ceqDev">2,2</b><span class="ceq2-arrow" id="ceqDevA" hidden>→</span><i id="ceqDevT" hidden></i></span></div>
+            <div class="ceq2-m"><span class="ceq2-m-l">Diferencia máx-mín</span><span class="ceq2-m-vals"><b id="ceqRange">6</b><span class="ceq2-arrow" id="ceqRangeA" hidden>→</span><i id="ceqRangeT" hidden></i></span></div>
+            <div class="ceq2-m"><span class="ceq2-m-l">Índice de equidad <span class="ceq2-m-h" title="Índice de Jain: 100% = reparto perfectamente igual">(Jain)</span></span><span class="ceq2-m-vals"><b id="ceqIdx">53%</b><span class="ceq2-arrow" id="ceqIdxA" hidden>→</span><i id="ceqIdxT" hidden></i></span></div>
           </div>
           <button class="fdemo-btn ceq2-go" id="ceqGo" type="button">Redistribuir noches con IA</button>
           <div class="ceq2-valid" id="ceqValid" hidden></div>
@@ -6141,21 +6188,19 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       </div>
       <div class="cconf2-body">
         <div class="cconf2-left">
-          <span class="cgen2-label">Conflictos detectados</span>
-          <div class="cconf2-issues" id="cconfIssues">
-            <div class="cconf2-issue" id="cconfIssue0"><span class="cconf2-sev high">Crítico</span> <span>Lucía P. encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).</span></div>
-            <div class="cconf2-issue" id="cconfIssue1"><span class="cconf2-sev mid">Aviso</span> <span>Sábado tarde: <strong>1 persona</strong> por debajo del mínimo.</span></div>
-          </div>
+          <span class="cgen2-label">Conflictos detectados <span class="cconf-count" id="cconfCount">4</span></span>
+          <div class="cconf2-issues" id="cconfIssues"></div>
           <button class="fdemo-btn" id="cconfGo" type="button">Resolver con IA</button>
-          <div class="cconf2-valid" id="cconfDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> 2 conflictos resueltos · convenio respetado · cobertura cubierta.</div>
+          <div class="cconf2-cost" id="cconfCost" hidden></div>
+          <div class="cconf2-valid" id="cconfDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <span id="cconfDoneTxt">Conflictos resueltos.</span></div>
         </div>
         <div class="cconf2-right">
-          <span class="cgen2-label">Semana de Lucía P.</span>
-          <div class="cconf2-week" id="cconfWeek"></div>
+          <span class="cgen2-label">Cuadrante de la semana</span>
+          <div class="ccw" id="cconfWeek"></div>
+          <div class="ccw-legend"><i class="ccw-lg m"></i>Mañana <i class="ccw-lg e" id="cconfLgE"></i><span id="cconfLgEtxt">Tarde</span> <i class="ccw-lg d"></i>Libre</div>
           <div class="cconf2-prop" id="cconfProp" hidden>
-            <div class="cconf-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg> Propuesta de resolución</div>
-            <div class="cconf-change"><span class="cconf-who">Lucía P.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill m">Mañana</i><span class="cconf-arrow">→</span><i class="cconf-pill d">Descanso</i></span></div>
-            <div class="cconf-change"><span class="cconf-who">Iván T.</span><span class="cconf-when">Jue</span><span class="cconf-flow"><i class="cconf-pill d">Descanso</i><span class="cconf-arrow">→</span><i class="cconf-pill m">Mañana</i></span></div>
+            <div class="cconf-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg> Propuesta de resolución <span class="cconf-newzero" id="cconfNewZero">0 conflictos nuevos</span></div>
+            <div id="cconfChanges"></div>
             <button class="fdemo-btn" id="cconfApply" type="button">Aplicar cambios</button>
           </div>
         </div>
@@ -6303,53 +6348,100 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       },42);
     });
   }
-  // ── Equidad nocturna/festivos: redistribución (sector + equipo) ──
+  // ── Equidad nocturna/festivos: redistribución con exenciones (sector + equipo) ──
   var eqGrid=document.getElementById('ceqGrid'), eqTotals=document.getElementById('ceqTotals'),
       eqGo=document.getElementById('ceqGo'), eqDev=document.getElementById('ceqDev'),
-      eqRange=document.getElementById('ceqRange'), eqValid=document.getElementById('ceqValid');
+      eqRange=document.getElementById('ceqRange'), eqIdx=document.getElementById('ceqIdx'),
+      eqDevT=document.getElementById('ceqDevT'), eqRangeT=document.getElementById('ceqRangeT'),
+      eqIdxT=document.getElementById('ceqIdxT'), eqDevA=document.getElementById('ceqDevA'),
+      eqRangeA=document.getElementById('ceqRangeA'), eqIdxA=document.getElementById('ceqIdxA'),
+      eqValid=document.getElementById('ceqValid');
   if(eqGrid && eqGo){
     var EN=14;
     function nightWord(cap){ var w=(SECTORS[CFG.sector]&&SECTORS[CFG.sector].night)?'noches':'festivos'; return cap?(w.charAt(0).toUpperCase()+w.slice(1)):w; }
     function eqPeople(){ return POOL.slice(0, CFG.team); }
-    function genDist(team, balanced){
-      var o=[];
-      if(balanced){ for(var n=0;n<EN;n++) o.push(n%team); }
-      else { var heavy=Math.max(5,Math.round(EN*0.45)); for(var n=0;n<heavy;n++) o.push(0); var p=1; for(var n=heavy;n<EN;n++){ o.push(p); p++; if(p>=team)p=1; } }
-      return o;
-    }
-    function eqCounts(o,team){ var c=[]; for(var i=0;i<team;i++)c[i]=0; o.forEach(function(x){ if(x<team)c[x]++; }); return c; }
-    function eqStd(c){ var m=c.reduce(function(a,b){return a+b;},0)/c.length; var v=c.reduce(function(a,b){return a+(b-m)*(b-m);},0)/c.length; return Math.sqrt(v); }
-    function eqBuild(o){
-      var ppl=eqPeople();
+    function nUse(){ return Math.max(2, CFG.team-1); } // personas que rotan (la última está exenta)
+    function genInitial(n){ var o=[], heavy=Math.max(6,Math.round(EN*0.5)); for(var i=0;i<heavy;i++)o.push(0); var p=1; for(var i=heavy;i<EN;i++){ o.push(p); p++; if(p>=n)p=1; } return o; }
+    function genBalanced(n){ var o=[]; for(var i=0;i<EN;i++)o.push(i%n); return o; }
+    function counts(o,n){ var c=[]; for(var i=0;i<n;i++)c[i]=0; o.forEach(function(x){ if(x<n)c[x]++; }); return c; }
+    function stdv(c){ var m=c.reduce(function(a,b){return a+b;},0)/c.length; var v=c.reduce(function(a,b){return a+(b-m)*(b-m);},0)/c.length; return Math.sqrt(v); }
+    function jain(c){ var s=c.reduce(function(a,b){return a+b;},0), s2=c.reduce(function(a,b){return a+b*b;},0); return s2?(s*s)/(c.length*s2):1; }
+    function metricsOf(o){ var n=nUse(), c=counts(o,n); return { std:stdv(c), range:(Math.max.apply(null,c)-Math.min.apply(null,c)), idx:Math.round(jain(c)*100) }; }
+    function fmt1(x){ return x.toFixed(1).replace('.',','); }
+    function tween(from,to,dur,cb){ var t0=null; function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/dur); cb(from+(to-from)*p); if(p<1)requestAnimationFrame(step); else cb(to); } requestAnimationFrame(step); }
+    function buildGrid(){
+      var ppl=eqPeople(), ex=ppl.length-1;
       eqGrid.style.gridTemplateColumns='auto repeat('+EN+',minmax(0,1fr))';
       var h='';
-      ppl.forEach(function(p,r){ h+='<div class="ceq2-name">'+p+'</div>'; for(var n=0;n<EN;n++){ h+='<div class="ceq2-cell'+(o[n]===r?' on':'')+'"></div>'; } });
+      ppl.forEach(function(p,r){
+        var exTag=(r===ex)?'<span class="ceq2-extag">'+(SECTORS[CFG.sector]&&SECTORS[CFG.sector].night?'reducción':'turno fijo')+'</span>':'';
+        h+='<div class="ceq2-name'+(r===ex?' ex':'')+'">'+p+exTag+'</div>';
+        for(var n=0;n<EN;n++){ h+='<div class="ceq2-cell'+(r===ex?' ex':'')+'" data-r="'+r+'" data-n="'+n+'"></div>'; }
+      });
       eqGrid.innerHTML=h;
     }
-    function eqTot(o){
-      var ppl=eqPeople(), c=eqCounts(o,ppl.length), mx=Math.max.apply(null,c)||1;
-      eqTotals.innerHTML=ppl.map(function(p,r){ return '<div class="ceq2-trow"><span class="ceq2-tname">'+p+'</span><span class="ceq2-tbar"><i style="width:'+Math.round(c[r]/mx*100)+'%"></i></span><span class="ceq2-tval">'+c[r]+'</span></div>'; }).join('');
+    function applyDist(o, animated){
+      Array.prototype.forEach.call(eqGrid.querySelectorAll('.ceq2-cell'),function(cell){
+        if(cell.classList.contains('ex')){ cell.classList.remove('on'); return; }
+        var r=+cell.getAttribute('data-r'), n=+cell.getAttribute('data-n');
+        cell.style.transitionDelay = animated ? (n*26)+'ms' : '0ms';
+        cell.classList.toggle('on', o[n]===r);
+      });
     }
-    function eqShow(o){ eqBuild(o); eqTot(o); var c=eqCounts(o,eqPeople().length); eqDev.textContent=eqStd(c).toFixed(1); eqRange.textContent=(Math.max.apply(null,c)-Math.min.apply(null,c)); }
+    function renderTotals(o){
+      var ppl=eqPeople(), ex=ppl.length-1, c=counts(o, ppl.length), mx=Math.max.apply(null,c)||1;
+      eqTotals.innerHTML=ppl.map(function(p,r){
+        var isEx=(r===ex);
+        return '<div class="ceq2-trow'+(isEx?' ex':'')+'"><span class="ceq2-tname">'+p+'</span><span class="ceq2-tbar"><i style="width:'+Math.round((c[r]||0)/mx*100)+'%"></i></span><span class="ceq2-tval">'+(isEx?'—':c[r])+'</span></div>';
+      }).join('');
+    }
+    function updateTotals(o){
+      var ppl=eqPeople(), c=counts(o, ppl.length), mx=Math.max.apply(null,c)||1;
+      var rows=eqTotals.querySelectorAll('.ceq2-trow');
+      Array.prototype.forEach.call(rows,function(row,r){
+        if(row.classList.contains('ex')) return;
+        var bar=row.querySelector('.ceq2-tbar i'); if(bar) bar.style.width=Math.round((c[r]||0)/mx*100)+'%';
+        var val=row.querySelector('.ceq2-tval'); if(val) val.textContent=c[r];
+      });
+    }
     function eqLabels(){
       var W=nightWord(false), Wc=nightWord(true);
       var h3=document.querySelector('.ceq2-head h3'); if(h3) h3.textContent='Equidad de '+W+': redistribución automática';
-      var lblL=document.querySelector('.ceq2-left .cgen2-label'); if(lblL) lblL.textContent='Reparto de '+W+' · últimas 2 semanas';
+      var lblL=document.querySelector('.ceq2-left .cgen2-label'); if(lblL) lblL.textContent='Reparto de '+W+' · últimas 2 semanas (14 '+W+')';
       var lblR=document.querySelector('.ceq2-right .cgen2-label'); if(lblR) lblR.textContent=Wc+' por persona';
-      var leg=document.querySelector('.ceq2-legend'); if(leg) leg.innerHTML='<span class="ceq2-lg-on"></span>'+Wc+' asignado <span class="ceq2-lg-off"></span>Libre';
+      var leg=document.querySelector('.ceq2-legend'); if(leg) leg.innerHTML='<span class="ceq2-lg-on"></span>'+Wc.slice(0,-1)+' asignad'+(W==='noches'?'a':'o')+' <span class="ceq2-lg-off"></span>Libre <span class="ceq2-lg-ex"></span>Exenta por convenio';
     }
-    var eqBalanced=false;
-    function eqReset(){ eqBalanced=false; eqLabels(); eqShow(genDist(eqPeople().length,false)); eqGo.innerHTML='Redistribuir '+nightWord(false)+' con IA'; if(eqValid) eqValid.hidden=true; }
+    var eqState='init';
+    function eqReset(){
+      eqState='init'; buildGrid(); eqLabels();
+      var o=genInitial(nUse());
+      applyDist(o,false); renderTotals(o);
+      var m=metricsOf(o);
+      eqDev.textContent=fmt1(m.std); eqRange.textContent=m.range; eqIdx.textContent=m.idx+'%';
+      [eqDevA,eqRangeA,eqIdxA,eqDevT,eqRangeT,eqIdxT].forEach(function(e){ if(e)e.hidden=true; });
+      [eqDev,eqRange,eqIdx].forEach(function(e){ if(e)e.classList.remove('bad'); });
+      eqGo.disabled=false; eqGo.innerHTML='Redistribuir '+nightWord(false)+' con IA';
+      if(eqValid) eqValid.hidden=true;
+    }
     eqReset();
     window.__equityReset=eqReset;
     eqGo.addEventListener('click',function(){
-      eqBalanced=!eqBalanced;
-      var team=eqPeople().length;
-      eqShow(genDist(team, eqBalanced));
-      eqGo.innerHTML=eqBalanced?(REFRESH+' Ver desequilibrio inicial'):('Redistribuir '+nightWord(false)+' con IA');
-      if(eqValid){ eqValid.hidden=!eqBalanced; if(eqBalanced){ var c=eqCounts(genDist(team,true),team); eqValid.innerHTML=OKICON+' '+nightWord(true)+' cuadrados · desviación '+eqStd(c).toFixed(1).replace('.',',')+' · todo cubierto y descansos respetados.'; } }
+      if(eqState==='done'){ eqReset(); return; }
+      var n=nUse(), before=metricsOf(genInitial(n)), after=metricsOf(genBalanced(n)), ob=genBalanced(n);
+      eqGo.disabled=true; eqGo.textContent='Redistribuyendo…';
+      [eqDev,eqRange,eqIdx].forEach(function(e){ if(e)e.classList.add('bad'); });
+      applyDist(ob,true); updateTotals(ob);
+      [eqDevA,eqRangeA,eqIdxA,eqDevT,eqRangeT,eqIdxT].forEach(function(e){ if(e)e.hidden=false; });
+      tween(before.std, after.std, 800, function(v){ eqDevT.textContent=fmt1(v); });
+      tween(before.range, after.range, 800, function(v){ eqRangeT.textContent=Math.round(v); });
+      tween(before.idx, after.idx, 800, function(v){ eqIdxT.textContent=Math.round(v)+'%'; });
+      setTimeout(function(){
+        eqState='done'; eqGo.disabled=false; eqGo.innerHTML=REFRESH+' Ver desequilibrio inicial';
+        if(eqValid){ eqValid.hidden=false; eqValid.innerHTML=OKICON+' '+nightWord(true)+' equilibradas · índice de equidad '+after.idx+'% · exención respetada · cobertura y descansos intactos.'; }
+      }, 950);
     });
   }
+
   // ── Lector PDF/Excel: pasos + columnas detectadas + validación ──
   var drop=document.getElementById('cimpDrop'), impFile=document.getElementById('cimpFile'),
       impSteps=document.getElementById('cimpSteps'), impTable=document.getElementById('cimpTable'),
@@ -6389,54 +6481,136 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       },430);
     });
   }
-  // ── Conflictos: semana real (sector + equipo) ──
+  // ── Conflictos: detección multi-tipo + resolución calculada (sector + equipo) ──
   var cGo=document.getElementById('cconfGo'), cApply=document.getElementById('cconfApply'),
-      cDone=document.getElementById('cconfDone'), cProp=document.getElementById('cconfProp'),
-      cWeek=document.getElementById('cconfWeek'), cI0=document.getElementById('cconfIssue0'),
-      cI1=document.getElementById('cconfIssue1');
+      cDone=document.getElementById('cconfDone'), cDoneTxt=document.getElementById('cconfDoneTxt'),
+      cProp=document.getElementById('cconfProp'), cWeek=document.getElementById('cconfWeek'),
+      cIssues=document.getElementById('cconfIssues'), cChanges=document.getElementById('cconfChanges'),
+      cCount=document.getElementById('cconfCount'), cCost=document.getElementById('cconfCost');
   if(cGo && cWeek){
-    var cd=['L','M','X','J','V','S','D'];
-    var luc=[];
-    function cShift(){ return (SECTORS[CFG.sector]&&SECTORS[CFG.sector].night)?{code:'N',label:'Noche',pill:'n'}:{code:'M',label:'Mañana',pill:'m'}; }
-    function renderWeek(hiThu, flagBad){
-      cWeek.style.gridTemplateColumns='repeat(7,minmax(0,1fr))';
-      var h='';
-      for(var i=0;i<7;i++){
-        var code=luc[i], cls='cconf2-cell code-'+code;
-        if(flagBad && code!=='D') cls+=' bad';
-        if(hiThu && i===3) cls+=' target';
-        h+='<div class="cconf2-daywrap"><span class="cconf2-dl">'+cd[i]+'</span><div class="'+cls+'">'+(code==='D'?'L':code)+'</div></div>';
+    var DSH=['L','M','X','J','V','S','D'], DLONG=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+    var MINM=2, MINE=1, RESP=[2,3];
+    var BASE0=[['M','M','M','M','E','M','M'],['E','E','E','E','D','D','M'],['M','M','M','M','M','D','D'],['M','D','M','D','M','M','D'],['D','M','D','M','D','M','E']];
+    var WEIGHT={turnaround:100,consec:20,cov:100,noresp:60};
+    var grid, names, roles;
+    function clone(g){ return g.map(function(r){ return r.slice(); }); }
+    function sectorRoles(){ var s=CFG.sector; if(s==='sanidad') return ['Enfermería','Enfermería','Supervisora','Coord. enfermería','Auxiliar']; if(s==='hosteleria') return ['Camarero/a','Cocina','Jefe/a de sala','2º de sala','Barra']; return ['Cajera','Reponedor','Encargada','2ª responsable','Mozo']; }
+    function isNight(){ return !!(SECTORS[CFG.sector]&&SECTORS[CFG.sector].night); }
+    function evCode(){ return isNight()?'N':'T'; }
+    function evWord(cap){ var w=isNight()?'noche':'tarde'; return cap?(w.charAt(0).toUpperCase()+w.slice(1)):w; }
+    function disp(c){ return c==='M'?'M':(c==='E'?evCode():'L'); }
+    function codeLabel(c){ return c==='M'?'Mañana':(c==='E'?evWord(true):'Descanso'); }
+    function codePill(c){ return c==='M'?'m':(c==='E'?(isNight()?'n':'t'):'d'); }
+    function maxRun(row){ var m=0,c=0; row.forEach(function(x){ if(x!=='D'){ c++; if(c>m)m=c; } else c=0; }); return m; }
+    function validate(g){
+      var iss=[];
+      g.forEach(function(row,p){
+        for(var d=0;d<6;d++){ if(row[d]==='E'&&row[d+1]==='M') iss.push({k:'turnaround',p:p,d:d}); }
+        if(maxRun(row)>6) iss.push({k:'consec',p:p});
+      });
+      for(var d=0;d<7;d++){
+        var cm=0,ce=0,respM=false;
+        for(var p=0;p<g.length;p++){ if(g[p][d]==='M'){ cm++; if(RESP.indexOf(p)>=0) respM=true; } if(g[p][d]==='E') ce++; }
+        if(cm<MINM) iss.push({k:'cov',d:d,sh:'M'});
+        if(ce<MINE) iss.push({k:'cov',d:d,sh:'E'});
+        if(cm>0&&!respM) iss.push({k:'noresp',d:d});
       }
+      return iss;
+    }
+    function costOf(iss){ return iss.reduce(function(a,i){ return a+(WEIGHT[i.k]||0); },0); }
+    function canM(g,q,d){ return g[q][d]==='D'&&(d===0||g[q][d-1]!=='E'); }
+    function canE(g,q,d){ return g[q][d]==='D'&&(d===6||g[q][d+1]!=='M'); }
+    function resolve(g){
+      var ch=[], gg=clone(g);
+      function mv(p,d,to){ ch.push({who:p,d:d,from:gg[p][d],to:to}); gg[p][d]=to; }
+      validate(gg).filter(function(i){return i.k==='consec';}).forEach(function(it){ var p=it.p,day=3; for(var q=0;q<gg.length;q++){ if(q!==p&&canM(gg,q,day)){ mv(q,day,gg[p][day]); mv(p,day,'D'); break; } } });
+      validate(gg).filter(function(i){return i.k==='turnaround';}).forEach(function(it){ var p=it.p,day=it.d+1; for(var q=0;q<gg.length;q++){ if(q!==p&&canM(gg,q,day)){ mv(p,day,'D'); mv(q,day,'M'); break; } } });
+      validate(gg).filter(function(i){return i.k==='cov'&&i.sh==='E';}).forEach(function(it){ var done=false; for(var q=0;q<gg.length;q++){ if(RESP.indexOf(q)<0&&canE(gg,q,it.d)){ mv(q,it.d,'E'); done=true; break; } } if(!done){ for(var q=0;q<gg.length;q++){ if(canE(gg,q,it.d)){ mv(q,it.d,'E'); break; } } } });
+      validate(gg).filter(function(i){return i.k==='cov'&&i.sh==='M';}).forEach(function(it){ for(var q=0;q<gg.length;q++){ if(canM(gg,q,it.d)){ mv(q,it.d,'M'); break; } } });
+      validate(gg).filter(function(i){return i.k==='noresp';}).forEach(function(it){ for(var ri=0;ri<RESP.length;ri++){ var q=RESP[ri]; if(canM(gg,q,it.d)){ mv(q,it.d,'M'); break; } } });
+      return {grid:gg, changes:ch};
+    }
+    function issueText(it){
+      if(it.k==='turnaround') return {sev:'high',sevTxt:'Crítico',html:'<strong>'+names[it.p]+'</strong> encadena '+evWord(false)+' ('+DLONG[it.d]+') → mañana ('+DLONG[it.d+1]+'): descanso inferior a 12 h <em>(Art. 34.3 ET)</em>.'};
+      if(it.k==='consec') return {sev:'high',sevTxt:'Crítico',html:'<strong>'+names[it.p]+'</strong> encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).'};
+      if(it.k==='cov') return {sev:'mid',sevTxt:'Aviso',html:DLONG[it.d]+' '+(it.sh==='E'?evWord(false):'mañana')+': <strong>1 persona</strong> por debajo del mínimo de cobertura.'};
+      if(it.k==='noresp') return {sev:'high',sevTxt:'Crítico',html:DLONG[it.d]+' mañana: turno <strong>sin '+roles[2]+'</strong> de guardia.'};
+      return {sev:'mid',sevTxt:'Aviso',html:'Incidencia.'};
+    }
+    function renderIssues(iss, resolved){
+      cIssues.innerHTML=iss.map(function(it){
+        var t=issueText(it);
+        return '<div class="cconf2-issue'+(resolved?' resolved':'')+'"><span class="cconf2-sev '+(resolved?'ok':t.sev)+'">'+(resolved?'OK':t.sevTxt)+'</span> <span>'+t.html+'</span></div>';
+      }).join('');
+      if(cCount){ cCount.textContent=resolved?'0':iss.length; cCount.classList.toggle('zero', resolved); }
+    }
+    function cellMeta(iss){
+      // marca celdas implicadas en conflictos
+      var bad={};
+      iss.forEach(function(it){
+        if(it.k==='turnaround'){ bad[it.p+'-'+it.d]=1; bad[it.p+'-'+(it.d+1)]=1; }
+        if(it.k==='consec'){ for(var d=0;d<7;d++) if(grid[it.p][d]!=='D') bad[it.p+'-'+d]='run'; }
+      });
+      return bad;
+    }
+    function renderWeek(bad, changed){
+      bad=bad||{}; changed=changed||{};
+      cWeek.style.gridTemplateColumns='minmax(96px,auto) repeat(7,minmax(0,1fr))';
+      var h='<div class="ccw-corner"></div>';
+      for(var d=0;d<7;d++) h+='<div class="ccw-dh">'+DSH[d]+'</div>';
+      grid.forEach(function(row,p){
+        var resp=RESP.indexOf(p)>=0;
+        h+='<div class="ccw-name"><span class="ccw-nm">'+names[p]+'</span><span class="ccw-role'+(resp?' resp':'')+'">'+roles[p]+'</span></div>';
+        for(var d=0;d<7;d++){
+          var code=row[d], cls='ccw-cell code-'+(code==='E'?evCode():code);
+          var key=p+'-'+d;
+          if(bad[key]==='run') cls+=' run'; else if(bad[key]) cls+=' bad';
+          if(changed[key]) cls+=' target';
+          h+='<div class="'+cls+'">'+disp(code)+'</div>';
+        }
+      });
       cWeek.innerHTML=h;
     }
-    function changeRow(who,day,from,to,fc,tc){
-      return '<div class="cconf-change"><span class="cconf-who">'+who+'</span><span class="cconf-when">'+day+'</span><span class="cconf-flow"><i class="cconf-pill '+fc+'">'+from+'</i><span class="cconf-arrow">→</span><i class="cconf-pill '+tc+'">'+to+'</i></span></div>';
+    function changeRow(c){
+      return '<div class="cconf-change"><span class="cconf-who">'+names[c.who]+'</span><span class="cconf-when">'+DLONG[c.d]+'</span><span class="cconf-flow"><i class="cconf-pill '+codePill(c.from)+'">'+codeLabel(c.from)+'</i><span class="cconf-arrow">→</span><i class="cconf-pill '+codePill(c.to)+'">'+codeLabel(c.to)+'</i></span></div>';
     }
+    var sol=null;
     function cReset(){
-      var sh=cShift(), p0=POOL[0], p1=POOL[1];
-      luc=[sh.code,sh.code,sh.code,sh.code,sh.code,sh.code,sh.code];
-      var lbl=document.querySelector('.cconf2-right .cgen2-label'); if(lbl) lbl.textContent='Semana de '+p0;
-      if(cI0) cI0.innerHTML='<span class="cconf2-sev high">Crítico</span> <span>'+p0+' encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).</span>';
-      if(cI1) cI1.innerHTML='<span class="cconf2-sev mid">Aviso</span> <span>'+(sh.label==='Noche'?'Noche del sábado':'Sábado tarde')+': <strong>1 persona</strong> por debajo del mínimo.</span>';
-      if(cI0) cI0.classList.remove('resolved'); if(cI1) cI1.classList.remove('resolved');
-      Array.prototype.forEach.call(cProp.querySelectorAll('.cconf-change'),function(n){ n.parentNode.removeChild(n); });
-      cApply.insertAdjacentHTML('beforebegin', changeRow(p0,'Jue',sh.label,'Descanso',sh.pill,'d')+changeRow(p1,'Jue','Descanso',sh.label,'d',sh.pill));
-      cProp.hidden=true; cDone.hidden=true; cGo.hidden=false; cGo.disabled=false; cGo.textContent='Resolver con IA';
-      renderWeek(false,true);
+      grid=clone(BASE0); names=POOL.slice(0,5); roles=sectorRoles(); sol=null;
+      var lgE=document.getElementById('cconfLgE'), lgEt=document.getElementById('cconfLgEtxt');
+      if(lgE) lgE.className='ccw-lg '+(isNight()?'n':'e'); if(lgEt) lgEt.textContent=evWord(true);
+      var iss=validate(grid);
+      renderIssues(iss,false); renderWeek(cellMeta(iss),{});
+      cProp.hidden=true; cDone.hidden=true; if(cCost) cCost.hidden=true;
+      cGo.hidden=false; cGo.disabled=false; cGo.textContent='Resolver con IA';
     }
     cReset();
     window.__conflictReset=cReset;
     cGo.addEventListener('click',function(){
-      cProp.hidden=false; cGo.disabled=true; cGo.textContent='Analizando…';
-      renderWeek(true,true);
-      setTimeout(function(){ cGo.hidden=true; },300);
+      if(sol) return;
+      cGo.disabled=true; cGo.textContent='Analizando convenio…';
+      var iss=validate(grid); sol=resolve(grid);
+      var changed={}; sol.changes.forEach(function(c){ changed[c.who+'-'+c.d]=1; });
+      setTimeout(function(){
+        renderWeek(cellMeta(iss), changed);
+        cChanges.innerHTML=sol.changes.map(changeRow).join('');
+        cProp.hidden=false; cGo.hidden=true;
+      },420);
     });
     cApply.addEventListener('click',function(){
-      luc[3]='D'; renderWeek(false,false);
-      cProp.hidden=true; cDone.hidden=false;
-      if(cI0) cI0.classList.add('resolved'); if(cI1) cI1.classList.add('resolved');
+      if(!sol) return;
+      grid=sol.grid;
+      var after=validate(grid), before=costOf(validate(BASE0));
+      renderWeek({}, {});
+      renderIssues(validate(BASE0), true);
+      cProp.hidden=true;
+      if(cCost){ cCost.hidden=false; cCost.innerHTML='<span class="cconf-cost-l">Coste del cuadrante</span><span class="cconf-cost-v"><b class="bad">'+before+'</b><span class="cconf-cost-a">→</span><b class="ok">'+costOf(after)+'</b></span>'; }
+      if(cDoneTxt) cDoneTxt.textContent=sol.changes.length+' cambios · convenio respetado · cobertura cubierta · 0 conflictos nuevos.';
+      cDone.hidden=false;
+      sol='done';
     });
   }
+
   // ── Pestañas "Pruébalo" ──
   var tabsEl=document.getElementById('demoTabs');
   if(tabsEl){
