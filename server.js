@@ -585,6 +585,11 @@ const RESEND_FROM = process.env.RESEND_FROM || 'Shiftia <onboarding@resend.dev>'
 // M365 pone en cuarentena el correo "de tu propio dominio" enviado desde fuera.
 // Usamos un dominio externo autenticado (resend.dev) para que entre directo.
 const INTERNAL_RESEND_FROM = process.env.INTERNAL_RESEND_FROM || 'Shiftia · Avisos <onboarding@resend.dev>';
+// Logo incrustado (CID) en todos los emails: se ve aunque el cliente bloquee
+// imágenes remotas (Apple Mail privacy, Gmail, etc.). Se referencia como cid:shiftialogo.
+let LOGO_BUF = null;
+try { LOGO_BUF = fs.readFileSync(path.join(__dirname, 'public', 'email-logo.png')); }
+catch (e) { console.warn('email-logo.png no encontrado para inline:', e.message); }
 
 // Safe send helper — uses Resend API or Gmail SMTP
 function sendMail(options) {
@@ -607,13 +612,13 @@ function sendMail(options) {
       html: options.html,
       reply_to: options.replyTo || NOTIFY_EMAIL
     };
-    // Adjuntos (p. ej. el .ics de la llamada) — Resend los acepta en base64.
+    // Adjuntos (logo inline + .ics) — Resend los acepta en base64.
+    const resAtts = [];
+    if (LOGO_BUF) resAtts.push({ filename: 'shiftia-logo.png', content: LOGO_BUF.toString('base64'), content_type: 'image/png', content_id: 'shiftialogo' });
     if (options.attachments && options.attachments.length) {
-      payload.attachments = options.attachments.map(a => ({
-        filename: a.filename,
-        content: Buffer.from(a.content).toString('base64')
-      }));
+      options.attachments.forEach(a => resAtts.push({ filename: a.filename, content: Buffer.from(a.content).toString('base64') }));
     }
+    if (resAtts.length) payload.attachments = resAtts;
 
     console.log(`Resend: sending to ${payload.to.join(', ')} — ${payload.subject}`);
 
@@ -635,6 +640,9 @@ function sendMail(options) {
   }
 
   if (transporter && emailReady) {
+    if (LOGO_BUF) {
+      options.attachments = (options.attachments || []).concat([{ filename: 'shiftia-logo.png', content: LOGO_BUF, cid: 'shiftialogo' }]);
+    }
     return transporter.sendMail(options)
       .then(info => { console.log('Email sent (SMTP):', options.subject); return info; })
       .catch(err => { console.error('SMTP error:', err.message); });
@@ -729,7 +737,7 @@ function emailTemplate(opts) {
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
               <tr>
                 <td style="vertical-align:middle;line-height:1;padding-right:12px;">
-                  <img src="${APP_URL}/email-logo.png" width="50" height="50" alt="Shiftia" style="display:block;border-radius:12px;width:50px;height:50px;">
+                  <img src="cid:shiftialogo" width="50" height="50" alt="Shiftia" style="display:block;border-radius:12px;width:50px;height:50px;">
                 </td>
                 <td style="vertical-align:middle;font-family:'Instrument Serif','Times New Roman',Georgia,serif;font-size:30px;font-weight:400;letter-spacing:-0.01em;line-height:1;">
                   <span style="color:#0e0f0f;">Shift</span><span style="color:#0f7a6d;">ia</span>
