@@ -376,7 +376,9 @@ async function initializeDatabase() {
       { name: 'cancellation_reason', type: 'TEXT' },
       { name: 'updated_at',      type: 'TIMESTAMPTZ DEFAULT NOW()' },
       { name: 'ip',              type: 'VARCHAR(64)' },
-      { name: 'user_agent',      type: 'VARCHAR(255)' }
+      { name: 'user_agent',      type: 'VARCHAR(255)' },
+      { name: 'reminder_24h_at', type: 'TIMESTAMPTZ' },
+      { name: 'reminder_1h_at',  type: 'TIMESTAMPTZ' }
     ];
     for (const col of bookingCols) {
       await client.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS ${col.name} ${col.type}`).catch(() => {});
@@ -593,6 +595,13 @@ function sendMail(options) {
       html: options.html,
       reply_to: options.replyTo || NOTIFY_EMAIL
     };
+    // Adjuntos (p. ej. el .ics de la llamada) — Resend los acepta en base64.
+    if (options.attachments && options.attachments.length) {
+      payload.attachments = options.attachments.map(a => ({
+        filename: a.filename,
+        content: Buffer.from(a.content).toString('base64')
+      }));
+    }
 
     console.log(`Resend: sending to ${payload.to.join(', ')} — ${payload.subject}`);
 
@@ -2129,6 +2138,127 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
+// ====== RECORDATORIOS DE LLAMADA (24 h al cliente · 1 h al cliente y a info@) ======
+const REMINDER_SCAN_MS = 5 * 60 * 1000; // escanea cada 5 minutos
+let __reminderScanRunning = false;
+
+function reminderIcs(b) {
+  const start = new Date(b.booking_at);
+  const end = new Date(start.getTime() + BOOKING_SLOT_MINUTES * 60000);
+  const ics = buildIcs({
+    uid: 'reminder-' + b.id,
+    startUtc: start,
+    endUtc: end,
+    summary: `Llamada con Shiftia — ${b.name}${b.company ? ' (' + b.company + ')' : ''}`,
+    description: `Demo personalizada de Shiftia.\n\nContacto: ${b.name}\nTeléfono: ${b.phone || '-'}`,
+    location: 'Llamada por teléfono',
+    organizerEmail: NOTIFY_EMAIL,
+    attendeeEmail: b.email
+  });
+  return { filename: 'shiftia-llamada.ics', content: ics, contentType: 'text/calendar; method=REQUEST; charset=UTF-8' };
+}
+
+function sendClientReminder(b, when) {
+  const prettyDate = prettyDateMadrid(b.booking_at);
+  const prettyTime = prettyTimeMadrid(b.booking_at);
+  const first = ESC_HTML(String(b.name || '').split(' ')[0] || '');
+  const isDay = (when === '24h');
+  const cancelUrl = b.cancel_token ? `${APP_URL}/booking/cancel?id=${b.id}&token=${b.cancel_token}` : '';
+  return sendMail({
+    from: `"Shiftia" <${GMAIL_USER}>`,
+    replyTo: NOTIFY_EMAIL,
+    to: b.email,
+    subject: isDay
+      ? `Recordatorio de tu llamada con Shiftia — ${prettyDate} a las ${prettyTime}`
+      : `Tu llamada con Shiftia es en 1 hora — hoy a las ${prettyTime}`,
+    attachments: [reminderIcs(b)],
+    html: emailTemplate({
+      preheader: isDay ? `${prettyDate} a las ${prettyTime}` : `Hoy a las ${prettyTime}`,
+      headline: isDay ? `Hola ${first}, te recordamos tu llamada` : `Hola ${first}, tu llamada es enseguida`,
+      body: `
+        <div style="background:#faf9f6;padding:20px;border-radius:10px;border:1px solid #ece9e2;margin-bottom:20px;">
+          <p style="margin:0;font-size:17px;color:#0e0f0f;font-family:'Instrument Serif','Times New Roman',Georgia,serif;line-height:1.3;">${prettyDate} a las ${prettyTime}</p>
+          <p style="margin:6px 0 0;font-size:12px;color:#7a766f;">Hora de Madrid (Europe/Madrid)</p>
+        </div>
+        <p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">Te llamaremos al teléfono que nos indicaste a la hora prevista. Si necesitas cambiar la cita${cancelUrl ? `, puedes <a href="${cancelUrl}" style="color:#0f7a6d;">cancelarla aquí</a>` : ', responde a este correo'}.</p>
+      `
+    })
+  });
+}
+
+function sendInternalReminder(b) {
+  const prettyDate = prettyDateMadrid(b.booking_at);
+  const prettyTime = prettyTimeMadrid(b.booking_at);
+  return sendMail({
+    from: `"Shiftia Booking" <${GMAIL_USER}>`,
+    replyTo: b.email,
+    to: NOTIFY_EMAIL,
+    subject: `Recordatorio: llamada con ${ESC_HTML(b.name)} en 1 hora — ${prettyTime}`,
+    attachments: [reminderIcs(b)],
+    html: emailTemplate({
+      preheader: `En 1 hora — ${ESC_HTML(b.name)} ${prettyTime}`,
+      headline: 'Llamada en 1 hora',
+      body: `
+        <div style="background:#faf9f6;padding:20px;border-radius:10px;border:1px solid #ece9e2;margin-bottom:20px;">
+          <p style="margin:0;font-size:17px;color:#0e0f0f;font-family:'Instrument Serif','Times New Roman',Georgia,serif;line-height:1.3;">${prettyDate} a las ${prettyTime}</p>
+        </div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">
+          <tr><td style="padding:10px 0;color:#7a766f;font-size:13px;width:120px;border-bottom:1px solid #ece9e2;">Nombre</td><td style="padding:10px 0;font-size:14px;border-bottom:1px solid #ece9e2;">${ESC_HTML(b.name)}</td></tr>
+          <tr><td style="padding:10px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Teléfono</td><td style="padding:10px 0;font-size:14px;border-bottom:1px solid #ece9e2;"><a href="tel:${ESC_HTML(b.phone || '')}" style="color:#0f7a6d;">${ESC_HTML(b.phone || '-')}</a></td></tr>
+          <tr><td style="padding:10px 0;color:#7a766f;font-size:13px;">Email</td><td style="padding:10px 0;font-size:14px;"><a href="mailto:${ESC_HTML(b.email)}" style="color:#0f7a6d;">${ESC_HTML(b.email)}</a></td></tr>
+        </table>
+      `
+    })
+  });
+}
+
+async function scanReminders() {
+  if (__reminderScanRunning || !global.__shiftiaDbReady) return;
+  if (!RESEND_KEY && !transporter) return;
+  __reminderScanRunning = true;
+  try {
+    // 24 h antes — solo al cliente (no a quien reserva con menos de 1 h)
+    const due24 = await pool.query(
+      `SELECT id,name,email,phone,company,booking_at,cancel_token FROM bookings
+       WHERE status != 'cancelled' AND booking_at IS NOT NULL AND reminder_24h_at IS NULL
+         AND booking_at > NOW() + INTERVAL '1 hour' AND booking_at <= NOW() + INTERVAL '24 hours'
+       ORDER BY booking_at ASC LIMIT 50`
+    );
+    for (const b of due24.rows) {
+      try {
+        await sendClientReminder(b, '24h');
+        await pool.query('UPDATE bookings SET reminder_24h_at = NOW() WHERE id=$1', [b.id]);
+        console.log('Recordatorio 24h enviado · booking', b.id);
+      } catch (e) { console.error('Recordatorio 24h falló · booking', b.id, e.message); }
+    }
+    // 1 h antes — al cliente y a info@
+    const due1 = await pool.query(
+      `SELECT id,name,email,phone,company,booking_at,cancel_token FROM bookings
+       WHERE status != 'cancelled' AND booking_at IS NOT NULL AND reminder_1h_at IS NULL
+         AND booking_at > NOW() AND booking_at <= NOW() + INTERVAL '1 hour'
+       ORDER BY booking_at ASC LIMIT 50`
+    );
+    for (const b of due1.rows) {
+      try {
+        await sendClientReminder(b, '1h');
+        await sendInternalReminder(b);
+        await pool.query('UPDATE bookings SET reminder_1h_at = NOW() WHERE id=$1', [b.id]);
+        console.log('Recordatorio 1h enviado · booking', b.id);
+      } catch (e) { console.error('Recordatorio 1h falló · booking', b.id, e.message); }
+    }
+  } catch (e) {
+    console.error('Escaneo de recordatorios falló:', e.message);
+  } finally {
+    __reminderScanRunning = false;
+  }
+}
+
+function startReminderScheduler() {
+  if (!RESEND_KEY && !transporter) { console.log('Recordatorios DESACTIVADOS (sin email)'); return; }
+  setInterval(() => { scanReminders().catch(() => {}); }, REMINDER_SCAN_MS);
+  console.log(`Recordatorios ON — escaneo cada ${REMINDER_SCAN_MS / 60000} min · 24h cliente · 1h cliente + ${NOTIFY_EMAIL}`);
+}
+
 // ====== SERVER STARTUP ======
 async function startServer() {
   try {
@@ -2145,6 +2275,7 @@ async function startServer() {
       console.log(`  Email: ${RESEND_KEY ? 'Resend' : (GMAIL_PASS ? 'Gmail SMTP' : 'DISABLED')}`);
       console.log(`  Billing: por llamada (Stripe deshabilitado)`);
       console.log(`  APP_URL: ${APP_URL}`);
+      startReminderScheduler();
     });
   } catch (err) {
     console.error('Failed to start server:', err.message);
