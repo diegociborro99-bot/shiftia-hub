@@ -109,7 +109,7 @@
           "name": "¿Cómo funciona el motor de IA?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Cuando alguien falta, el motor analiza 7 criterios en tiempo real (disponibilidad, horas acumuladas, equidad de noches, competencias, preferencias, histórico y compatibilidad de turno) y propone 3 candidatos puntuados en menos de 1 segundo. La decisión final siempre es humana."
+            "text": "Cuando alguien falta, el motor analiza 11 criterios en tiempo real —objetivos (carga, descansos, convenio, contrato, preferencias), subjetivos (polivalencia, fiabilidad, desempeño) e historial (absentismo, aceptación, frescura)— y propone 3 candidatos puntuados en menos de 1 segundo. La decisión final siempre es humana."
           }
         },
         {
@@ -5303,7 +5303,11 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 /* Coberturas: desglose por criterios en cada candidato */
 .cdemo-cand { flex-direction:column; align-items:stretch; gap:11px; }
 .cdemo-cand-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.cdemo-crit { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+.cdemo-crit { display:flex; flex-direction:column; gap:10px; }
+.cdemo-grp { display:block; }
+.cdemo-grp-l { display:block; font-size:9px; text-transform:uppercase; letter-spacing:.05em; color:var(--ds-text-subtle,#8a8a85); margin-bottom:5px; }
+.cdemo-grp-bars { display:flex; gap:6px; }
+.cdemo-grp-bars .cdemo-cc { flex:1; }
 .cdemo-cc { display:flex; flex-direction:column; align-items:center; gap:4px; }
 .cdemo-cc-bar { width:100%; height:32px; display:flex; align-items:flex-end; background:var(--ds-bg,#f4f2ec); border:1px solid var(--ds-border,#e8e6df); border-radius:5px; overflow:hidden; }
 .cdemo-cc-bar i { width:100%; height:0; background:linear-gradient(180deg,#4ecdc4,#2980b9); transition:height .6s cubic-bezier(.16,1,.3,1); }
@@ -5407,7 +5411,22 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 @keyframes cimpSpin { to { transform:rotate(360deg); } }
 .cimp2-step.done { color:var(--ds-text,#0e0f0f); }
 .cimp2-step.done .cimp2-dot { background:var(--ds-accent,#0f7a6d); border-color:var(--ds-accent,#0f7a6d); }
-.cimp2-summary { margin-top:16px; font-size:.86rem; color:#15803d; display:flex; align-items:center; gap:6px; }
+.cimp2-summary { margin-top:16px; font-size:.84rem; color:#15803d; display:flex; align-items:flex-start; flex-wrap:wrap; gap:4px 6px; line-height:1.5; background:rgba(22,163,74,.07); border:1px solid rgba(22,163,74,.22); border-radius:10px; padding:10px 12px; }
+/* Lector v2: columnas detectadas + estados de validación */
+.cimp2-cols { margin-top:14px; }
+.cimp2-cols-l { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ds-text-subtle,#8a8a85); margin-bottom:7px; }
+.cimp2-coltags { display:flex; flex-wrap:wrap; gap:7px; }
+.cimp2-coltag { display:inline-flex; align-items:center; gap:6px; font-size:.78rem; background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); border-radius:8px; padding:5px 10px; }
+.cimp2-coltag b { font-weight:600; color:var(--ds-text,#0e0f0f); }
+.cimp2-coltag i { font-style:normal; font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.72rem; color:#15803d; }
+.cimp2-coltag i.inf { color:#b45309; }
+.cimp2-chk.ok { color:#15803d; } .cimp2-chk.warn { color:#b45309; }
+.cimp2-tag { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.02em; padding:1px 6px; border-radius:999px; white-space:nowrap; }
+.cimp2-tag.warn { background:#fef3c7; color:#92400e; }
+.cimp2-tag.inf { background:#e9f5f2; color:#0a5950; }
+.cimp2-tag.rule { background:#ede9fe; color:#6d28d9; }
+.cimp2-row.dup { opacity:.6; }
+.cimp2-row.dup .cimp2-c.name, .cimp2-row.dup .cimp2-c.dni { text-decoration:line-through; text-decoration-color:rgba(180,83,9,.5); }
 .cimp2-summary .cdemo-check svg { width:14px; height:14px; }
 .cimp2-summary strong { font-family:var(--ds-font-display,'Instrument Serif',serif); }
 .cimp2-placeholder { border:1.5px dashed var(--ds-border,#e1e0d8); border-radius:14px; padding:40px 16px; text-align:center; font-size:.84rem; color:var(--ds-text-subtle,#8a8a85); }
@@ -5417,7 +5436,8 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cimp2-row { border-top:1px solid var(--ds-border,#eceae3); font-size:.82rem; color:var(--ds-text,#0e0f0f); opacity:0; transform:translateX(-6px); transition:opacity .25s,transform .25s; }
 .cimp2-row.show { opacity:1; transform:none; }
 .cimp2-c.dni { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.76rem; color:var(--ds-text-muted,#4a4a47); }
-.cimp2-c.rolecell { display:flex; align-items:center; gap:6px; justify-content:space-between; }
+.cimp2-c.rolecell { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+.cimp2-c.dni { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
 .cimp2-role { font-size:10.5px; color:var(--ds-accent-text,#0a5950); background:var(--ds-accent-soft,#e9f5f2); padding:2px 8px; border-radius:999px; white-space:nowrap; }
 .cimp2-chk { width:13px; height:13px; color:#15803d; flex-shrink:0; }
 
@@ -5892,7 +5912,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <div class="feat-card reveal d1">
         <div class="feat-icon i2"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="6" y="3" width="12" height="13" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M9 6h6M9 10h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="3" y="18" width="18" height="2" rx="1" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M8 16v2M16 16v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="f2_t">Motor IA de coberturas internas</h3>
-        <p data-i18n="f2_d">¿Una baja? La IA analiza tu propia plantilla con 7 criterios y sugiere 3 candidatos con puntuación, impacto en equidad y nivel de confianza. En menos de un segundo.</p>
+        <p data-i18n="f2_d">¿Una baja? La IA analiza tu propia plantilla con 11 criterios y sugiere 3 candidatos con puntuación, impacto en equidad y nivel de confianza. En menos de un segundo.</p>
       </div>
       <div class="feat-card reveal d2">
         <div class="feat-icon i3"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M12 2v6M12 2h8M12 2h-8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="8" x2="20" y2="8" stroke="#4ecdc4" stroke-width="2"/><path d="M8 8v10c0 1.1 1.8 2 4 2s4-.9 4-2V8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M12 20v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></div>
@@ -6002,7 +6022,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   <div class="container centered">
     <div class="section-eyebrow reveal">Funciones en acción</div>
     <h2 class="section-h2 reveal" id="fdemoTitle">No te lo contamos: <em>pruébalo</em></h2>
-    <p class="section-p reveal">Dos funciones que más tiempo te ahorran, jugables aquí mismo con datos de ejemplo.</p>
+    <p class="section-p reveal">Cinco funciones reales del producto, jugables aquí mismo con datos de ejemplo.</p>
   </div>
   <div class="container">
 
@@ -6050,7 +6070,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         </div>
         <div class="cdemo-analyzing" id="cdemoAnalyzing" hidden>
           <div class="cdemo-bar"><span></span></div>
-          <span class="cdemo-analyzing-text">Analizando 7 criterios entre tu plantilla… (carga, convenio, descansos, historial)</span>
+          <span class="cdemo-analyzing-text">Analizando 11 criterios entre tu plantilla… (objetivos, subjetivos e historial)</span>
         </div>
         <div class="cdemo-candidates" id="cdemoCandidates" hidden></div>
         <div class="cdemo-applied" id="cdemoApplied" hidden></div>
@@ -6159,11 +6179,16 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
             <span class="cimp2-file" id="cimpFile" hidden>plantilla_personal.xlsx · 6 filas</span>
           </button>
           <div class="cimp2-steps" id="cimpSteps" hidden>
-            <div class="cimp2-step" data-s="0"><span class="cimp2-dot"></span>Leyendo documento</div>
-            <div class="cimp2-step" data-s="1"><span class="cimp2-dot"></span>Detectando columnas: Nombre · DNI · Grupo · Rol</div>
-            <div class="cimp2-step" data-s="2"><span class="cimp2-dot"></span>Validando DNIs y duplicados</div>
+            <div class="cimp2-step" data-s="0"><span class="cimp2-dot"></span>Leyendo documento y detectando separador</div>
+            <div class="cimp2-step" data-s="1"><span class="cimp2-dot"></span>Identificando columnas: Nombre · DNI · Grupo · Rol</div>
+            <div class="cimp2-step" data-s="2"><span class="cimp2-dot"></span>Infiriendo roles y reglas de convenio</div>
+            <div class="cimp2-step" data-s="3"><span class="cimp2-dot"></span>Validando DNIs y descartando duplicados</div>
           </div>
-          <div class="cimp2-summary" id="cimpDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>6</strong> empleados · <strong>0</strong> duplicados · listos para importar</div>
+          <div class="cimp2-cols" id="cimpCols" hidden>
+            <span class="cimp2-cols-l">Columnas detectadas</span>
+            <div class="cimp2-coltags" id="cimpColtags"></div>
+          </div>
+          <div class="cimp2-summary" id="cimpDone" hidden></div>
         </div>
         <div class="cimp2-right">
           <div class="cimp2-placeholder" id="cimpPh">La tabla detectada aparecerá aquí</div>
@@ -6442,45 +6467,74 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     });
   }
 
-  // ── Lector PDF/Excel: pasos + columnas detectadas + validación ──
+  // ── Lector PDF/Excel: detección de columnas + inferencia de rol/reglas + validación de DNI ──
   var drop=document.getElementById('cimpDrop'), impFile=document.getElementById('cimpFile'),
       impSteps=document.getElementById('cimpSteps'), impTable=document.getElementById('cimpTable'),
       impRows=document.getElementById('cimpRows'), impDone=document.getElementById('cimpDone'),
-      impPh=document.getElementById('cimpPh');
+      impPh=document.getElementById('cimpPh'), impCols=document.getElementById('cimpCols'),
+      impColtags=document.getElementById('cimpColtags');
   if(drop){
-    var CHK='<svg class="cimp2-chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var CHK='<svg class="cimp2-chk ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var WARN='<svg class="cimp2-chk warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>';
+    function roleArr(){ return (SECTORS[CFG.sector]||{}).roles||['Rol A','Rol B','Rol C','Rol D']; }
     function impSample(){
-      var R=(SECTORS[CFG.sector]||{}).roles||['Rol A','Rol B','Rol C','Rol D'];
-      return [['Empleado Uno','····0001A','1',R[0]],['Empleada Dos','····0002B','2',R[0]],['Empleado Tres','····0003C','1',R[1]],['Empleado Cuatro','····0004D','1',R[3]||R[1]],['Empleado Cinco','····0005E','1',R[2]],['Empleada Seis','····0006F','2',R[1]]];
+      var R=roleArr();
+      return [
+        {name:'Ana G.',    dni:'····0001A', grp:'1', role:R[0],       inferred:false, st:'ok'},
+        {name:'Marcos R.', dni:'····0002B', grp:'2', role:R[0],       inferred:false, st:'ok'},
+        {name:'Lucía P.',  dni:'····0003C', grp:'1', role:R[2],       inferred:true,  rule:'reducción', st:'ok'},
+        {name:'Iván T.',   dni:'',          grp:'1', role:R[1],       inferred:false, st:'nodni'},
+        {name:'Sara M.',   dni:'····0002B', grp:'2', role:R[3]||R[1], inferred:true,  st:'dup'},
+        {name:'Diego N.',  dni:'····0006F', grp:'1', role:R[2],       inferred:true,  st:'ok'}
+      ];
     }
+    var COLS=[['Nombre',99,false],['DNI',96,false],['Grupo',93,false],['Rol',87,true]];
     var impBusy=false;
     drop.addEventListener('click',function(){
       if(impBusy) return; impBusy=true;
       var sample=impSample();
       impFile.hidden=false; drop.classList.add('loading');
       impSteps.hidden=false; impDone.hidden=true; impTable.hidden=true; if(impPh) impPh.hidden=true; impRows.innerHTML='';
+      if(impCols) impCols.hidden=true;
       var steps=impSteps.querySelectorAll('.cimp2-step');
       Array.prototype.forEach.call(steps,function(s){ s.className='cimp2-step'; });
       var si=0;
       var st=setInterval(function(){
         if(si>0){ steps[si-1].classList.remove('active'); steps[si-1].classList.add('done'); }
+        if(si===2 && impCols && impColtags){
+          impColtags.innerHTML=COLS.map(function(c){ return '<span class="cimp2-coltag"><b>'+c[0]+'</b><i'+(c[2]?' class="inf"':'')+'>'+c[1]+'%'+(c[2]?' · inferido':'')+'</i></span>'; }).join('');
+          impCols.hidden=false;
+        }
         if(si<steps.length){ steps[si].classList.add('active'); si++; }
         else {
           clearInterval(st); impTable.hidden=false;
-          var i=0;
+          var i=0, dup=0, nodni=0, inferred=0;
           var t=setInterval(function(){
-            if(i>=sample.length){ clearInterval(t); impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return; }
+            if(i>=sample.length){
+              clearInterval(t);
+              impDone.innerHTML='<span class="cdemo-check">'+CHK+'</span> <strong>'+(sample.length-dup)+'</strong> listos · <strong>'+dup+'</strong> duplicado descartado · <strong>'+nodni+'</strong> sin DNI (aviso) · <strong>'+inferred+'</strong> roles inferidos';
+              impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return;
+            }
             var r=sample[i];
-            var el=document.createElement('div'); el.className='cimp2-row';
-            el.innerHTML='<span class="cimp2-c name">'+r[0]+'</span><span class="cimp2-c dni">'+r[1]+'</span><span class="cimp2-c grp">'+r[2]+'</span><span class="cimp2-c rolecell"><span class="cimp2-role">'+r[3]+'</span>'+CHK+'</span>';
+            if(r.st==='dup') dup++; else if(r.st==='nodni') nodni++;
+            if(r.inferred && r.st!=='dup') inferred++;
+            var el=document.createElement('div'); el.className='cimp2-row'+(r.st==='dup'?' dup':'');
+            var dniCell = r.st==='dup'
+              ? '<span class="cimp2-c dni">'+r.dni+' '+WARN+'<span class="cimp2-tag warn">duplicado</span></span>'
+              : (r.st==='nodni'
+                 ? '<span class="cimp2-c dni"><span class="cimp2-tag warn">sin DNI</span></span>'
+                 : '<span class="cimp2-c dni">'+r.dni+' '+CHK+'</span>');
+            var roleCell='<span class="cimp2-c rolecell"><span class="cimp2-role">'+r.role+'</span>'+(r.inferred?'<span class="cimp2-tag inf">inferido</span>':'')+(r.rule?'<span class="cimp2-tag rule">'+r.rule+'</span>':'')+'</span>';
+            el.innerHTML='<span class="cimp2-c name">'+r.name+'</span>'+dniCell+'<span class="cimp2-c grp">'+r.grp+'</span>'+roleCell;
             impRows.appendChild(el);
             requestAnimationFrame(function(){ el.classList.add('show'); });
             i++;
-          },150);
+          },170);
         }
       },430);
     });
   }
+
   // ── Conflictos: detección multi-tipo + resolución calculada (sector + equipo) ──
   var cGo=document.getElementById('cconfGo'), cApply=document.getElementById('cconfApply'),
       cDone=document.getElementById('cconfDone'), cDoneTxt=document.getElementById('cconfDoneTxt'),
@@ -6639,28 +6693,46 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   var updatesEl=document.getElementById('cdemoUpdates');
   var chip=document.getElementById('cdemoChip');
   if(!gap||!suggestBtn) return;
-  var CRIT=['Carga','Descanso','Convenio','Noches','Poliv.','Fiab.','Hist.'];
+  // 11 features reales del modelo: 5 objetivas + 3 subjetivas + 3 de historial
+  var FEATURES=[
+    {k:'Carga',g:'obj',why:'Equidad de carga'},
+    {k:'Racha',g:'obj',why:'Evita días seguidos'},
+    {k:'Descanso',g:'obj',why:'Descanso de 12 h seguro'},
+    {k:'Contrato',g:'obj',why:'Margen de contrato'},
+    {k:'Prefer.',g:'obj',why:'Encaja su preferencia'},
+    {k:'Poliv.',g:'sub',why:'Polivalente'},
+    {k:'Fiab.',g:'sub',why:'Alta fiabilidad'},
+    {k:'Desemp.',g:'sub',why:'Buen desempeño'},
+    {k:'Absent.',g:'his',why:'Baja ausencia ese día'},
+    {k:'Acept.',g:'his',why:'Suele aceptar coberturas'},
+    {k:'Frescura',g:'his',why:'Poco usado últimamente'}
+  ];
+  var GROUPS=[{id:'obj',label:'Objetivo'},{id:'sub',label:'Subjetivo'},{id:'his',label:'Historial'}];
   function cfgRoles(){ return (window.__SECTORS&&window.__demoCfg)?window.__SECTORS[window.__demoCfg.sector].roles:['Cajera','Reponedor','Encargada','Mozo']; }
   function shiftLbl(){ return (window.__SECTORS&&window.__demoCfg&&window.__SECTORS[window.__demoCfg.sector].night)?'Noche':'Tarde'; }
   var candidates=[
-    {rank:1,name:'Ana G.',ri:0,score:94,crit:[92,96,100,80,88,95,84]},
-    {rank:2,name:'Marcos R.',ri:1,score:88,crit:[85,90,100,70,92,80,88]},
-    {rank:3,name:'Lucía P.',ri:3,score:79,crit:[78,84,95,75,70,90,82]}
+    {rank:1,name:'Ana G.',ri:0,score:94,crit:[92,90,100,88,86,95,96,90,93,91,84]},
+    {rank:2,name:'Marcos R.',ri:1,score:88,crit:[85,88,100,82,92,80,86,88,90,78,95]},
+    {rank:3,name:'Lucía P.',ri:3,score:79,crit:[78,84,95,80,70,90,82,76,72,88,82]}
   ];
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function topReasons(c){ return c.crit.map(function(v,i){return {i:i,v:v};}).sort(function(a,b){return b.v-a.v;}).slice(0,3).map(function(o){return FEATURES[o.i].why;}); }
   function render(){
     var roles=cfgRoles();
     list.innerHTML=candidates.map(function(c,i){
       var role=roles[c.ri]||roles[0];
-      var bars=CRIT.map(function(lbl,j){
-        return '<span class="cdemo-cc" title="'+esc(lbl)+': '+c.crit[j]+'/100"><span class="cdemo-cc-bar"><i data-h="'+c.crit[j]+'%"></i></span><span class="cdemo-cc-l">'+esc(lbl)+'</span></span>';
+      var reasons=topReasons(c).map(function(r){return '<span class="cdemo-reason">'+esc(r)+'</span>';}).join('');
+      var groups=GROUPS.map(function(g){
+        var bars=FEATURES.map(function(f,j){ if(f.g!==g.id) return ''; return '<span class="cdemo-cc" title="'+esc(f.k)+': '+c.crit[j]+'/100"><span class="cdemo-cc-bar"><i data-h="'+c.crit[j]+'%"></i></span><span class="cdemo-cc-l">'+esc(f.k)+'</span></span>'; }).join('');
+        return '<span class="cdemo-grp"><span class="cdemo-grp-l">'+g.label+'</span><span class="cdemo-grp-bars">'+bars+'</span></span>';
       }).join('');
       return '<button class="cdemo-cand" type="button" data-i="'+i+'" style="transition-delay:'+(i*90)+'ms">'+
         '<span class="cdemo-cand-top">'+
           '<span class="cdemo-cand-name"><span class="rk">#'+c.rank+'</span>'+esc(c.name)+' <span class="cdemo-cand-role">· '+esc(role)+'</span></span>'+
-          '<span class="cdemo-score">'+c.score+'</span>'+
+          '<span class="cdemo-score" title="puntuación 0-100">'+c.score+'</span>'+
         '</span>'+
-        '<span class="cdemo-crit">'+bars+'</span>'+
+        '<span class="cdemo-reasons">'+reasons+'</span>'+
+        '<span class="cdemo-crit">'+groups+'</span>'+
       '</button>';
     }).join('');
     Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){
@@ -7237,7 +7309,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <div class="price-list-head" data-i18n="p2_head">Todo Esencial, y además</div>
       <ul class="price-list">
         <li data-i18n="p2_fcore" data-tip>★ Auto-generación de cuadrantes con IA — ShiftiaCore<span class="tooltip">La IA crea el cuadrante mensual desde cero respetando convenio, equidad nocturna y restricciones individuales. En segundos.</span></li>
-        <li data-i18n="p2_f1" data-tip>★ Motor IA de coberturas — 3 candidatos en &lt;1 s, 7 criterios<span class="tooltip">Sugiere 3 candidatos en menos de un segundo con 7 criterios de equidad y convenio</span></li>
+        <li data-i18n="p2_f1" data-tip>★ Motor IA de coberturas — 3 candidatos en &lt;1 s, 11 criterios<span class="tooltip">Sugiere 3 candidatos en menos de un segundo con 11 criterios de equidad y convenio</span></li>
         <li data-i18n="p2_f2">Equidad nocturna avanzada (balanceo automático)</li>
         <li data-i18n="p2_f3">Lector PDF con IA: importa tu cuadrante</li>
         <li data-i18n="p2_f4">Vacaciones IA + verificación de cobertura</li>
@@ -7446,7 +7518,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="4"/><path d="M10 12l1.5 1.5L14 11" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span data-i18n="mod_shiftiacore">ShiftiaCore — auto-generación con IA</span>
             </div>
-            <div class="fm-chip" data-mod="Motor IA de coberturas" title="Cuando alguien falta, la IA propone 3 candidatos en menos de 1 segundo con 7 criterios (equidad, fatiga, convenio).">
+            <div class="fm-chip" data-mod="Motor IA de coberturas" title="Cuando alguien falta, la IA propone 3 candidatos en menos de 1 segundo con 11 criterios (equidad, fatiga, convenio).">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2.5-2.5 2.5-2.5 5"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
               <span data-i18n="mod_motor">Motor IA de coberturas</span>
             </div>
@@ -8363,7 +8435,7 @@ const translations = {
     feat_eyebrow: 'Funcionalidades', feat_title: 'Todo lo que necesita tu equipo',
     feat_desc: 'Cada funcionalidad está diseñada para resolver problemas reales de la gestión diaria de turnos y planillas.',
     f1_t: 'Planilla visual', f1_d: 'Vista mensual con colores por turno. Edita cualquier celda con un clic. Ve todo tu equipo de un vistazo.',
-    f2_t: 'Motor IA de coberturas internas', f2_d: '¿Una baja? La IA analiza tu propia plantilla con 7 criterios y sugiere 3 candidatos con puntuación, impacto en equidad y nivel de confianza. En menos de un segundo.',
+    f2_t: 'Motor IA de coberturas internas', f2_d: '¿Una baja? La IA analiza tu propia plantilla con 11 criterios y sugiere 3 candidatos con puntuación, impacto en equidad y nivel de confianza. En menos de un segundo.',
     f3_t: 'Equidad nocturna', f3_d: 'Calcula automáticamente la media de noches solo entre trabajadores que rotan. Detecta desequilibrios antes de que escalen.',
     f4_t: 'Alertas de conflicto', f4_d: 'Cobertura insuficiente, descansos no respetados, turnos incompatibles. Shiftia los detecta automáticamente.',
     f5_t: 'Dashboard y KPIs', f5_d: 'Horas mensuales, distribución de turnos, balance vacaciones y carga de trabajo por persona. Todo en tiempo real.',
@@ -8428,7 +8500,7 @@ const translations = {
     p2_badge: '★ Más elegido', p2_billing: 'o 55€/mes facturado anual',
     p2_head: 'Todo Esencial, y además',
     p2_fcore: '★ Auto-generación de cuadrantes con IA — ShiftiaCore',
-    p2_f1: '★ Motor IA de coberturas — 3 candidatos en <1 s, 7 criterios',
+    p2_f1: '★ Motor IA de coberturas — 3 candidatos en <1 s, 11 criterios',
     p2_f2: 'Equidad nocturna avanzada (balanceo automático)',
     p2_f3: 'Lector PDF con IA: importa tu cuadrante',
     p2_f4: 'Vacaciones IA + verificación de cobertura',
@@ -8597,7 +8669,7 @@ const translations = {
     feat_eyebrow: 'Features', feat_title: 'Everything your team needs',
     feat_desc: 'Every feature is designed to solve real daily problems in shift and roster management.',
     f1_t: 'Visual roster', f1_d: 'Monthly view with color-coded shifts. Edit any cell with one click. See your entire team at a glance.',
-    f2_t: 'Internal AI Coverage Engine', f2_d: 'Someone out sick? The AI analyzes your own staff with 7 criteria and suggests 3 candidates with scores, equity impact and confidence level. In under a second.',
+    f2_t: 'Internal AI Coverage Engine', f2_d: 'Someone out sick? The AI analyzes your own staff with 11 criteria and suggests 3 candidates with scores, equity impact and confidence level. In under a second.',
     f3_t: 'Night equity', f3_d: 'Automatically calculates night averages only among rotating workers. Detects imbalances before they escalate.',
     f4_t: 'Conflict alerts', f4_d: 'Insufficient coverage, missed rest periods, incompatible shifts. Shiftia detects them automatically.',
     f5_t: 'Dashboard & KPIs', f5_d: 'Monthly hours, shift distribution, vacation balance, and workload per person. All in real time.',
@@ -8804,7 +8876,7 @@ const translations = {
     feat_eyebrow: 'Funktionen', feat_title: 'Alles was Ihr Team braucht',
     feat_desc: 'Jede Funktion lost reale Probleme der taglichen Schicht- und Dienstplanverwaltung.',
     f1_t: 'Visueller Dienstplan', f1_d: 'Monatsansicht mit farbigen Schichten. Jede Zelle mit einem Klick bearbeiten.',
-    f2_t: 'Interner KI-Vertretungsmotor', f2_d: 'Ein Ausfall? Die KI analysiert Ihre eigene Belegschaft mit 7 Kriterien und schlägt 3 Kandidaten mit Bewertung und Fairness-Auswirkung vor. In unter einer Sekunde.',
+    f2_t: 'Interner KI-Vertretungsmotor', f2_d: 'Ein Ausfall? Die KI analysiert Ihre eigene Belegschaft mit 11 Kriterien und schlägt 3 Kandidaten mit Bewertung und Fairness-Auswirkung vor. In unter einer Sekunde.',
     f3_t: 'Nachtgleichheit', f3_d: 'Berechnet automatisch den Nachtdurchschnitt nur unter rotierenden Mitarbeitern.',
     f4_t: 'Konfliktwarnungen', f4_d: 'Unzureichende Besetzung, fehlende Ruhezeiten, inkompatible Schichten. Automatisch erkannt.',
     f5_t: 'Dashboard & KPIs', f5_d: 'Monatsstunden, Schichtverteilung, Urlaubssaldo und Arbeitsbelastung pro Person.',
@@ -9197,10 +9269,10 @@ const featData = [
     icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="6" y="3" width="12" height="13" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M9 6h6M9 10h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="3" y="18" width="18" height="2" rx="1" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M8 16v2M16 16v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#dbeafe',
     title: { es: 'Motor IA de coberturas internas', en: 'Internal AI Coverage Engine', de: 'Interner KI-Abdeckungsmotor', fr: 'Moteur IA de remplacements internes' },
     desc: {
-      es: 'Cuando alguien falta, el motor de IA analiza 7 criterios en tiempo real: disponibilidad, horas acumuladas, equidad de noches, competencias, preferencias, histórico de cambios y compatibilidad de turno. En menos de un segundo te presenta 3 candidatos ordenados por idoneidad con puntuación, impacto en equidad y nivel de confianza.',
-      en: 'When someone is absent, the AI engine analyzes 7 criteria in real time: availability, accumulated hours, night equity, competencies, preferences, change history, and shift compatibility. In under a second it presents 3 candidates ranked by suitability with scores, equity impact, and confidence level.',
-      de: 'Wenn jemand ausfällt, analysiert die KI 7 Kriterien in Echtzeit und präsentiert 3 Kandidaten mit Bewertung.',
-      fr: 'Quand quelqu\'un est absent, le moteur IA analyse 7 critères en temps réel et présente 3 candidats classés.'
+      es: 'Cuando alguien falta, el motor de IA analiza 11 criterios en tiempo real: disponibilidad, horas acumuladas, equidad de noches, competencias, preferencias, histórico de cambios y compatibilidad de turno. En menos de un segundo te presenta 3 candidatos ordenados por idoneidad con puntuación, impacto en equidad y nivel de confianza.',
+      en: 'When someone is absent, the AI engine analyzes 11 criteria in real time: availability, accumulated hours, night equity, competencies, preferences, change history, and shift compatibility. In under a second it presents 3 candidates ranked by suitability with scores, equity impact, and confidence level.',
+      de: 'Wenn jemand ausfällt, analysiert die KI 11 Kriterien in Echtzeit und präsentiert 3 Kandidaten mit Bewertung.',
+      fr: 'Quand quelqu\'un est absent, le moteur IA analyse 11 critères en temps réel et présente 3 candidats classés.'
     },
     previewTitle: { es: 'Motor IA en accion', en: 'AI Engine in action', de: 'KI-Motor in Aktion', fr: 'Moteur IA en action' },
     preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Motor IA sugiere 3 candidatos para cubrir un turno"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><g transform="translate(14,14)"><circle cx="6" cy="6" r="4" fill="#0f7a6d"/><text x="16" y="9" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Cobertura sugerida</text><text x="346" y="9" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#8a8a85">0.8s</text></g><line x1="14" y1="30" x2="346" y2="30" stroke="#e8e6df"/><text x="14" y="46" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1" fill="#8a8a85">TURNO NOCHE · MAR 14 · UVI</text><g transform="translate(14,56)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#e9f5f2" stroke="#0f7a6d"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#0a5950">MG</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">María G.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Disponible · 2 noches bajo media</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#0f7a6d"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#fff">94</text></g><g transform="translate(14,102)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#e9f5f2" stroke="#0f7a6d"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#0a5950">CP</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">Carlos P.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Sin turno · descanso 22h</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#e9f5f2" stroke="#0f7a6d"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#0a5950">87</text></g><g transform="translate(14,148)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#f4f2ec" stroke="#c8c5bb"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#4a4a47">SR</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">Sofía R.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Sin turno · 1 noche sobre media</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#fff" stroke="#c8c5bb"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#8a8a85">72</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Sugerencias en menos de 1 segundo</div></div>'
