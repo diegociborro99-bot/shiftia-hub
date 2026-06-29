@@ -523,8 +523,11 @@ const GMAIL_USER = process.env.GMAIL_USER || '';
 const GMAIL_PASS = process.env.GMAIL_APP_PASSWORD || '';
 // Buzón de empresa al que llegan TODAS las notificaciones internas (llamadas
 // agendadas, solicitudes de demo, contacto, cancelaciones) y al que responden
-// los clientes (reply-to). Se puede sobreescribir con SUPPORT_EMAIL en el entorno.
-const NOTIFY_EMAIL = process.env.SUPPORT_EMAIL || 'info@shiftia.es';
+// los clientes (reply-to).
+// Orden: SUPPORT_EMAIL (si se define) → GMAIL_USER (buzón actual, p.ej. highkeycvsender@gmail.com)
+// → info@shiftia.es. Cuando GoDaddy active info@shiftia.es, basta con poner
+// SUPPORT_EMAIL=info@shiftia.es en el entorno y todo se reenruta sin tocar código.
+const NOTIFY_EMAIL = process.env.SUPPORT_EMAIL || GMAIL_USER || 'info@shiftia.es';
 
 let transporter = null;
 let emailReady = false;
