@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.svg">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#faf9f6">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobre nosotros — Shiftia</title>
+<meta name="description" content="La historia detrás de Shiftia: un software de planificación de turnos creado por un enfermero que vive a diario el problema del convenio sanitario y la gestión de cuadrantes.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.shiftia.es/sobre-nosotros">
+<meta property="og:title" content="Sobre nosotros — Shiftia">
+<meta property="og:description" content="Shiftia lo creó un enfermero que vive el problema del convenio sanitario. Esa es nuestra mayor ventaja: entendemos el turno desde dentro.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.shiftia.es/sobre-nosotros">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(180deg, #f0fdf9 0%, #eff6ff 55%, #fafafa 100%);
+  color:#1e293b; line-height:1.65; min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.skip-link { position:absolute; left:-9999px; top:0; background:#2980b9; color:#fff; padding:8px 16px; z-index:9999; text-decoration:none; border-radius:0 0 8px 0; }
+.skip-link:focus { left:0 !important; }
+header.site-header { padding: 24px 24px 8px; max-width: 860px; margin: 0 auto; }
+header.site-header a.brand {
+  font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em;
+  color:#1e293b; text-decoration:none; display:inline-flex; align-items:center; gap:10px;
+}
+header.site-header a.brand .brand-logo {
+  width:36px; height:36px; border-radius:9px;
+  box-shadow:0 6px 18px rgba(41,128,185,0.25);
+  display:inline-block; transform-origin:center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  header.site-header a.brand .brand-logo { animation: brandFloat 4.5s ease-in-out infinite; }
+}
+@keyframes brandFloat { 0%,100% { transform: translateY(0) rotate(0deg);} 50% { transform: translateY(-3px) rotate(-4deg);} }
+main {
+  max-width: 860px; margin: 16px auto 48px; padding: 32px 28px 72px;
+  background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+  border-radius: 20px; border: 1px solid rgba(226,232,240,0.7);
+  box-shadow: 0 8px 32px rgba(15,23,42,0.05);
+}
+.eyebrow { font-size:0.78rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#14857a; margin-bottom:10px; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); line-height:1.12; letter-spacing:-0.02em; color:#0f172a; margin-bottom: 14px; }
+h1 em { font-style:normal; background:linear-gradient(135deg,#14a085,#2980b9); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.lead { font-size: 1.12rem; color:#475569; max-width: 60ch; }
+
+/* Tarjeta del fundador */
+.founder {
+  display:grid; grid-template-columns: 180px 1fr; gap: 28px; align-items:center;
+  margin: 34px 0 8px; padding: 24px;
+  background: linear-gradient(135deg, rgba(78,205,196,0.10), rgba(41,128,185,0.07));
+  border:1px solid rgba(78,205,196,0.28); border-radius:18px;
+}
+.founder-photo-wrap { position:relative; width:180px; height:180px; }
+.founder-photo {
+  width:180px; height:180px; border-radius:20px; object-fit:cover; object-position:center top;
+  background:#fff; border:1px solid rgba(226,232,240,0.9);
+  box-shadow:0 10px 30px rgba(41,128,185,0.18);
+}
+.founder-initials {
+  display:none; width:180px; height:180px; border-radius:20px;
+  align-items:center; justify-content:center; font-size:3.2rem; font-weight:800; color:#fff;
+  background:linear-gradient(135deg,#4ecdc4,#2980b9); box-shadow:0 10px 30px rgba(41,128,185,0.18);
+}
+.founder-name { font-size:1.4rem; font-weight:800; color:#0f172a; letter-spacing:-0.01em; }
+.founder-role { font-size:0.95rem; color:#14857a; font-weight:600; margin:2px 0 10px; }
+.founder-blurb { font-size:0.98rem; color:#475569; }
+.founder-links { margin-top:12px; display:flex; flex-wrap:wrap; gap:10px; }
+.founder-links a {
+  display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:600;
+  color:#2980b9; text-decoration:none; padding:6px 12px; border:1px solid rgba(41,128,185,0.3);
+  border-radius:999px; background:#fff; transition:border-color .2s, color .2s;
+}
+.founder-links a:hover { border-color:#2980b9; color:#1f6fa1; }
+.founder-links svg { width:15px; height:15px; }
+
+main h2 { font-size: 1.45rem; margin: 38px 0 12px; color:#0f172a; letter-spacing:-0.01em; }
+main p { color:#334155; margin-bottom: 14px; font-size: 1.0rem; }
+main p strong { color:#0f172a; }
+.pull {
+  border-left:4px solid #14a085; padding:14px 20px; margin:22px 0;
+  background:#f0fdf9; border-radius:0 12px 12px 0; font-size:1.08rem; color:#0f172a; font-style:italic;
+}
+
+/* Valores */
+.values { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0 8px; }
+.value-card { background:#fff; border:1px solid #e6eef0; border-radius:14px; padding:18px; }
+.value-ic { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#e9f5f2; margin-bottom:10px; }
+.value-ic svg { width:20px; height:20px; color:#14857a; }
+.value-card h3 { font-size:1.02rem; color:#0f172a; margin-bottom:5px; }
+.value-card p { font-size:0.9rem; color:#475569; margin:0; }
+
+/* Credenciales */
+.creds { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 4px; }
+.cred-pill { font-size:0.82rem; color:#334155; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:7px 14px; }
+
+/* CTA */
+.cta-box {
+  margin-top: 40px; text-align:center; padding: 30px 24px;
+  background: linear-gradient(135deg,#14a085,#2980b9); border-radius:18px; color:#fff;
+}
+.cta-box h2 { color:#fff; margin:0 0 8px; }
+.cta-box p { color:rgba(255,255,255,0.92); margin-bottom:18px; }
+.cta-box a {
+  display:inline-flex; align-items:center; gap:8px; background:#fff; color:#0f766e;
+  font-weight:700; padding:13px 26px; border-radius:12px; text-decoration:none;
+  box-shadow:0 8px 22px rgba(0,0,0,0.16); transition:transform .2s;
+}
+.cta-box a:hover { transform:translateY(-2px); }
+.cta-box a svg { width:17px; height:17px; }
+
+footer.site-footer { text-align:center; padding: 24px; color:#64748b; font-size: 0.85rem; }
+footer.site-footer a { color:#2980b9; text-decoration:none; margin: 0 8px; }
+
+@media (max-width: 640px) {
+  main { border-radius: 0; padding: 24px 18px 56px; margin-top: 8px; }
+  .founder { grid-template-columns: 1fr; justify-items:center; text-align:center; gap:18px; }
+  .founder-links { justify-content:center; }
+  .values { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Saltar al contenido principal</a>
+<header class="site-header">
+  <a href="/" class="brand"><img src="/favicon.svg" class="brand-logo" alt="Shiftia" width="36" height="36"> Shiftia</a>
+</header>
+<main id="main">
+  <div class="eyebrow">Sobre nosotros</div>
+  <h1>Shiftia lo creó <em>quien vive el turno</em> desde dentro.</h1>
+  <p class="lead">No somos una software factory que descubrió el sector sanitario en una hoja de cálculo. Shiftia nace de un enfermero de hospital que sufrió el problema del convenio y los cuadrantes en su propia piel —y que también construye IA para sanidad.</p>
+
+  <div class="founder">
+    <div class="founder-photo-wrap">
+      <img src="/equipo/diego-ciborro.png" alt="Diego Ciborro, fundador de Shiftia" class="founder-photo" width="180" height="180"
+           onerror="this.style.display='none';var f=document.getElementById('founderInitials');if(f)f.style.display='flex';">
+      <div class="founder-initials" id="founderInitials" aria-hidden="true">DC</div>
+    </div>
+    <div>
+      <div class="founder-name">Diego Ciborro</div>
+      <div class="founder-role">Enfermero · Fundador y Director de Shiftia</div>
+      <p class="founder-blurb">Enfermero especialista en la Fundación Hospital de Jove (Gijón), en la unidad de banco de sangre y hemoderivados. Máster en Dirección y Gestión de Enfermería y doctorando en Calidad Asistencial. Lleva años construyendo modelos de IA para el hospital —y ahora para tu plantilla.</p>
+      <div class="founder-links">
+        <a href="https://www.linkedin.com/in/diego-ciborro-4812183a2" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 18.34V10.1H5.67v8.24h2.67zM7 8.93a1.55 1.55 0 1 0 0-3.1 1.55 1.55 0 0 0 0 3.1zm11.34 9.41v-4.52c0-2.41-1.29-3.53-3-3.53a2.59 2.59 0 0 0-2.35 1.29v-1.1h-2.67v8.24h2.67v-4.36c0-1.15.22-2.26 1.64-2.26 1.4 0 1.42 1.31 1.42 2.34v4.28h2.65z"/></svg>
+          LinkedIn
+        </a>
+        <a href="mailto:info@shiftia.es">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          info@shiftia.es
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <h2>El problema que vivía cada mes</h2>
+  <p>Como enfermero a turnos, conozco de primera mano lo que cuesta hacer un cuadrante justo: máximos de noches, descansos mínimos entre turnos, festivos, jornadas reducidas, conciliación… y un Excel que no entiende ninguna de esas reglas. Cada baja era una cadena de llamadas, y cada mes alguien sentía que le tocaban más noches que al resto.</p>
+  <p>El convenio no es un detalle: es la diferencia entre un equipo que confía en su planificación y uno que vive en conflicto. Y casi ningún software lo trataba como lo que es —<strong>sagrado</strong>.</p>
+
+  <div class="pull">«Si el software no entiende tu convenio, no te está ayudando a planificar: te está dando más trabajo.»</div>
+
+  <h2>De la planta a la IA</h2>
+  <p>En el hospital empecé a aplicar IA a problemas reales: un modelo predictivo de demanda de hemoderivados (glóbulos rojos, plasma y plaquetas) que alcanzó un <strong>85–90% de acierto</strong> en el consumo mensual, reduciendo desperdicio y mejorando la seguridad transfusional. Después, un sistema para anticipar el consumo de reactivos de microbiología. La misma idea, una y otra vez: <strong>datos + criterio clínico = mejores decisiones</strong>.</p>
+  <p>Shiftia es ese mismo principio aplicado a las personas: un motor de IA que arma cuadrantes equilibrados respetando tu convenio, y que ante una ausencia propone candidatos ordenados por idoneidad. La decisión final siempre es humana —tú apruebas con un clic—. La IA ahorra tiempo, no sustituye tu criterio.</p>
+
+  <h2>Por qué esto nos hace diferentes</h2>
+  <p>La mayoría de herramientas de turnos las diseña alguien que nunca ha cubierto una guardia. Shiftia la diseña quien sí lo ha hecho. Esa credibilidad de dominio —entender el turno, el convenio y la realidad de una planta— es nuestra mayor ventaja, y la razón por la que hospitales, residencias, retail y hostelería confían en nosotros.</p>
+
+  <div class="values">
+    <div class="value-card">
+      <div class="value-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 3.5v5c0 4.8-3.3 8.3-8 9.5-4.7-1.2-8-4.7-8-9.5v-5L12 3z"/><path d="M8.8 12.2l2.3 2.3 4.3-4.6" stroke-linecap="round"/></svg></div>
+      <h3>El convenio, sagrado</h3>
+      <p>Tus reglas no son configurables "a la fuerza": son la base. La IA las respeta en cada planilla.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3.2"/><path d="M2.5 20c.6-3.2 3-5 6.5-5s5.9 1.8 6.5 5"/><path d="M17 11l2 2 4-4"/></svg></div>
+      <h3>La decisión es humana</h3>
+      <p>La IA sugiere y detecta conflictos; tú apruebas. Nunca planifica a tus espaldas.</p>
+    </div>
+    <div class="value-card">
+      <div class="value-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg></div>
+      <h3>Privacidad y RGPD</h3>
+      <p>Datos cifrados, alojados en la UE, con opción on-premise. Construido con la sanidad en mente.</p>
+    </div>
+  </div>
+
+  <h2>Trayectoria y formación</h2>
+  <div class="creds">
+    <span class="cred-pill">Grado en Enfermería · U. de León</span>
+    <span class="cred-pill">Máster en Dirección y Gestión de Enfermería · U. Europea</span>
+    <span class="cred-pill">Curso en Inteligencia Artificial · UNIR</span>
+    <span class="cred-pill">Doctorando en Calidad Asistencial · U. Europea</span>
+    <span class="cred-pill">Experto en Hematología y Hemoterapia · U. de Oviedo</span>
+    <span class="cred-pill">Miembro de SECA (Calidad Asistencial)</span>
+  </div>
+  <p style="margin-top:16px;font-size:0.9rem;color:#64748b;">Shiftia es un producto de <strong>Highkey Labs Software Solutions</strong>. Atendemos desde Asturias a equipos de toda España.</p>
+
+  <div class="cta-box">
+    <h2>¿Hablamos de tu plantilla?</h2>
+    <p>Te enseñamos Shiftia configurado con tu convenio y los datos de tu equipo. Sin compromiso.</p>
+    <a href="/#contact">Solicitar demo
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</main>
+<footer class="site-footer">
+  <a href="/">Inicio</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a> · <a href="mailto:info@shiftia.es">info@shiftia.es</a>
+</footer>
+</body>
+</html>

@@ -600,9 +600,21 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: -0.035em; color: var(--text1);
   margin-bottom: 28px;
 }
+.hero-stat {
+  font-size: 1.32rem; line-height: 1.5; color: var(--text1);
+  font-weight: 600; max-width: 480px; margin: 18px 0 14px;
+  letter-spacing: -0.01em;
+}
+.hero-stat strong {
+  font-weight: 800; color: #14857a;
+  background: linear-gradient(135deg, #14a085, #2980b9);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
 .hero-desc {
-  font-size: 1.15rem; line-height: 1.75; color: var(--text2);
-  margin-bottom: 44px; max-width: 440px;
+  font-size: 1.05rem; line-height: 1.7; color: var(--text2);
+  margin-bottom: 44px; max-width: 460px;
 }
 .hero-actions { display: flex; gap: 14px; align-items: center; }
 .hero-trial-badge {
@@ -5605,6 +5617,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <div class="hero-text">
       <div class="hero-label"><span class="hero-label-dot" aria-hidden="true"></span> <span data-i18n="hero_badge">Shiftia v8.0.1 · LIVE</span></div>
       <h1><span data-i18n="hero_title_1">Planificación de turnos y planillas,</span> <span class="rotating-words"><span class="rw-word active">simplificada</span><span class="rw-word" aria-hidden="true">automatizada</span><span class="rw-word" aria-hidden="true">inteligente</span><span class="rw-word" aria-hidden="true">sin esfuerzo</span></span></h1>
+      <p class="hero-stat" data-i18n-html="hero_stat">Ahorra <strong>~18&nbsp;h al mes</strong> planificando turnos —y unos <strong>4.800&nbsp;€/año</strong> en un equipo típico.</p>
       <p class="hero-desc" data-i18n="hero_desc">Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.</p>
       <div class="hero-actions">
         <a href="#contact" class="btn-lg primary">
@@ -5687,83 +5700,60 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </svg>
 </div>
 
-<!-- BESPOKE: app a medida sobre Shiftia v8 -->
+<!-- PRODUCTO: motor estándar configurado a tu convenio (fusión de bespoke + custom) -->
 <section class="bespoke-section" id="bespoke" aria-labelledby="bespoke-title">
   <div class="container centered">
-    <span class="bespoke-version-pill reveal" data-i18n="bespoke_pill">Sobre Shiftia v8</span>
-    <div class="section-eyebrow reveal" data-i18n="bespoke_eyebrow">Fabricado a medida</div>
-    <h2 class="section-h2 reveal" id="bespoke-title" data-i18n="bespoke_title">Tu app, no una plantilla.</h2>
-    <p class="section-p reveal" data-i18n="bespoke_desc">
-      No vendemos un SaaS genérico. Construimos una app personalizada al 100% para cada cliente sobre el motor Shiftia v8: el mismo núcleo robusto que ya planifica miles de turnos, adaptado a tu negocio para que encaje como un guante desde el primer día.
-    </p>
+    <span class="bespoke-version-pill reveal" data-i18n="prod_pill">Motor Shiftia v8</span>
+    <div class="section-eyebrow reveal" data-i18n="prod_eyebrow">El producto</div>
+    <h2 class="section-h2 reveal" id="bespoke-title" data-i18n-html="prod_title">Un motor probado, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configurado a tu convenio.</em></h2>
+    <p class="section-p reveal" data-i18n="prod_desc">No construimos una app desde cero para cada cliente —eso sería caro y lento—. Partes del motor Shiftia, ya probado en producción, y lo configuramos a tu convenio, tu vocabulario y los módulos que necesitas. Operativo en 5-7 días y con tarifa plana.</p>
 
     <div class="bespoke-grid">
       <div class="bespoke-card reveal">
         <span class="bespoke-card-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 21h18"/>
-            <path d="M5 21V10l7-6 7 6v11"/>
-            <path d="M9 21v-6h6v6"/>
+            <path d="M12 2.5l2.6 2.6-2.6 2.6-2.6-2.6L12 2.5z"/>
+            <path d="M5.4 9.1L8 11.7l-2.6 2.6L2.8 11.7l2.6-2.6z"/>
+            <path d="M18.6 9.1l2.6 2.6-2.6 2.6-2.6-2.6 2.6-2.6z"/>
+            <path d="M12 15.7l2.6 2.6-2.6 2.6-2.6-2.6 2.6-2.6z"/>
           </svg>
         </span>
-        <h3 data-i18n="bespoke_card1_title">Tu negocio define el producto</h3>
-        <p data-i18n="bespoke_card1_desc">Analizamos cómo trabajas tú —no cómo trabajan los demás— y modelamos la app a tu medida: tus roles, tu vocabulario, tus reglas, tus reportes.</p>
+        <h3 data-i18n="prod_c1_t">Motor estándar, probado</h3>
+        <p data-i18n="prod_c1_d">IA de cuadrantes, equidad nocturna, normativa laboral, auditoría y exportaciones: el núcleo ya planifica miles de turnos en producción. No estrenas software a medias.</p>
       </div>
 
       <div class="bespoke-card reveal">
         <span class="bespoke-card-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 0 1-4 0v-.08A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 0 1 0-4h.08A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6h.01A1.7 1.7 0 0 0 10.04 3.04V3a2 2 0 0 1 4 0v.08A1.7 1.7 0 0 0 15 4.6h.01a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v.01c.31.12.59.32.81.55.22.23.39.51.51.81H21a2 2 0 0 1 0 4h-.08a1.7 1.7 0 0 0-1.52 1.03z"/>
+            <path d="M12 3l8 3.5v5c0 4.8-3.3 8.3-8 9.5-4.7-1.2-8-4.7-8-9.5v-5L12 3z"/>
+            <path d="M8.8 12.2l2.3 2.3 4.3-4.6"/>
           </svg>
         </span>
-        <h3 data-i18n="bespoke_card2_title">Motor Shiftia v8 como base</h3>
-        <p data-i18n-html="bespoke_card2_desc">IA de cuadrantes, equidad, normativa laboral, exportaciones y auditoría: el núcleo viene probado en producción. Tú no estrenas software, estrenas <em>tu</em> versión de él.</p>
+        <h3 data-i18n="prod_c2_t">Configurado a tu convenio</h3>
+        <p data-i18n="prod_c2_d">Tus reglas —máximos de noches, descansos mínimos, festivos, jornadas reducidas—, tu vocabulario y tus roles. La IA los respeta como sagrados en cada planilla.</p>
       </div>
 
       <div class="bespoke-card reveal">
         <span class="bespoke-card-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 11V6a2 2 0 1 1 4 0v5"/>
-            <path d="M13 8a2 2 0 1 1 4 0v4"/>
-            <path d="M17 10a2 2 0 1 1 4 0v5a7 7 0 0 1-7 7h-2a7 7 0 0 1-6.5-4.4L3 13a2 2 0 0 1 3.5-2L9 13V5a2 2 0 1 1 4 0v6"/>
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+            <path d="M17.5 14v7M14 17.5h7"/>
           </svg>
         </span>
-        <h3 data-i18n="bespoke_card3_title">Encaja como un guante</h3>
-        <p data-i18n="bespoke_card3_desc">Nada de configurar a la fuerza ni renombrar campos: la app habla tu idioma operativo y se ajusta a tus flujos reales, no al revés.</p>
+        <h3 data-i18n="prod_c3_t">Eliges tus módulos</h3>
+        <p data-i18n="prod_c3_d">El núcleo siempre incluido; añades IA, fichaje, integración con nómina o multi-centro cuando quieras. Pagas solo por lo que usas.</p>
       </div>
     </div>
 
-    <p class="bespoke-footnote reveal" data-i18n-html="bespoke_footnote">
-      <strong>Una app por cliente.</strong> Un solo motor detrás. Cero compromisos de “configuración estándar”.
+    <p class="bespoke-footnote reveal" data-i18n-html="prod_foot">
+      <strong>Estándar por dentro, tuyo por fuera.</strong> Operativo en 5-7 días, tarifa plana y sin coste por trabajador.
     </p>
-  </div>
-</section>
-
-<!-- CUSTOM SECTION (sin customizer — el customizer vive ahora en el form de #contact) -->
-<section class="custom-section" id="custom">
-  <div class="container centered">
-    <div class="section-eyebrow reveal" data-i18n="custom_eyebrow">100% a tu medida</div>
-    <h2 class="section-h2 reveal" data-i18n-html="custom_title">No es una plantilla. <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">Es tu app.</em></h2>
-    <p class="section-p reveal" data-i18n="custom_desc">Cada cliente arranca con las funciones esenciales y elige qué módulos quiere encima. Pagas solo por lo que usas, ves solo lo que te interesa.</p>
-  </div>
-  <div class="container">
-    <div class="custom-hero custom-hero-solo">
-      <div class="custom-copy reveal">
-        <h3 data-i18n-html="custom_h3">Tú eliges <em>qué hace</em> tu Shiftia.</h3>
-        <p data-i18n="custom_p">El convenio de un hospital de cuidados intensivos no se parece al de una empresa de seguridad. Por eso no vendemos una plantilla a todo el mundo: armamos tu app contigo, función a función.</p>
-        <ul class="custom-bullets">
-          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span data-i18n-html="custom_b1"><b>Núcleo siempre incluido:</b> planilla, equipo, perfiles, app móvil.</span></li>
-          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span data-i18n-html="custom_b2"><b>Añade lo que necesites:</b> IA, fichaje, partes de incidencias, integración con nómina, multi-centro…</span></li>
-          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span data-i18n-html="custom_b3"><b>Personalización gráfica:</b> tu marca, tus colores, tus términos internos.</span></li>
-          <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="9 12 11 14 15 10"/></svg><span data-i18n-html="custom_b4"><b>Convenio a medida:</b> introducimos tus reglas (max noches, descansos, festivos) y la IA las respeta como sagradas.</span></li>
-        </ul>
-        <a href="#contact" class="custom-cta-link">
-          <span data-i18n="custom_cta">Configura tu app al agendar la llamada</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-        </a>
-      </div>
-    </div>
+    <a href="#contact" class="custom-cta-link" style="margin-top:6px;">
+      <span data-i18n="prod_cta">Configura tu Shiftia al agendar la llamada</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </a>
   </div>
 </section>
 
@@ -7449,7 +7439,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       </div>
       <div class="footer-col">
         <h5 data-i18n="footer_company">Empresa</h5>
-        <a href="#" data-i18n="footer_about">Sobre nosotros</a>
+        <a href="/sobre-nosotros" data-i18n="footer_about">Sobre nosotros</a>
         <a href="/privacidad" data-i18n="footer_privacy">Privacidad</a>
         <a href="/terminos" data-i18n="footer_terms">Términos</a>
       </div>
@@ -8116,16 +8106,6 @@ const translations = {
     dual_worker_f2: '<b>Solicitudes 1-click</b>: cambio de turno, día libre, ausencia justificada.',
     dual_worker_f3: '<b>Notificaciones push</b> cuando hay cambios en su planilla.',
     dual_worker_f4: '<b>Cómputo de jornada</b>, horas extra y noches acumuladas a la vista.',
-    custom_eyebrow: '100% a tu medida',
-    custom_title: 'No es una plantilla. <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">Es tu app.</em>',
-    custom_desc: 'Cada cliente arranca con las funciones esenciales y elige qué módulos quiere encima. Pagas solo por lo que usas, ves solo lo que te interesa.',
-    custom_h3: 'Tú eliges <em>qué hace</em> tu Shiftia.',
-    custom_p: 'El convenio de un hospital de cuidados intensivos no se parece al de una empresa de seguridad. Por eso no vendemos una plantilla a todo el mundo: armamos tu app contigo, función a función.',
-    custom_b1: '<b>Núcleo siempre incluido:</b> planilla, equipo, perfiles, app móvil.',
-    custom_b2: '<b>Añade lo que necesites:</b> IA, fichaje, partes de incidencias, integración con nómina, multi-centro…',
-    custom_b3: '<b>Personalización gráfica:</b> tu marca, tus colores, tus términos internos.',
-    custom_b4: '<b>Convenio a medida:</b> introducimos tus reglas (max noches, descansos, festivos) y la IA las respeta como sagradas.',
-    custom_cta: 'Configura tu app al agendar la llamada',
     cmp_bad1: 'Cuadrantes en Excel compartidos por email',
     cmp_bad2: 'Horas buscando quien puede cubrir una baja',
     cmp_bad3: 'Quejas constantes por reparto desigual de noches',
@@ -8192,6 +8172,8 @@ const translations = {
     hero_title_1: 'Planificación de turnos y planillas,',
     hero_title_2: 'simplificada',
     hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.',
+    hero_stat: 'Ahorra <strong>~18&nbsp;h al mes</strong> planificando turnos —y unos <strong>4.800&nbsp;€/año</strong> en un equipo típico.',
+    prod_pill: 'Motor Shiftia v8', prod_eyebrow: 'El producto', prod_title: 'Un motor probado, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configurado a tu convenio.</em>', prod_desc: 'No construimos una app desde cero para cada cliente —eso sería caro y lento—. Partes del motor Shiftia, ya probado en producción, y lo configuramos a tu convenio, tu vocabulario y los módulos que necesitas. Operativo en 5-7 días y con tarifa plana.', prod_c1_t: 'Motor estándar, probado', prod_c1_d: 'IA de cuadrantes, equidad nocturna, normativa laboral, auditoría y exportaciones: el núcleo ya planifica miles de turnos en producción. No estrenas software a medias.', prod_c2_t: 'Configurado a tu convenio', prod_c2_d: 'Tus reglas —máximos de noches, descansos mínimos, festivos, jornadas reducidas—, tu vocabulario y tus roles. La IA los respeta como sagrados en cada planilla.', prod_c3_t: 'Eliges tus módulos', prod_c3_d: 'El núcleo siempre incluido; añades IA, fichaje, integración con nómina o multi-centro cuando quieras. Pagas solo por lo que usas.', prod_foot: '<strong>Estándar por dentro, tuyo por fuera.</strong> Operativo en 5-7 días, tarifa plana y sin coste por trabajador.', prod_cta: 'Configura tu Shiftia al agendar la llamada',
     hero_cta: 'Solicitar demo', hero_cta2: 'Ver cómo funciona', hero_trial: 'Sin tarjeta · Respuesta en 24 h · Garantía de 30 días', hero_t1: 'Sin tarjeta', hero_t2: 'Respuesta en 24 h', hero_t3: 'Garantía de 30 días',
     pw_pre: 'desde', pw_unit: '€/trabajador al mes', pw_save_label: 'Ahorro anual', price_scarcity: 'Plazas de implantación limitadas cada mes · onboarding guiado en 5-7 días', sticky_cta_label: 'Solicitar demo',
     calc_eyebrow: 'Tu retorno', calc_title: 'Calcula cuánto ahorras con Shiftia', calc_desc: 'Ajusta los datos de tu equipo y mira el ahorro al instante. Sin registrarte.', calc_l_workers: 'Trabajadores', calc_l_hours: 'Horas/semana planificando turnos', calc_l_cost: 'Coste medio €/hora del responsable', calc_assume: 'Estimación basada en una reducción media del 70% del tiempo de planificación gracias a la auto-generación con IA.', calc_k_hours: 'Horas ahorradas/mes', calc_k_money: 'Ahorro al mes', calc_k_year: 'Ahorro al año', calc_plan_pre: 'Plan recomendado', calc_roi_pre: 'Por cada 1€ invertido, recuperas', calc_cta: 'Solicitar demo con estos datos', calc_help: '¿Más de 100 trabajadores? Te corresponde un plan Enterprise a medida — el ahorro real suele ser aún mayor.', calc_msg: 'Vengo de la calculadora de ahorro', calc_msg_workers: 'trabajadores', calc_msg_week: 'sem', calc_msg_save: 'Ahorro estimado', calc_msg_month: 'mes', calc_msg_year: 'año', calc_msg_end: 'Quiero una demo.',
@@ -8333,12 +8315,6 @@ const translations = {
     imp4_num: '24/7', imp4_label: 'Acceso total', imp4_sub: 'Desde cualquier dispositivo',
     show_eyebrow: 'Interfaz', show_title: 'Mira Shiftia en acción', show_desc: 'Una herramienta visual, rápida e intuitiva. Esto es lo que ven tus supervisores cada día.',
     tab_planilla: 'Planilla', tab_dashboard: 'Dashboard', tab_ai: 'Cobertura IA',
-    bespoke_pill: 'Sobre Shiftia v8', bespoke_eyebrow: 'Fabricado a medida', bespoke_title: 'Tu app, no una plantilla.',
-    bespoke_desc: 'No vendemos un SaaS genérico. Construimos una app personalizada al 100% para cada cliente sobre el motor Shiftia v8: el mismo núcleo robusto que ya planifica miles de turnos, adaptado a tu negocio para que encaje como un guante desde el primer día.',
-    bespoke_card1_title: 'Tu negocio define el producto', bespoke_card1_desc: 'Analizamos cómo trabajas tú —no cómo trabajan los demás— y modelamos la app a tu medida: tus roles, tu vocabulario, tus reglas, tus reportes.',
-    bespoke_card2_title: 'Motor Shiftia v8 como base', bespoke_card2_desc: 'IA de cuadrantes, equidad, normativa laboral, exportaciones y auditoría: el núcleo viene probado en producción. Tú no estrenas software, estrenas <em>tu</em> versión de él.',
-    bespoke_card3_title: 'Encaja como un guante', bespoke_card3_desc: 'Nada de configurar a la fuerza ni renombrar campos: la app habla tu idioma operativo y se ajusta a tus flujos reales, no al revés.',
-    bespoke_footnote: '<strong>Una app por cliente.</strong> Un solo motor detrás. Cero compromisos de “configuración estándar”.',
   },
   en: {
     trust_band: 'Trusted by teams in demanding shift sectors',
@@ -8365,16 +8341,6 @@ const translations = {
     dual_worker_f2: '<b>1-click requests</b>: shift swap, day off, justified absence.',
     dual_worker_f3: '<b>Push notifications</b> when there are changes to their roster.',
     dual_worker_f4: '<b>Working-time count</b>, overtime and accumulated nights at a glance.',
-    custom_eyebrow: '100% tailored to you',
-    custom_title: 'Not a template. <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">It\'s your app.</em>',
-    custom_desc: 'Each client starts with the essential features and chooses which modules to add on top. You pay only for what you use, you see only what matters to you.',
-    custom_h3: 'You choose <em>what your Shiftia does</em>.',
-    custom_p: 'An intensive-care hospital\'s agreement is nothing like a security company\'s. That\'s why we don\'t sell everyone the same template: we build your app with you, feature by feature.',
-    custom_b1: '<b>Core always included:</b> roster, team, profiles, mobile app.',
-    custom_b2: '<b>Add what you need:</b> AI, time tracking, incident reports, payroll integration, multi-site…',
-    custom_b3: '<b>Visual customization:</b> your brand, your colors, your internal terms.',
-    custom_b4: '<b>Tailored agreement:</b> we enter your rules (max nights, rest periods, holidays) and the AI treats them as sacred.',
-    custom_cta: 'Configure your app when booking the call',
     cmp_bad1: 'Spreadsheets shared by email',
     cmp_bad2: 'Hours spent finding someone to cover an absence',
     cmp_bad3: 'Constant complaints about unfair night distribution',
@@ -8440,6 +8406,8 @@ const translations = {
     hero_title_1: 'Shift scheduling and rosters,',
     hero_title_2: 'simplified',
     hero_desc: 'Shiftia automates shift planning, manages absences with AI, and ensures team equity. For hospitals, clinics, care homes, factories, and any business with rosters. Less Excel, more control.',
+    hero_stat: 'Save <strong>~18&nbsp;h a month</strong> on shift planning —and around <strong>€4,800/year</strong> for a typical team.',
+    prod_pill: 'Shiftia v8 engine', prod_eyebrow: 'The product', prod_title: 'A proven engine, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configured to your rules.</em>', prod_desc: 'We don\'t build an app from scratch for each client —that would be slow and expensive—. You start from the Shiftia engine, already proven in production, and we configure it to your collective agreement, your wording and the modules you need. Live in 5-7 days, flat rate.', prod_c1_t: 'Standard engine, proven', prod_c1_d: 'AI scheduling, night equity, labor law, audit and exports: the core already plans thousands of shifts in production. You don\'t launch half-baked software.', prod_c2_t: 'Configured to your rules', prod_c2_d: 'Your rules —night caps, minimum rest, holidays, reduced hours—, your wording and your roles. The AI treats them as sacred in every roster.', prod_c3_t: 'You pick your modules', prod_c3_d: 'The core always included; add AI, time tracking, payroll integration or multi-site whenever you want. You pay only for what you use.', prod_foot: '<strong>Standard inside, yours outside.</strong> Live in 5-7 days, flat rate and no per-worker cost.', prod_cta: 'Configure your Shiftia when you book the call',
     hero_cta: 'Request demo', hero_cta2: 'See how it works', hero_trial: 'No card · Reply within 24 h · 30-day guarantee', hero_t1: 'No card', hero_t2: 'Reply within 24 h', hero_t3: '30-day guarantee',
     pw_pre: 'from', pw_unit: '€/worker per month', pw_save_label: 'Annual saving', price_scarcity: 'Limited onboarding slots each month · guided setup in 5-7 days', sticky_cta_label: 'Request a demo',
     calc_eyebrow: 'Your return', calc_title: 'Calculate how much you save with Shiftia', calc_desc: 'Adjust your team data and see the savings instantly. No sign-up.', calc_l_workers: 'Workers', calc_l_hours: 'Hours/week planning shifts', calc_l_cost: 'Average €/hour of the manager', calc_assume: 'Estimate based on an average 70% reduction in planning time thanks to AI auto-generation.', calc_k_hours: 'Hours saved/month', calc_k_money: 'Monthly saving', calc_k_year: 'Yearly saving', calc_plan_pre: 'Recommended plan', calc_roi_pre: 'For every €1 invested, you get back', calc_cta: 'Request a demo with these figures', calc_help: 'More than 100 workers? You qualify for a tailored Enterprise plan — real savings are usually even higher.', calc_msg: 'Coming from the savings calculator', calc_msg_workers: 'workers', calc_msg_week: 'wk', calc_msg_save: 'Estimated saving', calc_msg_month: 'mo', calc_msg_year: 'yr', calc_msg_end: 'I would like a demo.',
@@ -8541,12 +8509,6 @@ const translations = {
     show_eyebrow: 'Interface', show_title: 'See Shiftia in action', show_desc: 'A visual, fast, and intuitive tool. This is what your supervisors see every day.',
     tab_planilla: 'Roster', tab_dashboard: 'Dashboard', tab_ai: 'AI Coverage',
     hero_cta_signup: 'View plans', hero_cta_signup_label: 'View plans',
-    bespoke_pill: 'About Shiftia v8', bespoke_eyebrow: 'Built to measure', bespoke_title: 'Your app, not a template.',
-    bespoke_desc: 'We don\'t sell a generic SaaS. We build a 100% custom app for each client on top of the Shiftia v8 engine: the same robust core that already plans thousands of shifts, tailored to your business so it fits like a glove from day one.',
-    bespoke_card1_title: 'Your business defines the product', bespoke_card1_desc: 'We analyze how you work —not how others work— and shape the app to fit you: your roles, your vocabulary, your rules, your reports.',
-    bespoke_card2_title: 'Shiftia v8 engine as the base', bespoke_card2_desc: 'Scheduling AI, equity, labor compliance, exports and auditing: the core is proven in production. You\'re not launching new software, you\'re launching <em>your</em> version of it.',
-    bespoke_card3_title: 'Fits like a glove', bespoke_card3_desc: 'No forced configuration or renaming fields: the app speaks your operational language and adapts to your real workflows, not the other way around.',
-    bespoke_footnote: '<strong>One app per client.</strong> A single engine behind it. Zero “standard configuration” compromises.',
     p1_billing: 'or €23/mo billed annually', p1_head: 'The core, always',
     p1_f5: 'Holidays and absences', p1_f6: 'Conflict detection', p1_f7: 'Basic dashboard', p1_f8: 'Cloud + GDPR · email support',
     price_btn_starter: 'Request a demo',
@@ -8586,16 +8548,6 @@ const translations = {
     dual_worker_f2: '<b>1-Klick-Anfragen</b>: Schichttausch, freier Tag, begründete Abwesenheit.',
     dual_worker_f3: '<b>Push-Benachrichtigungen</b> bei Änderungen am Dienstplan.',
     dual_worker_f4: '<b>Arbeitszeitberechnung</b>, Überstunden und gesammelte Nächte im Blick.',
-    custom_eyebrow: '100% maßgeschneidert',
-    custom_title: 'Keine Vorlage. <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">Es ist Ihre App.</em>',
-    custom_desc: 'Jeder Kunde startet mit den wesentlichen Funktionen und wählt, welche Module er hinzufügt. Sie zahlen nur für das, was Sie nutzen, und sehen nur das, was für Sie relevant ist.',
-    custom_h3: 'Sie entscheiden, <em>was Ihr Shiftia kann</em>.',
-    custom_p: 'Der Tarifvertrag eines Intensivkrankenhauses gleicht nicht dem einer Sicherheitsfirma. Deshalb verkaufen wir nicht allen dieselbe Vorlage: Wir bauen Ihre App mit Ihnen, Funktion für Funktion.',
-    custom_b1: '<b>Kern immer enthalten:</b> Dienstplan, Team, Profile, mobile App.',
-    custom_b2: '<b>Fügen Sie hinzu, was Sie brauchen:</b> KI, Zeiterfassung, Störungsmeldungen, Lohnintegration, Multi-Standort…',
-    custom_b3: '<b>Visuelle Anpassung:</b> Ihre Marke, Ihre Farben, Ihre internen Begriffe.',
-    custom_b4: '<b>Maßgeschneiderter Tarifvertrag:</b> wir hinterlegen Ihre Regeln (max. Nächte, Ruhezeiten, Feiertage) und die KI hält sie für sakrosankt.',
-    custom_cta: 'Konfigurieren Sie Ihre App bei der Terminbuchung',
     cmp_bad1: 'Per E-Mail geteilte Excel-Pläne',
     cmp_bad2: 'Stunden auf der Suche nach Vertretung',
     cmp_bad3: 'Ständige Beschwerden über ungleiche Nachtverteilung',
@@ -8661,6 +8613,8 @@ const translations = {
     hero_title_1: 'Schichtplanung und Dienstplane,',
     hero_title_2: 'vereinfacht',
     hero_desc: 'Shiftia automatisiert Schichten, verwaltet Abwesenheiten mit KI und garantiert die Fairness Ihres Teams. Fur Krankenhäuser, Kliniken, Pflegeheime, Fabriken und jedes Unternehmen mit Dienstplanen.',
+    hero_stat: 'Sparen Sie <strong>~18&nbsp;Std./Monat</strong> bei der Dienstplanung —und rund <strong>4.800&nbsp;€/Jahr</strong> bei einem typischen Team.',
+    prod_pill: 'Shiftia v8 Engine', prod_eyebrow: 'Das Produkt', prod_title: 'Eine bewährte Engine, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">auf Ihren Tarif konfiguriert.</em>', prod_desc: 'Wir bauen nicht für jeden Kunden eine App von Grund auf neu —das wäre teuer und langsam—. Sie starten mit der Shiftia-Engine, bereits in Produktion bewährt, und wir konfigurieren sie auf Ihren Tarifvertrag, Ihr Vokabular und die Module, die Sie brauchen. In 5-7 Tagen einsatzbereit, zum Pauschalpreis.', prod_c1_t: 'Standard-Engine, bewährt', prod_c1_d: 'KI-Dienstplanung, Nachtgerechtigkeit, Arbeitsrecht, Audit und Exporte: der Kern plant bereits Tausende Schichten in Produktion. Keine halbfertige Software.', prod_c2_t: 'Auf Ihren Tarif konfiguriert', prod_c2_d: 'Ihre Regeln —Nachtobergrenzen, Mindestruhezeiten, Feiertage, reduzierte Arbeitszeit—, Ihr Vokabular und Ihre Rollen. Die KI behandelt sie in jedem Dienstplan als heilig.', prod_c3_t: 'Sie wählen Ihre Module', prod_c3_d: 'Der Kern immer enthalten; fügen Sie KI, Zeiterfassung, Lohnintegration oder Multi-Standort hinzu, wann Sie wollen. Sie zahlen nur, was Sie nutzen.', prod_foot: '<strong>Standard innen, Ihres außen.</strong> In 5-7 Tagen einsatzbereit, Pauschalpreis und keine Kosten pro Mitarbeiter.', prod_cta: 'Konfigurieren Sie Ihr Shiftia bei der Terminbuchung',
     hero_cta: 'Demo anfragen', hero_cta2: 'So funktioniert es', hero_trial: 'Ohne Karte · Antwort in 24 h · 30 Tage Garantie', hero_t1: 'Ohne Karte', hero_t2: 'Antwort in 24 h', hero_t3: '30 Tage Garantie',
     pw_pre: 'ab', pw_unit: '€/Mitarbeiter pro Monat', pw_save_label: 'Jährliche Ersparnis', price_scarcity: 'Begrenzte Onboarding-Plätze pro Monat · geführt in 5-7 Tagen', sticky_cta_label: 'Demo anfragen',
     calc_eyebrow: 'Ihr Return', calc_title: 'Berechnen Sie Ihre Ersparnis mit Shiftia', calc_desc: 'Passen Sie Ihre Teamdaten an und sehen Sie die Ersparnis sofort. Ohne Anmeldung.', calc_l_workers: 'Mitarbeitende', calc_l_hours: 'Stunden/Woche für Dienstplanung', calc_l_cost: 'Durchschnittl. €/Stunde der Leitung', calc_assume: 'Schätzung auf Basis einer durchschnittlichen Reduzierung der Planungszeit um 70% dank KI-Autogenerierung.', calc_k_hours: 'Gesparte Std./Monat', calc_k_money: 'Ersparnis pro Monat', calc_k_year: 'Ersparnis pro Jahr', calc_plan_pre: 'Empfohlener Plan', calc_roi_pre: 'Für jeden investierten 1€ erhalten Sie', calc_cta: 'Demo mit diesen Werten anfragen', calc_help: 'Mehr als 100 Mitarbeitende? Sie erhalten einen maßgeschneiderten Enterprise-Plan — die reale Ersparnis ist meist noch höher.', calc_msg: 'Komme vom Ersparnisrechner', calc_msg_workers: 'Mitarbeitende', calc_msg_week: 'Wo', calc_msg_save: 'Geschätzte Ersparnis', calc_msg_month: 'Mon', calc_msg_year: 'Jahr', calc_msg_end: 'Ich möchte eine Demo.',
@@ -8762,12 +8716,6 @@ const translations = {
     show_eyebrow: 'Oberflache', show_title: 'Shiftia in Aktion erleben', show_desc: 'Ein visuelles, schnelles und intuitives Tool. Das sehen Ihre Teamleiter jeden Tag.',
     tab_planilla: 'Dienstplan', tab_dashboard: 'Dashboard', tab_ai: 'KI-Vertretung',
     hero_cta_signup: 'Pläne ansehen', hero_cta_signup_label: 'Pläne ansehen',
-    bespoke_pill: 'Über Shiftia v8', bespoke_eyebrow: 'Maßgefertigt', bespoke_title: 'Ihre App, keine Vorlage.',
-    bespoke_desc: 'Wir verkaufen kein generisches SaaS. Wir bauen für jeden Kunden eine zu 100% individuelle App auf Basis der Shiftia-v8-Engine: derselbe robuste Kern, der bereits Tausende Schichten plant, auf Ihr Unternehmen zugeschnitten, damit er vom ersten Tag an wie angegossen passt.',
-    bespoke_card1_title: 'Ihr Geschäft bestimmt das Produkt', bespoke_card1_desc: 'Wir analysieren, wie Sie arbeiten —nicht wie andere arbeiten— und formen die App nach Ihren Anforderungen: Ihre Rollen, Ihr Vokabular, Ihre Regeln, Ihre Berichte.',
-    bespoke_card2_title: 'Shiftia-v8-Engine als Basis', bespoke_card2_desc: 'Dienstplan-KI, Gerechtigkeit, Arbeitsrecht, Exporte und Auditierung: der Kern ist in der Produktion bewährt. Sie führen keine neue Software ein, sondern <em>Ihre</em> Version davon.',
-    bespoke_card3_title: 'Passt wie angegossen', bespoke_card3_desc: 'Keine erzwungene Konfiguration, kein Umbenennen von Feldern: die App spricht Ihre operative Sprache und passt sich Ihren realen Abläufen an, nicht umgekehrt.',
-    bespoke_footnote: '<strong>Eine App pro Kunde.</strong> Eine einzige Engine dahinter. Null Kompromisse bei der „Standardkonfiguration“.',
     p1_billing: 'oder 23 €/Monat, jährlich abgerechnet', p1_head: 'Der Kern, immer',
     p1_f5: 'Urlaub und Abwesenheiten', p1_f6: 'Konflikterkennung', p1_f7: 'Basis-Dashboard', p1_f8: 'Cloud + DSGVO · E-Mail-Support',
     price_btn_starter: 'Demo anfragen',
@@ -8807,16 +8755,6 @@ const translations = {
     dual_worker_f2: '<b>Demandes en 1 clic</b> : échange de poste, jour de repos, absence justifiée.',
     dual_worker_f3: '<b>Notifications push</b> lorsqu\'il y a des changements dans son planning.',
     dual_worker_f4: '<b>Décompte du temps de travail</b>, heures sup et nuits cumulées en un coup d\'œil.',
-    custom_eyebrow: '100% sur mesure',
-    custom_title: 'Pas un modèle. <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">C\'est votre app.</em>',
-    custom_desc: 'Chaque client démarre avec les fonctions essentielles et choisit les modules à ajouter. Vous ne payez que ce que vous utilisez, vous ne voyez que ce qui vous intéresse.',
-    custom_h3: 'Vous choisissez <em>ce que fait votre Shiftia</em>.',
-    custom_p: 'La convention d\'un hôpital de soins intensifs n\'a rien à voir avec celle d\'une société de sécurité. C\'est pourquoi nous ne vendons pas le même modèle à tous : nous construisons votre app avec vous, fonction par fonction.',
-    custom_b1: '<b>Noyau toujours inclus :</b> planning, équipe, profils, app mobile.',
-    custom_b2: '<b>Ajoutez ce dont vous avez besoin :</b> IA, pointage, rapports d\'incident, intégration paie, multi-centre…',
-    custom_b3: '<b>Personnalisation visuelle :</b> votre marque, vos couleurs, vos termes internes.',
-    custom_b4: '<b>Convention sur mesure :</b> nous saisissons vos règles (max nuits, repos, jours fériés) et l\'IA les respecte comme sacrées.',
-    custom_cta: 'Configurez votre app en réservant l\'appel',
     cmp_bad1: 'Plannings Excel partagés par e-mail',
     cmp_bad2: 'Des heures à chercher qui peut remplacer une absence',
     cmp_bad3: 'Plaintes constantes sur la répartition inégale des nuits',
@@ -8882,6 +8820,8 @@ const translations = {
     hero_title_1: 'Planification des equipes et des plannings,',
     hero_title_2: 'simplifiee',
     hero_desc: 'Shiftia automatise les plannings, gere les absences avec l\'IA et garantit l\'equite de votre equipe. Pour hopitaux, cliniques, EHPAD, usines et toute entreprise avec des plannings.',
+    hero_stat: 'Économisez <strong>~18&nbsp;h par mois</strong> de planification —et environ <strong>4 800&nbsp;€/an</strong> pour une équipe type.',
+    prod_pill: 'Moteur Shiftia v8', prod_eyebrow: 'Le produit', prod_title: 'Un moteur éprouvé, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configuré à votre convention.</em>', prod_desc: 'Nous ne construisons pas une app de zéro pour chaque client —ce serait cher et lent—. Vous partez du moteur Shiftia, déjà éprouvé en production, et nous le configurons à votre convention, votre vocabulaire et les modules dont vous avez besoin. Opérationnel en 5-7 jours, au forfait.', prod_c1_t: 'Moteur standard, éprouvé', prod_c1_d: 'IA de plannings, équité de nuit, droit du travail, audit et exports : le cœur planifie déjà des milliers de postes en production. Pas de logiciel à moitié fait.', prod_c2_t: 'Configuré à votre convention', prod_c2_d: 'Vos règles —plafonds de nuits, repos minimum, jours fériés, temps partiel—, votre vocabulaire et vos rôles. L\'IA les respecte comme sacrés dans chaque planning.', prod_c3_t: 'Vous choisissez vos modules', prod_c3_d: 'Le cœur toujours inclus ; ajoutez l\'IA, le pointage, l\'intégration paie ou le multi-site quand vous voulez. Vous payez seulement ce que vous utilisez.', prod_foot: '<strong>Standard à l\'intérieur, à vous à l\'extérieur.</strong> Opérationnel en 5-7 jours, forfait et sans coût par employé.', prod_cta: 'Configurez votre Shiftia en réservant l\'appel',
     hero_cta: 'Demander une demo', hero_cta2: 'Voir comment ça marche', hero_trial: 'Sans carte · Réponse sous 24 h · Garantie 30 jours', hero_t1: 'Sans carte', hero_t2: 'Réponse sous 24 h', hero_t3: 'Garantie 30 jours',
     pw_pre: 'à partir de', pw_unit: '€/employé par mois', pw_save_label: 'Économie annuelle', price_scarcity: 'Places d\'intégration limitées chaque mois · accompagnement en 5-7 jours', sticky_cta_label: 'Demander une démo',
     calc_eyebrow: 'Votre retour', calc_title: 'Calculez vos économies avec Shiftia', calc_desc: 'Ajustez les données de votre équipe et voyez les économies instantanément. Sans inscription.', calc_l_workers: 'Employés', calc_l_hours: 'Heures/semaine de planification', calc_l_cost: 'Coût moyen €/heure du responsable', calc_assume: 'Estimation basée sur une réduction moyenne de 70% du temps de planification grâce à l\'auto-génération par IA.', calc_k_hours: 'Heures économisées/mois', calc_k_money: 'Économie par mois', calc_k_year: 'Économie par an', calc_plan_pre: 'Plan recommandé', calc_roi_pre: 'Pour chaque 1€ investi, vous récupérez', calc_cta: 'Demander une démo avec ces données', calc_help: 'Plus de 100 employés ? Vous bénéficiez d\'un plan Enterprise sur mesure — les économies réelles sont souvent encore plus élevées.', calc_msg: 'Je viens du calculateur d\'économies', calc_msg_workers: 'employés', calc_msg_week: 'sem', calc_msg_save: 'Économie estimée', calc_msg_month: 'mois', calc_msg_year: 'an', calc_msg_end: 'Je souhaite une démo.',
@@ -8983,12 +8923,6 @@ const translations = {
     show_eyebrow: 'Interface', show_title: 'Decouvrez Shiftia en action', show_desc: 'Un outil visuel, rapide et intuitif. C\'est ce que vos cadres voient chaque jour.',
     tab_planilla: 'Planning', tab_dashboard: 'Tableau de bord', tab_ai: 'Couverture IA',
     hero_cta_signup: 'Voir les forfaits', hero_cta_signup_label: 'Voir les forfaits',
-    bespoke_pill: 'À propos de Shiftia v8', bespoke_eyebrow: 'Fait sur mesure', bespoke_title: 'Votre app, pas un modèle.',
-    bespoke_desc: 'Nous ne vendons pas un SaaS générique. Nous construisons une app 100% personnalisée pour chaque client sur le moteur Shiftia v8 : le même noyau robuste qui planifie déjà des milliers de postes, adapté à votre activité pour qu\'il s\'ajuste parfaitement dès le premier jour.',
-    bespoke_card1_title: 'Votre activité définit le produit', bespoke_card1_desc: 'Nous analysons votre façon de travailler —pas celle des autres— et façonnons l\'app à votre mesure : vos rôles, votre vocabulaire, vos règles, vos rapports.',
-    bespoke_card2_title: 'Le moteur Shiftia v8 comme base', bespoke_card2_desc: 'IA de planning, équité, conformité au droit du travail, exports et audit : le noyau est éprouvé en production. Vous ne lancez pas un nouveau logiciel, vous lancez <em>votre</em> version.',
-    bespoke_card3_title: 'S\'ajuste parfaitement', bespoke_card3_desc: 'Pas de configuration forcée ni de champs à renommer : l\'app parle votre langage opérationnel et s\'adapte à vos flux réels, et non l\'inverse.',
-    bespoke_footnote: '<strong>Une app par client.</strong> Un seul moteur derrière. Zéro compromis de « configuration standard ».',
     p1_billing: 'ou 23 €/mois facturé annuellement', p1_head: 'Le noyau, toujours',
     p1_f5: 'Congés et absences', p1_f6: 'Détection de conflits', p1_f7: 'Tableau de bord basique', p1_f8: 'Cloud + RGPD · support par e-mail',
     price_btn_starter: 'Demander une démo',

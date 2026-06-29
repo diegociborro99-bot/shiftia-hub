@@ -124,6 +124,7 @@ const PRETTY_HTML_ROUTES = {
   '/dashboard':'dashboard.html',
   '/docs':     'docs.html',
   '/demo':     'demo.html',
+  '/sobre-nosotros': 'sobre-nosotros.html',
   '/recursos': 'recursos/index.html',
   '/recursos/descanso-minimo-entre-turnos': 'recursos/descanso-minimo-entre-turnos.html',
   '/recursos/calculadora-equidad-nocturna': 'recursos/calculadora-equidad-nocturna.html',
@@ -2003,6 +2004,7 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: '/recursos/calculadora-equidad-nocturna',     priority: '0.8', changefreq: 'monthly' },
     { loc: '/recursos/excel-vs-software-turnos',         priority: '0.8', changefreq: 'monthly' },
     { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
+    { loc: '/sobre-nosotros',                            priority: '0.6', changefreq: 'monthly' },
     { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
     { loc: '/terminos',                                  priority: '0.3', changefreq: 'yearly'  },
     { loc: '/cookies',                                   priority: '0.3', changefreq: 'yearly'  }
@@ -2021,6 +2023,7 @@ ${urls.map(u => `  <url>
   res.send(xml);
 });
 
+app.get('/sobre-nosotros', (req, res) => res.sendFile(path.join(__dirname, 'public', 'sobre-nosotros.html')));
 app.get('/privacidad', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacidad.html')));
 app.get('/terminos',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'terminos.html')));
 app.get('/cookies',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));
