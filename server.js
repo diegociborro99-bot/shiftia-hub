@@ -89,7 +89,10 @@ if (!BOOKING_CANCEL_SECRET) {
 const BCRYPT_ROUNDS = Math.max(10, parseInt(process.env.BCRYPT_ROUNDS, 10) || 12);
 
 // ====== APP CONFIG ======
-const APP_URL = process.env.APP_URL || 'https://shiftia.es';
+// El dominio raíz (shiftia.es) hace 301 → www.shiftia.es. Los clientes de correo
+// NO siguen redirecciones al cargar imágenes (logo) ni queda fino en enlaces, así
+// que normalizamos siempre a www para que las imágenes/enlaces resuelvan directos.
+const APP_URL = (process.env.APP_URL || 'https://www.shiftia.es').replace(/^https?:\/\/shiftia\.es(?=\/|$)/, 'https://www.shiftia.es');
 
 // ====== THIRD-PARTY ANALYTICS / CHAT (server-side injection) ======
 // Snippets are injected into the <head> of every HTML response ONLY if the env
