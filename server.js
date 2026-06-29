@@ -521,6 +521,10 @@ function emailTag(email) {
 // Si falta GMAIL_USER, el SMTP queda deshabilitado (Resend se usa como provider primario).
 const GMAIL_USER = process.env.GMAIL_USER || '';
 const GMAIL_PASS = process.env.GMAIL_APP_PASSWORD || '';
+// Buzón de empresa al que llegan TODAS las notificaciones internas (llamadas
+// agendadas, solicitudes de demo, contacto, cancelaciones) y al que responden
+// los clientes (reply-to). Se puede sobreescribir con SUPPORT_EMAIL en el entorno.
+const NOTIFY_EMAIL = process.env.SUPPORT_EMAIL || 'info@shiftia.es';
 
 let transporter = null;
 let emailReady = false;
@@ -586,7 +590,7 @@ function sendMail(options) {
       to: Array.isArray(options.to) ? options.to : [options.to],
       subject: options.subject,
       html: options.html,
-      reply_to: options.replyTo || GMAIL_USER
+      reply_to: options.replyTo || NOTIFY_EMAIL
     };
 
     console.log(`Resend: sending to ${payload.to.join(', ')} — ${payload.subject}`);
@@ -735,7 +739,7 @@ function emailTemplate(opts) {
             ${footerExtra}
             <p style="margin:0 0 10px;font-size:12px;color:#7a766f;line-height:1.55;font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
               Shiftia &middot; Planificación de turnos para equipos sanitarios.<br>
-              Madrid, España &middot; <a href="mailto:hola@shiftia.es" style="color:#7a766f;text-decoration:underline;">hola@shiftia.es</a>
+              Asturias, España &middot; <a href="mailto:info@shiftia.es" style="color:#7a766f;text-decoration:underline;">info@shiftia.es</a>
             </p>
             <p style="margin:0;font-size:12px;color:#9a958c;line-height:1.55;font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
               <a href="${APP_URL}/privacidad" style="color:#9a958c;text-decoration:underline;">Privacidad</a>
@@ -853,7 +857,7 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
     const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     sendMail({
       from: `"Shiftia" <${GMAIL_USER}>`,
-      replyTo: process.env.SUPPORT_EMAIL || GMAIL_USER,
+      replyTo: NOTIFY_EMAIL,
       to: user.email,
       subject: 'Bienvenido a Shiftia — tu planificación de turnos empieza aquí',
       html: emailTemplate({
@@ -1227,7 +1231,7 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     // Fire-and-forget email (don't block response)
     sendMail({
           from: `"Shiftia Support" <${GMAIL_USER}>`,
-          to: process.env.SUPPORT_EMAIL || GMAIL_USER,
+          to: NOTIFY_EMAIL,
           subject: `[Soporte - ${catLabels[cat] || cat}] ${esc(subject)}`,
           html: emailTemplate({
             preheader: `Nuevo ticket de soporte: ${esc(subject)}`,
@@ -1318,7 +1322,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     // Fire-and-forget emails (don't block response)
     sendMail({
           from: `"Shiftia HUB" <${GMAIL_USER}>`,
-          to: process.env.SUPPORT_EMAIL || GMAIL_USER,
+          to: NOTIFY_EMAIL,
           subject: `Nueva solicitud de demo — ${safeName} (${safeCompany || 'Sin empresa'})`,
           html: emailTemplate({
             preheader: `Nueva solicitud de demo de ${safeName}`,
@@ -1679,7 +1683,7 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
       summary: `Llamada con Shiftia — ${name}${company ? ' (' + company + ')' : ''}`,
       description: `Demo personalizada de Shiftia.\n\nContacto: ${name}\nEmpresa: ${company || '-'}\nTeléfono: ${phone}\n${message ? 'Mensaje: ' + message : ''}`,
       location: 'Llamada por teléfono',
-      organizerEmail: process.env.SUPPORT_EMAIL || GMAIL_USER,
+      organizerEmail: NOTIFY_EMAIL,
       attendeeEmail: email
     });
     const icsAttachment = {
@@ -1689,7 +1693,7 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     };
 
     const cancelUrl = `${APP_URL}/booking/cancel?id=${bookingId}&token=${cancelToken}`;
-    const supportEmail = process.env.SUPPORT_EMAIL || GMAIL_USER;
+    const supportEmail = NOTIFY_EMAIL;
 
     // Responder OK al cliente DESPUÉS de confirmar la fila en BD
     console.log(`Booking #${bookingId} OK: ${emailTag(email)} — ${date} ${time} (Madrid)`);
@@ -1814,7 +1818,7 @@ app.get('/booking/cancel', async (req, res) => {
     // Notificación interna de cancelación
     sendMail({
       from: `"Shiftia Booking" <${GMAIL_USER}>`,
-      to: process.env.SUPPORT_EMAIL || GMAIL_USER,
+      to: NOTIFY_EMAIL,
       subject: `Cancelación de llamada #${id} — ${b.email}`,
       html: emailTemplate({
         preheader: `Cancelación de llamada #${id}`,
