@@ -1210,8 +1210,11 @@
       setTimeout(place, 60); // tras el scroll suave, reposiciona
     }
 
-    function end() {
+    function end(completed) {
       try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      // completed === true solo cuando se pulsa "Empezar" en el último paso;
+      // cualquier otra vía (Saltar, Esc, click en overlay) cuenta como skip.
+      try { if (window.posthog) posthog.capture(completed === true ? 'demo_tour_completed' : 'demo_tour_skipped', { step: idx + 1 }); } catch (e) {}
       window.removeEventListener('resize', onMove);
       window.removeEventListener('scroll', onMove, true);
       document.removeEventListener('keydown', onKey);
@@ -1248,12 +1251,13 @@
       card.querySelector('.ds-tour-card__skip').addEventListener('click', end);
       card.querySelector('[data-tour-prev]').addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
       card.querySelector('[data-tour-next]').addEventListener('click', function () {
-        if (idx < STEPS.length - 1) { idx++; render(); } else { end(); }
+        if (idx < STEPS.length - 1) { idx++; render(); } else { end(true); }
       });
       overlay.addEventListener('click', end);
       window.addEventListener('resize', onMove);
       window.addEventListener('scroll', onMove, true);
       document.addEventListener('keydown', onKey);
+      try { if (window.posthog) posthog.capture('demo_tour_started'); } catch (e) {}
       render();
       requestAnimationFrame(function () {
         overlay.classList.add('is-active');
@@ -1264,6 +1268,38 @@
     // Espera a que la planilla de ejemplo esté pintada para no tapar una tabla vacía.
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 700); });
     else setTimeout(start, 700);
+  })();
+  </script>
+
+  <script>
+  /* Analítica de la demo (PostHog, inyectado por el servidor en /demo).
+     Delegación pura: no toca el motor de la demo. Todos los capture van
+     protegidos por si el snippet no está (ad-blocker, entorno local). */
+  (function demoAnalytics() {
+    'use strict';
+    function track(name, props) {
+      try { if (window.posthog) posthog.capture(name, props || {}); } catch (e) {}
+    }
+    function bind(id, event) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('click', function () { track(event); });
+    }
+    bind('btn-ai', 'demo_ai_click');
+    bind('btn-mode', 'demo_mode_toggle');
+    bind('btn-reset', 'demo_reset');
+    bind('btn-publish', 'demo_publish_click');
+    var grid = document.getElementById('grid');
+    var firstTouch = false;
+    if (grid) grid.addEventListener('click', function () {
+      if (firstTouch) return;
+      firstTouch = true;
+      track('demo_first_cell_click');
+    });
+    document.querySelectorAll('a[href="/#contact"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        track('demo_cta_contact_click', { label: (a.textContent || '').trim() });
+      });
+    });
   })();
   </script>
 </body>

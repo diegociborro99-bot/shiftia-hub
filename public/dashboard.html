@@ -122,10 +122,26 @@
         }
         .app-nav a:hover { color: var(--ds-text); background: var(--ds-bg-subtle); }
         .app-nav a.active { color: var(--ds-text); background: var(--ds-bg-subtle); }
-        /* En móvil el nav center no cabe junto al logo + avatar — lo ocultamos. Las
-           secciones siguen accesibles vía scroll y desde el user menu. */
+        /* En móvil el nav no cabe junto al logo + avatar: pasa a segunda fila del
+           header como barra horizontal deslizable (patrón app), sin perder acceso. */
         @media (max-width: 640px) {
-            .app-nav { display: none; }
+            .app-header-inner {
+                grid-template-columns: auto auto;
+                justify-content: space-between;
+                gap: 10px 12px;
+            }
+            .app-nav {
+                grid-column: 1 / -1; grid-row: 2;
+                justify-self: stretch;
+                display: flex; gap: 2px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                margin: 0 calc(-1 * var(--ds-space-6));
+                padding: 0 var(--ds-space-6) 2px;
+            }
+            .app-nav::-webkit-scrollbar { display: none; }
+            .app-nav a { white-space: nowrap; padding: 7px 12px; }
         }
 
         .app-header-right {
