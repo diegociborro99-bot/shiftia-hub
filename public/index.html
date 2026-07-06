@@ -384,6 +384,37 @@ a { text-decoration: none; color: inherit; }
   --z-top: 9999;
 }
 
+/* ====== BANDA DE CLIENTES (bajo el hero) ====== */
+.client-band {
+  padding: 30px 48px;
+  background: var(--bg);
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+.client-band-inner {
+  display: flex; align-items: center; justify-content: center;
+  gap: 18px 44px; flex-wrap: wrap;
+}
+.client-band-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--text3); white-space: nowrap; margin: 0;
+}
+.client-band-row { display: flex; align-items: center; gap: 16px 40px; flex-wrap: wrap; justify-content: center; }
+.client-band-item { display: flex; flex-direction: column; gap: 2px; }
+.client-band-name { font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; color: var(--text1); }
+.client-band-meta { font-size: 0.72rem; color: var(--text3); }
+.client-band-link {
+  font-size: 0.8rem; font-weight: 600; color: var(--primary);
+  text-decoration: none; white-space: nowrap;
+}
+.client-band-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 768px) {
+  .client-band { padding: 22px 20px; }
+  .client-band-inner { gap: 14px 24px; }
+  .client-band-row { gap: 12px 24px; }
+  .client-band-link { display: none; } /* en móvil la banda queda limpia; la sección completa está más abajo */
+}
+
 /* Micro-detalles editoriales */
 ::selection { background: rgba(15,122,109,0.18); color: #0a3f38; }
 /* Cifras tabulares: los números no "bailan" al animarse (contadores, precios, KPIs) */
@@ -5652,6 +5683,34 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   </div>
 </section>
 
+<!-- BANDA DE CLIENTES — prueba social visible nada más aterrizar.
+     La sección completa con tarjetas (.proof) sigue viviendo más abajo; esto
+     es su versión condensada, tipográfica y discreta, bajo el hero. -->
+<section class="client-band" aria-label="Empresas que confían en Shiftia">
+  <div class="container client-band-inner">
+    <p class="client-band-label" data-i18n="clients_label">Confían en Shiftia</p>
+    <div class="client-band-row">
+      <div class="client-band-item">
+        <span class="client-band-name">SPAR Supermercados</span>
+        <span class="client-band-meta" data-i18n="cb_meta1">Retail · Gran Canaria</span>
+      </div>
+      <div class="client-band-item">
+        <span class="client-band-name">NONWATIO</span>
+        <span class="client-band-meta" data-i18n="cb_meta2">Frío industrial · Valencia</span>
+      </div>
+      <div class="client-band-item">
+        <span class="client-band-name">La Otra Abacería</span>
+        <span class="client-band-meta" data-i18n="cb_meta3">Hostelería · León</span>
+      </div>
+      <div class="client-band-item">
+        <span class="client-band-name" data-i18n="cb_name4">Servicios sanitarios</span>
+        <span class="client-band-meta" data-i18n="cb_meta4">Sanidad · Asturias</span>
+      </div>
+    </div>
+    <a class="client-band-link" href="#clientes" data-i18n="clients_more">Conócelos ↓</a>
+  </div>
+</section>
+
 <!-- CLARIDAD DE POSICIONAMIENTO — qué es Shiftia (y qué no) -->
 <section class="features" id="clarity" aria-labelledby="clarityTitle">
   <div class="container centered">
@@ -6995,7 +7054,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 </section>
 
 <!-- TRUSTED BY -->
-<section class="proof">
+<section class="proof" id="clientes">
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="proof_eyebrow">Confianza</div>
     <h2 class="section-h2 reveal" data-i18n="proof_title">Confiado por profesionales de:</h2>
@@ -8197,6 +8256,13 @@ let currentLang = 'es';
 const translations = {
   es: {
     trust_band: 'Confiado por equipos en sectores con turnos exigentes',
+    clients_label: 'Confían en Shiftia',
+    clients_more: 'Conócelos ↓',
+    cb_meta1: 'Retail · Gran Canaria',
+    cb_meta2: 'Frío industrial · Valencia',
+    cb_meta3: 'Hostelería · León',
+    cb_name4: 'Servicios sanitarios',
+    cb_meta4: 'Sanidad · Asturias',
     sec_hospitals: 'Hospitales',
     sec_residences: 'Residencias',
     sec_clinics: 'Clínicas',
@@ -8432,6 +8498,13 @@ const translations = {
   },
   en: {
     trust_band: 'Trusted by teams in demanding shift sectors',
+    clients_label: 'Trusted by',
+    clients_more: 'Meet them ↓',
+    cb_meta1: 'Retail · Gran Canaria',
+    cb_meta2: 'Industrial cold storage · Valencia',
+    cb_meta3: 'Hospitality · León',
+    cb_name4: 'Healthcare services',
+    cb_meta4: 'Healthcare · Asturias',
     sec_hospitals: 'Hospitals',
     sec_residences: 'Care homes',
     sec_clinics: 'Clinics',
@@ -8639,6 +8712,13 @@ const translations = {
   },
   de: {
     trust_band: 'Vertraut von Teams in anspruchsvollen Schichtbranchen',
+    clients_label: 'Sie vertrauen Shiftia',
+    clients_more: 'Mehr erfahren ↓',
+    cb_meta1: 'Einzelhandel · Gran Canaria',
+    cb_meta2: 'Industriekühlung · Valencia',
+    cb_meta3: 'Gastgewerbe · León',
+    cb_name4: 'Gesundheitsdienste',
+    cb_meta4: 'Gesundheitswesen · Asturien',
     sec_hospitals: 'Krankenhäuser',
     sec_residences: 'Pflegeheime',
     sec_clinics: 'Kliniken',
@@ -8846,6 +8926,13 @@ const translations = {
   },
   fr: {
     trust_band: 'Adopté par des équipes dans des secteurs à horaires exigeants',
+    clients_label: 'Ils font confiance à Shiftia',
+    clients_more: 'Découvrez-les ↓',
+    cb_meta1: 'Commerce · Gran Canaria',
+    cb_meta2: 'Froid industriel · Valence',
+    cb_meta3: 'Hôtellerie · León',
+    cb_name4: 'Services de santé',
+    cb_meta4: 'Santé · Asturies',
     sec_hospitals: 'Hôpitaux',
     sec_residences: 'Maisons de retraite',
     sec_clinics: 'Cliniques',
