@@ -37,7 +37,9 @@ check('niega "bolsa de profesionales/personal externo"', /bolsa de (profesionale
 check('afirma que planifica "tu propia plantilla"', /tu propia plantilla/i.test(html));
 
 console.log('B · Sección de ciclo completo de planificación');
-check('existe la sección id="full-cycle"', /id="full-cycle"/.test(html));
+// La sección id="full-cycle" se fusionó en Funciones (commit 730e03d); lo que
+// debe sobrevivir es el mensaje de planificación continuada, no el id.
+check('menciona planificación continuada de plantilla propia', /planificaci[oó]n continuada|de forma continuada/i.test(html));
 check('menciona "rotaciones"', /rotaciones/i.test(html));
 check('menciona "gestión de ausencias" o "ausencias y vacaciones"', /(gesti[oó]n de ausencias|ausencias y vacaciones)/i.test(html));
 check('menciona "reglas de convenio" o "reglas complejas"', /(reglas (complejas )?de(l)? convenio|reglas complejas)/i.test(html));
@@ -67,8 +69,12 @@ let faqPage = null;
 for (const block of ldBlocks) {
   try {
     const parsed = JSON.parse(block);
-    if (parsed['@type'] === 'SoftwareApplication') softwareApp = parsed;
-    if (parsed['@type'] === 'FAQPage') faqPage = parsed;
+    // Los nodos pueden venir sueltos o anidados en @graph (como en index.html).
+    const nodes = Array.isArray(parsed['@graph']) ? parsed['@graph'] : [parsed];
+    for (const node of nodes) {
+      if (node['@type'] === 'SoftwareApplication') softwareApp = node;
+      if (node['@type'] === 'FAQPage') faqPage = node;
+    }
   } catch (e) { ldValid = false; }
 }
 check('todos los JSON-LD parsean (' + ldBlocks.length + ' bloques)', ldValid);

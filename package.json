@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "build": "node scripts/build.mjs",
+    "test": "node --test",
     "indexnow": "node scripts/indexnow.mjs"
   },
   "devDependencies": {

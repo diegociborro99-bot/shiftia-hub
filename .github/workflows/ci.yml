@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Tests (lib + smoke de arranque del servidor)
+        run: npm test
+
+      - name: Build (minificado v36.js) y comprobar que está commiteado
+        run: |
+          npm run build
+          if ! git diff --quiet -- public/v36.min.js; then
+            echo "::error::public/v36.min.js está desincronizado de v36.js — ejecuta 'npm run build' y commitea el resultado."
+            git --no-pager diff --stat -- public/v36.min.js
+            exit 1
+          fi
+
+      - name: Verificador de posicionamiento (copy/SEO de la landing)
+        run: node scripts/verify-positioning.js

@@ -9,6 +9,7 @@ const { Pool } = require('pg');
 const rateLimit = require('express-rate-limit');
 
 const compression = require('compression');
+const bookingLib = require('./lib/booking');
 
 const app = express();
 app.disable('x-powered-by');
@@ -239,6 +240,14 @@ const poolConfig = process.env.DATABASE_URL
       user: process.env.PGUSER,
       password: process.env.PGPASSWORD,
     };
+
+// Límites explícitos del pool: sin ellos, un pico de tráfico puede agotar las
+// conexiones del plan de Postgres o dejar requests colgados indefinidamente.
+poolConfig.max = Number(process.env.PG_POOL_MAX || 10);
+poolConfig.idleTimeoutMillis = Number(process.env.PG_IDLE_TIMEOUT_MS || 30000);
+poolConfig.connectionTimeoutMillis = Number(process.env.PG_CONNECT_TIMEOUT_MS || 10000);
+// Corta cualquier query zombi en el servidor antes de que bloquee el pool.
+poolConfig.statement_timeout = Number(process.env.PG_STATEMENT_TIMEOUT_MS || 15000);
 
 const pool = new Pool(poolConfig);
 
@@ -891,7 +900,7 @@ app.post('/api/auth/register', authLimiter, async (req, res) => {
     res.status(201).json({ token, user: userPublic });
 
     // Fire-and-forget welcome email (don't block response)
-    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const esc = bookingLib.escHtml;
     sendMail({
       from: `"Shiftia" <${GMAIL_USER}>`,
       replyTo: NOTIFY_EMAIL,
@@ -1009,7 +1018,7 @@ app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
 
       // Send email with reset link
       const resetLink = `${APP_URL}/reset-password?token=${resetToken}`;
-      const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      const esc = bookingLib.escHtml;
 
       sendMail({
         from: `"Shiftia" <${RESEND_FROM}>`,
@@ -1236,7 +1245,7 @@ app.post('/api/support', authMiddleware, async (req, res) => {
     const catLabels = { general: 'Consulta general', bug: 'Reporte de error', billing: 'Facturación', feature: 'Sugerencia de mejora' };
 
     // HTML-escape helper for email content
-    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const esc = bookingLib.escHtml;
 
     // Save ticket to database (primary)
     try {
@@ -1321,7 +1330,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
     }
 
     // Sanitize HTML to prevent XSS in emails
-    const esc = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const esc = bookingLib.escHtml;
     const safeName = esc(name);
     const safeEmail = esc(email);
     const safeCompany = esc(company);
@@ -1414,98 +1423,24 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
 
 // ====== CALL BOOKING API (v2 — TIMESTAMPTZ + integridad + .ics + cancel) ======
 // Helpers de booking — todos en zona Europe/Madrid.
-const ESC_HTML = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const ESC_HTML = bookingLib.escHtml;
 // `cap` is defined globally in HELPER FUNCTIONS section above.
 
-// Genera lista de slots HH:MM válidos del día según BOOKING_HOUR_START/END/SLOT_MINUTES
-// y excluye los del bloque de comida.
-function generateDaySlots() {
-  const slots = [];
-  const stepMin = BOOKING_SLOT_MINUTES;
-  for (let h = BOOKING_HOUR_START; h < BOOKING_HOUR_END; h++) {
-    for (let m = 0; m < 60; m += stepMin) {
-      const t = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-      if (!BOOKING_LUNCH_BLOCK.includes(t)) slots.push(t);
-    }
-  }
-  return slots;
-}
-
-// Construye un ISO con offset correcto para Europe/Madrid en una fecha/hora dada.
-// Maneja DST sin libs externas usando Intl.DateTimeFormat.
-function madridIsoFromLocal(dateStr /* YYYY-MM-DD */, timeStr /* HH:MM */) {
-  // Construir Date como si fuera UTC, luego corregir el offset que Madrid tendría a esa fecha
-  const utcGuess = new Date(dateStr + 'T' + timeStr + ':00Z');
-  // Calcular offset (en minutos) que Europe/Madrid tiene en ese momento
-  const fmt = new Intl.DateTimeFormat('en-US', {
-    timeZone: BOOKING_TIMEZONE,
-    timeZoneName: 'shortOffset',
-    year: 'numeric'
-  });
-  const parts = fmt.formatToParts(utcGuess);
-  const offTok = parts.find(p => p.type === 'timeZoneName').value; // e.g. "GMT+2"
-  const m = offTok.match(/GMT([+-])(\d+)(?::(\d+))?/);
-  const sign = m && m[1] === '-' ? -1 : 1;
-  const hh = m ? Number(m[2]) : 0;
-  const mm = m && m[3] ? Number(m[3]) : 0;
-  const offMin = sign * (hh * 60 + mm);
-  // El instante real en UTC es: localGuess - offset
-  return new Date(utcGuess.getTime() - offMin * 60000);
-}
-
-function prettyDateMadrid(d) {
-  return new Intl.DateTimeFormat('es-ES', {
-    timeZone: BOOKING_TIMEZONE,
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-  }).format(d);
-}
-function prettyTimeMadrid(d) {
-  return new Intl.DateTimeFormat('es-ES', {
-    timeZone: BOOKING_TIMEZONE, hour: '2-digit', minute: '2-digit', hour12: false
-  }).format(d);
-}
-
-// Token de cancelación HMAC firmado — sin guardarlo, validable on-demand.
-function makeCancelToken(bookingId, email) {
-  const payload = `${bookingId}.${email}`;
-  return crypto.createHmac('sha256', BOOKING_CANCEL_SECRET).update(payload).digest('hex').slice(0, 32);
-}
-function verifyCancelToken(bookingId, email, token) {
-  if (!token) return false;
-  const expected = makeCancelToken(bookingId, email);
-  return crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expected));
-}
-
-// .ics para Google/Outlook/Apple
-function buildIcs({ uid, startUtc, endUtc, summary, description, location, organizerEmail, attendeeEmail }) {
-  const fmt = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Shiftia//Booking//ES',
-    'CALSCALE:GREGORIAN',
-    'METHOD:REQUEST',
-    'BEGIN:VEVENT',
-    `UID:${uid}@shiftia.es`,
-    `DTSTAMP:${fmt(new Date())}`,
-    `DTSTART:${fmt(startUtc)}`,
-    `DTEND:${fmt(endUtc)}`,
-    `SUMMARY:${summary.replace(/[\n,;]/g, ' ')}`,
-    `DESCRIPTION:${(description || '').replace(/\n/g, '\\n').replace(/[,;]/g, ' ')}`,
-    `LOCATION:${(location || '').replace(/[,;]/g, ' ')}`,
-    `ORGANIZER;CN=Shiftia:mailto:${organizerEmail}`,
-    `ATTENDEE;CN=${attendeeEmail};RSVP=TRUE:mailto:${attendeeEmail}`,
-    'STATUS:CONFIRMED',
-    'BEGIN:VALARM',
-    'TRIGGER:-PT15M',
-    'ACTION:DISPLAY',
-    'DESCRIPTION:Recordatorio',
-    'END:VALARM',
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ];
-  return lines.join('\r\n');
-}
+// Lógica pura de reservas extraída a ./lib/booking.js (testeable en aislamiento,
+// ver test/booking.test.js). Aquí quedan wrappers finos con la config del entorno
+// para no tocar ningún call site.
+const generateDaySlots = () => bookingLib.generateDaySlots({
+  hourStart: BOOKING_HOUR_START,
+  hourEnd: BOOKING_HOUR_END,
+  slotMinutes: BOOKING_SLOT_MINUTES,
+  lunchBlock: BOOKING_LUNCH_BLOCK
+});
+const madridIsoFromLocal = (dateStr, timeStr) => bookingLib.madridIsoFromLocal(dateStr, timeStr, BOOKING_TIMEZONE);
+const prettyDateMadrid = (d) => bookingLib.prettyDateMadrid(d, BOOKING_TIMEZONE);
+const prettyTimeMadrid = (d) => bookingLib.prettyTimeMadrid(d, BOOKING_TIMEZONE);
+const makeCancelToken = (bookingId, email) => bookingLib.makeCancelToken(bookingId, email, BOOKING_CANCEL_SECRET);
+const verifyCancelToken = (bookingId, email, token) => bookingLib.verifyCancelToken(bookingId, email, token, BOOKING_CANCEL_SECRET);
+const buildIcs = bookingLib.buildIcs;
 
 // GET slots — devuelve disponibilidad real de un día
 app.get('/api/booking/slots', apiLimiter, async (req, res) => {
