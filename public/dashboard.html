@@ -1440,7 +1440,7 @@
                            - data-product-status="ready" en el <a>
                            - href="https://app.shiftia.es" (o la URL real del cliente)
                          La luz roja pasará a verde y el texto secundario también. -->
-                    <a href="https://sara.shiftia.es"
+                    <a href="/demo"
                        target="_blank" rel="noopener"
                        class="aside-card aside-card-product reveal"
                        data-product-status="pending"
@@ -1859,7 +1859,7 @@
                 scheduleStep.style.cursor = 'pointer';
                 scheduleStep.setAttribute('role', 'button');
                 scheduleStep.setAttribute('tabindex', '0');
-                const triggerSchedule = () => window.open('https://sara.shiftia.es', '_blank');
+                const triggerSchedule = () => window.open('/demo', '_blank');
                 scheduleStep.addEventListener('click', triggerSchedule);
                 scheduleStep.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); triggerSchedule(); }

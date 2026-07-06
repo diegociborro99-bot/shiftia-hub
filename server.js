@@ -2275,7 +2275,7 @@ async function scanReminders() {
 function startReminderScheduler() {
   if (!RESEND_KEY && !transporter) { console.log('Recordatorios DESACTIVADOS (sin email)'); return; }
   setInterval(() => { scanReminders().catch(() => {}); }, REMINDER_SCAN_MS);
-  console.log(`Recordatorios ON — escaneo cada ${REMINDER_SCAN_MS / 60000} min · 24h cliente · 1h cliente + ${NOTIFY_EMAIL}`);
+  console.log(`Recordatorios ON — escaneo cada ${REMINDER_SCAN_MS / 60000} min · 1h cliente + ${NOTIFY_EMAIL}`);
 }
 
 // ====== SERVER STARTUP ======
