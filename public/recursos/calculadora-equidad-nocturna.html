@@ -100,6 +100,20 @@ li{margin-bottom:8px;line-height:1.6}
 .verdict.ok{color:var(--green)}
 .verdict.warn{color:var(--amber)}
 .verdict.bad{color:var(--red)}
+/* Captura de email del análisis */
+.mailbox{margin-top:20px;padding:18px 20px;background:var(--ds-accent-soft,#e9f5f2);border:1px solid rgba(15,122,109,.25);border-radius:12px}
+.mailbox-t{font-weight:700;font-size:0.95rem;color:var(--text1);margin:0 0 10px}
+.mailbox-row{display:flex;gap:8px;flex-wrap:wrap}
+.mailbox-row input{flex:1;min-width:200px;padding:11px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;font-family:inherit;font-size:0.95rem}
+.mailbox-row input:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(15,122,109,.12)}
+.mailbox-row button{padding:11px 18px;background:var(--ds-bg-inverse,#0e0f0f);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:0.92rem;font-weight:600;cursor:pointer;transition:background .2s,transform .2s}
+.mailbox-row button:hover{background:var(--ds-text-strong,#000);transform:translateY(-1px)}
+.mailbox-row button:disabled{opacity:.6;cursor:wait;transform:none}
+.mailbox-note{margin:8px 0 0;font-size:0.72rem;color:var(--text3)}
+.mailbox-note a{color:var(--accent)}
+.mailbox-msg{margin:8px 0 0;font-size:0.85rem;font-weight:600;display:none}
+.mailbox-msg.ok{display:block;color:var(--accent)}
+.mailbox-msg.err{display:block;color:var(--red,#c0392b)}
 .score-pill{font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:6px 12px;border-radius:999px;align-self:center;white-space:nowrap}
 .score-pill.ok{background:rgba(10,139,83,.12);color:var(--green)}
 .score-pill.warn{background:rgba(184,110,0,.12);color:var(--amber)}
@@ -216,6 +230,7 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
     <h3>Equidad sin pelear con Excel</h3>
     <p>Shiftia genera tu planilla automáticamente buscando la mejor equidad posible: noches, festivos y guardias repartidos entre el equipo respetando convenio. Sin tener que justificar a nadie.</p>
     <a href="/#contact">Probar Shiftia con tu equipo</a>
+    <p style="margin:16px 0 0;font-size:0.88rem;">¿Prefieres empezar suave? <a href="/recursos/auditoria-cuadrante" style="display:inline;background:none;padding:0;box-shadow:none;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-weight:600;">Pide una auditoría gratuita de tu cuadrante real →</a></p>
   </div>
 
   <div class="related">
@@ -346,8 +361,52 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
         </div>
         <div class="bars">${barsHtml}</div>
         <div class="diag"><strong>Diagnóstico.</strong> ${diag}</div>
+        <div class="mailbox">
+          <p class="mailbox-t">Guárdate este análisis</p>
+          <div class="mailbox-row">
+            <input type="email" id="mailboxEmail" placeholder="tu@empresa.es" autocomplete="email" aria-label="Tu email">
+            <button type="button" id="mailboxSend">Enviármelo por email</button>
+          </div>
+          <p class="mailbox-note">Solo para enviarte este análisis. <a href="/privacidad">Privacidad</a>.</p>
+          <p class="mailbox-msg" id="mailboxMsg" role="status" aria-live="polite"></p>
+        </div>
       </div>`;
+
+    // Resumen en texto plano para "Enviármelo por email" (el server lo escapa y lo envuelve en la plantilla)
+    lastSummary = [
+      'Equidad nocturna — ' + verdict,
+      'Personas: ' + valid.length + ' · Noches totales: ' + total + ' · Media: ' + mean.toFixed(2) + ' · Desviación: ' + stdDev.toFixed(2) + ' · Rango: ' + range + ' (' + min + '-' + max + ')',
+      'Reparto: ' + valid.map((p, i) => (p.name || 'Persona ' + (i + 1)) + ' ' + p.n).join(', '),
+      'Diagnóstico: ' + diag.replace(/<[^>]+>/g, '')
+    ].join('\n');
   };
+
+  // ----- Envío del análisis por email (lead de herramienta) -----
+  let lastSummary = '';
+  resultEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('#mailboxSend');
+    if (!btn) return;
+    const input = document.getElementById('mailboxEmail');
+    const msgEl = document.getElementById('mailboxMsg');
+    const email = (input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msgEl.className = 'mailbox-msg err'; msgEl.textContent = 'Revisa el email.'; return;
+    }
+    btn.disabled = true;
+    fetch('/api/tools/email-results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tool: 'equidad', email, summary: lastSummary })
+    })
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(() => {
+        msgEl.className = 'mailbox-msg ok';
+        msgEl.textContent = 'Enviado. Revisa tu bandeja (y el spam la primera vez).';
+        try { if (window.posthog) posthog.capture('tool_email_capture', { tool: 'equidad' }); } catch (err) {}
+      })
+      .catch(() => { msgEl.className = 'mailbox-msg err'; msgEl.textContent = 'No se pudo enviar. Prueba de nuevo en un minuto.'; })
+      .finally(() => { btn.disabled = false; });
+  });
   function escapeHtml(s){return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
   // Bindings (sustituyen a los antiguos handlers inline, bloqueados por CSP)

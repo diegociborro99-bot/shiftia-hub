@@ -9,6 +9,7 @@ const { Pool } = require('pg');
 const rateLimit = require('express-rate-limit');
 
 const compression = require('compression');
+const multer = require('multer');
 const bookingLib = require('./lib/booking');
 
 const app = express();
@@ -133,6 +134,7 @@ const PRETTY_HTML_ROUTES = {
   '/recursos/descanso-minimo-entre-turnos': 'recursos/descanso-minimo-entre-turnos.html',
   '/recursos/calculadora-equidad-nocturna': 'recursos/calculadora-equidad-nocturna.html',
   '/recursos/excel-vs-software-turnos':     'recursos/excel-vs-software-turnos.html',
+  '/recursos/auditoria-cuadrante':          'recursos/auditoria-cuadrante.html',
 };
 const PUBLIC_DIR = path.resolve(__dirname, 'public');
 
@@ -367,6 +369,21 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
+
+    // Leads de herramientas gratuitas (calculadoras + auditoría de cuadrante)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS tool_leads (
+        id SERIAL PRIMARY KEY,
+        tool VARCHAR(50) NOT NULL,
+        name VARCHAR(255),
+        email VARCHAR(255) NOT NULL,
+        sector VARCHAR(100),
+        workers VARCHAR(50),
+        summary TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    await client.query('CREATE INDEX IF NOT EXISTS idx_tool_leads_email ON tool_leads (LOWER(email));').catch(() => {});
 
     // Create password reset tokens table
     await client.query(`
@@ -1450,6 +1467,141 @@ const makeCancelToken = (bookingId, email) => bookingLib.makeCancelToken(booking
 const verifyCancelToken = (bookingId, email, token) => bookingLib.verifyCancelToken(bookingId, email, token, BOOKING_CANCEL_SECRET);
 const buildIcs = bookingLib.buildIcs;
 
+// ====== HERRAMIENTAS GRATUITAS — captura de leads ======
+// 1) "Envíame este análisis por email" desde las calculadoras de /recursos.
+//    El cliente manda un resumen en texto plano (≤2000 chars) que nosotros
+//    escapamos y envolvemos en la plantilla de marca. Guarda lead en tool_leads.
+const TOOL_NAMES = {
+  equidad: 'Calculadora de equidad nocturna',
+  descanso: 'Calculadora de descanso entre turnos'
+};
+
+app.post('/api/tools/email-results', contactLimiter, async (req, res) => {
+  try {
+    const { tool, email, summary, website } = req.body || {};
+    if (website) return res.json({ ok: true }); // honeypot anti-bot
+    if (!TOOL_NAMES[tool]) return res.status(400).json({ error: 'Herramienta desconocida' });
+    if (!email || !isValidEmail(email) || String(email).length > 255) {
+      return res.status(400).json({ error: 'Email no válido' });
+    }
+    const cleanSummary = cap(summary, 2000).trim();
+    if (!cleanSummary) return res.status(400).json({ error: 'No hay resultados que enviar' });
+
+    if (global.__shiftiaDbReady) {
+      pool.query('INSERT INTO tool_leads (tool, email, summary) VALUES ($1, $2, $3)', [tool, email, cleanSummary])
+        .catch(err => console.error('tool_leads insert falló:', err.message));
+    }
+    res.json({ ok: true });
+
+    const esc = bookingLib.escHtml;
+    const summaryHtml = cleanSummary.split('\n').filter(Boolean).map(l =>
+      `<p style="margin:0 0 8px;color:#1a1a1a;font-size:15px;line-height:1.55;">${esc(l)}</p>`
+    ).join('');
+    sendMail({
+      from: `"Shiftia" <${GMAIL_USER}>`,
+      replyTo: NOTIFY_EMAIL,
+      to: email,
+      subject: `Tu análisis — ${TOOL_NAMES[tool]} · Shiftia`,
+      html: emailTemplate({
+        preheader: 'El análisis que generaste en shiftia.es, guardado en tu correo',
+        headline: 'Tu análisis, guardado',
+        body: `
+          <p style="margin:0 0 18px;">Aquí tienes el resultado que generaste con la ${esc(TOOL_NAMES[tool].toLowerCase())} de Shiftia:</p>
+          <div style="background:#faf9f6;padding:20px;border-radius:10px;border:1px solid #ece9e2;margin-bottom:22px;">${summaryHtml}</div>
+          <p style="margin:0 0 8px;color:#1a1a1a;line-height:1.6;font-size:15px;">Si quieres que esto se calcule solo cada mes — con tu plantilla, tu convenio y tus reglas — te lo enseñamos en una llamada de 15 minutos.</p>
+          <p style="margin:16px 0 0;"><a href="${APP_URL}/#contact" style="display:inline-block;background:#0e0f0f;color:#faf9f6;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;">Agendar llamada gratuita</a></p>
+        `
+      })
+    }).catch(err => console.error('Email de herramienta falló:', err && err.message));
+  } catch (err) {
+    console.error('email-results error:', err.message);
+    if (!res.headersSent) res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+// 2) Auditoría gratuita de cuadrante: formulario con archivo adjunto (PDF/Excel/foto).
+//    v1 manual: el cuadrante llega a info@ con los datos del lead y respondemos a mano.
+const auditUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024, files: 1 },
+  fileFilter: (req, file, cb) => cb(null, /\.(pdf|xlsx?|csv|png|jpe?g)$/i.test(file.originalname || ''))
+});
+
+app.post('/api/audit-request', contactLimiter, (req, res) => {
+  auditUpload.single('file')(req, res, async (upErr) => {
+    try {
+      if (upErr) return res.status(400).json({ error: 'Archivo no válido o demasiado grande (máx. 8 MB, PDF/Excel/CSV/imagen)' });
+      const { name, email, sector, workers, message, website } = req.body || {};
+      if (website) return res.json({ ok: true }); // honeypot
+      const cleanName = cap(name, 255).trim();
+      if (!cleanName) return res.status(400).json({ error: 'Falta el nombre' });
+      if (!email || !isValidEmail(email) || String(email).length > 255) {
+        return res.status(400).json({ error: 'Email no válido' });
+      }
+      const cleanSector = cap(sector, 100).trim();
+      const cleanWorkers = cap(workers, 50).trim();
+      const cleanMessage = cap(message, 1500).trim();
+
+      if (global.__shiftiaDbReady) {
+        pool.query(
+          'INSERT INTO tool_leads (tool, name, email, sector, workers, summary) VALUES ($1, $2, $3, $4, $5, $6)',
+          ['auditoria', cleanName, email, cleanSector || null, cleanWorkers || null, cleanMessage || null]
+        ).catch(err => console.error('tool_leads (auditoría) insert falló:', err.message));
+      }
+      res.json({ ok: true });
+
+      const esc = bookingLib.escHtml;
+      const atts = [];
+      if (req.file) atts.push({ filename: cap(req.file.originalname, 120) || 'cuadrante', content: req.file.buffer });
+
+      // Aviso interno con el archivo — esta ES la auditoría (v1 manual).
+      sendMail({
+        from: `"Shiftia Auditoría" <${GMAIL_USER}>`,
+        to: NOTIFY_EMAIL,
+        resendFrom: INTERNAL_RESEND_FROM,
+        replyTo: email,
+        subject: `[Auditoría de cuadrante] ${esc(cleanName)}${cleanSector ? ' · ' + esc(cleanSector) : ''}${cleanWorkers ? ' · ' + esc(cleanWorkers) + ' trab.' : ''}`,
+        attachments: atts,
+        html: emailTemplate({
+          preheader: `Nueva auditoría solicitada por ${esc(cleanName)}`,
+          headline: 'Nueva auditoría de cuadrante',
+          body: `
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">
+              <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;width:130px;border-bottom:1px solid #ece9e2;">Nombre</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanName)}</td></tr>
+              <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Email</td><td style="padding:12px 0;font-size:14px;border-bottom:1px solid #ece9e2;"><a href="mailto:${esc(email)}" style="color:#0f7a6d;">${esc(email)}</a></td></tr>
+              ${cleanSector ? `<tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Sector</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanSector)}</td></tr>` : ''}
+              ${cleanWorkers ? `<tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Trabajadores</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanWorkers)}</td></tr>` : ''}
+              <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;">Cuadrante</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;">${req.file ? esc(req.file.originalname) + ' (adjunto)' : 'sin archivo — pedirlo por email'}</td></tr>
+            </table>
+            ${cleanMessage ? `<div style="margin-top:20px;padding:20px;background:#faf9f6;border-radius:10px;border:1px solid #ece9e2;"><p style="color:#7a766f;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">Contexto</p><p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">${esc(cleanMessage)}</p></div>` : ''}
+            <p style="color:#9a958c;font-size:12px;margin:20px 0 0;">Compromiso público: diagnóstico en 24-48 h laborables. Responde directamente a este correo (reply-to = cliente).</p>
+          `
+        })
+      }).catch(err => console.error('Aviso interno de auditoría falló:', err && err.message));
+
+      // Confirmación al solicitante.
+      sendMail({
+        from: `"Shiftia" <${GMAIL_USER}>`,
+        replyTo: NOTIFY_EMAIL,
+        to: email,
+        subject: 'Recibido — tu cuadrante está en cola de auditoría · Shiftia',
+        html: emailTemplate({
+          preheader: 'Te enviaremos el diagnóstico en 24-48 h laborables',
+          headline: `Hola ${esc(cleanName.split(' ')[0])}, lo tenemos`,
+          body: `
+            <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hemos recibido tu ${req.file ? 'cuadrante' : 'solicitud'} y ya está en cola de auditoría. En <span style="color:#0e0f0f;font-weight:600;">24-48 h laborables</span> te enviaremos a este correo un diagnóstico con lo que encontremos: equidad del reparto de noches, descansos mínimos y puntos de riesgo.</p>
+            ${req.file ? '' : `<p style="margin:0 0 16px;color:#1a1a1a;line-height:1.6;font-size:15px;">No adjuntaste ningún archivo: responde a este correo con tu cuadrante (PDF, Excel o una foto legible) y lo metemos en cola.</p>`}
+            <p style="margin:0;color:#7a766f;font-size:13px;line-height:1.6;">Tu cuadrante solo se usa para este análisis. No lo compartimos con nadie y lo eliminamos al terminar.</p>
+          `
+        })
+      }).catch(err => console.error('Confirmación de auditoría falló:', err && err.message));
+    } catch (err) {
+      console.error('audit-request error:', err.message);
+      if (!res.headersSent) res.status(500).json({ error: 'Error interno' });
+    }
+  });
+});
+
 // GET slots — devuelve disponibilidad real de un día
 app.get('/api/booking/slots', apiLimiter, async (req, res) => {
   try {
@@ -1999,6 +2151,7 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: '/recursos/descanso-minimo-entre-turnos',     priority: '0.8', changefreq: 'monthly' },
     { loc: '/recursos/calculadora-equidad-nocturna',     priority: '0.8', changefreq: 'monthly' },
     { loc: '/recursos/excel-vs-software-turnos',         priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/auditoria-cuadrante',              priority: '0.8', changefreq: 'monthly' },
     { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
     { loc: '/sobre-nosotros',                            priority: '0.6', changefreq: 'monthly' },
     { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
