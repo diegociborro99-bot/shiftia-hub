@@ -116,3 +116,21 @@ test('sector desconocido: régimen general, <12h = incumplimiento', () => {
   assert.equal(r.legal_context.sector_label, 'Régimen general');
   assert.equal(r.rest_violations[0].severity, 'incumplimiento');
 });
+
+test('puntuación global: cuadrante limpio ≈100, cuadrante roto baja', () => {
+  const limpio = analyzeSchedule({
+    workers: [
+      w('Ana', [s('2026-07-01', 'N'), s('2026-07-03', 'M')]),
+      w('Luis', [s('2026-07-02', 'N'), s('2026-07-04', 'M')])
+    ]
+  });
+  assert.ok(limpio.score >= 95, 'limpio: ' + limpio.score);
+  assert.equal(limpio.score_label, 'Saludable');
+  const roto = analyzeSchedule({
+    workers: [
+      w('Ana', [s('2026-07-01', 'N'), s('2026-07-02', 'N'), s('2026-07-03', 'N'), s('2026-07-04', 'M'), s('2026-07-04', 'T')]),
+      w('Luis', [s('2026-07-01', 'M')])
+    ]
+  });
+  assert.ok(roto.score < limpio.score - 25, 'roto: ' + roto.score);
+});

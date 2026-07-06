@@ -1553,13 +1553,16 @@ function buildAuditReportBody({ metrics, summary, firstName }) {
     `<li style="margin:0 0 6px;color:#1a1a1a;font-size:14px;">${esc(s.worker)}: <strong>${s.length} noches seguidas</strong> (hasta ${esc(s.end_date)})</li>`
   ).join('');
 
+  const scoreColor = m.score >= 85 ? '#0a5950' : (m.score >= 65 ? '#8a6220' : '#a31c22');
   return `
-    <p style="margin:0 0 18px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hola ${esc(firstName)}, aquí está el diagnóstico de tu cuadrante (${m.workers_count} personas · ${m.total_shifts} turnos analizados). <strong>Adjuntamos el informe completo en PDF</strong> — este correo es el resumen.</p>
-    ${summaryHtml}
-    <div style="margin:22px 0;padding:16px 20px;background:#faf9f6;border:1px solid #ece9e2;border-radius:10px;">
-      <p style="margin:0;font-size:14px;color:#1a1a1a;">Equidad nocturna: <strong style="color:${verdictColor};">${verdictLabel}</strong> · desviación ${String(m.nights.stdev).replace('.', ',')} · rango ${m.nights.range} (${m.nights.min}–${m.nights.max}) · índice de equidad ${String(m.nights.jain).replace('.', ',')}/1</p>
-      <p style="margin:8px 0 0;font-size:14px;color:#1a1a1a;">Descansos &lt;12 h: <strong style="color:${m.rest_violations.length ? '#a31c22' : '#0a5950'};">${m.rest_violations.length}</strong> · Rachas de ≥3 noches: <strong style="color:${m.night_streaks.length ? '#8a6220' : '#0a5950'};">${m.night_streaks.length}</strong></p>
+    <p style="margin:0 0 20px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hola ${esc(firstName)}, tu diagnóstico está listo (${m.workers_count} personas · ${m.total_shifts} turnos analizados). <strong>El informe completo va adjunto en PDF</strong> — esto es el resumen.</p>
+    <div style="margin:24px 0;padding:28px 24px;background:#faf9f6;border-radius:12px;border:1px solid #ece9e2;text-align:center;">
+      <p style="margin:0;font-size:12px;color:#7a766f;text-transform:uppercase;letter-spacing:0.08em;">Puntuación de tu cuadrante</p>
+      <p style="margin:14px 0 4px;font-size:44px;color:${scoreColor};font-family:'Instrument Serif','Times New Roman',Georgia,serif;line-height:1;font-style:italic;">${m.score}<span style="font-size:20px;color:#9a958c;font-style:normal;">/100</span></p>
+      <p style="margin:0;font-size:15px;color:#0e0f0f;font-family:'Instrument Serif','Times New Roman',Georgia,serif;">${esc(m.score_label)}</p>
+      <p style="margin:14px 0 0;font-size:12px;color:#9a958c;">Equidad nocturna: <strong style="color:${verdictColor};">${verdictLabel}</strong> &nbsp;·&nbsp; Descansos &lt;12 h: <strong style="color:${m.rest_violations.length ? '#a31c22' : '#0a5950'};">${m.rest_violations.length}</strong> &nbsp;·&nbsp; Rachas ≥3 noches: <strong style="color:${m.night_streaks.length ? '#8a6220' : '#0a5950'};">${m.night_streaks.length}</strong></p>
     </div>
+    ${summaryHtml}
     <p style="margin:22px 0 8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#7a766f;">Reparto de noches</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">${nightsRows}</table>
     ${m.rest_violations.length ? `
@@ -1644,7 +1647,7 @@ async function runAutoAudit(lead, file) {
   if (!summary) throw Object.assign(new Error('resumen no disponible'), { manualReason: 'El resumen IA no se generó.' });
 
   const body = buildAuditReportBody({ metrics, summary, firstName: lead.cleanName.split(' ')[0] });
-  const generatedAt = new Intl.DateTimeFormat('es-ES', { dateStyle: 'long', timeZone: BOOKING_TIMEZONE }).format(new Date());
+  const generatedAt = new Intl.DateTimeFormat('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: BOOKING_TIMEZONE }).format(new Date()) + ' (hora de Madrid)';
   const pdfBuffer = await buildAuditPdf({ metrics, summary, lead, generatedAt });
   const pdfAttachment = { filename: 'auditoria-cuadrante-shiftia.pdf', content: pdfBuffer };
   const seconds = Math.round((Date.now() - t0) / 1000);
@@ -2308,7 +2311,7 @@ app.get('/forgot-password', (req, res) => sendPublicHtml(res, 'forgot-password.h
 
 // Health check público — minimalista, no expone diagnóstico interno
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ status: 'ok', version: require('./package.json').version });
 });
 
 // Status público para la página /status — datos minimalistas, no expone diagnóstico
