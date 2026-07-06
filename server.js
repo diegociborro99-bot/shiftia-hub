@@ -214,6 +214,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
     // 5 min para HTML para permitir invalidar copy rápidamente.
     const longCacheAssets = new Set([
       'design-system.css',
+      'landing.css', // versionado con ?v= en el <link> de index.html
       'favicon.svg',
       'apple-touch-icon.svg',
       'og-image.svg',

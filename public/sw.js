@@ -10,6 +10,7 @@ const CACHE_NAME = 'shiftia-__BUILD__';
 const PRECACHE = [
   '/',
   '/design-system.css',
+  '/landing.css?v=1',
   '/v36.css?v=363',
   '/v36.min.js?v=382',
   '/favicon.svg',
