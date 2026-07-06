@@ -818,7 +818,7 @@
         var b = document.createElement('span');
         b.className = 'demo-cell__ai';
         b.setAttribute('aria-hidden', 'true');
-        b.textContent = 'AI';
+        b.textContent = 'IA';
         inner.appendChild(b);
       }
 
@@ -1136,10 +1136,11 @@
     }
 
     // ----- Init -----
+    // Arrancamos en Modo ejemplo: un cuadrante vacío no vende; así el visitante
+    // ve una planilla realista al instante y puede pasar a Modo libre cuando quiera.
     emptyGrid();
     buildGrid();
-    paintAll();
-    updateMetrics();
+    toggleMode();
 
     document.getElementById('btn-ai').addEventListener('click', fillWithAI);
     document.getElementById('btn-reset').addEventListener('click', function () { resetGrid(true); });
@@ -1151,6 +1152,118 @@
       btn.disabled = true;
       setTimeout(function () { btn.textContent = orig; btn.disabled = false; }, 1800);
     });
+  })();
+  </script>
+
+  <script>
+  /* Tour de onboarding (3 pasos) sobre el sistema ds-tour del design system.
+     Se muestra una sola vez por visitante (localStorage); Esc o "Saltar" lo cierran. */
+  (function demoTour() {
+    'use strict';
+    var KEY = 'shiftia_demo_tour_v1';
+    try { if (localStorage.getItem(KEY)) return; } catch (e) { /* modo privado: lo mostramos igual */ }
+
+    var STEPS = [
+      { sel: '#grid', eyebrow: 'Paso 1 de 3', title: 'Toca el cuadrante', desc: 'Cada celda cicla Mañana → Tarde → Noche → Libre. Prueba a cambiar un turno: las métricas reaccionan al instante.' },
+      { sel: '#btn-ai', eyebrow: 'Paso 2 de 3', title: 'Deja que la IA rellene', desc: 'Pulsa «Asignar con IA» y el motor completa los huecos respetando descansos, noches y equilibrio de carga.' },
+      { sel: '.sara', eyebrow: 'Paso 3 de 3', title: 'El motor vigila por ti', desc: 'Cobertura, equidad nocturna y restricciones de convenio se recalculan en tiempo real. Si algo se rompe, lo verás aquí.' }
+    ];
+
+    var idx = 0, overlay, spot, card, raf = null;
+
+    function el(tag, cls, html) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (html != null) n.innerHTML = html;
+      return n;
+    }
+
+    function place() {
+      var target = document.querySelector(STEPS[idx].sel);
+      if (!target) return end();
+      var r = target.getBoundingClientRect();
+      var pad = 8;
+      spot.style.top = (r.top - pad) + 'px';
+      spot.style.left = (r.left - pad) + 'px';
+      spot.style.width = (r.width + pad * 2) + 'px';
+      spot.style.height = (r.height + pad * 2) + 'px';
+      // Card: debajo del target si cabe; si no, encima. En móvil el CSS la fija abajo.
+      var ch = card.offsetHeight || 180, cw = Math.min(320, card.offsetWidth || 320);
+      var top = (r.bottom + 16 + ch < window.innerHeight) ? r.bottom + 16 : Math.max(16, r.top - ch - 16);
+      var left = Math.max(16, Math.min(r.left, window.innerWidth - cw - 16));
+      card.style.top = top + 'px';
+      card.style.left = left + 'px';
+    }
+
+    function render() {
+      var s = STEPS[idx];
+      var target = document.querySelector(s.sel);
+      if (!target) return end();
+      try { target.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { target.scrollIntoView(); }
+      card.querySelector('.ds-tour-card__eyebrow').textContent = s.eyebrow;
+      card.querySelector('.ds-tour-card__title').textContent = s.title;
+      card.querySelector('.ds-tour-card__desc').textContent = s.desc;
+      var dots = card.querySelectorAll('.ds-tour-card__dot');
+      for (var i = 0; i < dots.length; i++) dots[i].classList.toggle('is-active', i === idx);
+      card.querySelector('[data-tour-prev]').disabled = idx === 0;
+      card.querySelector('[data-tour-next]').textContent = idx === STEPS.length - 1 ? 'Empezar' : 'Siguiente';
+      setTimeout(place, 60); // tras el scroll suave, reposiciona
+    }
+
+    function end() {
+      try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      window.removeEventListener('resize', onMove);
+      window.removeEventListener('scroll', onMove, true);
+      document.removeEventListener('keydown', onKey);
+      [overlay, spot, card].forEach(function (n) { if (n && n.parentNode) n.parentNode.removeChild(n); });
+    }
+
+    function onMove() {
+      if (raf) return;
+      raf = requestAnimationFrame(function () { raf = null; place(); });
+    }
+    function onKey(e) { if (e.key === 'Escape') end(); }
+
+    function start() {
+      overlay = el('div', 'ds-tour-overlay');
+      spot = el('div', 'ds-tour-spotlight');
+      card = el('div', 'ds-tour-card');
+      card.setAttribute('role', 'dialog');
+      card.setAttribute('aria-label', 'Tour de la demo');
+      card.innerHTML =
+        '<button type="button" class="ds-tour-card__skip">Saltar</button>' +
+        '<p class="ds-tour-card__eyebrow"></p>' +
+        '<h3 class="ds-tour-card__title"></h3>' +
+        '<p class="ds-tour-card__desc"></p>' +
+        '<div class="ds-tour-card__actions">' +
+          '<span class="ds-tour-card__dots"><span class="ds-tour-card__dot"></span><span class="ds-tour-card__dot"></span><span class="ds-tour-card__dot"></span></span>' +
+          '<span class="ds-tour-card__btns">' +
+            '<button type="button" class="ds-tour-btn ds-tour-btn--ghost" data-tour-prev>Anterior</button>' +
+            '<button type="button" class="ds-tour-btn ds-tour-btn--primary" data-tour-next>Siguiente</button>' +
+          '</span>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      document.body.appendChild(spot);
+      document.body.appendChild(card);
+      card.querySelector('.ds-tour-card__skip').addEventListener('click', end);
+      card.querySelector('[data-tour-prev]').addEventListener('click', function () { if (idx > 0) { idx--; render(); } });
+      card.querySelector('[data-tour-next]').addEventListener('click', function () {
+        if (idx < STEPS.length - 1) { idx++; render(); } else { end(); }
+      });
+      overlay.addEventListener('click', end);
+      window.addEventListener('resize', onMove);
+      window.addEventListener('scroll', onMove, true);
+      document.addEventListener('keydown', onKey);
+      render();
+      requestAnimationFrame(function () {
+        overlay.classList.add('is-active');
+        card.classList.add('is-visible');
+      });
+    }
+
+    // Espera a que la planilla de ejemplo esté pintada para no tapar una tabla vacía.
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 700); });
+    else setTimeout(start, 700);
   })();
   </script>
 </body>
