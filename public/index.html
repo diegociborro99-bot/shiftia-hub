@@ -357,7 +357,7 @@ a { text-decoration: none; color: inherit; }
   --bg-card: #ffffff;
   --text1: #0f0f0f;
   --text2: #444444;
-  --text3: #888888;
+  --text3: #6b6b66; /* AA: ≥4.5:1 sobre --bg (antes #888, ~3.4:1 — ilegible para baja visión) */
   --border: #e8e8e8;
   --border-light: #f0f0f0;
   --radius: 20px;
@@ -658,7 +658,6 @@ a { text-decoration: none; color: inherit; }
   50% { left: 150%; }
   100% { left: 150%; }
 }
-body.dark .hero-trial-badge { color: #4ecdc4; background: linear-gradient(135deg, rgba(78,205,196,0.1), rgba(41,128,185,0.08)); }
 .btn-lg {
   padding: 16px 32px; border-radius: var(--radius-pill);
   font-size: 0.95rem; font-weight: 600; cursor: pointer;
@@ -1631,8 +1630,6 @@ section { padding: 140px 48px; }
 .nav-logo-text { font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; }
 .logo-shift { color: #0f0f0f !important; -webkit-text-fill-color: #0f0f0f !important; }
 .logo-ia { color: #2980b9 !important; -webkit-text-fill-color: #2980b9 !important; }
-body.dark .logo-shift { color: #f0f0f5 !important; -webkit-text-fill-color: #f0f0f5 !important; }
-body.dark .logo-ia { color: #4ecdc4 !important; -webkit-text-fill-color: #4ecdc4 !important; }
 
 /* ====== TIME SAVINGS / IMPACT ====== */
 .impact { background: var(--bg); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
@@ -2114,8 +2111,6 @@ section + section::before {
   .rotating-words { display: block; min-height: 1.2em; }
 
   /* Nav mobile drawer dark mode fix */
-  body.dark .nav-links { background: #1a1d2e; }
-  body.dark .nav-links a { border-bottom-color: #2a2d40; }
 
   /* Orbit map */
   .orbit-map-wrap { overflow-x: hidden; padding: 0 10px; }
@@ -2198,7 +2193,6 @@ section + section::before {
   .back-top { width: 40px; height: 40px; bottom: 16px; left: 16px; font-size: 0.9rem; }
 
   /* Dark mode toggle */
-  .dark-toggle { width: 38px; height: 38px; top: 74px; }
 
   /* Scroll progress */
   .scroll-progress { height: 3px; }
@@ -2841,57 +2835,7 @@ section { scroll-margin-top: 80px; }
 .feat-icon { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .feat-card:hover .feat-icon { transform: translateY(-4px) scale(1.1); }
 
-/* ====== 1. DARK MODE TOGGLE ====== */
-body.dark {
-  --bg: #0f1117; --bg-warm: #141620; --bg-card: #1a1d2e;
-  --text1: #f0f0f5; --text2: #a0a3b5; --text3: #6b6f85;
-  --border: #2a2d40; --border-light: #232638;
-}
-body.dark .nav { background: rgba(15,17,23,0.85); }
-body.dark .nav.scrolled { background: rgba(15,17,23,0.95); box-shadow: 0 1px 20px rgba(0,0,0,0.3); }
-body.dark .proof { background: #0a0c12; }
-body.dark .demo-worker-row, body.dark .demo-chart-card, body.dark .demo-kpi { background: #1a1d2e; }
-body.dark .form-card, body.dark .price-card { background: #1a1d2e; }
-body.dark .feat-modal { background: #1a1d2e; }
-body.dark .feat-modal-close { background: #2a2d40; }
-body.dark .feat-modal-preview { background: #141620; }
-body.dark .faq-item { background: #1a1d2e; }
-body.dark .orbit-emoji { background: linear-gradient(135deg, rgba(78,205,196,0.15), rgba(41,128,185,0.2)); border-color: rgba(78,205,196,0.4); }
-body.dark .orbit-label { background: rgba(26,29,46,0.9); color: var(--text2); }
-body.dark .hero::before { opacity: 0.5; }
-body.dark .compare-card.before { background: #2a1a1a; border-color: #4a2a2a; }
-body.dark .compare-card.after { background: #1a2a24; border-color: #2a4a3a; }
-body.dark .bento-card { background: #1a1d2e; }
-body.dark .chat-window { background: #1a1d2e; }
-body.dark .chat-body { background: #141620; }
-body.dark .chat-suggestions { background: #141620; }
-body.dark .chat-input-area { background: #1a1d2e; border-color: var(--border); }
-body.dark .chat-input { background: #232638; color: var(--text1); border-color: var(--border); }
-body.dark .chat-msg.bot .chat-msg-bubble,
-body.dark .chat-msg.bot .chat-msg-text { background: #232638; border-color: var(--border); }
-body.dark .chat-suggestion { background: #232638; border-color: var(--border); color: var(--text2); }
-body.dark .chat-suggestion:hover { background: rgba(78,205,196,0.1); }
-body.dark .orbit-center { box-shadow: 0 0 40px rgba(78,205,196,0.2), 0 0 80px rgba(41,128,185,0.12); }
-body.dark .orbit-ring { border-color: rgba(78,205,196,0.12); }
-body.dark .feat-card { background: #1a1d2e; }
-body.dark .step, body.dark .step-flow { background: #1a1d2e; }
-body.dark .back-top { background: #1a1d2e; color: var(--text2); }
-body.dark .fg input, body.dark .fg select, body.dark .fg textarea { background: #232638; border-color: var(--border); color: var(--text1); }
-body.dark .fg input::placeholder, body.dark .fg textarea::placeholder { color: var(--text3); }
-body.dark .price-toggle-knob { background: #232638; }
-body.dark .demo-kpi-bar { background: #232638; }
 
-.dark-toggle {
-  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
-  background: var(--bg-card); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s; margin-right: 4px;
-}
-.dark-toggle:hover { border-color: #4ecdc4; background: rgba(78,205,196,0.1); }
-.dark-toggle svg { width: 18px; height: 18px; stroke: var(--text2); transition: all 0.3s; }
-body.dark .dark-toggle .dt-sun { display: inline; }
-body.dark .dark-toggle .dt-moon { display: none; }
-.dark-toggle .dt-sun { display: none; }
-.dark-toggle .dt-moon { display: inline; }
 
 /* ====== 2. ANIMATED GRADIENT SHIMMER ON SECTION EYEBROWS ====== */
 .section-eyebrow {
@@ -3062,11 +3006,6 @@ a[href]:not(.btn-lg):not(.nav-btn-primary):not(.nav-btn-ghost):not(.price-btn) {
 }
 
 /* ====== IMPROVED DARK MODE TRANSITIONS ====== */
-body.dark .hero::before { filter: brightness(0.7); }
-body.dark .compare-card { transition: background 0.3s, border-color 0.3s; }
-body.dark .feat-card::after { background: linear-gradient(to right, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%); }
-body.dark .price-card::after { background: linear-gradient(to right, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%); }
-body.dark .floating-cta { box-shadow: 0 8px 30px rgba(78,205,196,0.25); }
 
 /* ====== PRICING TOGGLE MICRO-INTERACTION ====== */
 .price-toggle { position: relative; transition: background 0.3s, box-shadow 0.3s; }
@@ -9801,57 +9740,10 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
 <script src="/v36.min.js?v=382" defer></script>
 
 <style id="v37-premium">
-  /* Scroll progress bar */
-  #v37-progress {
-    position: fixed; top: 0; left: 0; right: 0;
-    height: 2px; z-index: 9999;
-    background: linear-gradient(90deg, #4ecdc4 0%, #2980b9 50%, #c9a961 100%);
-    transform-origin: 0 50%;
-    transform: scaleX(0);
-    transition: transform 80ms linear;
-    pointer-events: none;
-    opacity: .85;
-  }
-  /* Magnetic buttons (desktop only) */
-  @media (hover: hover) and (pointer: fine) {
-    .v37-magnetic { transition: transform .35s cubic-bezier(.16,1,.3,1); will-change: transform; }
-  }
-
   /* Tilt 3D cards */
   .v37-tilt { transform-style: preserve-3d; transition: transform .25s cubic-bezier(.16,1,.3,1); will-change: transform; }
   .v37-tilt > * { transform: translateZ(0); }
   @media (hover: none), (pointer: coarse) { .v37-tilt { transform: none !important; } }
-
-  /* Nav progressive glass */
-  body.v37-nav-glass nav.top, body.v37-nav-glass header.top, body.v37-nav-glass .nav-top, body.v37-nav-glass .top-nav {
-    backdrop-filter: saturate(160%) blur(14px);
-    -webkit-backdrop-filter: saturate(160%) blur(14px);
-    background-color: rgba(10, 14, 22, .72) !important;
-    border-bottom: 1px solid rgba(255,255,255,.06);
-    transition: background-color .35s ease, backdrop-filter .35s ease;
-  }
-
-  /* Page transition overlay */
-  #v37-transition {
-    position: fixed; inset: 0;
-    background: radial-gradient(ellipse at center, #0f172a 0%, #050810 100%);
-    z-index: 99999;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .55s cubic-bezier(.7,0,.3,1);
-  }
-  #v37-transition.is-active { opacity: 1; pointer-events: all; }
-  #v37-transition::after {
-    content: ""; position: absolute; left: 50%; top: 50%;
-    width: 36px; height: 36px; margin: -18px 0 0 -18px;
-    border: 2px solid rgba(78,205,196,.25);
-    border-top-color: #4ecdc4;
-    border-radius: 50%;
-    opacity: 0; transition: opacity .25s .15s;
-    animation: v37spin 1s linear infinite;
-  }
-  #v37-transition.is-active::after { opacity: 1; }
-  @keyframes v37spin { to { transform: rotate(360deg); } }
 
   /* Rotator upgrade — typewriter slide-up */
   .rw-word {
@@ -9865,13 +9757,8 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
     filter: blur(6px);
   }
 
-  /* Reveal on enter (subtle, for sections not yet animated) */
-  .v37-reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
-  .v37-reveal.is-in { opacity: 1; transform: translateY(0); }
-
   @media (prefers-reduced-motion: reduce) {
-    #v37-progress, #v37-transition { display: none !important; }
-    .v37-tilt, .v37-magnetic, .v37-reveal { transform: none !important; transition: none !important; opacity: 1 !important; filter: none !important; }
+    .v37-tilt { transform: none !important; transition: none !important; opacity: 1 !important; filter: none !important; }
     .rw-word { transition: opacity .3s linear !important; filter: none !important; }
   }
 </style>
@@ -9885,46 +9772,9 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hoverFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  // ─── 1) Scroll progress bar ───────────────────────────
-  function initScrollProgress(){
-    if (reduced) return;
-    try {
-      const bar = document.createElement('div');
-      bar.id = 'v37-progress';
-      document.body.appendChild(bar);
-      let ticking = false;
-      function update(){
-        const h = document.documentElement;
-        const max = h.scrollHeight - h.clientHeight;
-        const pct = max > 0 ? (h.scrollTop || window.scrollY) / max : 0;
-        bar.style.transform = 'scaleX(' + Math.max(0, Math.min(1, pct)) + ')';
-        ticking = false;
-      }
-      window.addEventListener('scroll', () => {
-        if (!ticking) { requestAnimationFrame(update); ticking = true; }
-      }, { passive: true });
-      update();
-    } catch(e){}
-  }
-
-  // ─── 3) Magnetic CTAs ─────────────────────────────────
-  function initMagnetic(){
-    if (reduced || !hoverFine) return;
-    try {
-      const targets = document.querySelectorAll('.btn-lg, .hero-actions a, [data-magnetic]');
-      targets.forEach(el => {
-        el.classList.add('v37-magnetic');
-        const strength = 18;
-        el.addEventListener('mousemove', (e) => {
-          const r = el.getBoundingClientRect();
-          const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
-          const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-          el.style.transform = 'translate(' + (dx * strength) + 'px,' + (dy * strength) + 'px)';
-        });
-        el.addEventListener('mouseleave', () => { el.style.transform = ''; });
-      });
-    } catch(e){}
-  }
+  // (Scroll progress y magnetic CTAs viven en la capa v2.7/v36 — aquí solo
+  //  queda lo que no está cubierto por otra capa: tilt, parallax, rotador y
+  //  el configurador de módulos del formulario.)
 
   // ─── 4) 3D Tilt on cards ──────────────────────────────
   function initTilt(){
@@ -9967,69 +9817,6 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
         visual.style.transform = '';
         if (text) text.style.transform = '';
       });
-    } catch(e){}
-  }
-
-  // ─── 6) Nav progressive glass ─────────────────────────
-  function initNavGlass(){
-    try {
-      let on = false;
-      function check(){
-        const sc = window.scrollY || document.documentElement.scrollTop;
-        const should = sc > 80;
-        if (should !== on) {
-          on = should;
-          document.body.classList.toggle('v37-nav-glass', on);
-        }
-      }
-      window.addEventListener('scroll', check, { passive: true });
-      check();
-    } catch(e){}
-  }
-
-  // ─── 7) Page transition overlay on internal nav ───────
-  function initPageTransition(){
-    if (reduced) return;
-    try {
-      const overlay = document.createElement('div');
-      overlay.id = 'v37-transition';
-      document.body.appendChild(overlay);
-      const triggers = 'a[href^="/"]:not([target]):not([download]):not([data-no-transition]):not([href^="/api"])';
-      document.addEventListener('click', (e) => {
-        const a = e.target && e.target.closest && e.target.closest(triggers);
-        if (!a) return;
-        const href = a.getAttribute('href') || '';
-        if (!href || href === '#' || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
-        // same page anchor?
-        try {
-          const u = new URL(a.href, location.href);
-          if (u.origin !== location.origin) return;
-          if (u.pathname === location.pathname && u.hash) return;
-        } catch(_) { return; }
-        e.preventDefault();
-        overlay.classList.add('is-active');
-        setTimeout(() => { window.location.href = a.href; }, 380);
-      });
-      // hide on bfcache restore
-      window.addEventListener('pageshow', () => overlay.classList.remove('is-active'));
-    } catch(e){}
-  }
-
-  // ─── 8) Reveal on enter for unattended sections ───────
-  function initReveal(){
-    if (reduced || !('IntersectionObserver' in window)) return;
-    try {
-      const candidates = document.querySelectorAll('section > .container > h2, section > h2, .dual-card, .device, .module-chip');
-      candidates.forEach(el => el.classList.add('v37-reveal'));
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(en => {
-          if (en.isIntersecting) {
-            en.target.classList.add('is-in');
-            io.unobserve(en.target);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-      candidates.forEach(el => io.observe(el));
     } catch(e){}
   }
 
@@ -10098,13 +9885,8 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   }
 
   function boot(){
-    initScrollProgress();
-    initNavGlass();
-    initMagnetic();
     initTilt();
     initHeroParallax();
-    initPageTransition();
-    initReveal();
     upgradeRotator();
     initFormModules();
   }
