@@ -1324,12 +1324,6 @@
                             Cerrar sesión
                         </button>
 
-                        <!-- Hidden legacy theme toggle (kept for JS compatibility) -->
-                        <button id="darkModeBtn" type="button" style="display:none;" aria-hidden="true">
-                            <svg id="themeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                            </svg>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -1533,7 +1527,7 @@
                         </svg>
                         <div class="donut-meta">
                             <span class="donut-label">La IA reparte los turnos nocturnos sin sesgos.</span>
-                            <span class="donut-sub">142 turnos · 18 trabajadores</span>
+                            <span class="donut-sub">87 noches repartidas · 23 trabajadores</span>
                         </div>
                     </div>
                 </article>
@@ -1946,8 +1940,7 @@
         function highlightThemeChips() {}
         function initThemePicker()     { document.documentElement.setAttribute('data-theme', 'light'); }
         function loadDarkModePreference() {}
-        function toggleDarkMode()      {}
-        function updateThemeIcon()     {}
+        // (dark mode legacy retirado: la app es light-only por diseño)
 
         // ===== DATE =====
         function setCurrentDate() {
@@ -2445,8 +2438,6 @@
 
         // ===== EVENT LISTENERS =====
         function setupEventListeners() {
-            const darkBtn = document.getElementById('darkModeBtn');
-            if (darkBtn) darkBtn.addEventListener('click', toggleDarkMode);
             document.getElementById('logoutBtn').addEventListener('click', logout);
             document.getElementById('supportCardBtn').addEventListener('click', scrollToSupport);
             document.getElementById('supportForm').addEventListener('submit', handleSupportSubmit);
@@ -2868,7 +2859,7 @@
             // Demo events últimos 30 días — reemplazar por respuesta del endpoint
             const events = [
                 { type: 'ai',      title: 'La IA reasignó 3 turnos para equilibrar nocturnos', meta: 'hace 5 días · 14:22' },
-                { type: 'shift',   title: 'Planilla de mayo publicada (142 turnos)',          meta: 'hace 7 días' },
+                { type: 'shift',   title: 'Planilla de julio publicada (512 turnos)',         meta: 'hace 7 días' },
                 { type: 'team',    title: 'Carmen P. añadida al equipo',                       meta: 'hace 12 días' },
                 { type: 'plan',    title: 'Plan Pro activado',                                  meta: 'hace 18 días · activado por ti' },
                 { type: 'login',   title: 'Inicio de sesión desde Gijón',                     meta: 'hace 21 días · Safari · macOS' },

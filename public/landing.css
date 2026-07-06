@@ -108,10 +108,26 @@ a { text-decoration: none; color: inherit; }
 }
 .client-band-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 768px) {
-  .client-band { padding: 22px 20px; }
-  .client-band-inner { gap: 14px 24px; }
-  .client-band-row { gap: 12px 24px; }
-  .client-band-link { display: none; } /* en móvil la banda queda limpia; la sección completa está más abajo */
+  /* En móvil la fila tipográfica quedaba como texto suelto y desalineado:
+     pasa a rejilla 2×2 de mini-tarjetas con anclaje visual. */
+  .client-band { padding: 26px 20px 28px; }
+  .client-band-inner { flex-direction: column; align-items: stretch; gap: 14px; }
+  .client-band-label { text-align: center; }
+  .client-band-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .client-band-item {
+    background: var(--bg-card, #fff);
+    border: 1px solid var(--border-light, #f0f0f0);
+    border-left: 2px solid var(--primary, #0f7a6d);
+    border-radius: 12px;
+    padding: 12px 14px;
+    gap: 3px;
+    min-width: 0;
+  }
+  .client-band-name { font-size: 0.88rem; line-height: 1.25; overflow-wrap: break-word; }
+  .client-band-meta { font-size: 0.7rem; }
+  .client-band-link { display: block; text-align: center; margin-top: 2px; }
 }
 
 /* Micro-detalles editoriales */
@@ -3743,7 +3759,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   opacity: 1 !important;
   transform: translateX(-50%) translateY(0) !important;
 }
-.price-list li[data-tip] { tabindex: 0; outline: none; }
+/* (tabindex no es CSS — se pone en el markup; aquí solo el anillo de foco) */
+.price-list li[data-tip]:focus-visible { outline: 2px solid var(--ds-accent, #0f7a6d); outline-offset: 3px; border-radius: 6px; }
 
 @media (hover: none) {
   /* En touch, hover no funciona — el indicador "i" se ve siempre como CTA */

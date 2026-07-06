@@ -246,7 +246,6 @@ app.use(express.static(path.join(__dirname, 'public'), {
       'landing.css', // versionado con ?v= en el <link> de index.html
       'favicon.svg',
       'apple-touch-icon.svg',
-      'og-image.svg',
       'product-mockup.svg'
     ]);
     const base = path.basename(filePath);
@@ -677,7 +676,11 @@ function sendMail(options) {
       console.log('Email sent OK (Resend):', options.subject, '→', payload.to.join(', '));
       return body;
     })
-    .catch(err => { console.error('Resend failed:', err.message); });
+    // OJO: sendMail PROPAGA los fallos (antes se tragaban aquí y un email
+    // perdido era invisible: el recordatorio se marcaba como enviado y el
+    // email_status='failed' del booking no se activaba nunca). Todo call
+    // site fire-and-forget debe llevar su propio .catch con log.
+    .catch(err => { console.error('Resend failed:', err.message); throw err; });
   }
 
   if (transporter && emailReady) {
@@ -686,7 +689,7 @@ function sendMail(options) {
     }
     return transporter.sendMail(options)
       .then(info => { console.log('Email sent (SMTP):', options.subject); return info; })
-      .catch(err => { console.error('SMTP error:', err.message); });
+      .catch(err => { console.error('SMTP error:', err.message); throw err; });
   }
 
   console.warn('Email skip: no email provider available');
@@ -1284,21 +1287,10 @@ app.post('/api/support', authMiddleware, async (req, res) => {
         [req.user.id, cat, subject, message]
       );
     } catch (dbErr) {
-      if (dbErr.message.includes('does not exist')) {
-        await pool.query(`
-          CREATE TABLE IF NOT EXISTS support_tickets (
-            id SERIAL PRIMARY KEY, user_id INTEGER, category VARCHAR(50) DEFAULT 'general',
-            subject VARCHAR(500) NOT NULL, message TEXT NOT NULL,
-            status VARCHAR(50) DEFAULT 'open', created_at TIMESTAMP DEFAULT NOW()
-          );
-        `);
-        await pool.query(
-          'INSERT INTO support_tickets (user_id, category, subject, message) VALUES ($1, $2, $3, $4)',
-          [req.user.id, cat, subject, message]
-        );
-      } else {
-        console.warn('DB insert ticket failed (continuing):', dbErr.message);
-      }
+      // La tabla se crea en initializeDatabase; si el INSERT falla es un problema
+      // real de esquema/conexión que hay que ver en logs, no parchear al vuelo
+      // (el CREATE TABLE de emergencia enmascaraba divergencias de esquema).
+      console.error('DB insert ticket failed (continuing, email igual sale):', dbErr.message);
     }
 
     console.log(`Support ticket from ${emailTag(user.email)} [${cat}] (${subject.length} chars)`);
@@ -1327,7 +1319,7 @@ app.post('/api/support', authMiddleware, async (req, res) => {
               </div>
             `
           })
-        });
+    }).catch(err => console.error('Email fire-and-forget falló:', err && err.message));
   } catch (err) {
     console.error('Support ticket error:', err.message);
     res.status(500).json({ error: 'Error sending support request' });
@@ -1375,22 +1367,8 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
         [name, email, company || null, workers || null, department || null, message || null]
       );
     } catch (dbErr) {
-      // Table might not exist yet — create it and retry
-      if (dbErr.message.includes('does not exist')) {
-        await pool.query(`
-          CREATE TABLE IF NOT EXISTS contact_leads (
-            id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL,
-            company VARCHAR(255), workers VARCHAR(50), department VARCHAR(255),
-            message TEXT, created_at TIMESTAMP DEFAULT NOW()
-          );
-        `);
-        await pool.query(
-          'INSERT INTO contact_leads (name, email, company, workers, department, message) VALUES ($1, $2, $3, $4, $5, $6)',
-          [name, email, company || null, workers || null, department || null, message || null]
-        );
-      } else {
-        console.warn('DB insert lead failed (continuing):', dbErr.message);
-      }
+      // La tabla se crea en initializeDatabase; ver comentario en support_tickets.
+      console.error('DB insert lead failed (continuing, email igual sale):', dbErr.message);
     }
 
     console.log(`Contact lead saved: ${emailTag(email)} company=${company ? 'yes' : 'no'}`);
@@ -1422,7 +1400,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
               <p style="color:#9a958c;font-size:12px;margin:16px 0 0;">Enviado desde www.shiftia.es — ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}</p>
             `
           })
-        });
+    }).catch(err => console.error('Email fire-and-forget falló:', err && err.message));
 
     sendMail({
           from: `"Shiftia" <${GMAIL_USER}>`,
@@ -1443,7 +1421,7 @@ app.post('/api/contact', contactLimiter, async (req, res) => {
               <p style="color:#33312d;margin:24px 0 0;">Un saludo,<br><span style="color:#0e0f0f;">El equipo de Shiftia</span></p>
             `
           })
-        });
+    }).catch(err => console.error('Email fire-and-forget falló:', err && err.message));
 
   } catch (err) {
     console.error('Contact form error:', err.message);
@@ -1785,7 +1763,7 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
           <p style="color:#33312d;margin:24px 0 0;">Un saludo,<br><span style="color:#0e0f0f;">El equipo de Shiftia</span></p>
         `
       })
-    });
+    }).catch(err => console.error('Email fire-and-forget falló:', err && err.message));
 
   } catch (err) {
     console.error('Booking error:', err.message);
@@ -1831,7 +1809,7 @@ app.get('/booking/cancel', async (req, res) => {
         headline: `Llamada #${id} cancelada`,
         body: `<p style="margin:0;">El cliente <span style="color:#0e0f0f;">${ESC_HTML(b.name)}</span> &lt;<a href="mailto:${ESC_HTML(b.email)}" style="color:#0f7a6d;">${ESC_HTML(b.email)}</a>&gt; ha cancelado su llamada del <span style="color:#0e0f0f;">${prettyDateMadrid(b.booking_at)}</span> a las <span style="color:#0e0f0f;">${prettyTimeMadrid(b.booking_at)}</span>.</p>`
       })
-    }).catch(() => {});
+    }).catch(err => console.error('Aviso interno de cancelación falló:', err && err.message));
 
     return res.status(200).send(htmlPage('Reserva cancelada', `Tu llamada del ${ESC_HTML(prettyDateMadrid(b.booking_at))} a las ${ESC_HTML(prettyTimeMadrid(b.booking_at))} ha quedado cancelada. Si lo deseas, <a href="${APP_URL}/#contact">reserva otra fecha</a>.`));
   } catch (err) {
@@ -1848,7 +1826,15 @@ app.get('/booking/cancel', async (req, res) => {
 function requireAdminKey(req, res) {
   const adminKey = process.env.ADMIN_API_KEY;
   const sentKey  = req.headers['x-admin-key'];
-  if (!adminKey || sentKey !== adminKey) {
+  // Comparación en tiempo constante (coherente con el resto de tokens del server):
+  // hasheamos ambos para igualar longitudes antes de timingSafeEqual.
+  let ok = false;
+  if (adminKey && typeof sentKey === 'string') {
+    const a = crypto.createHash('sha256').update(sentKey).digest();
+    const b = crypto.createHash('sha256').update(adminKey).digest();
+    ok = crypto.timingSafeEqual(a, b);
+  }
+  if (!ok) {
     res.status(404).end();
     return false;
   }
@@ -2078,7 +2064,7 @@ app.get('/api/health/full', (req, res) => {
 
 // Test email endpoint — protegido contra abuso. Requiere ADMIN_API_KEY que solo el
 // owner conoce. Sin esa key el endpoint devuelve 404 (no leak de su existencia).
-app.get('/api/test-email', async (req, res) => {
+app.get('/api/test-email', authLimiter, async (req, res) => {
   if (!requireAdminKey(req, res)) return;
 
   const to = req.query.to;
