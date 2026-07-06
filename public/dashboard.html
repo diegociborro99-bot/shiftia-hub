@@ -1353,7 +1353,7 @@
                 <div class="onboarding-content">
                     <div class="onboarding-header">
                         <h3>Bienvenido a Shiftia</h3>
-                        <button class="onboarding-dismiss" type="button" onclick="dismissOnboarding()" aria-label="Descartar onboarding">&times;</button>
+                        <button class="onboarding-dismiss" type="button" id="dismissOnboardingBtn" aria-label="Descartar onboarding">&times;</button>
                     </div>
                     <p>Completa estos pasos para empezar:</p>
                     <div class="onboarding-steps">
@@ -1423,7 +1423,7 @@
                         </div>
 
                         <div class="btn-row">
-                            <button class="btn btn-primary" id="changePlanBtn" type="button" onclick="contactSales('plan')">Cambiar plan</button>
+                            <button class="btn btn-primary" id="changePlanBtn" type="button">Cambiar plan</button>
                             <a class="btn btn-secondary" href="mailto:info@shiftia.es?subject=Gestion%20de%20mi%20plan" style="text-decoration:none;">Escribir a soporte</a>
                         </div>
 
@@ -1625,7 +1625,7 @@
                             </div>
                             <h3 class="empty-title">Sin suscripción activa</h3>
                             <p class="empty-desc">Elige un plan para desbloquear todas las funcionalidades de Shiftia.</p>
-                            <button class="btn btn-primary" type="button" onclick="openPlanModal()">Ver planes</button>
+                            <button class="btn btn-primary" type="button" id="openPlanModalBtn">Ver planes</button>
                         </div>
                     </div>
                     <div id="billingComingSoon" style="display:none;">
@@ -1761,7 +1761,7 @@
 
             <div class="billing-toggle-wrap">
                 <span class="billing-label active" id="blMonthly">Mensual</span>
-                <button class="billing-switch" type="button" id="billingSwitch" onclick="toggleBilling()" aria-label="Cambiar a anual">
+                <button class="billing-switch" type="button" id="billingSwitch" aria-label="Cambiar a anual">
                     <span class="billing-switch-knob"></span>
                 </button>
                 <span class="billing-label" id="blAnnual">Anual <span class="billing-save">−20%</span></span>
@@ -1789,7 +1789,7 @@
             </div>
 
             <button class="plan-checkout-btn" id="planCheckoutBtn" type="button" disabled>Selecciona un plan</button>
-            <span class="plan-manage-link" id="manageSubLink" style="display:none;" onclick="contactSales('billing')">Escribir a soporte</span>
+            <span class="plan-manage-link" id="manageSubLink" style="display:none;" role="button" tabindex="0">Escribir a soporte</span>
             <p style="font-family: var(--ds-font-sans); color: var(--ds-text-subtle); font-size: var(--ds-text-xs); margin: 14px 0 0; text-align: center;">Sin permanencia. Reembolso garantizado en los primeros 30 días. Contratación por llamada previa.</p>
         </div>
     </div>
@@ -3151,6 +3151,32 @@
             }
             window.addEventListener('dashboardReady', launch, { once: true });
             setTimeout(launch, 3000);
+        })();
+
+        // Event bindings (sustituyen a los antiguos handlers inline, bloqueados por CSP)
+        (function () {
+            const dismissBtn = document.getElementById('dismissOnboardingBtn');
+            if (dismissBtn) dismissBtn.addEventListener('click', dismissOnboarding);
+
+            const changePlanBtn = document.getElementById('changePlanBtn');
+            if (changePlanBtn) changePlanBtn.addEventListener('click', () => contactSales('plan'));
+
+            const openPlanBtn = document.getElementById('openPlanModalBtn');
+            if (openPlanBtn) openPlanBtn.addEventListener('click', openPlanModal);
+
+            const billingSwitch = document.getElementById('billingSwitch');
+            if (billingSwitch) billingSwitch.addEventListener('click', toggleBilling);
+
+            const manageSubLink = document.getElementById('manageSubLink');
+            if (manageSubLink) {
+                manageSubLink.addEventListener('click', () => contactSales('billing'));
+                manageSubLink.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                        e.preventDefault();
+                        contactSales('billing');
+                    }
+                });
+            }
         })();
     </script>
 </body>

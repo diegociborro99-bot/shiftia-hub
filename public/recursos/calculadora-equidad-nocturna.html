@@ -164,15 +164,15 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
     <div class="tool-head">
       <div class="tool-title">Reparto de noches por trabajador</div>
       <div class="tool-actions">
-        <button class="btn" onclick="loadDemo()">Cargar ejemplo</button>
-        <button class="btn" onclick="addRow()">+ Añadir persona</button>
-        <button class="btn ghost" onclick="clearAll()">Limpiar</button>
+        <button class="btn" id="btnDemo">Cargar ejemplo</button>
+        <button class="btn" id="btnAddRow">+ Añadir persona</button>
+        <button class="btn ghost" id="btnClear">Limpiar</button>
       </div>
     </div>
     <div class="peopleRows" id="rows"></div>
     <div class="tool-foot">
       <div class="total"><span id="totalLine">0 personas · 0 noches</span></div>
-      <button class="btn primary" onclick="calculate()">Calcular equidad</button>
+      <button class="btn primary" id="btnCalculate">Calcular equidad</button>
     </div>
     <div id="result"></div>
   </div>
@@ -249,9 +249,9 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
       const row = document.createElement('div');
       row.className = 'row';
       row.innerHTML = `
-        <input type="text" placeholder="Nombre o ID" value="${p.name.replace(/"/g,'&quot;')}" oninput="onName(${i}, this.value)">
-        <input type="number" min="0" step="1" placeholder="0" value="${p.n === '' ? '' : p.n}" oninput="onNights(${i}, this.value)">
-        <button class="del" title="Eliminar" onclick="removeRow(${i})">×</button>`;
+        <input type="text" class="inp-name" data-idx="${i}" placeholder="Nombre o ID" value="${p.name.replace(/"/g,'&quot;')}">
+        <input type="number" class="inp-nights" data-idx="${i}" min="0" step="1" placeholder="0" value="${p.n === '' ? '' : p.n}">
+        <button class="del row-remove" data-idx="${i}" title="Eliminar">×</button>`;
       rowsEl.appendChild(row);
     });
     updateTotal();
@@ -349,6 +349,30 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
       </div>`;
   };
   function escapeHtml(s){return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+  // Bindings (sustituyen a los antiguos handlers inline, bloqueados por CSP)
+  const btnDemo = document.getElementById('btnDemo');
+  if (btnDemo) btnDemo.addEventListener('click', () => loadDemo());
+  const btnAddRow = document.getElementById('btnAddRow');
+  if (btnAddRow) btnAddRow.addEventListener('click', () => addRow());
+  const btnClear = document.getElementById('btnClear');
+  if (btnClear) btnClear.addEventListener('click', () => clearAll());
+  const btnCalculate = document.getElementById('btnCalculate');
+  if (btnCalculate) btnCalculate.addEventListener('click', () => calculate());
+
+  // Delegación sobre el contenedor de filas (las filas se regeneran en cada render)
+  rowsEl.addEventListener('input', (e) => {
+    const t = e.target;
+    const idx = Number(t.dataset.idx);
+    if (!Number.isInteger(idx)) return;
+    if (t.classList.contains('inp-name')) onName(idx, t.value);
+    else if (t.classList.contains('inp-nights')) onNights(idx, t.value);
+  });
+  rowsEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.row-remove');
+    if (btn) removeRow(Number(btn.dataset.idx));
+  });
+
   render();
 })();
 </script>

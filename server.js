@@ -136,31 +136,58 @@ const PRETTY_HTML_ROUTES = {
 };
 const PUBLIC_DIR = path.resolve(__dirname, 'public');
 
-// Inject snippets into the <head> of HTML responses we own. Runs BEFORE
-// express.static so we can transform the response. Falls through (calls next())
-// for non-HTML paths and when no third-party widget is configured.
-function injectThirdPartySnippets(req, res, next) {
-  if (!HAS_THIRD_PARTY) return next();
-  if (req.method !== 'GET') return next();
+// CSP compartida entre el header global y el de las respuestas HTML con nonce.
+// Con nonce, los navegadores modernos ignoran 'unsafe-inline' en script-src
+// (queda solo como fallback para navegadores antiguos): un XSS inyectado ya no
+// puede ejecutar <script> inline porque no conoce el nonce de la respuesta.
+// Los handlers inline (onclick=...) se eliminaron de todas las páginas por esto.
+function buildCsp(nonce) {
+  const noncePart = nonce ? ` 'nonce-${nonce}'` : '';
+  return "default-src 'self'; " +
+    `script-src 'self'${noncePart} 'unsafe-inline' https://cdnjs.cloudflare.com https://client.crisp.chat https://*.posthog.com; ` +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat; " +
+    "font-src 'self' https://fonts.gstatic.com https://client.crisp.chat data:; " +
+    "img-src 'self' data: https:; " +
+    "connect-src 'self' https://client.crisp.chat wss://client.relay.crisp.chat https://*.posthog.com; " +
+    "frame-src https://client.crisp.chat; frame-ancestors 'none'; object-src 'none'; " +
+    "base-uri 'self'; form-action 'self'; upgrade-insecure-requests";
+}
 
+// Sirve un HTML de public/ transformado: snippets de terceros (si los hay) +
+// nonce por-respuesta en cada <script> + CSP con ese nonce. Único camino de
+// salida para el HTML propio (rutas bonitas, *.html y fallback SPA).
+function sendPublicHtml(res, fileName, next) {
+  const filePath = path.resolve(PUBLIC_DIR, fileName);
+  // Defense-in-depth: ensure the resolved file is inside public/, never escape.
+  if (!filePath.startsWith(PUBLIC_DIR + path.sep)) return next ? next() : res.status(404).end();
+
+  fs.promises.readFile(filePath, 'utf8').then((html) => {
+    let out = html;
+    if (HAS_THIRD_PARTY && out.includes('</head>')) {
+      out = out.replace('</head>', THIRD_PARTY_SNIPPETS + '</head>');
+    }
+    const nonce = crypto.randomBytes(16).toString('base64');
+    out = out.replace(/<script(?=[\s>])/g, `<script nonce="${nonce}"`);
+    res.setHeader('Content-Security-Policy', buildCsp(nonce));
+    res.type('html');
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.send(out);
+  }).catch((err) => {
+    if (next) return next();
+    console.error('sendPublicHtml falló:', fileName, err && err.message);
+    res.status(500).end();
+  });
+}
+
+// Middleware: intercepta rutas bonitas y *.html antes de express.static.
+function serveOwnHtml(req, res, next) {
+  if (req.method !== 'GET') return next();
   let fileName = PRETTY_HTML_ROUTES[req.path];
   if (!fileName) {
     if (!req.path.endsWith('.html')) return next();
     fileName = req.path.replace(/^\//, '');
   }
-
-  const filePath = path.resolve(PUBLIC_DIR, fileName);
-  // Defense-in-depth: ensure the resolved file is inside public/, never escape.
-  if (!filePath.startsWith(PUBLIC_DIR + path.sep)) return next();
-
-  fs.promises.readFile(filePath, 'utf8').then((html) => {
-    const injected = html.includes('</head>')
-      ? html.replace('</head>', THIRD_PARTY_SNIPPETS + '</head>')
-      : html;
-    res.type('html');
-    res.setHeader('Cache-Control', 'public, max-age=300');
-    res.send(injected);
-  }).catch(() => next());
+  sendPublicHtml(res, fileName, next);
 }
 
 // ====== SECURITY & PERFORMANCE MIDDLEWARE ======
@@ -174,8 +201,9 @@ app.use((req, res, next) => {
   // ignore X-Frame-Options when both are present, so we drop the duplicate header.
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  // Plan: nonce-based CSP to drop 'unsafe-inline' on script-src once the bundle is split.
-  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://client.crisp.chat https://*.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://client.crisp.chat; font-src 'self' https://fonts.gstatic.com https://client.crisp.chat data:; img-src 'self' data: https:; connect-src 'self' https://client.crisp.chat wss://client.relay.crisp.chat https://*.posthog.com; frame-src https://client.crisp.chat; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests");
+  // CSP base sin nonce (assets, API). Las respuestas HTML propias la
+  // sobreescriben con la variante con nonce en sendPublicHtml().
+  res.setHeader('Content-Security-Policy', buildCsp(null));
   // Strict Transport Security (HTTPS only) — 2-year max-age + preload
   if (IS_PRODUCTION) {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
@@ -185,8 +213,9 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: '50kb' }));
 
-// Inject Crisp/PostHog snippets into HTML responses BEFORE express.static serves the raw file.
-app.use(injectThirdPartySnippets);
+// HTML propio (rutas bonitas + *.html): snippets de terceros + CSP con nonce.
+// DEBE ir antes de express.static para poder transformar la respuesta.
+app.use(serveOwnHtml);
 
 // Service worker dinámico: inyecta BUILD_ID en CACHE_NAME para invalidar la
 // caché en cada build automáticamente. DEBE ir antes de express.static.
@@ -1954,22 +1983,22 @@ function htmlPage(title, body) {
 // ====== STATIC ROUTES ======
 // Serve login.html
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+  sendPublicHtml(res, 'login.html');
 });
 
 // Serve reset-password.html
 app.get('/reset-password', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'reset-password.html'));
+  sendPublicHtml(res, 'reset-password.html');
 });
 
 // Serve dashboard.html
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+  sendPublicHtml(res, 'dashboard.html');
 });
 
 // Serve docs.html
 app.get('/docs', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'docs.html'));
+  sendPublicHtml(res, 'docs.html');
 });
 
 // Serve legal pages
@@ -2004,19 +2033,19 @@ ${urls.map(u => `  <url>
   res.send(xml);
 });
 
-app.get('/sobre-nosotros', (req, res) => res.sendFile(path.join(__dirname, 'public', 'sobre-nosotros.html')));
-app.get('/privacidad', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacidad.html')));
-app.get('/terminos',   (req, res) => res.sendFile(path.join(__dirname, 'public', 'terminos.html')));
-app.get('/cookies',    (req, res) => res.sendFile(path.join(__dirname, 'public', 'cookies.html')));
+app.get('/sobre-nosotros', (req, res) => sendPublicHtml(res, 'sobre-nosotros.html'));
+app.get('/privacidad', (req, res) => sendPublicHtml(res, 'privacidad.html'));
+app.get('/terminos',   (req, res) => sendPublicHtml(res, 'terminos.html'));
+app.get('/cookies',    (req, res) => sendPublicHtml(res, 'cookies.html'));
 
 // SEO pillar pages — recursos
-app.get('/recursos',  (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'index.html')));
+app.get('/recursos',  (req, res) => sendPublicHtml(res, 'recursos/index.html'));
 app.get('/recursos/', (req, res) => res.redirect(301, '/recursos'));
-app.get('/recursos/descanso-minimo-entre-turnos', (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'descanso-minimo-entre-turnos.html')));
-app.get('/recursos/calculadora-equidad-nocturna', (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'calculadora-equidad-nocturna.html')));
-app.get('/recursos/excel-vs-software-turnos',     (req, res) => res.sendFile(path.join(__dirname, 'public', 'recursos', 'excel-vs-software-turnos.html')));
-app.get('/demo', (req, res) => res.sendFile(path.join(__dirname, 'public', 'demo.html')));
-app.get('/forgot-password', (req, res) => res.sendFile(path.join(__dirname, 'public', 'forgot-password.html')));
+app.get('/recursos/descanso-minimo-entre-turnos', (req, res) => sendPublicHtml(res, 'recursos/descanso-minimo-entre-turnos.html'));
+app.get('/recursos/calculadora-equidad-nocturna', (req, res) => sendPublicHtml(res, 'recursos/calculadora-equidad-nocturna.html'));
+app.get('/recursos/excel-vs-software-turnos',     (req, res) => sendPublicHtml(res, 'recursos/excel-vs-software-turnos.html'));
+app.get('/demo', (req, res) => sendPublicHtml(res, 'demo.html'));
+app.get('/forgot-password', (req, res) => sendPublicHtml(res, 'forgot-password.html'));
 
 // Health check público — minimalista, no expone diagnóstico interno
 app.get('/api/health', (req, res) => {
@@ -2084,7 +2113,7 @@ app.use('/api', (req, res) => {
 
 // SPA fallback (solo para rutas no-API)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  sendPublicHtml(res, 'index.html');
 });
 
 // ====== GLOBAL ERROR HANDLER ======

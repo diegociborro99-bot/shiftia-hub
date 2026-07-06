@@ -341,8 +341,8 @@
 
                     <!-- Tabs -->
                     <div class="auth-tabs" role="tablist">
-                        <button id="tabLogin" class="auth-tab is-active" role="tab" aria-selected="true" onclick="showTab('login')">Iniciar sesión</button>
-                        <button id="tabRegister" class="auth-tab" role="tab" aria-selected="false" onclick="showTab('register')">Crear cuenta</button>
+                        <button id="tabLogin" class="auth-tab is-active" role="tab" aria-selected="true" data-tab="login">Iniciar sesión</button>
+                        <button id="tabRegister" class="auth-tab" role="tab" aria-selected="false" data-tab="register">Crear cuenta</button>
                     </div>
 
                     <!-- Alerts -->
@@ -472,6 +472,9 @@
             document.getElementById('errorMessage').classList.remove('show');
             document.getElementById('successMessage').classList.remove('show');
         }
+
+        document.getElementById('tabLogin').addEventListener('click', () => showTab('login'));
+        document.getElementById('tabRegister').addEventListener('click', () => showTab('register'));
 
         // Register form
         document.getElementById('registerForm').addEventListener('submit', async (e) => {

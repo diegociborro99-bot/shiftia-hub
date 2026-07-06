@@ -136,8 +136,7 @@ footer.site-footer a { color:var(--ds-accent-text,#0a5950); text-decoration:none
 
   <div class="founder">
     <div class="founder-photo-wrap">
-      <img src="/equipo/diego-ciborro.webp?v=3" alt="Diego Ciborro, fundador de Shiftia" class="founder-photo" width="180" height="180"
-           onerror="this.style.display='none';var f=document.getElementById('founderInitials');if(f)f.style.display='flex';">
+      <img src="/equipo/diego-ciborro.webp?v=3" alt="Diego Ciborro, fundador de Shiftia" class="founder-photo" id="founderPhoto" width="180" height="180">
       <div class="founder-initials" id="founderInitials" aria-hidden="true">DC</div>
     </div>
     <div>
@@ -222,5 +221,19 @@ footer.site-footer a { color:var(--ds-accent-text,#0a5950); text-decoration:none
 <footer class="site-footer">
   <a href="/">Inicio</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a> · <a href="mailto:info@shiftia.es">info@shiftia.es</a>
 </footer>
+<script>
+(function(){
+  var img = document.getElementById('founderPhoto');
+  if (!img) return;
+  function fallback(){
+    img.style.display = 'none';
+    var f = document.getElementById('founderInitials');
+    if (f) f.style.display = 'flex';
+  }
+  img.addEventListener('error', fallback);
+  // Si el error ya ocurrió antes de bindear el listener:
+  if (img.complete && img.naturalWidth === 0) fallback();
+})();
+</script>
 </body>
 </html>

@@ -56,6 +56,24 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
     assert.ok(html.includes('Shiftia'), 'la landing contiene la marca');
     assert.ok(html.toLowerCase().includes('<!doctype html'), 'respuesta HTML');
 
+    // CSP con nonce: el header y los <script> del HTML deben compartir nonce.
+    const csp = home.headers.get('content-security-policy') || '';
+    const nonceMatch = csp.match(/'nonce-([^']+)'/);
+    assert.ok(nonceMatch, 'el CSP de la landing lleva nonce');
+    assert.ok(html.includes(`<script nonce="${nonceMatch[1]}"`), 'los <script> llevan el mismo nonce');
+    assert.ok(!/<script(?![^>]*nonce=)[\s>]/.test(html), 'ningún <script> queda sin nonce');
+    assert.ok(!/on(?:click|submit|error|input|load|change)="/.test(html), 'sin handlers inline en la landing');
+
+    // Dos peticiones → dos nonces distintos (no debe ser estático).
+    const again = await fetch(`${BASE}/`);
+    const csp2 = again.headers.get('content-security-policy') || '';
+    assert.notEqual(csp, csp2, 'el nonce cambia por respuesta');
+
+    // Una página servida por ruta bonita también va con nonce.
+    const demo = await fetch(`${BASE}/demo`);
+    assert.equal(demo.status, 200);
+    assert.ok((demo.headers.get('content-security-policy') || '').includes("'nonce-"), '/demo lleva CSP con nonce');
+
     const notFound = await fetch(`${BASE}/api/no-existe`);
     assert.equal(notFound.status, 404, 'las rutas /api desconocidas devuelven 404');
   } catch (err) {

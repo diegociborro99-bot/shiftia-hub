@@ -294,8 +294,7 @@
 <!-- DNS prefetch for runtime-injected third-party (Crisp chat, PostHog analytics) -->
 <link rel="dns-prefetch" href="https://client.crisp.chat">
 <link rel="dns-prefetch" href="https://eu.i.posthog.com">
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <link rel="preload" as="style" href="/design-system.css">
 <link rel="stylesheet" href="/design-system.css">
 <link rel="preload" as="style" href="/v36.css?v=363">
@@ -321,7 +320,7 @@
     </svg>
     <span class="nav-logo-text">Shiftia</span>
   </a>
-  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+  <button class="hamburger" id="hamburger" data-action="toggle-menu" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-links">
@@ -343,21 +342,21 @@
     <!-- Dark mode toggle eliminado: la web es light-only por diseño. -->
 
     <div class="lang-selector" id="langSelector">
-      <button class="lang-btn" onclick="document.getElementById('langSelector').classList.toggle('open')">
+      <button class="lang-btn" data-action="toggle-lang">
         <span class="lang-flag" id="currentFlag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#c60b1e"/><rect y="3" width="16" height="6" fill="#ffc400"/></svg></span>
         <span id="currentLang">ES</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <div class="lang-dropdown">
-        <div class="lang-option active" data-lang="es" onclick="setLang('es')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#c60b1e"/><rect y="3" width="16" height="6" fill="#ffc400"/></svg></span> Español</div>
-        <div class="lang-option" data-lang="en" onclick="setLang('en')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#012169"/><path d="M0 0L16 12M16 0L0 12" stroke="#fff" stroke-width="2.4"/><path d="M0 0L16 12M16 0L0 12" stroke="#c8102e" stroke-width="1.2"/><path d="M8 0V12M0 6H16" stroke="#fff" stroke-width="3.4"/><path d="M8 0V12M0 6H16" stroke="#c8102e" stroke-width="1.9"/></svg></span> English</div>
-        <div class="lang-option" data-lang="de" onclick="setLang('de')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#000"/><rect y="4" width="16" height="4" fill="#dd0000"/><rect y="8" width="16" height="4" fill="#ffce00"/></svg></span> Deutsch</div>
-        <div class="lang-option" data-lang="fr" onclick="setLang('fr')"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#fff"/><rect width="5.34" height="12" fill="#0055a4"/><rect x="10.66" width="5.34" height="12" fill="#ef4135"/></svg></span> Français</div>
+        <div class="lang-option active" data-lang="es"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#c60b1e"/><rect y="3" width="16" height="6" fill="#ffc400"/></svg></span> Español</div>
+        <div class="lang-option" data-lang="en"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#012169"/><path d="M0 0L16 12M16 0L0 12" stroke="#fff" stroke-width="2.4"/><path d="M0 0L16 12M16 0L0 12" stroke="#c8102e" stroke-width="1.2"/><path d="M8 0V12M0 6H16" stroke="#fff" stroke-width="3.4"/><path d="M8 0V12M0 6H16" stroke="#c8102e" stroke-width="1.9"/></svg></span> English</div>
+        <div class="lang-option" data-lang="de"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#000"/><rect y="4" width="16" height="4" fill="#dd0000"/><rect y="8" width="16" height="4" fill="#ffce00"/></svg></span> Deutsch</div>
+        <div class="lang-option" data-lang="fr"><span class="lang-flag"><svg class="flagsvg" viewBox="0 0 16 12" aria-hidden="true"><rect width="16" height="12" fill="#fff"/><rect width="5.34" height="12" fill="#0055a4"/><rect x="10.66" width="5.34" height="12" fill="#ef4135"/></svg></span> Français</div>
       </div>
     </div>
-    <button class="nav-btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})" data-i18n="nav_cta">Solicitar llamada</button>
+    <button class="nav-btn-primary" data-action="scroll-contact" data-i18n="nav_cta">Solicitar llamada</button>
   </div>
-  <button class="nav-mobile" onclick="this.parentElement.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">
+  <button class="nav-mobile" data-action="toggle-nav-links" aria-label="Menu">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
   </button>
 </nav>
@@ -1913,7 +1912,7 @@
           <div class="calc-roi-line"><span data-i18n="calc_roi_pre">Por cada 1€ invertido, recuperas</span> <strong id="calcRoi">5,8×</strong></div>
           <div class="calc-roi-bar" aria-hidden="true"><div class="calc-roi-fill" id="calcRoiFill"></div></div>
         </div>
-        <button class="calc-cta" id="calcCta" type="button" onclick="calcToContact()">
+        <button class="calc-cta" id="calcCta" type="button" data-action="calc-contact">
           <span data-i18n="calc_cta">Solicitar demo con estos datos</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
@@ -1936,7 +1935,7 @@
   </div>
   <div class="price-toggle-wrap reveal">
     <span class="price-toggle-label active" id="ptMonthly" data-i18n="price_monthly">Mensual</span>
-    <button class="price-toggle" id="priceToggle" onclick="togglePricing()">
+    <button class="price-toggle" id="priceToggle" data-action="toggle-pricing">
       <div class="price-toggle-knob"></div>
     </button>
     <span class="price-toggle-label" id="ptAnnual" data-i18n="price_annual">Anual <span class="price-save" data-i18n="price_save">-20%</span></span>
@@ -1960,7 +1959,7 @@
         <li data-i18n="p1_f7">Dashboard básico</li>
         <li data-i18n="p1_f8">Nube + RGPD · soporte por email</li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn_starter" onclick="scrollToContact('esencial')">Solicitar demo</button>
+      <button class="price-btn outline" data-i18n="price_btn_starter" data-action="contact-plan" data-plan="esencial">Solicitar demo</button>
     </div>
     <div class="price-card pop reveal d1">
       <div class="price-pop-badge" data-i18n="p2_badge">★ Más elegido</div>
@@ -1982,7 +1981,7 @@
         <li data-i18n="p2_f7">Personalización gráfica (tu marca y términos)</li>
         <li data-i18n="p2_f8">Implantación guiada 5-7 días laborables · soporte prioritario</li>
       </ul>
-      <button class="price-btn fill" data-i18n="price_btn_pro" onclick="scrollToContact('pro')">Solicitar demo</button>
+      <button class="price-btn fill" data-i18n="price_btn_pro" data-action="contact-plan" data-plan="pro">Solicitar demo</button>
     </div>
     <div class="price-card reveal d2">
       <div class="price-name" data-i18n="p3_n">Business</div>
@@ -2002,7 +2001,7 @@
         <li data-i18n="p3_f7">Onboarding dedicado + gestor de cuenta</li>
         <li data-i18n="p3_f8">Soporte prioritario con SLA</li>
       </ul>
-      <button class="price-btn outline" data-i18n="price_btn_business" onclick="scrollToContact('business')">Solicitar demo</button>
+      <button class="price-btn outline" data-i18n="price_btn_business" data-action="contact-plan" data-plan="business">Solicitar demo</button>
     </div>
   </div>
 
@@ -2022,7 +2021,7 @@
       <li data-i18n="p4_f5">Seguridad reforzada y auditoría</li>
       <li data-i18n="p4_f6">Formación on-site + contrato adaptado</li>
     </ul>
-    <button class="price-btn ghost" data-i18n="price_btn_enterprise" onclick="scrollToContact('enterprise')">Hablar con ventas</button>
+    <button class="price-btn ghost" data-i18n="price_btn_enterprise" data-action="contact-plan" data-plan="enterprise">Hablar con ventas</button>
   </div>
 
   <div class="price-chips reveal">
@@ -2043,39 +2042,39 @@
   <div class="container">
     <div class="faq-list">
       <div class="faq-item reveal">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq1_q">¿Puedo importar mi Excel o cuadrante actual?</div>
+        <div class="faq-q" data-i18n="faq1_q">¿Puedo importar mi Excel o cuadrante actual?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq1_a">Sí. Puedes importar tu planilla actual en PDF y Shiftia extrae los datos automáticamente. También puedes crear la planilla desde cero en minutos añadiendo tu equipo y configurando los turnos, o Shiftia lo hace por ti.</div></div>
       </div>
       <div class="faq-item reveal d1">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq2_q">¿Funciona sin conexión a internet?</div>
+        <div class="faq-q" data-i18n="faq2_q">¿Funciona sin conexión a internet?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq2_a">Shiftia es una aplicación web que requiere conexión. Sin embargo, una vez cargada, puedes seguir trabajando temporalmente offline y los cambios se sincronizarán cuando recuperes la conexión.</div></div>
       </div>
       <div class="faq-item reveal d2">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq3_q">¿Cuánto tiempo tarda la implantación?</div>
+        <div class="faq-q" data-i18n="faq3_q">¿Cuánto tiempo tarda la implantación?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq3_a">El plazo de implantación es de 5 a 7 días laborables desde la contratación del servicio. Configuramos tu equipo, importamos o creamos la planilla y dejamos todo listo para que empieces a trabajar. Ofrecemos acompañamiento completo durante todo el proceso de puesta en marcha.</div></div>
       </div>
       <div class="faq-item reveal d3">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq4_q">¿La IA sustituye al supervisor?</div>
+        <div class="faq-q" data-i18n="faq4_q">¿La IA sustituye al supervisor?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq4_a">No. Shiftia asiste al supervisor sugiriendo candidatos y detectando conflictos, pero la decisión final siempre es humana. Tú apruebas cada cobertura con un clic. La IA ahorra tiempo, no reemplaza el criterio profesional.</div></div>
       </div>
       <div class="faq-item reveal d4">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq5_q">¿Mis datos están seguros?</div>
+        <div class="faq-q" data-i18n="faq5_q">¿Mis datos están seguros?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq5_a">Absolutamente. Todos los datos se almacenan cifrados en la nube con copias de seguridad automáticas. Cumplimos con RGPD y ofrecemos opción de despliegue on-premise para organizaciones que lo requieran.</div></div>
       </div>
       <div class="faq-item reveal d5">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq6_q">¿Puedo cancelar en cualquier momento?</div>
+        <div class="faq-q" data-i18n="faq6_q">¿Puedo cancelar en cualquier momento?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq6_a">Si. Sin permanencia ni penalizaciones. Puedes cancelar tu plan en cualquier momento y seguirás teniendo acceso hasta el final del período facturado. También puedes exportar tus datos en cualquier momento.</div></div>
       </div>
       <div class="faq-item reveal d5">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq7_q">¿Shiftia es una ETT o un marketplace de personal?</div>
+        <div class="faq-q" data-i18n="faq7_q">¿Shiftia es una ETT o un marketplace de personal?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq7_a">No. Shiftia no es una ETT ni una bolsa de profesionales externos: es un software de planificación de turnos. Tu equipo es el tuyo. Shiftia genera los cuadrantes, gestiona ausencias y vacaciones y propone sustituciones entre tu propia plantilla. Ninguna persona externa interviene en tu operación.</div></div>
       </div>
       <div class="faq-item reveal d5">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq8_q">Tengo una empresa de unos 30 trabajadores. ¿Sirve para planificación continuada, no solo para urgencias?</div>
+        <div class="faq-q" data-i18n="faq8_q">Tengo una empresa de unos 30 trabajadores. ¿Sirve para planificación continuada, no solo para urgencias?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq8_a">Sí, ese es exactamente el caso típico de Shiftia. Genera planillas equilibradas de forma continuada, mes a mes durante todo el año: rotaciones, descansos legales, vacaciones y equidad de noches. La cobertura urgente de bajas es solo una función más, no el producto. El plan Pro cubre hasta 40 trabajadores.</div></div>
       </div>
       <div class="faq-item reveal d5">
-        <div class="faq-q" onclick="toggleFaq(this)" data-i18n="faq9_q">¿Gestiona vacaciones, ausencias, rotaciones y reglas complejas?</div>
+        <div class="faq-q" data-i18n="faq9_q">¿Gestiona vacaciones, ausencias, rotaciones y reglas complejas?</div>
         <div class="faq-a"><div class="faq-a-inner" data-i18n="faq9_a">Sí. Vacaciones con balance por persona y verificación de cobertura, ausencias y bajas con sustitución sugerida por IA, rotaciones de mañana/tarde/noche equilibradas, y reglas de convenio configurables: máximo de noches, descansos mínimos, jornadas reducidas y conciliación. Todo queda auditado y es exportable.</div></div>
       </div>
     </div>
@@ -2104,7 +2103,7 @@
       </div>
     </div>
     <div class="form-card reveal d2">
-      <form id="contactForm" onsubmit="handleSubmit(event)" aria-label="Formulario de contacto para agendar una demo">
+      <form id="contactForm" aria-label="Formulario de contacto para agendar una demo">
         <div class="form-row">
           <div class="fg"><label for="cf-name" data-i18n="form_name">Nombre completo</label><input id="cf-name" type="text" placeholder="Tu nombre" data-i18n-ph="form_name_ph" required aria-required="true"></div>
           <div class="fg"><label for="cf-email" data-i18n="form_email">Email profesional</label><input id="cf-email" type="email" placeholder="tu@empresa.es" required aria-required="true" aria-invalid="false"></div>
@@ -2371,7 +2370,7 @@
 <!-- Feature detail modal -->
 <div class="feat-modal-overlay" id="featModal">
   <div class="feat-modal">
-    <button class="feat-modal-close" onclick="closeFeatModal()">&times;</button>
+    <button class="feat-modal-close" data-action="close-feat-modal">&times;</button>
     <div class="feat-modal-icon" id="fmIcon"></div>
     <h3 id="fmTitle"></h3>
     <div class="feat-modal-desc" id="fmDesc"></div>
@@ -4128,13 +4127,15 @@ const counterObserver = new IntersectionObserver((entries) => {
 counters.forEach(c => counterObserver.observe(c));
 
 // Back to top visibility
-const backToTop = document.getElementById('backToTop');
-if (backToTop) {
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 600) backToTop.classList.add('visible');
-    else backToTop.classList.remove('visible');
-  });
-}
+// El botón vive más abajo en el DOM que este script: hay que consultarlo en
+// el momento del scroll, no al parsear (si no, getElementById devuelve null
+// y el botón no aparece nunca — bug histórico destapado por el sweep de CSP).
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backToTop');
+  if (!btn) return;
+  if (window.scrollY > 600) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+}, { passive: true });
 
 // ====== ADDITIONAL VISUAL ENHANCEMENTS ======
 
@@ -4240,7 +4241,7 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
 </script>
 
 <!-- Floating buttons -->
-<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+<button class="back-to-top" id="backToTop" data-action="back-top">
   <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
@@ -4248,8 +4249,8 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
 <div class="cookie-banner" id="cookieBanner">
   <span>Utilizamos cookies propias para mejorar tu experiencia. <a href="/cookies">Política de cookies</a></span>
   <div style="display:flex;gap:8px;">
-    <button class="cookie-btn reject" onclick="dismissCookies()">Rechazar</button>
-    <button class="cookie-btn accept" onclick="acceptCookies()">Aceptar</button>
+    <button class="cookie-btn reject" data-action="dismiss-cookies">Rechazar</button>
+    <button class="cookie-btn accept" data-action="accept-cookies">Aceptar</button>
   </div>
 </div>
 
@@ -4328,13 +4329,8 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
     update();
   }
 
-  // ----- FAQ accordion (open class para animación del + → ×) -----
-  document.querySelectorAll('.faq-q').forEach(q => {
-    q.addEventListener('click', () => {
-      const item = q.closest('.faq-item');
-      if (item) item.classList.toggle('open');
-    });
-  });
+  // (FAQ: el click vive en la delegación global de acciones → toggleFaq(),
+  //  que ya gestiona .open, max-height y aria-expanded. No duplicar aquí.)
 
   // (Calculadora ROI antigua eliminada: sustituida por la sección interactiva #calc.)
 })();
@@ -4705,6 +4701,44 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
+})();
+</script>
+
+<script>
+/* Delegación de acciones — sustituye a los antiguos atributos onclick inline para
+   que la página funcione bajo CSP con nonces (los handlers inline quedan
+   bloqueados cuando script-src lleva nonce). Las funciones son las globales
+   ya definidas en los bloques anteriores. */
+(function actionDelegation() {
+  'use strict';
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target : null;
+    if (!t) return;
+
+    var faq = t.closest('.faq-q');
+    if (faq) { toggleFaq(faq); return; }
+
+    var lang = t.closest('.lang-option');
+    if (lang && lang.dataset.lang) { setLang(lang.dataset.lang); return; }
+
+    var el = t.closest('[data-action]');
+    if (!el) return;
+    switch (el.dataset.action) {
+      case 'toggle-menu': toggleMenu(); break;
+      case 'toggle-lang': document.getElementById('langSelector').classList.toggle('open'); break;
+      case 'scroll-contact': document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); break;
+      case 'toggle-nav-links': el.parentElement.querySelector('.nav-links').classList.toggle('open'); break;
+      case 'calc-contact': calcToContact(); break;
+      case 'toggle-pricing': togglePricing(); break;
+      case 'contact-plan': scrollToContact(el.dataset.plan); break;
+      case 'close-feat-modal': closeFeatModal(); break;
+      case 'back-top': window.scrollTo({ top: 0, behavior: 'smooth' }); break;
+      case 'dismiss-cookies': dismissCookies(); break;
+      case 'accept-cookies': acceptCookies(); break;
+    }
+  });
+  var form = document.getElementById('contactForm');
+  if (form) form.addEventListener('submit', function (e) { handleSubmit(e); });
 })();
 </script>
 
