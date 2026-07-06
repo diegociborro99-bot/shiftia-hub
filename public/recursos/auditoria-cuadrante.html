@@ -119,11 +119,11 @@ footer a:hover{color:var(--accent)}
     <a href="/">Inicio</a> · <a href="/recursos">Recursos</a> · Auditoría de cuadrante
   </div>
 
-  <div class="eyebrow">Gratis · Sin registro · Respuesta en 24-48 h</div>
+  <div class="eyebrow">Gratis · Sin registro · Diagnóstico en minutos</div>
 
   <h1>Sube tu cuadrante y te decimos <em>qué falla</em></h1>
 
-  <p class="lede">Envíanos tu planilla actual (PDF, Excel o una foto legible) y te devolvemos por email un diagnóstico honesto: cómo de justo es el reparto de noches, qué descansos mínimos se están incumpliendo y dónde están los riesgos. Hecho por quien hace turnos, no por un comercial.</p>
+  <p class="lede">Envíanos tu planilla actual (PDF, CSV o una foto legible) y recibirás por email un diagnóstico con números verificables: cómo de justo es el reparto de noches, qué descansos mínimos se están incumpliendo (con fechas y personas) y dónde están los riesgos. La IA lee tu cuadrante; los cálculos los hace un motor de reglas verificado — nada de números inventados. Si el archivo no se puede leer con garantías, lo revisa el equipo en 24-48 h.</p>
 
   <div class="points">
     <div class="point"><strong>Equidad nocturna</strong><span>¿Quién carga con más noches de la cuenta? Desviación y ranking por persona.</span></div>
@@ -183,8 +183,8 @@ footer a:hover{color:var(--accent)}
       <p>El cuadrante se usa exclusivamente para este análisis. No se comparte con terceros y se elimina al terminar. Si contiene nombres, puedes taparlos o sustituirlos por iniciales: para el análisis nos basta con los turnos.</p>
     </details>
     <details>
-      <summary>¿Quién hace el análisis?</summary>
-      <p>El equipo de Shiftia — fundado por un enfermero de turnos en activo — con las mismas métricas que usa el producto: equidad nocturna (desviación e índice de Jain), descansos mínimos y detección de rachas.</p>
+      <summary>¿Quién hace el análisis? ¿Puedo fiarme de los números?</summary>
+      <p>La IA solo hace una cosa: leer tu documento y transcribir los turnos. Todos los números del diagnóstico (desviación, índice de Jain, descansos incumplidos, rachas) los calcula un motor de reglas determinista y testeado — el mismo criterio que usa el producto de Shiftia. Si la lectura del documento no alcanza un umbral de confianza, no te enviamos un informe automático: lo revisa el equipo (fundado por un enfermero de turnos en activo) y lo recibes en 24-48 h.</p>
     </details>
   </div>
 </div>
@@ -244,7 +244,7 @@ footer a:hover{color:var(--accent)}
         if (!res.ok) throw new Error(res.j.error || 'No se pudo enviar');
         form.reset();
         dzText.innerHTML = 'Arrastra el archivo aquí o <span class="dz-file">haz clic para elegirlo</span>';
-        showMsg('ok', '¡Recibido! Te enviaremos el diagnóstico a tu email en 24-48 h laborables. Revisa también la carpeta de spam.');
+        showMsg('ok', '¡Recibido! Si tu cuadrante se puede leer automáticamente, el diagnóstico te llegará al email en unos minutos; si no, lo revisa el equipo y lo tienes en 24-48 h. Revisa también la carpeta de spam.');
         try { if (window.posthog) posthog.capture('audit_request_submitted', { has_file: !!fi.files.length }); } catch (err) {}
       })
       .catch(function (err) { showMsg('err', err.message + '. Si persiste, escríbenos a info@shiftia.es.'); })

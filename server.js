@@ -11,6 +11,8 @@ const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 const multer = require('multer');
 const bookingLib = require('./lib/booking');
+const auditAI = require('./lib/audit-ai');
+const { analyzeSchedule } = require('./lib/audit');
 
 const app = express();
 app.disable('x-powered-by');
@@ -1527,6 +1529,152 @@ const auditUpload = multer({
   fileFilter: (req, file, cb) => cb(null, /\.(pdf|xlsx?|csv|png|jpe?g)$/i.test(file.originalname || ''))
 });
 
+// --- Informe de auditoría automática (IA lee el documento; los números
+//     salen SOLO de lib/audit.js, matemática determinista y testeada) ---
+function buildAuditReportBody({ metrics, summary, firstName }) {
+  const esc = bookingLib.escHtml;
+  const m = metrics;
+  const verdictLabel = { justo: 'Justo', mejorable: 'Mejorable', critico: 'Crítico' }[m.nights.verdict] || m.nights.verdict;
+  const verdictColor = { justo: '#0a5950', mejorable: '#8a6220', critico: '#a31c22' }[m.nights.verdict] || '#0e0f0f';
+
+  const summaryHtml = String(summary || '').split(/\n\s*\n/).filter(Boolean)
+    .map(p => `<p style="margin:0 0 14px;color:#1a1a1a;line-height:1.65;font-size:15px;">${esc(p)}</p>`).join('');
+
+  const nightsRows = m.nights.per_worker.slice(0, 14).map(x =>
+    `<tr><td style="padding:8px 0;font-size:14px;color:#1a1a1a;border-bottom:1px solid #ece9e2;">${esc(x.name)}${m.nights.overloaded.includes(x.name) ? ' <span style="color:#a31c22;font-size:11px;font-weight:700;">▲ sobrecarga</span>' : ''}</td><td style="padding:8px 0;font-size:14px;color:#0e0f0f;text-align:right;border-bottom:1px solid #ece9e2;font-variant-numeric:tabular-nums;">${x.nights}</td></tr>`
+  ).join('');
+
+  const violationsRows = m.rest_violations.slice(0, 12).map(v =>
+    `<tr><td style="padding:8px 0;font-size:13px;color:#1a1a1a;border-bottom:1px solid #ece9e2;">${esc(v.worker)}</td><td style="padding:8px 0;font-size:13px;color:#4a4a47;border-bottom:1px solid #ece9e2;">${esc(v.from)} → ${esc(v.to)}</td><td style="padding:8px 0;font-size:13px;color:#a31c22;text-align:right;border-bottom:1px solid #ece9e2;font-variant-numeric:tabular-nums;">${String(v.rest_hours).replace('.', ',')} h</td></tr>`
+  ).join('');
+
+  const streaksHtml = m.night_streaks.slice(0, 8).map(s =>
+    `<li style="margin:0 0 6px;color:#1a1a1a;font-size:14px;">${esc(s.worker)}: <strong>${s.length} noches seguidas</strong> (hasta ${esc(s.end_date)})</li>`
+  ).join('');
+
+  return `
+    <p style="margin:0 0 18px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hola ${esc(firstName)}, aquí está el diagnóstico de tu cuadrante (${m.workers_count} personas · ${m.total_shifts} turnos analizados).</p>
+    ${summaryHtml}
+    <div style="margin:22px 0;padding:16px 20px;background:#faf9f6;border:1px solid #ece9e2;border-radius:10px;">
+      <p style="margin:0;font-size:14px;color:#1a1a1a;">Equidad nocturna: <strong style="color:${verdictColor};">${verdictLabel}</strong> · desviación ${String(m.nights.stdev).replace('.', ',')} · rango ${m.nights.range} (${m.nights.min}–${m.nights.max}) · índice de equidad ${String(m.nights.jain).replace('.', ',')}/1</p>
+      <p style="margin:8px 0 0;font-size:14px;color:#1a1a1a;">Descansos &lt;12 h: <strong style="color:${m.rest_violations.length ? '#a31c22' : '#0a5950'};">${m.rest_violations.length}</strong> · Rachas de ≥3 noches: <strong style="color:${m.night_streaks.length ? '#8a6220' : '#0a5950'};">${m.night_streaks.length}</strong></p>
+    </div>
+    <p style="margin:22px 0 8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#7a766f;">Reparto de noches</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">${nightsRows}</table>
+    ${m.rest_violations.length ? `
+      <p style="margin:22px 0 8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#7a766f;">Descansos por debajo de 12 h (art. 34.3 ET)</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">${violationsRows}</table>
+      ${m.rest_violations.length > 12 ? `<p style="margin:8px 0 0;font-size:12px;color:#7a766f;">…y ${m.rest_violations.length - 12} más.</p>` : ''}` : ''}
+    ${m.night_streaks.length ? `
+      <p style="margin:22px 0 8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#7a766f;">Rachas de noches</p>
+      <ul style="margin:0;padding-left:18px;">${streaksHtml}</ul>` : ''}
+    <p style="margin:24px 0 0;color:#1a1a1a;line-height:1.6;font-size:15px;">Si quieres que esto no vuelva a pasar — la IA de Shiftia genera el cuadrante respetando descansos, equidad y tu convenio — te lo enseñamos con tus datos en una llamada de 15 minutos.</p>
+    <p style="margin:16px 0 0;"><a href="${APP_URL}/#contact" style="display:inline-block;background:#0e0f0f;color:#faf9f6;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;">Agendar llamada gratuita</a></p>
+    <p style="margin:22px 0 0;color:#9a958c;font-size:12px;line-height:1.6;">Supuestos del cálculo: descanso mínimo ${m.assumptions.min_rest_hours} h entre fin e inicio de turno; horarios ${bookingLib.escHtml(m.assumptions.assumed_defs || m.assumptions.shift_definitions.join(', '))}. Los números salen de un cálculo automático verificado — la IA solo lee el documento, no calcula. Tu cuadrante se elimina tras el análisis. Este diagnóstico es informativo y no constituye asesoramiento legal.</p>
+  `;
+}
+
+function sendManualAuditEmails({ cleanName, email, cleanSector, cleanWorkers, cleanMessage, file, statusNote }) {
+  const esc = bookingLib.escHtml;
+  const atts = [];
+  if (file) atts.push({ filename: cap(file.originalname, 120) || 'cuadrante', content: file.buffer });
+
+  sendMail({
+    from: `"Shiftia Auditoría" <${GMAIL_USER}>`,
+    to: NOTIFY_EMAIL,
+    resendFrom: INTERNAL_RESEND_FROM,
+    replyTo: email,
+    subject: `[Auditoría de cuadrante] ${esc(cleanName)}${cleanSector ? ' · ' + esc(cleanSector) : ''}${cleanWorkers ? ' · ' + esc(cleanWorkers) + ' trab.' : ''}`,
+    attachments: atts,
+    html: emailTemplate({
+      preheader: `Nueva auditoría solicitada por ${esc(cleanName)}`,
+      headline: 'Nueva auditoría de cuadrante',
+      body: `
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">
+          <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;width:130px;border-bottom:1px solid #ece9e2;">Nombre</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanName)}</td></tr>
+          <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Email</td><td style="padding:12px 0;font-size:14px;border-bottom:1px solid #ece9e2;"><a href="mailto:${esc(email)}" style="color:#0f7a6d;">${esc(email)}</a></td></tr>
+          ${cleanSector ? `<tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Sector</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanSector)}</td></tr>` : ''}
+          ${cleanWorkers ? `<tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Trabajadores</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanWorkers)}</td></tr>` : ''}
+          <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;">Cuadrante</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;">${file ? esc(file.originalname) + ' (adjunto)' : 'sin archivo — pedirlo por email'}</td></tr>
+        </table>
+        ${cleanMessage ? `<div style="margin-top:20px;padding:20px;background:#faf9f6;border-radius:10px;border:1px solid #ece9e2;"><p style="color:#7a766f;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">Contexto</p><p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">${esc(cleanMessage)}</p></div>` : ''}
+        <p style="color:#9a958c;font-size:12px;margin:20px 0 0;">${esc(statusNote || 'Requiere análisis manual.')} Compromiso público: diagnóstico en 24-48 h laborables. Responde directamente a este correo (reply-to = cliente).</p>
+      `
+    })
+  }).catch(err => console.error('Aviso interno de auditoría falló:', err && err.message));
+
+  sendMail({
+    from: `"Shiftia" <${GMAIL_USER}>`,
+    replyTo: NOTIFY_EMAIL,
+    to: email,
+    subject: 'Recibido — tu cuadrante está en cola de auditoría · Shiftia',
+    html: emailTemplate({
+      preheader: 'Te enviaremos el diagnóstico en 24-48 h laborables',
+      headline: `Hola ${esc(cleanName.split(' ')[0])}, lo tenemos`,
+      body: `
+        <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hemos recibido tu ${file ? 'cuadrante' : 'solicitud'} y ya está en cola de auditoría. En <span style="color:#0e0f0f;font-weight:600;">24-48 h laborables</span> te enviaremos a este correo un diagnóstico con lo que encontremos: equidad del reparto de noches, descansos mínimos y puntos de riesgo.</p>
+        ${file ? '' : `<p style="margin:0 0 16px;color:#1a1a1a;line-height:1.6;font-size:15px;">No adjuntaste ningún archivo: responde a este correo con tu cuadrante (PDF, Excel o una foto legible) y lo metemos en cola.</p>`}
+        <p style="margin:0;color:#7a766f;font-size:13px;line-height:1.6;">Tu cuadrante solo se usa para este análisis. No lo compartimos con nadie y lo eliminamos al terminar.</p>
+      `
+    })
+  }).catch(err => console.error('Confirmación de auditoría falló:', err && err.message));
+}
+
+// Auditoría automática: extracción con IA → validación de confianza →
+// métricas deterministas → resumen anclado → informe al cliente + copia interna.
+// Cualquier fallo o baja confianza cae al flujo manual sin romper nada.
+async function runAutoAudit(lead, file) {
+  const esc = bookingLib.escHtml;
+  const t0 = Date.now();
+  const schedule = await auditAI.extractSchedule(file);
+  if (!schedule) throw Object.assign(new Error('formato no auto-analizable'), { manualReason: 'Formato no auto-analizable (¿Excel?).' });
+
+  const conf = Number(schedule.confidence || 0);
+  const workersOk = Array.isArray(schedule.workers) && schedule.workers.length >= 2;
+  const shiftsCount = workersOk ? schedule.workers.reduce((a, w) => a + ((w.shifts && w.shifts.length) || 0), 0) : 0;
+  if (conf < auditAI.MIN_CONFIDENCE || !workersOk || shiftsCount < 8) {
+    throw Object.assign(new Error('extracción de baja confianza'), {
+      manualReason: `Extracción IA descartada (confianza ${conf.toFixed(2)}, ${schedule.workers ? schedule.workers.length : 0} personas, ${shiftsCount} turnos). Notas: ${(schedule.notes || []).join(' · ') || 'ninguna'}.`
+    });
+  }
+
+  const metrics = analyzeSchedule(schedule);
+  const summary = await auditAI.writeSummary({ metrics, lead, extractionNotes: schedule.notes });
+  if (!summary) throw Object.assign(new Error('resumen no disponible'), { manualReason: 'El resumen IA no se generó.' });
+
+  const body = buildAuditReportBody({ metrics, summary, firstName: lead.cleanName.split(' ')[0] });
+  const seconds = Math.round((Date.now() - t0) / 1000);
+
+  await sendMail({
+    from: `"Shiftia" <${GMAIL_USER}>`,
+    replyTo: NOTIFY_EMAIL,
+    to: lead.email,
+    subject: 'Tu auditoría de cuadrante — diagnóstico completo · Shiftia',
+    html: emailTemplate({
+      preheader: `Equidad ${metrics.nights.verdict} · ${metrics.rest_violations.length} descansos <12h · ${metrics.night_streaks.length} rachas`,
+      headline: 'Tu diagnóstico, listo',
+      body
+    })
+  });
+
+  // Copia interna con el informe + el archivo original.
+  sendMail({
+    from: `"Shiftia Auditoría" <${GMAIL_USER}>`,
+    to: NOTIFY_EMAIL,
+    resendFrom: INTERNAL_RESEND_FROM,
+    replyTo: lead.email,
+    subject: `[Auditoría AUTO ✓] ${esc(lead.cleanName)} · equidad ${metrics.nights.verdict} · ${metrics.rest_violations.length} descansos · ${seconds}s`,
+    attachments: file ? [{ filename: cap(file.originalname, 120) || 'cuadrante', content: file.buffer }] : [],
+    html: emailTemplate({
+      preheader: `Informe automático enviado a ${esc(lead.email)}`,
+      headline: 'Informe automático enviado',
+      body: `<p style="margin:0 0 16px;color:#1a1a1a;font-size:14px;">Enviado a <a href="mailto:${esc(lead.email)}" style="color:#0f7a6d;">${esc(lead.email)}</a> en ${seconds}s (modelo ${esc(auditAI.MODEL)}, confianza ${conf.toFixed(2)}). Copia del informe:</p><div style="border:1px solid #ece9e2;border-radius:10px;padding:16px;">${body}</div>`
+    })
+  }).catch(err => console.error('Copia interna de auditoría auto falló:', err && err.message));
+
+  console.log(`Auditoría AUTO OK · ${lead.cleanName} · ${metrics.workers_count} personas · ${seconds}s`);
+}
+
 app.post('/api/audit-request', contactLimiter, (req, res) => {
   auditUpload.single('file')(req, res, async (upErr) => {
     try {
@@ -1548,53 +1696,20 @@ app.post('/api/audit-request', contactLimiter, (req, res) => {
           ['auditoria', cleanName, email, cleanSector || null, cleanWorkers || null, cleanMessage || null]
         ).catch(err => console.error('tool_leads (auditoría) insert falló:', err.message));
       }
-      res.json({ ok: true });
+      res.json({ ok: true, auto: auditAI.isEnabled() && !!req.file });
 
-      const esc = bookingLib.escHtml;
-      const atts = [];
-      if (req.file) atts.push({ filename: cap(req.file.originalname, 120) || 'cuadrante', content: req.file.buffer });
+      const lead = { cleanName, email, sector: cleanSector, workers: cleanWorkers, message: cleanMessage };
+      const manualArgs = { cleanName, email, cleanSector, cleanWorkers, cleanMessage, file: req.file };
 
-      // Aviso interno con el archivo — esta ES la auditoría (v1 manual).
-      sendMail({
-        from: `"Shiftia Auditoría" <${GMAIL_USER}>`,
-        to: NOTIFY_EMAIL,
-        resendFrom: INTERNAL_RESEND_FROM,
-        replyTo: email,
-        subject: `[Auditoría de cuadrante] ${esc(cleanName)}${cleanSector ? ' · ' + esc(cleanSector) : ''}${cleanWorkers ? ' · ' + esc(cleanWorkers) + ' trab.' : ''}`,
-        attachments: atts,
-        html: emailTemplate({
-          preheader: `Nueva auditoría solicitada por ${esc(cleanName)}`,
-          headline: 'Nueva auditoría de cuadrante',
-          body: `
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">
-              <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;width:130px;border-bottom:1px solid #ece9e2;">Nombre</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanName)}</td></tr>
-              <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Email</td><td style="padding:12px 0;font-size:14px;border-bottom:1px solid #ece9e2;"><a href="mailto:${esc(email)}" style="color:#0f7a6d;">${esc(email)}</a></td></tr>
-              ${cleanSector ? `<tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Sector</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanSector)}</td></tr>` : ''}
-              ${cleanWorkers ? `<tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Trabajadores</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${esc(cleanWorkers)}</td></tr>` : ''}
-              <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;">Cuadrante</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;">${req.file ? esc(req.file.originalname) + ' (adjunto)' : 'sin archivo — pedirlo por email'}</td></tr>
-            </table>
-            ${cleanMessage ? `<div style="margin-top:20px;padding:20px;background:#faf9f6;border-radius:10px;border:1px solid #ece9e2;"><p style="color:#7a766f;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">Contexto</p><p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">${esc(cleanMessage)}</p></div>` : ''}
-            <p style="color:#9a958c;font-size:12px;margin:20px 0 0;">Compromiso público: diagnóstico en 24-48 h laborables. Responde directamente a este correo (reply-to = cliente).</p>
-          `
-        })
-      }).catch(err => console.error('Aviso interno de auditoría falló:', err && err.message));
-
-      // Confirmación al solicitante.
-      sendMail({
-        from: `"Shiftia" <${GMAIL_USER}>`,
-        replyTo: NOTIFY_EMAIL,
-        to: email,
-        subject: 'Recibido — tu cuadrante está en cola de auditoría · Shiftia',
-        html: emailTemplate({
-          preheader: 'Te enviaremos el diagnóstico en 24-48 h laborables',
-          headline: `Hola ${esc(cleanName.split(' ')[0])}, lo tenemos`,
-          body: `
-            <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hemos recibido tu ${req.file ? 'cuadrante' : 'solicitud'} y ya está en cola de auditoría. En <span style="color:#0e0f0f;font-weight:600;">24-48 h laborables</span> te enviaremos a este correo un diagnóstico con lo que encontremos: equidad del reparto de noches, descansos mínimos y puntos de riesgo.</p>
-            ${req.file ? '' : `<p style="margin:0 0 16px;color:#1a1a1a;line-height:1.6;font-size:15px;">No adjuntaste ningún archivo: responde a este correo con tu cuadrante (PDF, Excel o una foto legible) y lo metemos en cola.</p>`}
-            <p style="margin:0;color:#7a766f;font-size:13px;line-height:1.6;">Tu cuadrante solo se usa para este análisis. No lo compartimos con nadie y lo eliminamos al terminar.</p>
-          `
-        })
-      }).catch(err => console.error('Confirmación de auditoría falló:', err && err.message));
+      // Camino inteligente: solo con API key configurada y archivo presente.
+      if (auditAI.isEnabled() && req.file) {
+        runAutoAudit(lead, req.file).catch(err => {
+          console.error('Auditoría auto falló → flujo manual:', err && err.message);
+          sendManualAuditEmails({ ...manualArgs, statusNote: err && err.manualReason ? err.manualReason : `Análisis automático falló (${err && err.message}).` });
+        });
+      } else {
+        sendManualAuditEmails({ ...manualArgs, statusNote: auditAI.isEnabled() ? 'Sin archivo adjunto.' : 'Análisis automático desactivado (falta ANTHROPIC_API_KEY).' });
+      }
     } catch (err) {
       console.error('audit-request error:', err.message);
       if (!res.headersSent) res.status(500).json({ error: 'Error interno' });
