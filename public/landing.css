@@ -130,6 +130,32 @@ a { text-decoration: none; color: inherit; }
   .client-band-link { display: block; text-align: center; margin-top: 2px; }
 }
 
+/* ====== BANDA AUDITORÍA GRATUITA (post-clientes) ====== */
+.audit-cta {
+  background: var(--bg-warm);
+  border-top: 1px solid var(--border-light);
+  padding: 72px 48px;
+}
+.audit-cta-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 40px; max-width: 1000px; margin: 0 auto;
+}
+.audit-cta-text { max-width: 620px; }
+.audit-cta-title {
+  font-family: 'Instrument Serif', 'Times New Roman', Georgia, serif;
+  font-weight: 400; font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+  line-height: 1.15; letter-spacing: -0.015em; color: var(--text1);
+  margin: 0 0 12px;
+}
+.audit-cta-title em { font-style: italic; color: var(--primary); }
+.audit-cta-desc { font-size: 1rem; color: var(--text2); line-height: 1.6; margin: 0; max-width: 56ch; }
+.audit-cta-btn { white-space: nowrap; flex-shrink: 0; }
+@media (max-width: 860px) {
+  .audit-cta { padding: 56px 20px; }
+  .audit-cta-inner { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .audit-cta-btn { width: 100%; justify-content: center; }
+}
+
 /* Micro-detalles editoriales */
 ::selection { background: rgba(15,122,109,0.18); color: #0a3f38; }
 /* Cifras tabulares: los números no "bailan" al animarse (contadores, precios, KPIs) */

@@ -301,8 +301,8 @@
 <link rel="stylesheet" href="/v36.css?v=363">
 <!-- Preload the main bundle so it starts fetching during HTML parse, not after -->
 <link rel="preload" as="script" href="/v36.min.js?v=382" fetchpriority="high">
-<link rel="preload" as="style" href="/landing.css?v=3">
-<link rel="stylesheet" href="/landing.css?v=3">
+<link rel="preload" as="style" href="/landing.css?v=4">
+<link rel="stylesheet" href="/landing.css?v=4">
 </head>
 <body>
 <a href="#main" class="skip-link">Saltar al contenido principal</a>
@@ -1809,6 +1809,18 @@
   </div>
 </section>
 
+<!-- AUDITORÍA GRATUITA — escaparate en la landing del lead magnet de /recursos -->
+<section class="audit-cta" aria-labelledby="auditCtaTitle">
+  <div class="container audit-cta-inner">
+    <div class="audit-cta-text">
+      <div class="section-eyebrow" data-i18n="audit_eyebrow">Auditoría gratuita</div>
+      <h2 class="audit-cta-title" id="auditCtaTitle" data-i18n-html="audit_title">¿Tu cuadrante actual aguantaría <em>una auditoría</em>?</h2>
+      <p class="audit-cta-desc" data-i18n="audit_desc">Sube tu planilla (PDF, foto o CSV) y te devolvemos un diagnóstico con números verificables: equidad de noches, descansos incumplidos con fechas y puntos de riesgo. Gratis, sin registro y en minutos.</p>
+    </div>
+    <a class="btn-lg primary audit-cta-btn" href="/recursos/auditoria-cuadrante" data-i18n="audit_cta">Enviar mi planilla</a>
+  </div>
+</section>
+
 <div class="wave-divider flip">
   <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
     <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="var(--text1)"/>
@@ -2305,6 +2317,7 @@
       </div>
       <div class="footer-col">
         <h5 data-i18n="footer_company">Empresa</h5>
+        <a href="/recursos" data-i18n="footer_resources">Recursos</a>
         <a href="/sobre-nosotros" data-i18n="footer_about">Sobre nosotros</a>
         <a href="/privacidad" data-i18n="footer_privacy">Privacidad</a>
         <a href="/terminos" data-i18n="footer_terms">Términos</a>
@@ -2955,6 +2968,11 @@ const translations = {
     cb_meta3: 'Hostelería · León',
     cb_name4: 'Servicios sanitarios',
     cb_meta4: 'Sanidad · Asturias',
+    audit_eyebrow: 'Auditoría gratuita',
+    audit_title: '¿Tu cuadrante actual aguantaría <em>una auditoría</em>?',
+    audit_desc: 'Sube tu planilla (PDF, foto o CSV) y te devolvemos un diagnóstico con números verificables: equidad de noches, descansos incumplidos con fechas y puntos de riesgo. Gratis, sin registro y en minutos.',
+    audit_cta: 'Enviar mi planilla',
+    footer_resources: 'Recursos',
     dual_eyebrow: 'Perfiles',
     dual_title: 'Un sistema, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">dos experiencias</em>',
     dual_desc: 'Tu equipo no necesita aprender otro software. Cada perfil ve solo lo suyo, con la interfaz pensada para su rol.',
@@ -3190,6 +3208,11 @@ const translations = {
     cb_meta3: 'Hospitality · León',
     cb_name4: 'Healthcare services',
     cb_meta4: 'Healthcare · Asturias',
+    audit_eyebrow: 'Free audit',
+    audit_title: 'Would your current rota survive <em>an audit</em>?',
+    audit_desc: 'Upload your rota (PDF, photo or CSV) and get a diagnosis with verifiable numbers: night-shift fairness, rest violations with dates, and risk points. Free, no sign-up, in minutes.',
+    audit_cta: 'Send my rota',
+    footer_resources: 'Resources',
     dual_eyebrow: 'Profiles',
     dual_title: 'One system, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">two experiences</em>',
     dual_desc: 'Your team doesn\'t need to learn another piece of software. Each profile sees only what\'s theirs, with an interface designed for their role.',
@@ -3397,6 +3420,11 @@ const translations = {
     cb_meta3: 'Gastgewerbe · León',
     cb_name4: 'Gesundheitsdienste',
     cb_meta4: 'Gesundheitswesen · Asturien',
+    audit_eyebrow: 'Kostenloses Audit',
+    audit_title: 'Würde Ihr Dienstplan <em>ein Audit</em> bestehen?',
+    audit_desc: 'Laden Sie Ihren Dienstplan hoch (PDF, Foto oder CSV) und erhalten Sie eine Diagnose mit überprüfbaren Zahlen: Nachtdienst-Fairness, Ruhezeitverstöße mit Daten und Risikopunkte. Kostenlos, ohne Registrierung, in Minuten.',
+    audit_cta: 'Dienstplan senden',
+    footer_resources: 'Ressourcen',
     dual_eyebrow: 'Profile',
     dual_title: 'Ein System, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">zwei Erlebnisse</em>',
     dual_desc: 'Ihr Team muss keine weitere Software lernen. Jedes Profil sieht nur das Eigene, mit einer auf die Rolle zugeschnittenen Oberfläche.',
@@ -3604,6 +3632,11 @@ const translations = {
     cb_meta3: 'Hôtellerie · León',
     cb_name4: 'Services de santé',
     cb_meta4: 'Santé · Asturies',
+    audit_eyebrow: 'Audit gratuit',
+    audit_title: 'Votre planning actuel survivrait-il à <em>un audit</em> ?',
+    audit_desc: 'Envoyez votre planning (PDF, photo ou CSV) et recevez un diagnostic avec des chiffres vérifiables : équité des nuits, repos non respectés avec dates et points de risque. Gratuit, sans inscription, en quelques minutes.',
+    audit_cta: 'Envoyer mon planning',
+    footer_resources: 'Ressources',
     dual_eyebrow: 'Profils',
     dual_title: 'Un système, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">deux expériences</em>',
     dual_desc: 'Votre équipe n\'a pas besoin d\'apprendre un autre logiciel. Chaque profil ne voit que ce qui le concerne, avec une interface pensée pour son rôle.',
