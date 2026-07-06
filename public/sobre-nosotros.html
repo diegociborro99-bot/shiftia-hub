@@ -15,109 +15,106 @@
 <meta property="og:description" content="Shiftia lo creó quien ha vivido el turno por dentro. El mismo problema —repartir el trabajo de forma justa sin romper el convenio— en sanidad, retail, hostelería o industria.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.shiftia.es/sobre-nosotros">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/design-system.css">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(180deg, #f0fdf9 0%, #eff6ff 55%, #fafafa 100%);
-  color:#1e293b; line-height:1.65; min-height:100vh;
+  font-family: var(--ds-font-sans, 'Geist', -apple-system, 'Segoe UI', sans-serif);
+  background: var(--ds-bg, #faf9f6);
+  color: var(--ds-text, #0e0f0f); line-height:1.65; min-height:100vh;
   -webkit-font-smoothing:antialiased;
 }
-.skip-link { position:absolute; left:-9999px; top:0; background:#2980b9; color:#fff; padding:8px 16px; z-index:9999; text-decoration:none; border-radius:0 0 8px 0; }
+.skip-link { position:absolute; left:-9999px; top:0; background:var(--ds-bg-inverse,#0e0f0f); color:#fff; padding:8px 16px; z-index:9999; text-decoration:none; border-radius:0 0 8px 0; }
 .skip-link:focus { left:0 !important; }
 header.site-header { padding: 24px 24px 8px; max-width: 860px; margin: 0 auto; }
 header.site-header a.brand {
-  font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em;
-  color:#1e293b; text-decoration:none; display:inline-flex; align-items:center; gap:10px;
+  font-family: var(--ds-font-display, 'Instrument Serif', Georgia, serif); font-style: italic;
+  font-size: 1.6rem; font-weight: 400; letter-spacing: -0.02em;
+  color: var(--ds-text, #0e0f0f); text-decoration:none; display:inline-flex; align-items:center;
 }
-header.site-header a.brand .brand-logo {
-  width:36px; height:36px; border-radius:9px;
-  box-shadow:0 6px 18px rgba(41,128,185,0.25);
-  display:inline-block; transform-origin:center;
-}
-@media (prefers-reduced-motion: no-preference) {
-  header.site-header a.brand .brand-logo { animation: brandFloat 4.5s ease-in-out infinite; }
-}
-@keyframes brandFloat { 0%,100% { transform: translateY(0) rotate(0deg);} 50% { transform: translateY(-3px) rotate(-4deg);} }
+header.site-header a.brand:hover { color: var(--ds-accent-text, #0a5950); }
 main {
   max-width: 860px; margin: 16px auto 48px; padding: 32px 28px 72px;
-  background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
-  border-radius: 20px; border: 1px solid rgba(226,232,240,0.7);
-  box-shadow: 0 8px 32px rgba(15,23,42,0.05);
+  background: var(--ds-bg-elev, #fff);
+  border-radius: 20px; border: 1px solid var(--ds-border, #e8e6df);
+  box-shadow: var(--ds-shadow-md, 0 4px 12px rgba(15,15,15,0.06));
 }
-.eyebrow { font-size:0.78rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#14857a; margin-bottom:10px; }
-h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); line-height:1.12; letter-spacing:-0.02em; color:#0f172a; margin-bottom: 14px; }
-h1 em { font-style:normal; background:linear-gradient(135deg,#14a085,#2980b9); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.lead { font-size: 1.12rem; color:#475569; max-width: 60ch; }
+.eyebrow { font-size:0.78rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--ds-accent-text,#0a5950); margin-bottom:10px; }
+h1 { font-family: var(--ds-font-display, 'Instrument Serif', Georgia, serif); font-weight:400; font-size: clamp(2.1rem, 5vw, 2.9rem); line-height:1.12; letter-spacing:-0.02em; color:var(--ds-text,#0e0f0f); margin-bottom: 14px; }
+h1 em { font-style:italic; color: var(--ds-accent-text, #0a5950); }
+.lead { font-size: 1.12rem; color:var(--ds-text-muted,#4a4a47); max-width: 60ch; }
 
 /* Tarjeta del fundador */
 .founder {
   display:grid; grid-template-columns: 180px 1fr; gap: 28px; align-items:center;
   margin: 34px 0 8px; padding: 24px;
-  background: linear-gradient(135deg, rgba(78,205,196,0.10), rgba(41,128,185,0.07));
-  border:1px solid rgba(78,205,196,0.28); border-radius:18px;
+  background: var(--ds-accent-soft, #e9f5f2);
+  border:1px solid rgba(15,122,109,0.28); border-radius:18px;
 }
 .founder-photo-wrap { position:relative; width:180px; height:180px; }
 .founder-photo {
   width:180px; height:180px; border-radius:20px; object-fit:cover; object-position:center 18%;
-  background:#fff; border:1px solid rgba(226,232,240,0.9);
-  box-shadow:0 10px 30px rgba(41,128,185,0.18);
+  background:#fff; border:1px solid var(--ds-border, #e8e6df);
+  box-shadow:var(--ds-shadow-lg, 0 12px 32px rgba(15,15,15,0.08));
 }
 .founder-initials {
   display:none; width:180px; height:180px; border-radius:20px;
   align-items:center; justify-content:center; font-size:3.2rem; font-weight:800; color:#fff;
-  background:linear-gradient(135deg,#4ecdc4,#2980b9); box-shadow:0 10px 30px rgba(41,128,185,0.18);
+  background:var(--ds-accent,#0f7a6d); box-shadow:var(--ds-shadow-lg, 0 12px 32px rgba(15,15,15,0.08));
 }
-.founder-name { font-size:1.4rem; font-weight:800; color:#0f172a; letter-spacing:-0.01em; }
-.founder-role { font-size:0.95rem; color:#14857a; font-weight:600; margin:2px 0 10px; }
-.founder-blurb { font-size:0.98rem; color:#475569; }
+.founder-name { font-size:1.4rem; font-weight:800; color:var(--ds-text,#0e0f0f); letter-spacing:-0.01em; }
+.founder-role { font-size:0.95rem; color:var(--ds-accent-text,#0a5950); font-weight:600; margin:2px 0 10px; }
+.founder-blurb { font-size:0.98rem; color:var(--ds-text-muted,#4a4a47); }
 .founder-links { margin-top:12px; display:flex; flex-wrap:wrap; gap:10px; }
 .founder-links a {
   display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:600;
-  color:#2980b9; text-decoration:none; padding:6px 12px; border:1px solid rgba(41,128,185,0.3);
+  color:var(--ds-accent-text,#0a5950); text-decoration:none; padding:6px 12px; border:1px solid rgba(15,122,109,0.3);
   border-radius:999px; background:#fff; transition:border-color .2s, color .2s;
 }
-.founder-links a:hover { border-color:#2980b9; color:#1f6fa1; }
+.founder-links a:hover { border-color:var(--ds-accent,#0f7a6d); color:var(--ds-accent-text,#0a5950); }
 .founder-links svg { width:15px; height:15px; }
 
-main h2 { font-size: 1.45rem; margin: 38px 0 12px; color:#0f172a; letter-spacing:-0.01em; }
-main p { color:#334155; margin-bottom: 14px; font-size: 1.0rem; }
-main p strong { color:#0f172a; }
+main h2 { font-family: var(--ds-font-display, 'Instrument Serif', Georgia, serif); font-weight:400; font-size: 1.7rem; margin: 38px 0 12px; color:var(--ds-text,#0e0f0f); letter-spacing:-0.01em; }
+main p { color:var(--ds-text-muted,#4a4a47); margin-bottom: 14px; font-size: 1.0rem; }
+main p strong { color:var(--ds-text,#0e0f0f); }
 .pull {
-  border-left:4px solid #14a085; padding:14px 20px; margin:22px 0;
-  background:#f0fdf9; border-radius:0 12px 12px 0; font-size:1.08rem; color:#0f172a; font-style:italic;
+  border-left:4px solid var(--ds-accent,#0f7a6d); padding:14px 20px; margin:22px 0;
+  background:var(--ds-accent-soft,#e9f5f2); border-radius:0 12px 12px 0; font-size:1.08rem; color:var(--ds-text,#0e0f0f); font-style:italic;
 }
 
 /* Valores */
 .values { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0 8px; }
-.value-card { background:#fff; border:1px solid #e6eef0; border-radius:14px; padding:18px; }
-.value-ic { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#e9f5f2; margin-bottom:10px; }
-.value-ic svg { width:20px; height:20px; color:#14857a; }
-.value-card h3 { font-size:1.02rem; color:#0f172a; margin-bottom:5px; }
-.value-card p { font-size:0.9rem; color:#475569; margin:0; }
+.value-card { background:#fff; border:1px solid var(--ds-border,#e8e6df); border-radius:14px; padding:18px; }
+.value-ic { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:var(--ds-accent-soft,#e9f5f2); margin-bottom:10px; }
+.value-ic svg { width:20px; height:20px; color:var(--ds-accent-text,#0a5950); }
+.value-card h3 { font-size:1.02rem; color:var(--ds-text,#0e0f0f); margin-bottom:5px; }
+.value-card p { font-size:0.9rem; color:var(--ds-text-muted,#4a4a47); margin:0; }
 
 /* Credenciales */
 .creds { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0 4px; }
-.cred-pill { font-size:0.82rem; color:#334155; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:7px 14px; }
+.cred-pill { font-size:0.82rem; color:var(--ds-text-muted,#4a4a47); background:#fff; border:1px solid var(--ds-border,#e8e6df); border-radius:999px; padding:7px 14px; }
 
 /* CTA */
 .cta-box {
   margin-top: 40px; text-align:center; padding: 30px 24px;
-  background: linear-gradient(135deg,#14a085,#2980b9); border-radius:18px; color:#fff;
+  background: var(--ds-bg-inverse,#0e0f0f); border-radius:18px; color:#fff;
 }
 .cta-box h2 { color:#fff; margin:0 0 8px; }
 .cta-box p { color:rgba(255,255,255,0.92); margin-bottom:18px; }
 .cta-box a {
-  display:inline-flex; align-items:center; gap:8px; background:#fff; color:#0f766e;
+  display:inline-flex; align-items:center; gap:8px; background:#fff; color:var(--ds-text,#0e0f0f);
   font-weight:700; padding:13px 26px; border-radius:12px; text-decoration:none;
   box-shadow:0 8px 22px rgba(0,0,0,0.16); transition:transform .2s;
 }
 .cta-box a:hover { transform:translateY(-2px); }
 .cta-box a svg { width:17px; height:17px; }
 
-footer.site-footer { text-align:center; padding: 24px; color:#64748b; font-size: 0.85rem; }
-footer.site-footer a { color:#2980b9; text-decoration:none; margin: 0 8px; }
+footer.site-footer { text-align:center; padding: 24px; color:var(--ds-text-subtle,#8a8a85); font-size: 0.85rem; }
+footer.site-footer a { color:var(--ds-accent-text,#0a5950); text-decoration:none; margin: 0 8px; }
 
 @media (max-width: 640px) {
   main { border-radius: 0; padding: 24px 18px 56px; margin-top: 8px; }
@@ -130,7 +127,7 @@ footer.site-footer a { color:#2980b9; text-decoration:none; margin: 0 8px; }
 <body>
 <a href="#main" class="skip-link">Saltar al contenido principal</a>
 <header class="site-header">
-  <a href="/" class="brand"><img src="/favicon.svg" class="brand-logo" alt="Shiftia" width="36" height="36"> Shiftia</a>
+  <a href="/" class="brand">Shiftia</a>
 </header>
 <main id="main">
   <div class="eyebrow">Sobre nosotros</div>
@@ -139,7 +136,7 @@ footer.site-footer a { color:#2980b9; text-decoration:none; margin: 0 8px; }
 
   <div class="founder">
     <div class="founder-photo-wrap">
-      <img src="/equipo/diego-ciborro.png?v=2" alt="Diego Ciborro, fundador de Shiftia" class="founder-photo" width="180" height="180"
+      <img src="/equipo/diego-ciborro.webp?v=3" alt="Diego Ciborro, fundador de Shiftia" class="founder-photo" width="180" height="180"
            onerror="this.style.display='none';var f=document.getElementById('founderInitials');if(f)f.style.display='flex';">
       <div class="founder-initials" id="founderInitials" aria-hidden="true">DC</div>
     </div>
@@ -212,7 +209,7 @@ footer.site-footer a { color:#2980b9; text-decoration:none; margin: 0 8px; }
     <span class="cred-pill">Experto en Hematología y Hemoterapia · U. de Oviedo</span>
     <span class="cred-pill">Miembro de SECA (Calidad Asistencial)</span>
   </div>
-  <p style="margin-top:16px;font-size:0.9rem;color:#64748b;">Shiftia es un producto de <strong>Highkey Labs Software Solutions</strong>. Atendemos desde Asturias a equipos de toda España.</p>
+  <p style="margin-top:16px;font-size:0.9rem;color:var(--ds-text-subtle,#8a8a85);">Shiftia es un producto de <strong>Highkey Labs Software Solutions</strong>. Atendemos desde Asturias a equipos de toda España.</p>
 
   <div class="cta-box">
     <h2>¿Hablamos de tu plantilla?</h2>
