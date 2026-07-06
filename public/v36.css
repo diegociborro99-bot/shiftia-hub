@@ -85,7 +85,7 @@
 .hd-ai-stream {
   position: absolute; bottom: 8%; left: 4%; max-width: 60%;
   padding: 10px 14px; background: rgba(14, 15, 15, 0.92);
-  border: 1px solid rgba(78, 205, 196, 0.25); border-radius: 10px;
+  border: 1px solid rgba(47, 163, 147, 0.25); border-radius: 10px;
   color: #d1f7f3; font-family: 'Geist Mono', ui-monospace, monospace;
   font-size: 11px; line-height: 1.45;
   opacity: 0; transform: translateY(8px);
@@ -96,12 +96,12 @@
 .hd-ai-stream::before {
   content: 'Motor IA';
   display: block; font-size: 9px; letter-spacing: 0.12em;
-  color: #4ecdc4; text-transform: uppercase; margin-bottom: 4px;
+  color: #2fa393; text-transform: uppercase; margin-bottom: 4px;
   font-weight: 600;
 }
 .hd-ai-cursor {
   display: inline-block; width: 6px; height: 11px;
-  background: #4ecdc4; vertical-align: text-bottom; margin-left: 1px;
+  background: #2fa393; vertical-align: text-bottom; margin-left: 1px;
   animation: hdBlink 0.8s steps(2) infinite;
 }
 @keyframes hdBlink { 50% { opacity: 0; } }

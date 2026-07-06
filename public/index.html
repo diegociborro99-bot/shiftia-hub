@@ -298,8 +298,8 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
 <link rel="preload" as="style" href="/design-system.css">
 <link rel="stylesheet" href="/design-system.css">
-<link rel="preload" as="style" href="/v36.css?v=362">
-<link rel="stylesheet" href="/v36.css?v=362">
+<link rel="preload" as="style" href="/v36.css?v=363">
+<link rel="stylesheet" href="/v36.css?v=363">
 <!-- Preload the main bundle so it starts fetching during HTML parse, not after -->
 <link rel="preload" as="script" href="/v36.min.js?v=382" fetchpriority="high">
 <style>
@@ -317,7 +317,7 @@ h1, h2, .hero h1, .section-h2, .contact-left h2 {
   font-family: var(--ds-font-display, 'Instrument Serif'), Georgia, 'Times New Roman', serif;
 }
 /* Accessibility: skip link */
-.skip-link { position: absolute; left: -9999px; top: 0; background: #2980b9; color: #fff; padding: 8px 16px; z-index: 9999; text-decoration: none; border-radius: 0 0 8px 0; }
+.skip-link { position: absolute; left: -9999px; top: 0; background: #0f7a6d; color: #fff; padding: 8px 16px; z-index: 9999; text-decoration: none; border-radius: 0 0 8px 0; }
 .skip-link:focus { left: 0 !important; }
 /* Accessibility: focus-visible for keyboard navigation */
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
@@ -345,12 +345,12 @@ p, .hero-desc, .section-p, .faq-a-inner, .proof-text, .bento-card p,
   text-wrap: pretty;
 }
 /* Smooth global transitions */
-::selection { background: rgba(41,128,185,0.25); color: var(--text1); }
+::selection { background: rgba(15,122,109,0.25); color: var(--text1); }
 a { text-decoration: none; color: inherit; }
 
 :root {
-  --primary: #2980b9;
-  --primary-hover: #1f6d9e;
+  --primary: #0f7a6d;
+  --primary-hover: #0a5950;
   --accent: #f5f0e8;
   --bg: #fafafa;
   --bg-warm: #faf8f5;
@@ -382,6 +382,13 @@ a { text-decoration: none; color: inherit; }
   --z-banner: 9990;
   --z-overlay: 9998;
   --z-top: 9999;
+}
+
+/* Micro-detalles editoriales */
+::selection { background: rgba(15,122,109,0.18); color: #0a3f38; }
+/* Cifras tabulares: los números no "bailan" al animarse (contadores, precios, KPIs) */
+.impact-num, .price-amount, [data-count], .demo-kpi, .stat-num, .roi-result {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ====== NAVBAR ====== */
@@ -478,14 +485,14 @@ a { text-decoration: none; color: inherit; }
 /* ====== FLOATING BUTTONS ====== */
 .floating-cta {
   position: fixed; bottom: 24px; right: 24px; z-index: 90;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9); color: white;
+  background: linear-gradient(135deg, #2fa393, #0f7a6d); color: white;
   border: none; padding: 14px 28px; border-radius: var(--radius-pill);
   font-weight: 700; font-size: 0.88rem; cursor: pointer;
-  box-shadow: 0 8px 30px rgba(41,128,185,0.4);
+  box-shadow: 0 8px 30px rgba(15,122,109,0.4);
   transform: translateY(100px); opacity: 0; transition: all 0.4s;
 }
 .floating-cta.visible { transform: translateY(0); opacity: 1; }
-.floating-cta:hover { box-shadow: 0 12px 40px rgba(41,128,185,0.5); transform: translateY(-3px) scale(1.03); }
+.floating-cta:hover { box-shadow: 0 12px 40px rgba(15,122,109,0.5); transform: translateY(-3px) scale(1.03); }
 .floating-cta:active { transform: translateY(0) scale(0.98); }
 .back-top {
   position: fixed; bottom: 24px; left: 24px; z-index: 90;
@@ -518,12 +525,12 @@ a { text-decoration: none; color: inherit; }
 .hero-aurora .ha-blob-1 {
   top: -10%; left: -8%;
   width: 520px; height: 520px;
-  background: radial-gradient(circle, rgba(78,205,196,0.55), rgba(78,205,196,0) 70%);
+  background: radial-gradient(circle, rgba(47,163,147,0.55), rgba(47,163,147,0) 70%);
 }
 .hero-aurora .ha-blob-2 {
   top: 20%; right: -10%;
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(41,128,185,0.45), rgba(41,128,185,0) 70%);
+  background: radial-gradient(circle, rgba(15,122,109,0.45), rgba(15,122,109,0) 70%);
 }
 .hero-aurora .ha-blob-3 {
   bottom: -15%; left: 30%;
@@ -557,9 +564,9 @@ a { text-decoration: none; color: inherit; }
 }
 .hero::before {
   content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(ellipse at 20% 50%, rgba(78,205,196,0.08) 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 20%, rgba(41,128,185,0.06) 0%, transparent 50%),
-              radial-gradient(ellipse at 50% 80%, rgba(78,205,196,0.04) 0%, transparent 50%);
+  background: radial-gradient(ellipse at 20% 50%, rgba(47,163,147,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 20%, rgba(15,122,109,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 80%, rgba(47,163,147,0.04) 0%, transparent 50%);
   animation: meshMove 20s ease-in-out infinite;
   z-index: 0;
 }
@@ -584,7 +591,7 @@ a { text-decoration: none; color: inherit; }
 .hero-label {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 16px; border-radius: var(--radius-pill);
-  background: rgba(41,128,185,0.08); color: var(--primary);
+  background: rgba(15,122,109,0.08); color: var(--primary);
   font-size: 0.82rem; font-weight: 600; margin-bottom: 32px;
 }
 .hero-label-dot {
@@ -607,7 +614,7 @@ a { text-decoration: none; color: inherit; }
 }
 .hero-stat strong {
   font-weight: 800; color: #14857a;
-  background: linear-gradient(135deg, #14a085, #2980b9);
+  background: linear-gradient(135deg, #14a085, #0f7a6d);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
@@ -621,8 +628,8 @@ a { text-decoration: none; color: inherit; }
   margin-top: 24px; font-size: 0.86rem; font-weight: 600;
   display: inline-flex; align-items: center; flex-wrap: wrap; gap: 9px 14px;
   padding: 12px 20px; border-radius: 16px;
-  background: linear-gradient(135deg, rgba(78,205,196,0.12), rgba(41,128,185,0.08));
-  border: 1px solid rgba(78,205,196,0.3);
+  background: linear-gradient(135deg, rgba(47,163,147,0.12), rgba(15,122,109,0.08));
+  border: 1px solid rgba(47,163,147,0.3);
   color: #1f6f8f; max-width: 100%;
   position: relative; overflow: hidden;
   animation-name: heroStagger, badgeGlow;
@@ -635,7 +642,7 @@ a { text-decoration: none; color: inherit; }
 }
 .hero-trial-badge::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(78,205,196,0.25), transparent);
+  background: linear-gradient(90deg, transparent, rgba(47,163,147,0.25), transparent);
   animation: badgeSweep 3s ease-in-out infinite;
   animation-delay: 2s; pointer-events: none;
 }
@@ -644,14 +651,14 @@ a { text-decoration: none; color: inherit; }
 .htb-dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0.4; flex-shrink: 0; }
 .hero-howlink {
   display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
-  font-size: 0.9rem; font-weight: 600; color: #2980b9; text-decoration: none;
+  font-size: 0.9rem; font-weight: 600; color: #0f7a6d; text-decoration: none;
   transition: gap .2s ease, color .2s ease;
 }
 .hero-howlink svg { width: 15px; height: 15px; }
 .hero-howlink:hover, .hero-howlink:focus-visible { gap: 9px; color: #1f6fa1; }
 @keyframes badgeGlow {
-  0%, 100% { box-shadow: 0 0 8px rgba(78,205,196,0.2), 0 0 20px rgba(78,205,196,0.08); border-color: rgba(78,205,196,0.3); }
-  50% { box-shadow: 0 0 16px rgba(78,205,196,0.4), 0 0 40px rgba(78,205,196,0.15); border-color: rgba(78,205,196,0.6); }
+  0%, 100% { box-shadow: 0 0 8px rgba(47,163,147,0.2), 0 0 20px rgba(47,163,147,0.08); border-color: rgba(47,163,147,0.3); }
+  50% { box-shadow: 0 0 16px rgba(47,163,147,0.4), 0 0 40px rgba(47,163,147,0.15); border-color: rgba(47,163,147,0.6); }
 }
 @keyframes badgeSweep {
   0% { left: -100%; }
@@ -664,15 +671,16 @@ a { text-decoration: none; color: inherit; }
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); border: none;
   display: inline-flex; align-items: center; gap: 10px;
 }
-.btn-lg.primary { background: var(--primary); color: white; }
-.btn-lg.primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(41,128,185,0.25); }
-.btn-lg.primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(41,128,185,0.15); }
+/* CTA primario en tinta (patrón editorial del design system), no en color de acento */
+.btn-lg.primary { background: var(--ds-bg-inverse, #0e0f0f); color: var(--ds-bg, #faf9f6); }
+.btn-lg.primary:hover { background: #000; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,15,15,0.18); }
+.btn-lg.primary:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(15,15,15,0.12); }
 .btn-lg.ghost {
   background: transparent; color: var(--text1);
   border: 1.5px solid var(--border);
 }
-.btn-lg.ghost:hover { border-color: var(--primary); color: var(--primary); background: rgba(41,128,185,0.04); }
-.btn-lg.ghost:active { background: rgba(41,128,185,0.08); }
+.btn-lg.ghost:hover { border-color: var(--primary); color: var(--primary); background: rgba(15,122,109,0.04); }
+.btn-lg.ghost:active { background: rgba(15,122,109,0.08); }
 
 /* Hero visual — product mockup */
 .hero-visual { position: relative; }
@@ -707,7 +715,7 @@ a { text-decoration: none; color: inherit; }
 .sch-header h3 { font-size: 0.95rem; font-weight: 700; }
 .sch-badge {
   padding: 4px 12px; border-radius: var(--radius-pill);
-  background: rgba(41,128,185,0.08); color: var(--primary);
+  background: rgba(15,122,109,0.08); color: var(--primary);
   font-size: 0.7rem; font-weight: 600;
 }
 .sch-grid {
@@ -733,7 +741,7 @@ a { text-decoration: none; color: inherit; }
   width: 30px; height: 24px; border-radius: 6px;
   font-weight: 700; font-size: 0.7rem;
 }
-.shift-m { background: #dbeafe; color: #2980b9; }
+.shift-m { background: #dbeafe; color: #0f7a6d; }
 .shift-t { background: #dbeafe; color: #2563eb; }
 .shift-n { background: #fef3c7; color: #92400e; }
 .shift-d { background: var(--bg); color: #bbb; }
@@ -792,7 +800,7 @@ section { padding: 140px 48px; }
 .bespoke-version-pill {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 6px 14px; border-radius: var(--radius-pill);
-  background: rgba(41, 128, 185, 0.08);
+  background: rgba(15, 122, 109, 0.08);
   color: var(--primary);
   font-size: 0.78rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
@@ -800,8 +808,8 @@ section { padding: 140px 48px; }
 }
 .bespoke-version-pill::before {
   content: ""; width: 8px; height: 8px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, var(--primary));
-  box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.18);
+  background: linear-gradient(135deg, #2fa393, var(--primary));
+  box-shadow: 0 0 0 4px rgba(47, 163, 147, 0.18);
 }
 .bespoke-grid {
   display: grid;
@@ -820,13 +828,13 @@ section { padding: 140px 48px; }
 .bespoke-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 14px 40px rgba(15, 15, 15, 0.06);
-  border-color: rgba(41, 128, 185, 0.25);
+  border-color: rgba(15, 122, 109, 0.25);
 }
 .bespoke-card-icon {
   width: 48px; height: 48px;
   border-radius: 14px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, rgba(78, 205, 196, 0.18), rgba(41, 128, 185, 0.18));
+  background: linear-gradient(135deg, rgba(47, 163, 147, 0.18), rgba(15, 122, 109, 0.18));
   color: var(--primary);
   margin-bottom: 20px;
 }
@@ -862,7 +870,7 @@ section { padding: 140px 48px; }
   padding: 48px 40px; border: 1px solid var(--border);
 }
 .compare-card.old { border-color: #f0e0e0; }
-.compare-card.new { border-color: rgba(41,128,185,0.2); }
+.compare-card.new { border-color: rgba(15,122,109,0.2); }
 .compare-icon {
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -884,9 +892,9 @@ section { padding: 140px 48px; }
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .feat-card:hover {
-  border-color: rgba(78,205,196,0.3);
+  border-color: rgba(47,163,147,0.3);
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(41,128,185,0.08), 0 0 0 1px rgba(78,205,196,0.1);
+  box-shadow: 0 12px 40px rgba(15,122,109,0.08), 0 0 0 1px rgba(47,163,147,0.1);
 }
 .feat-card:hover .feat-icon {
   transform: scale(1.1);
@@ -993,22 +1001,22 @@ section { padding: 140px 48px; }
 .step-flow.visible:nth-child(4) { transition-delay: 0.6s; }
 .step-num {
   width: 68px; height: 68px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   color: white;
   display: flex; align-items: center; justify-content: center;
   font-size: 1.5rem;
-  box-shadow: 0 8px 30px rgba(78, 205, 196, 0.3);
+  box-shadow: 0 8px 30px rgba(47, 163, 147, 0.3);
   position: relative; z-index: 3;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .step-flow:hover .step-num {
   transform: scale(1.1);
-  box-shadow: 0 12px 40px rgba(78, 205, 196, 0.5);
+  box-shadow: 0 12px 40px rgba(47, 163, 147, 0.5);
 }
 .step-num-ring {
   position: absolute; top: -6px; left: -6px; right: -6px; bottom: -6px;
   border-radius: 50%; border: 2px solid transparent;
-  background: conic-gradient(from 0deg, #4ecdc4, #2980b9, transparent 70%) border-box;
+  background: conic-gradient(from 0deg, #2fa393, #0f7a6d, transparent 70%) border-box;
   -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   opacity: 0; animation: none;
@@ -1027,12 +1035,12 @@ section { padding: 140px 48px; }
 }
 .flow-pipe-line {
   width: 100%; height: 4px; border-radius: 4px;
-  background: rgba(78, 205, 196, 0.15);
+  background: rgba(47, 163, 147, 0.15);
   position: relative; overflow: hidden;
 }
 .flow-pipe-fill {
   position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-  background: linear-gradient(90deg, #4ecdc4, #2980b9);
+  background: linear-gradient(90deg, #2fa393, #0f7a6d);
   border-radius: 4px;
   transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1041,8 +1049,8 @@ section { padding: 140px 48px; }
 .flow-pipe-dot {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 10px; height: 10px; border-radius: 50%;
-  background: #4ecdc4;
-  box-shadow: 0 0 12px rgba(78, 205, 196, 0.8), 0 0 24px rgba(78, 205, 196, 0.4);
+  background: #2fa393;
+  box-shadow: 0 0 12px rgba(47, 163, 147, 0.8), 0 0 24px rgba(47, 163, 147, 0.4);
   opacity: 0;
 }
 .flow-pipe.visible .flow-pipe-dot {
@@ -1059,11 +1067,11 @@ section { padding: 140px 48px; }
   position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
   width: 0; height: 0;
   border-top: 7px solid transparent; border-bottom: 7px solid transparent;
-  border-left: 10px solid rgba(78, 205, 196, 0.2);
+  border-left: 10px solid rgba(47, 163, 147, 0.2);
   transition: border-left-color 0.6s ease 0.8s;
 }
 .flow-pipe.visible .flow-pipe-arrow {
-  border-left-color: #2980b9;
+  border-left-color: #0f7a6d;
 }
 
 /* Responsive */
@@ -1100,7 +1108,7 @@ section { padding: 140px 48px; }
 .price-card.featured { position: relative; overflow: hidden; }
 .price-card.featured::before {
   content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9, #4ecdc4);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d, #2fa393);
   background-size: 200% 200%; border-radius: inherit;
   z-index: -1; animation: priceGlow 3s ease-in-out infinite;
 }
@@ -1111,7 +1119,7 @@ section { padding: 140px 48px; }
   padding: 4px 18px; border-radius: var(--radius-pill);
   font-size: 0.72rem; font-weight: 700;
 }
-.price-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.08); border-color: rgba(41,128,185,0.15); }
+.price-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(0,0,0,0.08); border-color: rgba(15,122,109,0.15); }
 .price-name { font-size: 0.9rem; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
 .price-billing-note { font-size: 0.8rem; color: var(--text3); margin-top: 6px; margin-bottom: 4px; }
 .price-list-head {
@@ -1125,21 +1133,21 @@ section { padding: 140px 48px; }
   background: var(--primary); color: white;
   padding: 5px 20px; border-radius: var(--radius-pill);
   font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em;
-  box-shadow: 0 4px 14px rgba(41,128,185,0.3);
+  box-shadow: 0 4px 14px rgba(15,122,109,0.3);
   white-space: nowrap;
 }
 .price-card.pop::before { content: none; }
 
 .price-enterprise {
   max-width: 1000px; margin: 36px auto 0;
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #2980b9 100%);
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 60%, #0f7a6d 100%);
   color: #fff; border-radius: var(--radius);
   padding: 36px 40px; position: relative; overflow: hidden;
   box-shadow: 0 12px 40px rgba(44,62,80,0.18);
 }
 .price-enterprise::before {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at 90% 10%, rgba(78,205,196,0.18), transparent 50%);
+  background: radial-gradient(circle at 90% 10%, rgba(47,163,147,0.18), transparent 50%);
   pointer-events: none;
 }
 .pe-head {
@@ -1163,8 +1171,8 @@ section { padding: 140px 48px; }
 }
 .pe-list li::before {
   content: ''; position: absolute; left: 0; top: 7px; width: 14px; height: 14px;
-  border-radius: 50%; background: rgba(78,205,196,0.25);
-  box-shadow: inset 0 0 0 2px #4ecdc4;
+  border-radius: 50%; background: rgba(47,163,147,0.25);
+  box-shadow: inset 0 0 0 2px #2fa393;
 }
 .price-enterprise .price-btn.ghost {
   margin-top: 26px;
@@ -1216,7 +1224,7 @@ section { padding: 140px 48px; }
   background: var(--bg-warm); font-weight: 700; font-size: 0.78rem;
   color: var(--text3); letter-spacing: 0.04em; text-transform: uppercase;
 }
-.pc-row-shiftia { background: rgba(78,205,196,0.08); }
+.pc-row-shiftia { background: rgba(47,163,147,0.08); }
 .pc-row-shiftia .pc-price { color: var(--primary); }
 .pc-price-muted { color: var(--text2); }
 .pc-mute { color: var(--text3); font-weight: 400; }
@@ -1239,14 +1247,14 @@ section { padding: 140px 48px; }
 .price-toggle-wrap { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 32px; margin-bottom: 40px; }
 .price-toggle-label { font-size: 0.9rem; font-weight: 600; color: var(--text3); transition: color 0.3s; }
 .price-toggle-label.active { color: var(--text1); }
-.price-save { background: linear-gradient(135deg, #4ecdc4, #2980b9); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+.price-save { background: linear-gradient(135deg, #2fa393, #0f7a6d); color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
 .price-toggle { width: 52px; height: 28px; border-radius: 14px; background: var(--border); border: none; cursor: pointer; position: relative; transition: background 0.3s; }
-.price-toggle.annual { background: linear-gradient(135deg, #4ecdc4, #2980b9); }
+.price-toggle.annual { background: linear-gradient(135deg, #2fa393, #0f7a6d); }
 .price-toggle-knob { width: 22px; height: 22px; border-radius: 50%; background: var(--bg-card); position: absolute; top: 3px; left: 3px; transition: left 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
 .price-toggle.annual .price-toggle-knob { left: 27px; }
 .price-amount { margin-bottom: 8px; line-height: 1; }
-.price-val { font-size: 4.2rem; font-weight: 900; letter-spacing: -0.03em; color: #2980b9; }
-.price-currency { font-size: 2.2rem; font-weight: 800; color: #4ecdc4; }
+.price-val { font-size: 4.2rem; font-weight: 900; letter-spacing: -0.03em; color: #0f7a6d; }
+.price-currency { font-size: 2.2rem; font-weight: 800; color: #2fa393; }
 .price-amount .price-per { font-size: 1rem; font-weight: 500; color: var(--text3); }
 .price-desc {
   font-size: 0.82rem; color: var(--text3);
@@ -1275,7 +1283,7 @@ section { padding: 140px 48px; }
 .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
 .faq-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; transition: all 0.3s; }
 .faq-item:hover { border-color: #d0d0d0; }
-.faq-item.open { border-color: rgba(41,128,185,0.2); box-shadow: 0 2px 12px rgba(41,128,185,0.06); }
+.faq-item.open { border-color: rgba(15,122,109,0.2); box-shadow: 0 2px 12px rgba(15,122,109,0.06); }
 .faq-q { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; cursor: pointer; font-weight: 600; font-size: 0.95rem; color: var(--text1); gap: 16px; }
 .faq-q svg, .faq-q .faq-icon { transition: transform 0.3s ease; }
 .faq-item.open .faq-q svg, .faq-item.open .faq-q .faq-icon { transform: rotate(180deg); }
@@ -1317,7 +1325,7 @@ section { padding: 140px 48px; }
   color: var(--text1); background: var(--bg); transition: all 0.2s; outline: none;
 }
 .fg input:focus, .fg select:focus, .fg textarea:focus {
-  border-color: var(--primary); box-shadow: 0 0 0 3px rgba(41,128,185,0.08);
+  border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,122,109,0.08);
   background: var(--bg-card);
 }
 .fg textarea { resize: vertical; min-height: 110px; }
@@ -1344,8 +1352,8 @@ section { padding: 140px 48px; }
 .form-modules {
   margin: 18px 0 6px;
   padding: 18px 16px 14px;
-  background: linear-gradient(160deg, rgba(78,205,196,0.05), rgba(41,128,185,0.03));
-  border: 1px solid rgba(78,205,196,0.18);
+  background: linear-gradient(160deg, rgba(47,163,147,0.05), rgba(15,122,109,0.03));
+  border: 1px solid rgba(47,163,147,0.18);
   border-radius: 14px;
 }
 .form-modules .fm-head {
@@ -1369,7 +1377,7 @@ section { padding: 140px 48px; }
 }
 .form-modules .fm-count {
   font-size: 0.72rem; color: #15847d; font-weight: 700;
-  padding: 6px 10px; background: rgba(78,205,196,0.12);
+  padding: 6px 10px; background: rgba(47,163,147,0.12);
   border-radius: 999px; white-space: nowrap; flex-shrink: 0;
   letter-spacing: 0.02em;
 }
@@ -1390,19 +1398,19 @@ section { padding: 140px 48px; }
   transition: all .22s cubic-bezier(.16,1,.3,1);
 }
 .form-modules .fm-chip svg {
-  width: 18px; height: 18px; color: #4ecdc4;
+  width: 18px; height: 18px; color: #2fa393;
   transition: color .22s, transform .22s;
 }
 .form-modules .fm-chip:hover {
   transform: translateY(-2px);
-  border-color: #4ecdc4;
+  border-color: #2fa393;
   color: #15847d;
 }
 .form-modules .fm-chip.active {
-  background: linear-gradient(135deg, rgba(78,205,196,0.24), rgba(41,128,185,0.13));
+  background: linear-gradient(135deg, rgba(47,163,147,0.24), rgba(15,122,109,0.13));
   border-color: #2bb3a8;
   color: #0f6e66;
-  box-shadow: 0 0 0 2px rgba(78,205,196,0.40), 0 6px 16px rgba(78,205,196,0.20);
+  box-shadow: 0 0 0 2px rgba(47,163,147,0.40), 0 6px 16px rgba(47,163,147,0.20);
 }
 .form-modules .fm-chip.active svg { transform: scale(1.08); color: #15847d; }
 .form-modules .fm-chip.active::after {
@@ -1415,8 +1423,8 @@ section { padding: 140px 48px; }
   box-shadow: 0 1px 3px rgba(15,110,102,0.4);
 }
 .form-modules .fm-chip.required {
-  background: rgba(78,205,196,0.07);
-  border-color: rgba(78,205,196,0.45);
+  background: rgba(47,163,147,0.07);
+  border-color: rgba(47,163,147,0.45);
   color: #15847d;
   cursor: default;
 }
@@ -1447,7 +1455,7 @@ section { padding: 140px 48px; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 16px; }
 .cal-dow { font-size: 0.68rem; font-weight: 600; text-align: center; padding: 4px 0; color: var(--text3); text-transform: uppercase; }
 .cal-day { aspect-ratio: 1; border-radius: 8px; border: 1.5px solid transparent; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.15s; color: var(--text1); }
-.cal-day:hover:not(.disabled):not(.empty) { border-color: var(--primary); background: rgba(41,128,185,0.06); }
+.cal-day:hover:not(.disabled):not(.empty) { border-color: var(--primary); background: rgba(15,122,109,0.06); }
 .cal-day.selected { background: var(--primary); color: white; border-color: var(--primary); font-weight: 700; }
 .cal-day.disabled { color: var(--text3); opacity: 0.35; cursor: not-allowed; background: transparent; }
 .cal-day.today:not(.selected) { border-color: var(--accent); color: var(--accent); font-weight: 700; }
@@ -1464,7 +1472,7 @@ section { padding: 140px 48px; }
 .time-slot.selected { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
 .time-slot.disabled { opacity: 0.3; cursor: not-allowed; }
 
-.selected-datetime { margin-top: 16px; padding: 14px 20px; background: linear-gradient(135deg, rgba(78,205,196,0.1), rgba(41,128,185,0.1)); border: 1px solid rgba(78,205,196,0.3); border-radius: 10px; font-size: 0.9rem; color: var(--text1); font-weight: 600; display: none; text-align: center; gap: 8px; align-items: center; justify-content: center; }
+.selected-datetime { margin-top: 16px; padding: 14px 20px; background: linear-gradient(135deg, rgba(47,163,147,0.1), rgba(15,122,109,0.1)); border: 1px solid rgba(47,163,147,0.3); border-radius: 10px; font-size: 0.9rem; color: var(--text1); font-weight: 600; display: none; text-align: center; gap: 8px; align-items: center; justify-content: center; }
 .selected-datetime.show { display: flex; }
 .selected-datetime svg { flex-shrink: 0; }
 
@@ -1530,23 +1538,23 @@ section { padding: 140px 48px; }
   font-weight: 700;
   letter-spacing: 0.02em;
   text-decoration: none;
-  filter: drop-shadow(0 0 14px rgba(78,205,196,0.28));
+  filter: drop-shadow(0 0 14px rgba(47,163,147,0.28));
   transition: filter 0.3s ease, transform 0.3s ease;
 }
 .footer-credit:hover {
-  filter: drop-shadow(0 0 22px rgba(41,128,185,0.55));
+  filter: drop-shadow(0 0 22px rgba(15,122,109,0.55));
   transform: translateY(-1px);
 }
 .footer-credit-text {
   background: linear-gradient(
     100deg,
-    #4ecdc4 0%,
-    #2980b9 25%,
-    #5dade2 45%,
+    #2fa393 0%,
+    #0f7a6d 25%,
+    #4fb3a3 45%,
     #ffffff 50%,
-    #5dade2 55%,
-    #2980b9 75%,
-    #4ecdc4 100%
+    #4fb3a3 55%,
+    #0f7a6d 75%,
+    #2fa393 100%
   );
   background-size: 220% auto;
   background-clip: text;
@@ -1565,7 +1573,7 @@ section { padding: 140px 48px; }
 
 /* ====== SHIFTIA LOGO ====== */
 .shiftia-svg {
-  filter: drop-shadow(0 0 12px rgba(78,205,196,0.25));
+  filter: drop-shadow(0 0 12px rgba(47,163,147,0.25));
   overflow: visible;
 }
 .shiftia-svg .s-path-1 {
@@ -1603,8 +1611,8 @@ section { padding: 140px 48px; }
   }
 }
 @keyframes logoAura {
-  0%, 100% { filter: drop-shadow(0 0 10px rgba(78,205,196,0.22)); }
-  50%      { filter: drop-shadow(0 0 22px rgba(41,128,185,0.55)); }
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(47,163,147,0.22)); }
+  50%      { filter: drop-shadow(0 0 22px rgba(15,122,109,0.55)); }
 }
 @keyframes logoStrokePulse {
   0%, 100% { stroke-width: 3; opacity: 0.92; }
@@ -1623,13 +1631,17 @@ section { padding: 140px 48px; }
   }
 }
 @keyframes logoIAPulse {
-  0%, 100% { filter: drop-shadow(0 0 0 rgba(41,128,185,0)); }
-  50%      { filter: drop-shadow(0 0 8px rgba(41,128,185,0.45)); }
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(15,122,109,0)); }
+  50%      { filter: drop-shadow(0 0 8px rgba(15,122,109,0.45)); }
 }
 
-.nav-logo-text { font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; }
-.logo-shift { color: #0f0f0f !important; -webkit-text-fill-color: #0f0f0f !important; }
-.logo-ia { color: #2980b9 !important; -webkit-text-fill-color: #2980b9 !important; }
+/* Wordmark editorial: mismo patrón serif itálico que login/demo/recursos */
+.nav-logo-text {
+  font-family: 'Instrument Serif', 'Times New Roman', Georgia, serif;
+  font-style: italic; font-weight: 400;
+  font-size: 1.5rem; letter-spacing: -0.01em;
+  color: #0f0f0f !important; -webkit-text-fill-color: #0f0f0f !important;
+}
 
 /* ====== TIME SAVINGS / IMPACT ====== */
 .impact { background: var(--bg); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
@@ -1641,7 +1653,7 @@ section { padding: 140px 48px; }
 .impact-num {
   font-size: clamp(2.5rem, 5vw, 3.8rem); font-weight: 900;
   letter-spacing: -0.03em; line-height: 1;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; margin-bottom: 8px;
 }
@@ -1657,7 +1669,7 @@ section { padding: 140px 48px; }
   font-size: 0.85rem; font-weight: 600; color: var(--text2);
   cursor: pointer; transition: all 0.3s;
 }
-.showcase-tab.active, .showcase-tab:hover { border-color: var(--primary); color: var(--primary); background: rgba(41,128,185,0.04); }
+.showcase-tab.active, .showcase-tab:hover { border-color: var(--primary); color: var(--primary); background: rgba(15,122,109,0.04); }
 .showcase-screen {
   max-width: 900px; margin: 0 auto;
   background: var(--bg-card); border-radius: var(--radius);
@@ -1692,7 +1704,7 @@ section { padding: 140px 48px; }
 .demo-kpi-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .demo-kpi-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
 .demo-kpi-change { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
-.demo-kpi-change.up { background: #dbeafe; color: #2980b9; }
+.demo-kpi-change.up { background: #dbeafe; color: #0f7a6d; }
 .demo-kpi-change.down { background: #fee2e2; color: #dc2626; }
 .demo-kpi-change.neutral { background: var(--border-light); color: var(--text3); }
 .demo-kpi-num { font-size: 1.5rem; font-weight: 800; color: var(--text1); line-height: 1; }
@@ -1718,7 +1730,7 @@ section { padding: 140px 48px; }
 .demo-donut-wrap { display: flex; align-items: center; gap: 20px; }
 .demo-donut {
   width: 80px; height: 80px; border-radius: 50%;
-  background: conic-gradient(#4ecdc4 0% 45%, #2980b9 45% 75%, #f59e0b 75% 90%, var(--border-light) 90% 100%);
+  background: conic-gradient(#2fa393 0% 45%, #0f7a6d 45% 75%, #f59e0b 75% 90%, var(--border-light) 90% 100%);
   position: relative; flex-shrink: 0;
 }
 .demo-donut::after {
@@ -1753,7 +1765,7 @@ section { padding: 140px 48px; }
 .demo-candidate-left { display: flex; align-items: center; gap: 12px; }
 .demo-candidate-avatar {
   width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   display: flex; align-items: center; justify-content: center;
   color: white; font-weight: 700; font-size: 0.75rem;
 }
@@ -1763,13 +1775,13 @@ section { padding: 140px 48px; }
   font-size: 0.85rem; font-weight: 800;
   padding: 4px 12px; border-radius: var(--radius-pill);
 }
-.demo-score-high { background: #dbeafe; color: #2980b9; }
+.demo-score-high { background: #dbeafe; color: #0f7a6d; }
 .demo-score-med { background: #fef3c7; color: #92400e; }
 
 /* ====== VISUAL EFFECTS ====== */
 /* Shimmer text effect */
 .shimmer {
-  background: linear-gradient(90deg, #2980b9, #4ecdc4, #2980b9);
+  background: linear-gradient(90deg, #0f7a6d, #2fa393, #0f7a6d);
   background-size: 200% auto;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1784,16 +1796,16 @@ section { padding: 140px 48px; }
 /* Scroll progress bar */
 .scroll-progress {
   position: fixed; top: 0; left: 0; height: 3px; z-index: 9999;
-  background: linear-gradient(90deg, #4ecdc4, #2980b9);
+  background: linear-gradient(90deg, #2fa393, #0f7a6d);
   width: 0%; transition: width 0.1s linear;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #4ecdc4, #2980b9); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #2fa393, #0f7a6d); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #3dbdb5, #2070a0); }
-html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
+html { scrollbar-width: thin; scrollbar-color: #0f7a6d var(--bg); }
 
 /* Confetti animation */
 .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 9998; overflow: hidden; }
@@ -1829,19 +1841,19 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
   transform-origin: top center;
 }
 .orbit-ring {
-  position: absolute; border-radius: 50%; border: 1px solid rgba(78,205,196,0.15);
+  position: absolute; border-radius: 50%; border: 1px solid rgba(47,163,147,0.15);
   top: 50%; left: 50%; transform: translate(-50%, -50%);
 }
-.orbit-ring-1 { width: 200px; height: 200px; border-color: rgba(78,205,196,0.2); }
+.orbit-ring-1 { width: 200px; height: 200px; border-color: rgba(47,163,147,0.2); }
 .orbit-ring-2 { width: 340px; height: 340px; }
-.orbit-ring-3 { width: 480px; height: 480px; border-color: rgba(41,128,185,0.1); }
+.orbit-ring-3 { width: 480px; height: 480px; border-color: rgba(15,122,109,0.1); }
 .orbit-center {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   width: 90px; height: 90px; border-radius: 50%;
-  background: var(--bg-card); border: 2px solid rgba(78,205,196,0.3);
+  background: var(--bg-card); border: 2px solid rgba(47,163,147,0.3);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 2px; z-index: 5;
-  box-shadow: 0 0 40px rgba(78,205,196,0.15), 0 0 80px rgba(41,128,185,0.08);
+  box-shadow: 0 0 40px rgba(47,163,147,0.15), 0 0 80px rgba(15,122,109,0.08);
 }
 .orbit-center span { font-size: 0.65rem; font-weight: 800; color: var(--text1); letter-spacing: -0.02em; }
 .orbit-track {
@@ -1861,19 +1873,19 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
 @keyframes orbitSpinReverse { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
 .orbit-emoji {
   width: 48px; height: 48px; border-radius: 50%;
-  background: linear-gradient(135deg, rgba(78,205,196,0.08), rgba(41,128,185,0.12));
-  border: 1.5px solid rgba(78,205,196,0.3);
+  background: linear-gradient(135deg, rgba(47,163,147,0.08), rgba(15,122,109,0.12));
+  border: 1.5px solid rgba(47,163,147,0.3);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(78,205,196,0.12), inset 0 1px 2px rgba(255,255,255,0.6);
+  box-shadow: 0 4px 20px rgba(47,163,147,0.12), inset 0 1px 2px rgba(255,255,255,0.6);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   backdrop-filter: blur(8px);
 }
 .orbit-emoji svg { width: 22px; height: 22px; }
 .orbit-node:hover .orbit-emoji {
   transform: scale(1.25);
-  box-shadow: 0 8px 32px rgba(78,205,196,0.3), inset 0 1px 2px rgba(255,255,255,0.6);
-  border-color: #4ecdc4;
-  background: linear-gradient(135deg, rgba(78,205,196,0.15), rgba(41,128,185,0.2));
+  box-shadow: 0 8px 32px rgba(47,163,147,0.3), inset 0 1px 2px rgba(255,255,255,0.6);
+  border-color: #2fa393;
+  background: linear-gradient(135deg, rgba(47,163,147,0.15), rgba(15,122,109,0.2));
 }
 .orbit-label {
   font-size: 0.62rem; font-weight: 700; color: var(--text2);
@@ -1927,15 +1939,15 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
   gap: 10px;
   padding: 12px 14px;
   background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(78,205,196,0.18);
+  border: 1px solid rgba(47,163,147,0.18);
   border-radius: 12px;
   backdrop-filter: blur(8px);
   transition: transform .25s cubic-bezier(.16,1,.3,1), border-color .25s, background-color .25s;
 }
-.orbit-mobile-grid .omg-chip:hover { transform: translateY(-2px); border-color: rgba(78,205,196,0.45); background: rgba(78,205,196,0.06); }
+.orbit-mobile-grid .omg-chip:hover { transform: translateY(-2px); border-color: rgba(47,163,147,0.45); background: rgba(47,163,147,0.06); }
 .orbit-mobile-grid .omg-chip svg {
   width: 20px; height: 20px; flex-shrink: 0;
-  color: #4ecdc4;
+  color: #2fa393;
 }
 .orbit-mobile-grid .omg-chip span {
   font-size: 0.78rem;
@@ -1948,11 +1960,11 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
   flex-direction: column;
   text-align: center;
   padding: 18px 14px;
-  background: linear-gradient(135deg, rgba(78,205,196,0.12), rgba(41,128,185,0.08));
-  border-color: rgba(78,205,196,0.35);
+  background: linear-gradient(135deg, rgba(47,163,147,0.12), rgba(15,122,109,0.08));
+  border-color: rgba(47,163,147,0.35);
 }
 .orbit-mobile-grid .omg-center svg { width: 36px; height: 36px; }
-.orbit-mobile-grid .omg-center span { font-size: 1.1rem; font-weight: 700; color: #4ecdc4; }
+.orbit-mobile-grid .omg-center span { font-size: 1.1rem; font-weight: 700; color: #2fa393; }
 
 /* Para tablets/desktop pequeño, escala ligera + posiciones originales (no abs) */
 @media (max-width: 1024px) and (min-width: 769px) {
@@ -1972,7 +1984,7 @@ html { scrollbar-width: thin; scrollbar-color: #2980b9 var(--bg); }
 .showcase-frame { position: relative; }
 .showcase-frame::before {
   content: ''; position: absolute; inset: -2px; border-radius: calc(var(--radius) + 2px);
-  background: linear-gradient(90deg, #4ecdc4, #2980b9, #4ecdc4, #2980b9);
+  background: linear-gradient(90deg, #2fa393, #0f7a6d, #2fa393, #0f7a6d);
   background-size: 300% 100%; z-index: -1;
   animation: borderGlow 4s linear infinite;
 }
@@ -2013,8 +2025,8 @@ section + section::before {
   height: 1px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(78,205,196,0.28) 30%,
-    rgba(41,128,185,0.28) 70%,
+    rgba(47,163,147,0.28) 30%,
+    rgba(15,122,109,0.28) 70%,
     transparent 100%);
   pointer-events: none;
   z-index: 1;
@@ -2030,7 +2042,7 @@ section + section::before {
   inset: 0 0 auto 0;
   height: 320px;
   background: radial-gradient(ellipse 70% 100% at 50% 0%,
-    rgba(78,205,196,0.045),
+    rgba(47,163,147,0.045),
     transparent 75%);
   pointer-events: none;
   z-index: -1;
@@ -2335,9 +2347,9 @@ section + section::before {
   filter: blur(80px); opacity: 0.12;
   animation: orbFloat 15s ease-in-out infinite;
 }
-.orb-1 { width: 400px; height: 400px; background: #4ecdc4; top: -100px; right: -100px; animation-delay: 0s; }
-.orb-2 { width: 300px; height: 300px; background: #2980b9; bottom: -80px; left: -80px; animation-delay: -5s; }
-.orb-3 { width: 250px; height: 250px; background: #4ecdc4; top: 50%; left: 50%; animation-delay: -10s; }
+.orb-1 { width: 400px; height: 400px; background: #2fa393; top: -100px; right: -100px; animation-delay: 0s; }
+.orb-2 { width: 300px; height: 300px; background: #0f7a6d; bottom: -80px; left: -80px; animation-delay: -5s; }
+.orb-3 { width: 250px; height: 250px; background: #2fa393; top: 50%; left: 50%; animation-delay: -10s; }
 @keyframes orbFloat {
   0%, 100% { transform: translate(0, 0) scale(1); }
   25% { transform: translate(30px, -30px) scale(1.1); }
@@ -2371,7 +2383,7 @@ section + section::before {
 .nav-links a::after {
   content: ''; position: absolute; bottom: -4px; left: 0;
   width: 0; height: 2px;
-  background: linear-gradient(90deg, #4ecdc4, #2980b9);
+  background: linear-gradient(90deg, #2fa393, #0f7a6d);
   border-radius: 2px; transition: width 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .nav-links a:hover::after { width: 100%; }
@@ -2405,12 +2417,12 @@ section + section::before {
   }
   .nav-links a:hover {
     color: var(--text1);
-    background: rgba(78,205,196,0.10);
+    background: rgba(47,163,147,0.10);
     transform: translateY(-1px);
   }
   .nav-links a.is-active {
     color: var(--text1);
-    background: rgba(41,128,185,0.10);
+    background: rgba(15,122,109,0.10);
   }
   .nav-links a::after { display: none; }   /* pill replaces underline on desktop */
   .nav-link-icon {
@@ -2436,11 +2448,11 @@ section + section::before {
   .nav-btn-primary {
     padding: 10px 22px;
     font-weight: 700;
-    box-shadow: 0 6px 16px rgba(41,128,185,0.18);
+    box-shadow: 0 6px 16px rgba(15,122,109,0.18);
     transition: box-shadow 0.3s ease, transform 0.25s ease, background 0.2s ease;
   }
   .nav-btn-primary:hover {
-    box-shadow: 0 12px 28px rgba(41,128,185,0.30);
+    box-shadow: 0 12px 28px rgba(15,122,109,0.30);
     transform: translateY(-1px);
   }
 }
@@ -2472,7 +2484,7 @@ section + section::before {
 .price-list.animate-checks li:nth-child(5)::before { transition-delay: 0.5s; }
 
 /* 7. SMOOTH INFINITE MARQUEE */
-.marquee { padding: 20px 0; background: linear-gradient(90deg, rgba(78,205,196,0.05), rgba(41,128,185,0.05)); overflow: hidden; }
+.marquee { padding: 20px 0; background: linear-gradient(90deg, rgba(47,163,147,0.05), rgba(15,122,109,0.05)); overflow: hidden; }
 .marquee-track {
   display: flex; gap: 48px; white-space: nowrap;
   animation: marqueeScroll 30s linear infinite;
@@ -2482,7 +2494,7 @@ section + section::before {
   display: flex; align-items: center; gap: 10px;
   font-size: 0.88rem; font-weight: 600; color: var(--text3);
 }
-.marquee-dot { width: 6px; height: 6px; border-radius: 50%; background: linear-gradient(135deg, #4ecdc4, #2980b9); flex-shrink: 0; }
+.marquee-dot { width: 6px; height: 6px; border-radius: 50%; background: linear-gradient(135deg, #2fa393, #0f7a6d); flex-shrink: 0; }
 @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
 /* 8. BOUNCING EMOJI ON FEATURE ICONS */
@@ -2518,7 +2530,7 @@ body::after {
 
 /* ====== ANIMATED NAVBAR CTA GRADIENT ====== */
 .nav-cta {
-  background: linear-gradient(135deg, #4ecdc4, #2980b9, #4ecdc4);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d, #2fa393);
   background-size: 200% 200%;
   animation: navCtaGlow 3s ease-in-out infinite;
 }
@@ -2535,24 +2547,24 @@ body::after {
   transition: color 0.3s;
 }
 .impact-item:hover .impact-num {
-  color: #4ecdc4;
+  color: #2fa393;
 }
 
 /* ====== AI CHAT ASSISTANT ====== */
 .chat-fab {
   position: fixed; bottom: 24px; right: 90px; z-index: 95;
   width: 56px; height: 56px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 30px rgba(41,128,185,0.4);
+  box-shadow: 0 8px 30px rgba(15,122,109,0.4);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   color: white; font-size: 1.5rem;
 }
-.chat-fab:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(41,128,185,0.5); }
+.chat-fab:hover { transform: scale(1.08); box-shadow: 0 12px 40px rgba(15,122,109,0.5); }
 .chat-fab.active { transform: scale(0) rotate(180deg); opacity: 0; pointer-events: none; }
 .chat-fab-pulse {
   position: absolute; inset: -4px; border-radius: 50%;
-  border: 2px solid rgba(78,205,196,0.5);
+  border: 2px solid rgba(47,163,147,0.5);
   animation: fabPulse 2s ease-out infinite;
 }
 @keyframes fabPulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.4); opacity: 0; } }
@@ -2569,7 +2581,7 @@ body::after {
 .chat-window.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
 
 .chat-header {
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   padding: 18px 20px; color: white; display: flex; align-items: center; gap: 12px;
   flex-shrink: 0;
 }
@@ -2600,7 +2612,7 @@ body::after {
 .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
 .chat-msg-avatar {
   width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   display: flex; align-items: center; justify-content: center;
   font-size: 0.65rem; color: white; font-weight: 700;
 }
@@ -2616,7 +2628,7 @@ body::after {
 }
 .chat-msg.user .chat-msg-bubble,
 .chat-msg.user .chat-msg-text {
-  background: linear-gradient(135deg, #4ecdc4, #2980b9); color: white;
+  background: linear-gradient(135deg, #2fa393, #0f7a6d); color: white;
   border-bottom-right-radius: 4px;
 }
 @keyframes chatMsgIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
@@ -2639,7 +2651,7 @@ body::after {
   background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text2);
   cursor: pointer; transition: all 0.2s; white-space: nowrap;
 }
-.chat-suggestion:hover { border-color: #4ecdc4; color: #2980b9; background: rgba(78,205,196,0.05); }
+.chat-suggestion:hover { border-color: #2fa393; color: #0f7a6d; background: rgba(47,163,147,0.05); }
 
 .chat-input-area {
   display: flex; align-items: center; gap: 10px; padding: 14px 16px;
@@ -2650,11 +2662,11 @@ body::after {
   padding: 10px 16px; font-size: 0.85rem; outline: none;
   transition: border-color 0.2s; font-family: inherit;
 }
-.chat-input:focus { border-color: #4ecdc4; }
+.chat-input:focus { border-color: #2fa393; }
 .chat-input::placeholder { color: #bbb; }
 .chat-send {
   width: 38px; height: 38px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   border: none; color: white; cursor: pointer; display: flex;
   align-items: center; justify-content: center; font-size: 1rem;
   transition: transform 0.2s, opacity 0.2s; flex-shrink: 0;
@@ -2669,30 +2681,8 @@ body::after {
 
 /* ====== PREMIUM VISUAL IMPROVEMENTS ====== */
 
-/* Hero Particles */
-.hero-particles {
-  position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
-}
-.hero-particles span {
-  position: absolute; display: block;
-  background: rgba(78,205,196,0.3); border-radius: 50%;
-  animation: particleFloat linear infinite;
-}
-.hero-particles span:nth-child(1) { left: 10%; width: 6px; height: 6px; animation-duration: 18s; animation-delay: 0s; bottom: -10%; }
-.hero-particles span:nth-child(2) { left: 25%; width: 3px; height: 3px; animation-duration: 22s; animation-delay: 2s; bottom: -10%; }
-.hero-particles span:nth-child(3) { left: 40%; width: 5px; height: 5px; animation-duration: 20s; animation-delay: 4s; bottom: -10%; }
-.hero-particles span:nth-child(4) { left: 55%; width: 4px; height: 4px; animation-duration: 24s; animation-delay: 1s; bottom: -10%; background: rgba(41,128,185,0.25); }
-.hero-particles span:nth-child(5) { left: 70%; width: 7px; height: 7px; animation-duration: 16s; animation-delay: 3s; bottom: -10%; }
-.hero-particles span:nth-child(6) { left: 85%; width: 3px; height: 3px; animation-duration: 26s; animation-delay: 5s; bottom: -10%; background: rgba(41,128,185,0.2); }
-.hero-particles span:nth-child(7) { left: 50%; width: 5px; height: 5px; animation-duration: 19s; animation-delay: 7s; bottom: -10%; }
-.hero-particles span:nth-child(8) { left: 15%; width: 4px; height: 4px; animation-duration: 21s; animation-delay: 6s; bottom: -10%; background: rgba(41,128,185,0.3); }
+/* (hero-particles retiradas — decoración que competía con el mockup animado) */
 
-@keyframes particleFloat {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.6; }
-  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
-}
 
 /* Rotating Words */
 .rotating-words {
@@ -2704,7 +2694,7 @@ body::after {
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   transform: translateY(30px);
   white-space: nowrap;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; color: transparent;
 }
@@ -2716,20 +2706,20 @@ body::after {
 /* Magnetic Hover on Buttons */
 .btn-lg { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .btn-lg:hover { transform: translateY(-2px) scale(1.02); }
-.btn-lg.primary:hover { box-shadow: 0 12px 40px rgba(41,128,185,0.35); }
+.btn-lg.primary:hover { box-shadow: 0 12px 40px rgba(15,122,109,0.35); }
 
 /* Back to Top Button */
 .back-to-top {
   position: fixed; bottom: 100px; right: 32px; z-index: 90;
   width: 44px; height: 44px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
   opacity: 0; transform: translateY(20px); pointer-events: none;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 20px rgba(41,128,185,0.3);
+  box-shadow: 0 4px 20px rgba(15,122,109,0.3);
 }
 .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-.back-to-top:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(41,128,185,0.4); }
+.back-to-top:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(15,122,109,0.4); }
 .back-to-top svg { width: 20px; height: 20px; }
 
 /* Smooth Tilt on Proof Cards */
@@ -2740,15 +2730,15 @@ body::after {
 .price-card.pop {
   border: 2px solid transparent !important;
   background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
-              linear-gradient(135deg, #4ecdc4, #2980b9, #4ecdc4) border-box !important;
+              linear-gradient(135deg, #2fa393, #0f7a6d, #2fa393) border-box !important;
   animation: borderRotate 4s linear infinite;
 }
 @keyframes borderRotate {
-  0% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(0deg, #4ecdc4, #2980b9, #4ecdc4) border-box; }
-  25% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(90deg, #4ecdc4, #2980b9, #4ecdc4) border-box; }
-  50% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(180deg, #4ecdc4, #2980b9, #4ecdc4) border-box; }
-  75% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(270deg, #4ecdc4, #2980b9, #4ecdc4) border-box; }
-  100% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(360deg, #4ecdc4, #2980b9, #4ecdc4) border-box; }
+  0% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(0deg, #2fa393, #0f7a6d, #2fa393) border-box; }
+  25% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(90deg, #2fa393, #0f7a6d, #2fa393) border-box; }
+  50% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(180deg, #2fa393, #0f7a6d, #2fa393) border-box; }
+  75% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(270deg, #2fa393, #0f7a6d, #2fa393) border-box; }
+  100% { background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box, linear-gradient(360deg, #2fa393, #0f7a6d, #2fa393) border-box; }
 }
 
 /* ====== ENHANCED VISUAL IMPROVEMENTS ====== */
@@ -2758,7 +2748,7 @@ body::after {
 .nav-links a { position: relative; }
 .nav-links a::after {
   content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
-  background: linear-gradient(90deg, #4ecdc4, #2980b9);
+  background: linear-gradient(90deg, #2fa393, #0f7a6d);
   transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 2px;
 }
@@ -2772,12 +2762,12 @@ body::after {
 /* 4. Form Input Focus Animations */
 .fg input, .fg select, .fg textarea { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 .fg input:focus, .fg select:focus, .fg textarea:focus {
-  outline: none; border-color: #4ecdc4;
-  box-shadow: 0 0 0 3px rgba(78,205,196,0.12), 0 2px 8px rgba(78,205,196,0.08);
+  outline: none; border-color: #2fa393;
+  box-shadow: 0 0 0 3px rgba(47,163,147,0.12), 0 2px 8px rgba(47,163,147,0.08);
   transform: translateY(-1px);
 }
 .form-submit { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-.form-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(41,128,185,0.35); }
+.form-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(15,122,109,0.35); }
 
 /* 5. Pricing Card Hover Enhancements */
 .price-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -2807,11 +2797,11 @@ body::after {
   }
 }
 @keyframes logoHoverGlow {
-  0%   { filter: drop-shadow(0 0 12px rgba(78,205,196,0.25)); }
+  0%   { filter: drop-shadow(0 0 12px rgba(47,163,147,0.25)); }
   35%  { filter: drop-shadow(0 0 30px rgba(255,255,255,0.75))
-                drop-shadow(0 0 14px rgba(41,128,185,0.55)); }
-  100% { filter: drop-shadow(0 0 22px rgba(41,128,185,0.55))
-                drop-shadow(0 0 6px rgba(78,205,196,0.35)); }
+                drop-shadow(0 0 14px rgba(15,122,109,0.55)); }
+  100% { filter: drop-shadow(0 0 22px rgba(15,122,109,0.55))
+                drop-shadow(0 0 6px rgba(47,163,147,0.35)); }
 }
 @keyframes logoSparkleBurst {
   0%   { transform: scale(1) rotate(0deg);   opacity: 1; }
@@ -2819,9 +2809,9 @@ body::after {
   100% { transform: scale(1) rotate(0deg);   opacity: 1; }
 }
 @keyframes logoIABurst {
-  0%   { filter: drop-shadow(0 0 0 rgba(41,128,185,0)); }
-  40%  { filter: drop-shadow(0 0 14px rgba(41,128,185,0.85)); }
-  100% { filter: drop-shadow(0 0 6px rgba(41,128,185,0.4)); }
+  0%   { filter: drop-shadow(0 0 0 rgba(15,122,109,0)); }
+  40%  { filter: drop-shadow(0 0 14px rgba(15,122,109,0.85)); }
+  100% { filter: drop-shadow(0 0 6px rgba(15,122,109,0.4)); }
 }
 
 /* 8. Smooth Scroll Snap Feel */
@@ -2841,7 +2831,7 @@ section { scroll-margin-top: 80px; }
 .section-eyebrow {
   font-size: 0.78rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 20px;
-  background: linear-gradient(90deg, #4ecdc4, #2980b9, #4ecdc4);
+  background: linear-gradient(90deg, #2fa393, #0f7a6d, #2fa393);
   background-size: 200% auto;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; color: transparent;
@@ -2908,13 +2898,13 @@ section { scroll-margin-top: 80px; }
   box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
 }
 .cookie-banner.visible { transform: translateY(0); }
-.cookie-banner a { color: #4ecdc4; text-decoration: underline; }
+.cookie-banner a { color: #2fa393; text-decoration: underline; }
 .cookie-btn {
   padding: 8px 20px; border-radius: var(--radius-pill); border: none; cursor: pointer;
   font-size: 0.82rem; font-weight: 600; transition: all 0.2s;
 }
-.cookie-btn.accept { background: linear-gradient(135deg, #4ecdc4, #2980b9); color: white; }
-.cookie-btn.accept:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(78,205,196,0.3); }
+.cookie-btn.accept { background: linear-gradient(135deg, #2fa393, #0f7a6d); color: white; }
+.cookie-btn.accept:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(47,163,147,0.3); }
 .cookie-btn.reject { background: transparent; color: var(--bg); border: 1px solid rgba(255,255,255,0.3); }
 .cookie-btn.reject:hover { border-color: rgba(255,255,255,0.6); }
 @media (max-width: 768px) { .cookie-banner { flex-direction: column; text-align: center; gap: 12px; padding: 20px; } }
@@ -2932,7 +2922,7 @@ section { scroll-margin-top: 80px; }
 .social-notif.visible { transform: translateX(0); opacity: 1; }
 .social-notif-avatar {
   width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   display: flex; align-items: center; justify-content: center;
   color: white; font-weight: 700; font-size: 0.8rem; flex-shrink: 0;
 }
@@ -2948,7 +2938,7 @@ section { scroll-margin-top: 80px; }
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 0.55rem; font-weight: 800; text-transform: uppercase;
   padding: 2px 6px; border-radius: 4px; margin-left: 6px;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   color: white; letter-spacing: 0.05em;
   animation: badgePulse 2s ease-in-out infinite;
 }
@@ -2978,14 +2968,14 @@ section { scroll-margin-top: 80px; }
   flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
   background: var(--border-light); display: flex; align-items: center; justify-content: center;
 }
-.faq-item.open .faq-q::after { transform: rotate(135deg); color: #4ecdc4; background: rgba(78,205,196,0.1); }
-.faq-q:hover::after { color: #4ecdc4; }
+.faq-item.open .faq-q::after { transform: rotate(135deg); color: #2fa393; background: rgba(47,163,147,0.1); }
+.faq-q:hover::after { color: #2fa393; }
 
 /* ====== TESTIMONIAL QUOTE MARKS ====== */
 .proof-card::before {
   content: '"'; position: absolute; top: 20px; left: 24px;
   font-size: 4rem; line-height: 1; font-family: Georgia, serif;
-  background: linear-gradient(135deg, rgba(78,205,196,0.3), rgba(41,128,185,0.2));
+  background: linear-gradient(135deg, rgba(47,163,147,0.3), rgba(15,122,109,0.2));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; color: transparent;
   pointer-events: none;
@@ -3010,7 +3000,7 @@ a[href]:not(.btn-lg):not(.nav-btn-primary):not(.nav-btn-ghost):not(.price-btn) {
 /* ====== PRICING TOGGLE MICRO-INTERACTION ====== */
 .price-toggle { position: relative; transition: background 0.3s, box-shadow 0.3s; }
 .price-toggle:active { transform: scale(0.95); }
-.price-toggle.annual { box-shadow: 0 0 12px rgba(78,205,196,0.2); }
+.price-toggle.annual { box-shadow: 0 0 12px rgba(47,163,147,0.2); }
 
 /* ====== SECTION DIVIDER DOTS ====== */
 .section-dot-divider {
@@ -3880,12 +3870,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .trust-aura::before {
   width: 420px; height: 420px;
   top: -130px; left: 6%;
-  background: radial-gradient(circle, rgba(78,205,196,0.65), transparent 70%);
+  background: radial-gradient(circle, rgba(47,163,147,0.65), transparent 70%);
 }
 .trust-aura::after {
   width: 460px; height: 460px;
   bottom: -170px; right: 4%;
-  background: radial-gradient(circle, rgba(41,128,185,0.55), transparent 70%);
+  background: radial-gradient(circle, rgba(15,122,109,0.55), transparent 70%);
 }
 @media (prefers-reduced-motion: no-preference) {
   .trust-aura::before { animation: trustAura1 26s ease-in-out infinite; }
@@ -4922,7 +4912,7 @@ section.centered p,
   stroke: var(--ds-accent-text, #0a5950) !important;
   fill: none !important;
 }
-/* Para los iconos de bento-card que usan stroke="#4ecdc4" (legacy hardcoded),
+/* Para los iconos de bento-card que usan stroke="#2fa393" (legacy hardcoded),
    forzamos que cojan el color del contenedor */
 .bento-emoji svg path,
 .bento-emoji svg rect,
@@ -4983,11 +4973,11 @@ section.centered p,
 }
 .clr-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, #4ecdc4, #2980b9); opacity: 0.85;
+  background: linear-gradient(90deg, #2fa393, #0f7a6d); opacity: 0.85;
 }
 .clr-card:hover {
-  transform: translateY(-4px); border-color: rgba(78,205,196,0.3);
-  box-shadow: 0 12px 40px rgba(41,128,185,0.08), 0 0 0 1px rgba(78,205,196,0.1);
+  transform: translateY(-4px); border-color: rgba(47,163,147,0.3);
+  box-shadow: 0 12px 40px rgba(15,122,109,0.08), 0 0 0 1px rgba(47,163,147,0.1);
 }
 .clr-card:hover .clr-icon { transform: scale(1.08); }
 .clr-num {
@@ -5006,12 +4996,12 @@ section.centered p,
 .fcy-track { position: relative; max-width: 720px; margin: 8px auto 44px; padding-top: 4px; }
 .fcy-track-line {
   position: absolute; top: 7px; left: 4%; right: 4%; height: 2px; border-radius: 2px;
-  background: linear-gradient(90deg, rgba(78,205,196,0.7), rgba(41,128,185,0.7));
+  background: linear-gradient(90deg, rgba(47,163,147,0.7), rgba(15,122,109,0.7));
 }
 .fcy-dots { position: relative; display: flex; justify-content: space-between; padding: 0 4%; }
 .fcy-dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: linear-gradient(135deg, #4ecdc4, #2980b9);
+  background: linear-gradient(135deg, #2fa393, #0f7a6d);
   box-shadow: 0 0 0 3px var(--bg); position: relative; top: 3px;
 }
 .fcy-track-labels {
@@ -5026,8 +5016,8 @@ section.centered p,
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .fcy-card:hover {
-  transform: translateY(-4px); border-color: rgba(78,205,196,0.3);
-  box-shadow: 0 12px 40px rgba(41,128,185,0.08), 0 0 0 1px rgba(78,205,196,0.1);
+  transform: translateY(-4px); border-color: rgba(47,163,147,0.3);
+  box-shadow: 0 12px 40px rgba(15,122,109,0.08), 0 0 0 1px rgba(47,163,147,0.1);
 }
 .fcy-card:hover .fcy-icon { transform: scale(1.08); }
 .fcy-icon {
@@ -5061,7 +5051,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 
 /* ===== Demo interactiva: cobertura inteligente ===== */
 .cdemo-section { background: var(--ds-bg, #faf9f6); padding: 88px 0; }
-.cdemo-section .section-h2 em { font-style: normal; background: linear-gradient(135deg,#4ecdc4,#2980b9); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.cdemo-section .section-h2 em { font-style: normal; background: linear-gradient(135deg,#2fa393,#0f7a6d); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .cdemo-card {
   max-width: 680px; margin: 36px auto 0;
   background: var(--ds-bg-elev, #fff);
@@ -5085,7 +5075,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cdemo-btn[disabled] { opacity:.6; cursor:default; transform:none; }
 .cdemo-analyzing { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
 .cdemo-bar { height:6px; border-radius:999px; background: var(--ds-border,#e8e6df); overflow:hidden; }
-.cdemo-bar span { display:block; height:100%; width:0; background:linear-gradient(90deg,#4ecdc4,#2980b9); border-radius:999px; animation: cdemoFill .82s cubic-bezier(.4,0,.2,1) forwards; }
+.cdemo-bar span { display:block; height:100%; width:0; background:linear-gradient(90deg,#2fa393,#0f7a6d); border-radius:999px; animation: cdemoFill .82s cubic-bezier(.4,0,.2,1) forwards; }
 @keyframes cdemoFill { to { width:100%; } }
 .cdemo-analyzing-text { font-size:.8rem; color: var(--ds-text-subtle,#8a8a85); }
 .cdemo-candidates { margin-top:16px; display:grid; gap:10px; }
@@ -5109,7 +5099,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 
 /* ===== Demos "funciones en acción": auto-gen + equidad ===== */
 .fdemo-section { padding: 88px 0; background: var(--ds-bg, #faf9f6); }
-.fdemo-section .section-h2 em { font-style:normal; background:linear-gradient(135deg,#4ecdc4,#2980b9); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.fdemo-section .section-h2 em { font-style:normal; background:linear-gradient(135deg,#2fa393,#0f7a6d); -webkit-background-clip:text; background-clip:text; color:transparent; }
 .fdemo-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; max-width:920px; margin:36px auto 0; }
 .fdemo-card { background:var(--ds-bg-elev,#fff); border:1px solid var(--ds-border,#e8e6df); border-radius:20px; padding:24px; box-shadow:0 1px 2px rgba(15,15,15,.04),0 14px 40px rgba(15,15,15,.05); display:flex; flex-direction:column; }
 .fdemo-card-head { display:flex; gap:12px; align-items:flex-start; margin-bottom:16px; }
@@ -5135,14 +5125,14 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cgen-stat strong { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.1rem; color:var(--ds-text,#0e0f0f); }
 .cgen-bars { margin-top:10px; display:grid; gap:7px; }
 .cgen-bar label { display:block; font-size:10px; color:var(--ds-text-subtle,#8a8a85); margin-bottom:3px; }
-.cgen-bar i { display:block; height:5px; border-radius:999px; background:linear-gradient(90deg,#4ecdc4,#2980b9); width:0; transition:width .9s cubic-bezier(.16,1,.3,1); }
+.cgen-bar i { display:block; height:5px; border-radius:999px; background:linear-gradient(90deg,#2fa393,#0f7a6d); width:0; transition:width .9s cubic-bezier(.16,1,.3,1); }
 .cgen-result.show .cgen-bar i { width:var(--w); }
 /* equidad */
 .ceq-rows { display:grid; gap:10px; margin-bottom:16px; }
 .ceq-row { display:flex; align-items:center; gap:10px; }
 .ceq-name { font-size:.82rem; color:var(--ds-text,#0e0f0f); width:78px; flex-shrink:0; }
 .ceq-track { flex:1; height:10px; border-radius:999px; background:var(--ds-bg,#f4f2ec); overflow:hidden; }
-.ceq-track i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#4ecdc4,#2980b9); transition:width .7s cubic-bezier(.16,1,.3,1); }
+.ceq-track i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#2fa393,#0f7a6d); transition:width .7s cubic-bezier(.16,1,.3,1); }
 .ceq-val { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.8rem; color:var(--ds-text-muted,#4a4a47); width:18px; text-align:right; }
 .ceq-foot { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .ceq-dev { font-size:.82rem; color:var(--ds-text-subtle,#8a8a85); }
@@ -5158,7 +5148,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cimp-drop u { color:var(--ds-accent-text,#0a5950); }
 .cimp-result { margin-top:14px; }
 .cimp-prog { height:5px; border-radius:999px; background:var(--ds-border,#e8e6df); overflow:hidden; margin-bottom:12px; }
-.cimp-prog span { display:block; height:100%; width:0; background:linear-gradient(90deg,#4ecdc4,#2980b9); border-radius:999px; animation:cimpFill 1.1s linear forwards; }
+.cimp-prog span { display:block; height:100%; width:0; background:linear-gradient(90deg,#2fa393,#0f7a6d); border-radius:999px; animation:cimpFill 1.1s linear forwards; }
 @keyframes cimpFill { to{ width:100%; } }
 .cimp-rows { display:grid; gap:6px; }
 .cimp-row { display:flex; justify-content:space-between; gap:10px; padding:8px 12px; border:1px solid var(--ds-border,#e8e6df); border-radius:10px; background:var(--ds-bg-elev,#fff); opacity:0; transform:translateX(-6px); transition:opacity .25s,transform .25s; }
@@ -5249,7 +5239,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .cdemo-grp-bars .cdemo-cc { flex:1; }
 .cdemo-cc { display:flex; flex-direction:column; align-items:center; gap:4px; }
 .cdemo-cc-bar { width:100%; height:32px; display:flex; align-items:flex-end; background:var(--ds-bg,#f4f2ec); border:1px solid var(--ds-border,#e8e6df); border-radius:5px; overflow:hidden; }
-.cdemo-cc-bar i { width:100%; height:0; background:linear-gradient(180deg,#4ecdc4,#2980b9); transition:height .6s cubic-bezier(.16,1,.3,1); }
+.cdemo-cc-bar i { width:100%; height:0; background:linear-gradient(180deg,#2fa393,#0f7a6d); transition:height .6s cubic-bezier(.16,1,.3,1); }
 .cdemo-cc-l { font-size:8.5px; color:var(--ds-text-subtle,#8a8a85); white-space:nowrap; }
 @media (max-width:600px){ .cdemo-cc-l{ font-size:7px; } .cdemo-cc-bar{ height:26px; } .cdemo-crit{ gap:4px; } }
 @media (prefers-reduced-motion: reduce){ .cdemo-cc-bar i{ transition:none; } }
@@ -5269,16 +5259,16 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .ceq2-grid { display:grid; gap:4px; margin:8px 0 10px; }
 .ceq2-name { font-size:.72rem; color:var(--ds-text,#0e0f0f); white-space:nowrap; display:flex; align-items:center; padding-right:6px; }
 .ceq2-cell { height:20px; border-radius:5px; background:var(--ds-bg,#f1efe9); border:1px solid var(--ds-border,#e8e6df); transition:background .45s cubic-bezier(.16,1,.3,1),border-color .45s; }
-.ceq2-cell.on { background:linear-gradient(135deg,#4ecdc4,#2980b9); border-color:transparent; }
+.ceq2-cell.on { background:linear-gradient(135deg,#2fa393,#0f7a6d); border-color:transparent; }
 .ceq2-legend { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--ds-text-subtle,#8a8a85); }
 .ceq2-lg-on,.ceq2-lg-off { width:11px; height:11px; border-radius:3px; display:inline-block; }
-.ceq2-lg-on { background:linear-gradient(135deg,#4ecdc4,#2980b9); margin-right:2px; }
+.ceq2-lg-on { background:linear-gradient(135deg,#2fa393,#0f7a6d); margin-right:2px; }
 .ceq2-lg-off { background:var(--ds-bg,#f1efe9); border:1px solid var(--ds-border,#e8e6df); margin:0 2px 0 10px; }
 .ceq2-totals { display:grid; gap:8px; margin-bottom:16px; }
 .ceq2-trow { display:flex; align-items:center; gap:8px; }
 .ceq2-tname { font-size:.76rem; color:var(--ds-text,#0e0f0f); width:74px; flex-shrink:0; }
 .ceq2-tbar { flex:1; height:9px; border-radius:999px; background:var(--ds-bg,#f1efe9); overflow:hidden; }
-.ceq2-tbar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#4ecdc4,#2980b9); transition:width .6s cubic-bezier(.16,1,.3,1); }
+.ceq2-tbar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#2fa393,#0f7a6d); transition:width .6s cubic-bezier(.16,1,.3,1); }
 .ceq2-tval { font-family:var(--ds-font-mono,'Geist Mono',monospace); font-size:.78rem; color:var(--ds-text-muted,#4a4a47); width:16px; text-align:right; }
 .ceq2-metrics { display:flex; gap:24px; margin-bottom:16px; }
 .ceq2-metric strong { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.5rem; color:var(--ds-text,#0e0f0f); display:block; line-height:1; }
@@ -5477,7 +5467,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 
 /* ===== Pricing: precio por trabajador + ahorro anual ===== */
 .price-perworker { margin-top:10px; font-size:.82rem; color:var(--ds-text-muted,#4a4a47); }
-.price-perworker .pw-val { font-family:var(--ds-font-display,'Instrument Serif',serif); font-weight:700; color:var(--primary,#2980b9); font-size:1.02rem; }
+.price-perworker .pw-val { font-family:var(--ds-font-display,'Instrument Serif',serif); font-weight:700; color:var(--primary,#0f7a6d); font-size:1.02rem; }
 .price-yearsave { display:none; margin-top:8px; font-size:.8rem; color:#15803d; background:rgba(22,163,74,.09); border:1px solid rgba(22,163,74,.28); border-radius:999px; padding:4px 12px; align-self:flex-start; }
 .price-yearsave strong { font-weight:800; }
 .pricing-grid.annual-on .price-yearsave { display:inline-block; }
@@ -5510,7 +5500,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .calc-inputs { padding:30px 30px; display:flex; flex-direction:column; gap:24px; border-right:1px solid var(--ds-border,#eceae3); }
 .calc-field { display:flex; flex-direction:column; gap:10px; }
 .calc-flabel { display:flex; justify-content:space-between; align-items:baseline; gap:12px; font-size:.88rem; color:var(--ds-text-muted,#4a4a47); font-weight:500; }
-.calc-fval { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.35rem; color:var(--primary,#2980b9); font-weight:700; white-space:nowrap; }
+.calc-fval { font-family:var(--ds-font-display,'Instrument Serif',serif); font-size:1.35rem; color:var(--primary,#0f7a6d); font-weight:700; white-space:nowrap; }
 .calc-range { -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:999px; background:var(--ds-border,#e1e0d8); outline:none; cursor:pointer; }
 .calc-range::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%; background:var(--ds-accent,#0f7a6d); border:3px solid #fff; box-shadow:0 2px 8px rgba(15,122,109,.4); cursor:pointer; transition:transform .15s; }
 .calc-range::-webkit-slider-thumb:hover { transform:scale(1.12); }
@@ -5556,12 +5546,12 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 <nav class="nav" id="nav">
   <a href="#" class="nav-logo">
     <svg class="shiftia-svg" width="32" height="32" viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia logo">
-      <defs><linearGradient id="sG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs>
+      <defs><linearGradient id="sG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs>
       <path class="s-path-1" d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sG)" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path class="s-path-2" d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sG)" stroke-width="3" fill="none" stroke-linecap="round"/>
       <path class="s-path-3" d="M28 8l4-4 2 5" stroke="url(#sG)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
-    <span class="nav-logo-text"><span class="logo-shift">Shift</span><span class="logo-ia">ia</span></span>
+    <span class="nav-logo-text">Shiftia</span>
   </a>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -5617,7 +5607,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <span class="ha-blob ha-blob-2"></span>
     <span class="ha-blob ha-blob-3"></span>
   </div>
-  <div class="hero-particles"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <!-- (partículas del hero retiradas: el mockup animado es el único protagonista) -->
   <div class="hero-inner">
     <div class="hero-text">
       <div class="hero-label"><span class="hero-label-dot" aria-hidden="true"></span> <span data-i18n="hero_badge">Shiftia v8.0.1 · LIVE</span></div>
@@ -5674,7 +5664,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <div class="clr-card reveal">
         <span class="clr-num" aria-hidden="true">01</span>
         <div class="clr-icon" style="background:#dff5ee;">
-          <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px"><circle cx="9" cy="8" r="3.2" stroke="#4ecdc4" stroke-width="2"/><path d="M3.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M16 8h5M18.5 5.5L21 8l-2.5 2.5" stroke="#2980b9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px"><circle cx="9" cy="8" r="3.2" stroke="#2fa393" stroke-width="2"/><path d="M3.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M16 8h5M18.5 5.5L21 8l-2.5 2.5" stroke="#0f7a6d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <h3 data-i18n="clar1_t">Sustituciones por idoneidad</h3>
         <p data-i18n="clar1_d">¿Una baja? La IA analiza tu equipo y propone 3 candidatos de tu propia plantilla, ordenados por idoneidad, en menos de un segundo.</p>
@@ -5682,7 +5672,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <div class="clr-card reveal d1">
         <span class="clr-num" aria-hidden="true">02</span>
         <div class="clr-icon" style="background:#dbeafe;">
-          <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="#2980b9" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="#2980b9" stroke-width="2" stroke-linecap="round"/><path d="M9.5 15.5a2.8 2.8 0 015.3-1.2M14.8 16.2a2.8 2.8 0 01-5.3 1.2" stroke="#4ecdc4" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px"><rect x="3" y="5" width="18" height="16" rx="2.5" stroke="#0f7a6d" stroke-width="2"/><path d="M3 9.5h18M8 3v4M16 3v4" stroke="#0f7a6d" stroke-width="2" stroke-linecap="round"/><path d="M9.5 15.5a2.8 2.8 0 015.3-1.2M14.8 16.2a2.8 2.8 0 01-5.3 1.2" stroke="#2fa393" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
         <h3 data-i18n="clar2_t">Planificación continuada</h3>
         <p data-i18n="clar2_d">Cuadrantes equilibrados mes a mes: rotaciones, descansos y vacaciones. La cobertura urgente de bajas es solo una función más.</p>
@@ -5690,7 +5680,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <div class="clr-card reveal d2">
         <span class="clr-num" aria-hidden="true">03</span>
         <div class="clr-icon" style="background:#fef3c7;">
-          <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px"><path d="M12 3l8 3.5v5c0 4.8-3.3 8.3-8 9.5-4.7-1.2-8-4.7-8-9.5v-5L12 3z" stroke="#2980b9" stroke-width="2" stroke-linejoin="round"/><path d="M8.8 12.2l2.3 2.3 4.3-4.6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" style="width:22px;height:22px"><path d="M12 3l8 3.5v5c0 4.8-3.3 8.3-8 9.5-4.7-1.2-8-4.7-8-9.5v-5L12 3z" stroke="#0f7a6d" stroke-width="2" stroke-linejoin="round"/><path d="M8.8 12.2l2.3 2.3 4.3-4.6" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <h3 data-i18n="clar3_t">Tu convenio, sagrado</h3>
         <p data-i18n="clar3_d">Máximos de noches, descansos mínimos, jornadas reducidas y conciliación: la IA los respeta en cada planilla.</p>
@@ -5710,7 +5700,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   <div class="container centered">
     <span class="bespoke-version-pill reveal" data-i18n="prod_pill">Motor Shiftia v8</span>
     <div class="section-eyebrow reveal" data-i18n="prod_eyebrow">El producto</div>
-    <h2 class="section-h2 reveal" id="bespoke-title" data-i18n-html="prod_title">Un motor probado, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configurado a tu convenio.</em></h2>
+    <h2 class="section-h2 reveal" id="bespoke-title" data-i18n-html="prod_title">Un motor probado, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">configurado a tu convenio.</em></h2>
     <p class="section-p reveal" data-i18n="prod_desc">No construimos una app desde cero para cada cliente —eso sería caro y lento—. Partes del motor Shiftia, ya probado en producción, y lo configuramos a tu convenio, tu vocabulario y los módulos que necesitas. Operativo en 5-7 días y con tarifa plana.</p>
 
     <div class="bespoke-grid">
@@ -5844,42 +5834,42 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   <div class="container">
     <div class="features-grid">
       <div class="feat-card reveal">
-        <div class="feat-icon i1"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M9 15h6M9 19h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="feat-icon i1"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M9 15h6M9 19h6" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="f1_t">Planilla visual</h3>
         <p data-i18n="f1_d">Vista mensual con colores por turno. Edita cualquier celda con un clic. Ve todo tu equipo de un vistazo.</p>
       </div>
       <div class="feat-card reveal d1">
-        <div class="feat-icon i2"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="6" y="3" width="12" height="13" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M9 6h6M9 10h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="3" y="18" width="18" height="2" rx="1" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M8 16v2M16 16v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="feat-icon i2"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="6" y="3" width="12" height="13" rx="2" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M9 6h6M9 10h6" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><rect x="3" y="18" width="18" height="2" rx="1" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M8 16v2M16 16v2" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="f2_t">Motor IA de coberturas internas</h3>
         <p data-i18n="f2_d">¿Una baja? La IA analiza tu propia plantilla con 11 criterios y sugiere 3 candidatos con puntuación, impacto en equidad y nivel de confianza. En menos de un segundo.</p>
       </div>
       <div class="feat-card reveal d2">
-        <div class="feat-icon i3"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M12 2v6M12 2h8M12 2h-8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="8" x2="20" y2="8" stroke="#4ecdc4" stroke-width="2"/><path d="M8 8v10c0 1.1 1.8 2 4 2s4-.9 4-2V8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M12 20v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="feat-icon i3"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M12 2v6M12 2h8M12 2h-8" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="8" x2="20" y2="8" stroke="#2fa393" stroke-width="2"/><path d="M8 8v10c0 1.1 1.8 2 4 2s4-.9 4-2V8" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M12 20v2" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="f3_t">Equidad nocturna</h3>
         <p data-i18n="f3_d">Calcula automáticamente la media de noches solo entre trabajadores que rotan. Detecta desequilibrios antes de que escalen.</p>
       </div>
       <div class="feat-card reveal d3">
-        <div class="feat-icon i4"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M18 2l-2 4M6 2l2 4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2l-3 5v10h6V7l-3-5z" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="21" x2="15" y2="21" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M10 13h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="feat-icon i4"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M18 2l-2 4M6 2l2 4" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2l-3 5v10h6V7l-3-5z" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="21" x2="15" y2="21" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M10 13h4" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="f4_t">Alertas de conflicto</h3>
         <p data-i18n="f4_d">Cobertura insuficiente, descansos no respetados, turnos incompatibles. Shiftia los detecta automáticamente.</p>
       </div>
       <div class="feat-card reveal d4">
-        <div class="feat-icon i5"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="3" y="11" width="18" height="10" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M7 21V8M12 21V5M17 21v-3" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="feat-icon i5"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="3" y="11" width="18" height="10" rx="2" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M7 21V8M12 21V5M17 21v-3" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="f5_t">Dashboard y KPIs</h3>
         <p data-i18n="f5_d">Horas mensuales, distribución de turnos, balance vacaciones y carga de trabajo por persona. Todo en tiempo real.</p>
       </div>
       <div class="feat-card reveal d5">
-        <div class="feat-icon i6"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="7" y="2" width="10" height="20" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M10 19h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="#4ecdc4" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="#4ecdc4" stroke-width="1" fill="none" opacity="0.5"/></svg></div>
+        <div class="feat-icon i6"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="7" y="2" width="10" height="20" rx="2" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M10 19h4" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="#2fa393" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="#2fa393" stroke-width="1" fill="none" opacity="0.5"/></svg></div>
         <h3 data-i18n="f6_t">Acceso desde cualquier sitio</h3>
         <p data-i18n="f6_d">Responsive en móvil, tablet y escritorio. Guardado automático en la nube. Sin instalación necesaria.</p>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon i3"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M2 22h20" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M6 18l4-8 4 4 4-6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="6" r="2" stroke="#4ecdc4" stroke-width="2"/></svg></div>
+        <div class="feat-icon i3"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M2 22h20" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M6 18l4-8 4 4 4-6" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="6" r="2" stroke="#2fa393" stroke-width="2"/></svg></div>
         <h3 data-i18n="fc3_t">Vacaciones del equipo</h3>
         <p data-i18n="fc3_d">Balance de días por persona, solicitudes 1-click del trabajador y verificación automática de cobertura antes de aprobar.</p>
       </div>
       <div class="feat-card reveal">
-        <div class="feat-icon i5"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><circle cx="12" cy="12" r="8.5" stroke="#4ecdc4" stroke-width="2"/><path d="M12 7.5V12l3 2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="feat-icon i5"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><circle cx="12" cy="12" r="8.5" stroke="#2fa393" stroke-width="2"/><path d="M12 7.5V12l3 2" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h3 data-i18n="fc6_t">Histórico y auditoría</h3>
         <p data-i18n="fc6_d">Cada cambio queda registrado. Exporta a CSV o PDF para gerencia, inspección o tu propio control.</p>
       </div>
@@ -6708,10 +6698,10 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 <style>
 .dual-section{background:var(--bg);padding:var(--section-pad) 0;position:relative;overflow:hidden;}
 .dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px;max-width:1100px;margin-left:auto;margin-right:auto;}
-.dual-card{position:relative;background:linear-gradient(170deg,var(--bg-card),rgba(78,205,196,0.03));border:1px solid var(--border);border-radius:24px;padding:36px 28px;overflow:hidden;transition:transform .35s cubic-bezier(0.16,1,0.3,1),border-color .35s,box-shadow .35s;}
-.dual-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,rgba(78,205,196,0.10),transparent 50%);opacity:.6;pointer-events:none;}
-.dual-card:hover{transform:translateY(-4px);border-color:rgba(78,205,196,0.35);box-shadow:0 20px 40px rgba(41,128,185,0.10);}
-.dual-card .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:linear-gradient(135deg,rgba(78,205,196,0.15),rgba(41,128,185,0.10));border:1px solid rgba(78,205,196,0.3);border-radius:999px;font-size:0.7rem;font-weight:700;color:#2980b9;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:18px;}
+.dual-card{position:relative;background:linear-gradient(170deg,var(--bg-card),rgba(47,163,147,0.03));border:1px solid var(--border);border-radius:24px;padding:36px 28px;overflow:hidden;transition:transform .35s cubic-bezier(0.16,1,0.3,1),border-color .35s,box-shadow .35s;}
+.dual-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 0% 0%,rgba(47,163,147,0.10),transparent 50%);opacity:.6;pointer-events:none;}
+.dual-card:hover{transform:translateY(-4px);border-color:rgba(47,163,147,0.35);box-shadow:0 20px 40px rgba(15,122,109,0.10);}
+.dual-card .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:linear-gradient(135deg,rgba(47,163,147,0.15),rgba(15,122,109,0.10));border:1px solid rgba(47,163,147,0.3);border-radius:999px;font-size:0.7rem;font-weight:700;color:#0f7a6d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:18px;}
 .dual-card h3{font-size:1.5rem;font-weight:800;color:var(--text1);margin-bottom:8px;letter-spacing:-0.02em;}
 .dual-card p.sub{font-size:0.95rem;color:var(--text2);line-height:1.6;margin-bottom:24px;}
 .dual-features{list-style:none;display:flex;flex-direction:column;gap:14px;margin:0;padding:0;}
@@ -6719,7 +6709,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .dual-features li svg{flex-shrink:0;margin-top:2px;}
 .dual-features li b{color:var(--text1);font-weight:700;}
 .dual-card .pic{display:flex;justify-content:center;align-items:center;margin:20px 0 28px;height:140px;}
-.dual-card.admin .pic{background:linear-gradient(135deg,rgba(78,205,196,0.08),rgba(41,128,185,0.04));border-radius:18px;}
+.dual-card.admin .pic{background:linear-gradient(135deg,rgba(47,163,147,0.08),rgba(15,122,109,0.04));border-radius:18px;}
 .dual-card.worker .pic{background:linear-gradient(135deg,rgba(255,184,77,0.10),rgba(255,140,60,0.04));border-radius:18px;}
 .dual-card.worker .badge{background:linear-gradient(135deg,rgba(255,184,77,0.18),rgba(255,140,60,0.10));border-color:rgba(255,184,77,0.35);color:#cc7a00;}
 
@@ -6729,12 +6719,12 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .devices-section{padding:var(--section-pad) 0;background:linear-gradient(180deg,var(--bg) 0%,var(--bg-soft,#f4f9fa) 100%);position:relative;}
 .devices-mosaic{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;max-width:1100px;margin-left:auto;margin-right:auto;align-items:end;}
 .device{position:relative;padding:24px 20px 28px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;text-align:center;transition:transform .35s,border-color .35s,box-shadow .35s;}
-.device:hover{transform:translateY(-3px);border-color:rgba(78,205,196,0.4);box-shadow:0 16px 32px rgba(41,128,185,0.08);}
+.device:hover{transform:translateY(-3px);border-color:rgba(47,163,147,0.4);box-shadow:0 16px 32px rgba(15,122,109,0.08);}
 .device-frame{margin:0 auto 16px;display:flex;justify-content:center;align-items:flex-end;height:170px;}
 .device-frame svg{width:auto;height:100%;max-width:100%;}
 .device h4{font-size:1.05rem;font-weight:800;color:var(--text1);margin-bottom:4px;letter-spacing:-0.01em;}
 .device p{font-size:0.8rem;color:var(--text2);line-height:1.5;text-align:center;-webkit-hyphens:manual;hyphens:manual;text-wrap:pretty;}
-.device .tag{display:inline-block;margin-top:10px;padding:3px 10px;background:rgba(78,205,196,0.12);color:#15847d;border-radius:999px;font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
+.device .tag{display:inline-block;margin-top:10px;padding:3px 10px;background:rgba(47,163,147,0.12);color:#15847d;border-radius:999px;font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
 
 @media (max-width: 768px){.devices-mosaic{grid-template-columns:1fr;gap:14px;margin-top:30px;}.device-frame{height:140px;}.device{padding:20px 16px 22px;}}
 
@@ -6742,24 +6732,24 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 .custom-section{padding:var(--section-pad) 0;background:var(--bg);overflow:hidden;}
 .custom-hero{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;max-width:1100px;margin:48px auto 0;}
 .custom-hero-solo{grid-template-columns:1fr;max-width:780px;text-align:left;}
-.custom-cta-link{display:inline-flex;align-items:center;gap:10px;margin-top:24px;padding:14px 22px;background:linear-gradient(135deg,#4ecdc4,#2980b9);color:#fff;text-decoration:none;border-radius:12px;font-weight:700;font-size:0.95rem;letter-spacing:-0.005em;transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s;box-shadow:0 6px 20px rgba(41,128,185,0.18);}
-.custom-cta-link:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(41,128,185,0.35);}
+.custom-cta-link{display:inline-flex;align-items:center;gap:10px;margin-top:24px;padding:14px 22px;background:linear-gradient(135deg,#2fa393,#0f7a6d);color:#fff;text-decoration:none;border-radius:12px;font-weight:700;font-size:0.95rem;letter-spacing:-0.005em;transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s;box-shadow:0 6px 20px rgba(15,122,109,0.18);}
+.custom-cta-link:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,122,109,0.35);}
 .custom-copy h3{font-size:1.7rem;font-weight:800;color:var(--text1);margin-bottom:16px;letter-spacing:-0.02em;line-height:1.15;}
-.custom-copy h3 em{font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.custom-copy h3 em{font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .custom-copy p{font-size:1rem;color:var(--text2);line-height:1.65;margin-bottom:22px;}
 .custom-bullets{list-style:none;padding:0;display:flex;flex-direction:column;gap:14px;}
 .custom-bullets li{display:flex;align-items:flex-start;gap:12px;font-size:0.95rem;color:var(--text2);}
 .custom-bullets li b{color:var(--text1);}
-.custom-bullets li svg{flex-shrink:0;margin-top:2px;color:#4ecdc4;}
+.custom-bullets li svg{flex-shrink:0;margin-top:2px;color:#2fa393;}
 
-.custom-modules{position:relative;padding:24px;background:linear-gradient(160deg,var(--bg-card),rgba(78,205,196,0.04));border:1px solid var(--border);border-radius:24px;}
+.custom-modules{position:relative;padding:24px;background:linear-gradient(160deg,var(--bg-card),rgba(47,163,147,0.04));border:1px solid var(--border);border-radius:24px;}
 .custom-modules .label{font-size:0.7rem;font-weight:700;color:var(--text3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px;text-align:center;}
 .modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .module-chip{padding:14px 8px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;text-align:center;font-size:0.72rem;font-weight:700;color:var(--text2);cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:6px;user-select:none;}
-.module-chip:hover{transform:translateY(-2px);border-color:#4ecdc4;color:#2980b9;}
-.module-chip.active{background:linear-gradient(135deg,rgba(78,205,196,0.18),rgba(41,128,185,0.10));border-color:#4ecdc4;color:#15847d;box-shadow:0 0 0 3px rgba(78,205,196,0.15);}
-.module-chip svg{width:22px;height:22px;color:#4ecdc4;}
-.module-chip.required{background:rgba(78,205,196,0.06);border-style:solid;}
+.module-chip:hover{transform:translateY(-2px);border-color:#2fa393;color:#0f7a6d;}
+.module-chip.active{background:linear-gradient(135deg,rgba(47,163,147,0.18),rgba(15,122,109,0.10));border-color:#2fa393;color:#15847d;box-shadow:0 0 0 3px rgba(47,163,147,0.15);}
+.module-chip svg{width:22px;height:22px;color:#2fa393;}
+.module-chip.required{background:rgba(47,163,147,0.06);border-style:solid;}
 .module-chip.required .pill{font-size:0.55rem;color:#15847d;font-weight:800;letter-spacing:0.05em;}
 .custom-modules .helper{margin-top:14px;font-size:0.72rem;color:var(--text3);text-align:center;font-style:italic;}
 
@@ -6769,7 +6759,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
 <section class="dual-section" id="profiles">
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="dual_eyebrow">Perfiles</div>
-    <h2 class="section-h2 reveal" data-i18n-html="dual_title">Un sistema, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">dos experiencias</em></h2>
+    <h2 class="section-h2 reveal" data-i18n-html="dual_title">Un sistema, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">dos experiencias</em></h2>
     <p class="section-p reveal" data-i18n="dual_desc">Tu equipo no necesita aprender otro software. Cada perfil ve solo lo suyo, con la interfaz pensada para su rol.</p>
   </div>
   <div class="container">
@@ -6784,24 +6774,24 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         <p class="sub" data-i18n="dual_admin_sub">El director, supervisor o responsable ve toda la operación. Planilla mensual, métricas en tiempo real, equipo, vacaciones, IA de optimización.</p>
         <div class="pic">
           <svg width="220" height="130" viewBox="0 0 220 130" fill="none">
-            <rect x="6" y="6" width="208" height="118" rx="10" fill="var(--bg-card)" stroke="#4ecdc4" stroke-opacity="0.4" stroke-width="1.5"/>
-            <rect x="14" y="14" width="50" height="6" rx="3" fill="#4ecdc4" opacity="0.6"/>
+            <rect x="6" y="6" width="208" height="118" rx="10" fill="var(--bg-card)" stroke="#2fa393" stroke-opacity="0.4" stroke-width="1.5"/>
+            <rect x="14" y="14" width="50" height="6" rx="3" fill="#2fa393" opacity="0.6"/>
             <rect x="14" y="26" width="32" height="4" rx="2" fill="#9bb"/>
-            <rect x="14" y="38" width="60" height="38" rx="6" fill="rgba(78,205,196,0.10)" stroke="#4ecdc4" stroke-opacity="0.3"/>
-            <rect x="80" y="38" width="60" height="38" rx="6" fill="rgba(78,205,196,0.10)" stroke="#4ecdc4" stroke-opacity="0.3"/>
-            <rect x="146" y="38" width="60" height="38" rx="6" fill="rgba(78,205,196,0.10)" stroke="#4ecdc4" stroke-opacity="0.3"/>
-            <path d="M14 92 L40 86 L70 89 L100 80 L130 84 L160 76 L190 70 L206 73" stroke="#2980b9" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <circle cx="206" cy="73" r="3" fill="#4ecdc4"/>
+            <rect x="14" y="38" width="60" height="38" rx="6" fill="rgba(47,163,147,0.10)" stroke="#2fa393" stroke-opacity="0.3"/>
+            <rect x="80" y="38" width="60" height="38" rx="6" fill="rgba(47,163,147,0.10)" stroke="#2fa393" stroke-opacity="0.3"/>
+            <rect x="146" y="38" width="60" height="38" rx="6" fill="rgba(47,163,147,0.10)" stroke="#2fa393" stroke-opacity="0.3"/>
+            <path d="M14 92 L40 86 L70 89 L100 80 L130 84 L160 76 L190 70 L206 73" stroke="#0f7a6d" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="206" cy="73" r="3" fill="#2fa393"/>
             <rect x="14" y="104" width="60" height="6" rx="3" fill="#9bb" opacity="0.5"/>
             <rect x="80" y="104" width="40" height="6" rx="3" fill="#9bb" opacity="0.5"/>
             <rect x="126" y="104" width="80" height="6" rx="3" fill="#9bb" opacity="0.5"/>
           </svg>
         </div>
         <ul class="dual-features">
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f1"><b>Planilla mensual completa</b> con IA, drag & drop, conflictos resaltados.</span></li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f2"><b>Gestor SP, ausencias, vacaciones</b> y mapa de cobertura por planta.</span></li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f3"><b>Auditoría y exportación</b> CSV/PDF para gerencia.</span></li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f4"><b>Editor por trabajador</b>: convenio, restricciones, preferencias.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2fa393" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f1"><b>Planilla mensual completa</b> con IA, drag & drop, conflictos resaltados.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2fa393" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f2"><b>Gestor SP, ausencias, vacaciones</b> y mapa de cobertura por planta.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2fa393" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f3"><b>Auditoría y exportación</b> CSV/PDF para gerencia.</span></li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2fa393" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n-html="dual_admin_f4"><b>Editor por trabajador</b>: convenio, restricciones, preferencias.</span></li>
         </ul>
       </article>
       <!-- Worker -->
@@ -6818,19 +6808,19 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
             <rect x="35" y="9" width="16" height="3" rx="1.5" fill="#ccc"/>
             <rect x="10" y="20" width="66" height="14" rx="4" fill="rgba(255,184,77,0.18)"/>
             <text x="13" y="30" font-family="-apple-system,sans-serif" font-size="6.5" font-weight="700" fill="#cc7a00">MI MES</text>
-            <rect x="10" y="40" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
-            <rect x="27" y="40" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="10" y="40" width="14" height="14" rx="3" fill="rgba(47,163,147,0.18)"/>
+            <rect x="27" y="40" width="14" height="14" rx="3" fill="rgba(47,163,147,0.18)"/>
             <rect x="44" y="40" width="14" height="14" rx="3" fill="rgba(255,184,77,0.18)"/>
             <rect x="61" y="40" width="14" height="14" rx="3" fill="rgba(255,184,77,0.18)"/>
-            <rect x="10" y="57" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
+            <rect x="10" y="57" width="14" height="14" rx="3" fill="rgba(47,163,147,0.18)"/>
             <rect x="27" y="57" width="14" height="14" rx="3" fill="rgba(120,120,120,0.10)"/>
             <rect x="44" y="57" width="14" height="14" rx="3" fill="rgba(120,120,120,0.10)"/>
-            <rect x="61" y="57" width="14" height="14" rx="3" fill="rgba(78,205,196,0.18)"/>
-            <rect x="10" y="78" width="66" height="20" rx="5" fill="rgba(78,205,196,0.08)" stroke="#4ecdc4" stroke-opacity="0.3"/>
+            <rect x="61" y="57" width="14" height="14" rx="3" fill="rgba(47,163,147,0.18)"/>
+            <rect x="10" y="78" width="66" height="20" rx="5" fill="rgba(47,163,147,0.08)" stroke="#2fa393" stroke-opacity="0.3"/>
             <text x="14" y="90" font-family="-apple-system,sans-serif" font-size="5" fill="#15847d">Próximo turno</text>
             <text x="14" y="96.5" font-family="-apple-system,sans-serif" font-size="6.5" font-weight="800" fill="#15847d">Mañana · 8h</text>
-            <rect x="10" y="103" width="66" height="18" rx="9" fill="linear-gradient(90deg,#4ecdc4,#2980b9)" fill-opacity="0.85"/>
-            <rect x="10" y="103" width="66" height="18" rx="9" fill="#4ecdc4" fill-opacity="0.85"/>
+            <rect x="10" y="103" width="66" height="18" rx="9" fill="linear-gradient(90deg,#2fa393,#0f7a6d)" fill-opacity="0.85"/>
+            <rect x="10" y="103" width="66" height="18" rx="9" fill="#2fa393" fill-opacity="0.85"/>
             <text x="22" y="114.5" font-family="-apple-system,sans-serif" font-size="6.5" font-weight="800" fill="#fff">PEDIR CAMBIO</text>
           </svg>
         </div>
@@ -6905,7 +6895,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <!-- Center: Shiftia logo -->
     <div class="orbit-center">
       <svg width="44" height="44" viewBox="0 0 40 40" fill="none">
-        <defs><linearGradient id="sGorb" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs>
+        <defs><linearGradient id="sGorb" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs>
         <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGorb)" stroke-width="3" fill="none" stroke-linecap="round"/>
         <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGorb)" stroke-width="3" fill="none" stroke-linecap="round"/>
         <path d="M28 8l4-4 2 5" stroke="url(#sGorb)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -6914,25 +6904,25 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     </div>
     <!-- Orbiting concepts - Ring 1 (inner, fast) -->
     <div class="orbit-track orbit-track-1">
-      <div class="orbit-node n1"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og1" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M12 2a4 4 0 014 4v1h1a3 3 0 013 3v6a3 3 0 01-3 3H7a3 3 0 01-3-3v-6a3 3 0 013-3h1V6a4 4 0 014-4z" stroke="url(#og1)" stroke-width="1.5" fill="none"/><circle cx="9" cy="13" r="1.5" fill="url(#og1)"/><circle cx="15" cy="13" r="1.5" fill="url(#og1)"/><path d="M9 17h6" stroke="url(#og1)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_ai">Motor IA</span></div>
-      <div class="orbit-node n2"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og2" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><rect x="4" y="3" width="16" height="18" rx="2" stroke="url(#og2)" stroke-width="1.5" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="url(#og2)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_schedule">Planilla</span></div>
-      <div class="orbit-node n3"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og3" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M12 3v4M5 12l3-5h8l3 5-3 5H8l-3-5z" stroke="url(#og3)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><circle cx="12" cy="12" r="2" fill="url(#og3)"/></svg></span><span class="orbit-label" data-i18n="orb_equity">Equidad</span></div>
+      <div class="orbit-node n1"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og1" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M12 2a4 4 0 014 4v1h1a3 3 0 013 3v6a3 3 0 01-3 3H7a3 3 0 01-3-3v-6a3 3 0 013-3h1V6a4 4 0 014-4z" stroke="url(#og1)" stroke-width="1.5" fill="none"/><circle cx="9" cy="13" r="1.5" fill="url(#og1)"/><circle cx="15" cy="13" r="1.5" fill="url(#og1)"/><path d="M9 17h6" stroke="url(#og1)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_ai">Motor IA</span></div>
+      <div class="orbit-node n2"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og2" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><rect x="4" y="3" width="16" height="18" rx="2" stroke="url(#og2)" stroke-width="1.5" fill="none"/><path d="M8 8h8M8 12h8M8 16h5" stroke="url(#og2)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_schedule">Planilla</span></div>
+      <div class="orbit-node n3"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og3" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M12 3v4M5 12l3-5h8l3 5-3 5H8l-3-5z" stroke="url(#og3)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><circle cx="12" cy="12" r="2" fill="url(#og3)"/></svg></span><span class="orbit-label" data-i18n="orb_equity">Equidad</span></div>
     </div>
     <!-- Ring 2 (middle, medium) -->
     <div class="orbit-track orbit-track-2">
-      <div class="orbit-node n4"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og4" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><rect x="3" y="3" width="18" height="18" rx="3" stroke="url(#og4)" stroke-width="1.5" fill="none"/><path d="M7 17v-4M12 17V9M17 17V7" stroke="url(#og4)" stroke-width="2" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_dashboard">Dashboard</span></div>
-      <div class="orbit-node n5"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og5" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M12 3v4M12 17v4M5.64 5.64l2.83 2.83M15.54 15.54l2.83 2.83M3 12h4M17 12h4" stroke="url(#og5)" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" stroke="url(#og5)" stroke-width="1.5" fill="none"/></svg></span><span class="orbit-label" data-i18n="orb_alerts">Alertas</span></div>
-      <div class="orbit-node n6"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og6" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M17 2l4 4-4 4" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 11V9a4 4 0 014-4h14" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round"/><path d="M7 22l-4-4 4-4" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 13v2a4 4 0 01-4 4H3" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_coverage">Coberturas</span></div>
-      <div class="orbit-node n7"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og7" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" stroke="url(#og7)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><circle cx="16" cy="6" r="1" fill="url(#og7)"/><circle cx="19" cy="9" r="0.5" fill="url(#og7)"/></svg></span><span class="orbit-label" data-i18n="orb_nights">Noches</span></div>
+      <div class="orbit-node n4"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og4" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><rect x="3" y="3" width="18" height="18" rx="3" stroke="url(#og4)" stroke-width="1.5" fill="none"/><path d="M7 17v-4M12 17V9M17 17V7" stroke="url(#og4)" stroke-width="2" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_dashboard">Dashboard</span></div>
+      <div class="orbit-node n5"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og5" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M12 3v4M12 17v4M5.64 5.64l2.83 2.83M15.54 15.54l2.83 2.83M3 12h4M17 12h4" stroke="url(#og5)" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="3" stroke="url(#og5)" stroke-width="1.5" fill="none"/></svg></span><span class="orbit-label" data-i18n="orb_alerts">Alertas</span></div>
+      <div class="orbit-node n6"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og6" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M17 2l4 4-4 4" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 11V9a4 4 0 014-4h14" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round"/><path d="M7 22l-4-4 4-4" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 13v2a4 4 0 01-4 4H3" stroke="url(#og6)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_coverage">Coberturas</span></div>
+      <div class="orbit-node n7"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og7" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" stroke="url(#og7)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><circle cx="16" cy="6" r="1" fill="url(#og7)"/><circle cx="19" cy="9" r="0.5" fill="url(#og7)"/></svg></span><span class="orbit-label" data-i18n="orb_nights">Noches</span></div>
     </div>
     <!-- Ring 3 (outer, slow) -->
     <div class="orbit-track orbit-track-3">
-      <div class="orbit-node n8"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og8" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><rect x="7" y="2" width="10" height="20" rx="2" stroke="url(#og8)" stroke-width="1.5" fill="none"/><path d="M10 19h4" stroke="url(#og8)" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/></svg></span><span class="orbit-label" data-i18n="orb_mobile">App móvil</span></div>
-      <div class="orbit-node n9"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og9" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M4 16.9A5 5 0 0112 6a6 6 0 016 6 4 4 0 01-2 7.5" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5A5 5 0 014 16.9" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M16 19.5a4 4 0 002-3" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5h8" stroke="url(#og9)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_sync">Sincronización</span></div>
-      <div class="orbit-node n10"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og10" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><rect x="5" y="11" width="14" height="10" rx="2" stroke="url(#og10)" stroke-width="1.5" fill="none"/><path d="M8 11V7a4 4 0 118 0v4" stroke="url(#og10)" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="url(#og10)"/></svg></span><span class="orbit-label" data-i18n="orb_gdpr">RGPD</span></div>
-      <div class="orbit-node n11"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og11" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="url(#og11)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="url(#og11)" stroke-width="1.5" stroke-linecap="round"/><path d="M9 15l2 2 4-4" stroke="url(#og11)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="orbit-label" data-i18n="orb_pdf">Import PDF</span></div>
-      <div class="orbit-node n12"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og12" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M12 2L4 7v5c0 5.5 3.4 10.7 8 12 4.6-1.3 8-6.5 8-12V7l-8-5z" stroke="url(#og12)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 8v4h3" stroke="url(#og12)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="orbit-label" data-i18n="orb_conciliation">Conciliación</span></div>
-      <div class="orbit-node n13"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og13" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M3 21h18M5 21V7l4-4 4 4v14" stroke="url(#og13)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M13 21V11h6v10" stroke="url(#og13)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 9v2M11 9v2M7 13v2M11 13v2M15 13v2M15 17v2" stroke="url(#og13)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_holidays">Vacaciones</span></div>
+      <div class="orbit-node n8"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og8" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><rect x="7" y="2" width="10" height="20" rx="2" stroke="url(#og8)" stroke-width="1.5" fill="none"/><path d="M10 19h4" stroke="url(#og8)" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="url(#og8)" stroke-width="1" fill="none" opacity="0.5"/></svg></span><span class="orbit-label" data-i18n="orb_mobile">App móvil</span></div>
+      <div class="orbit-node n9"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og9" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M4 16.9A5 5 0 0112 6a6 6 0 016 6 4 4 0 01-2 7.5" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5A5 5 0 014 16.9" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M16 19.5a4 4 0 002-3" stroke="url(#og9)" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M8 19.5h8" stroke="url(#og9)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_sync">Sincronización</span></div>
+      <div class="orbit-node n10"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og10" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><rect x="5" y="11" width="14" height="10" rx="2" stroke="url(#og10)" stroke-width="1.5" fill="none"/><path d="M8 11V7a4 4 0 118 0v4" stroke="url(#og10)" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="url(#og10)"/></svg></span><span class="orbit-label" data-i18n="orb_gdpr">RGPD</span></div>
+      <div class="orbit-node n11"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og11" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="url(#og11)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="url(#og11)" stroke-width="1.5" stroke-linecap="round"/><path d="M9 15l2 2 4-4" stroke="url(#og11)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="orbit-label" data-i18n="orb_pdf">Import PDF</span></div>
+      <div class="orbit-node n12"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og12" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M12 2L4 7v5c0 5.5 3.4 10.7 8 12 4.6-1.3 8-6.5 8-12V7l-8-5z" stroke="url(#og12)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M12 8v4h3" stroke="url(#og12)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="orbit-label" data-i18n="orb_conciliation">Conciliación</span></div>
+      <div class="orbit-node n13"><span class="orbit-emoji"><svg viewBox="0 0 24 24" fill="none"><defs><linearGradient id="og13" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M3 21h18M5 21V7l4-4 4 4v14" stroke="url(#og13)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M13 21V11h6v10" stroke="url(#og13)" stroke-width="1.5" fill="none" stroke-linejoin="round"/><path d="M7 9v2M11 9v2M7 13v2M11 13v2M15 13v2M15 17v2" stroke="url(#og13)" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="orbit-label" data-i18n="orb_holidays">Vacaciones</span></div>
     </div>
   </div>
   </div><!-- /orbit-map-wrap -->
@@ -6940,7 +6930,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
   <!-- Mobile fallback: grid estática con los mismos conceptos. CSS la oculta en desktop. -->
   <div class="orbit-mobile-grid" aria-hidden="false">
     <div class="omg-chip omg-center">
-      <svg viewBox="0 0 40 40" fill="none"><defs><linearGradient id="omgC" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#omgC)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#omgC)" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 40 40" fill="none"><defs><linearGradient id="omgC" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#omgC)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#omgC)" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
       <span>Shiftia · El centro de tu operativa</span>
     </div>
     <div class="omg-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a4 4 0 014 4v1h1a3 3 0 013 3v6a3 3 0 01-3 3H7a3 3 0 01-3-3v-6a3 3 0 013-3h1V6a4 4 0 014-4z"/><circle cx="9" cy="13" r="1.5" fill="currentColor"/><circle cx="15" cy="13" r="1.5" fill="currentColor"/></svg><span>Motor IA</span></div>
@@ -7027,7 +7017,7 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
           </div>
         </div>
       </div>
-      <div class="trust-card reveal d1" style="--tint:#2980b9;">
+      <div class="trust-card reveal d1" style="--tint:#0f7a6d;">
         <div class="trust-logo">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20M3.5 7l17 10M20.5 7l-17 10"/><path d="M12 2l2.5 2.5M12 2 9.5 4.5M12 22l2.5-2.5M12 22l-2.5-2.5M3.5 7l.3 3.4M3.5 7l3.3-.6M20.5 17l-.3-3.4M20.5 17l-3.3.6M20.5 7l-.3 3.4M20.5 7l-3.3-.6M3.5 17l.3-3.4M3.5 17l3.3.6"/></svg>
         </div>
@@ -7304,15 +7294,15 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
       <p data-i18n="contact_desc">Cada empresa es diferente. Explícanos tu situación y te hacemos una propuesta personalizada con demo incluida.</p>
       <div class="contact-perks">
         <div class="cperk">
-          <div class="cperk-icon"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="cperk-icon"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <div><h4 data-i18n="cp1_t">Respuesta en 24h</h4><p data-i18n="cp1_d">Te contestamos con una propuesta clara y sin compromiso.</p></div>
         </div>
         <div class="cperk">
-          <div class="cperk-icon"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><circle cx="12" cy="12" r="9" stroke="#4ecdc4" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="5" stroke="#4ecdc4" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1" fill="#4ecdc4"/></svg></div>
+          <div class="cperk-icon"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><circle cx="12" cy="12" r="9" stroke="#2fa393" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="5" stroke="#2fa393" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1" fill="#2fa393"/></svg></div>
           <div><h4 data-i18n="cp2_t">Demo personalizada</h4><p data-i18n="cp2_d">Te mostramos Shiftia configurado con los datos de tu equipo.</p></div>
         </div>
         <div class="cperk">
-          <div class="cperk-icon"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M8 11V7a4 4 0 118 0v4" stroke="#4ecdc4" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="#4ecdc4"/></svg></div>
+          <div class="cperk-icon"><svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="5" y="11" width="14" height="10" rx="2" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M8 11V7a4 4 0 118 0v4" stroke="#2fa393" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="#2fa393"/></svg></div>
           <div><h4 data-i18n="cp3_t">Devolución garantizada</h4><p data-i18n="cp3_d">Si no te convence en 30 días, te devolvemos el 100% sin preguntas.</p></div>
         </div>
       </div>
@@ -7488,13 +7478,13 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
         <div class="fg" style="margin-top:8px;">
           <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:0.88rem;color:var(--text2);font-weight:400;line-height:1.5;">
             <input type="checkbox" id="cf-consent" required aria-required="true" style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer;">
-            <span>He leído y acepto la <a href="/privacidad" target="_blank" rel="noopener" style="color:#2980b9;text-decoration:underline;">Política de Privacidad</a>. Mis datos se usarán únicamente para gestionar esta solicitud de demo.</span>
+            <span>He leído y acepto la <a href="/privacidad" target="_blank" rel="noopener" style="color:#0f7a6d;text-decoration:underline;">Política de Privacidad</a>. Mis datos se usarán únicamente para gestionar esta solicitud de demo.</span>
           </label>
         </div>
 
         <div class="scheduler-section">
           <label class="scheduler-label">
-            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             Agenda tu llamada <span style="font-weight:400;color:#94a3b8;font-size:0.85em;">— horario de Madrid</span>
           </label>
           <div class="cal-nav">
@@ -7546,12 +7536,12 @@ body.dark .clr-card, body.dark .fcy-card { background: #1a1d2e; }
     <div class="footer-brand">
       <a href="#" class="nav-logo">
         <svg class="shiftia-svg" width="32" height="32" viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia logo">
-          <defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#4ecdc4"/><stop offset="1" stop-color="#2980b9"/></linearGradient></defs>
+          <defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs>
           <path class="s-path-1" d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/>
           <path class="s-path-2" d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/>
           <path class="s-path-3" d="M28 8l4-4 2 5" stroke="url(#sGf)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="nav-logo-text"><span class="logo-shift">Shift</span><span class="logo-ia">ia</span></span>
+        <span class="nav-logo-text">Shiftia</span>
       </a>
       <p data-i18n="footer_desc">Planificación inteligente de turnos y planillas para cualquier sector.</p>
     </div>
@@ -8084,7 +8074,7 @@ function updateDatetimeDisplay() {
   if (selectedDate && selectedTime) {
     const dayNames = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
     const monthNames = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-    display.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${dayNames[selectedDate.getDay()]} ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]} a las ${selectedTime}h`;
+    display.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${dayNames[selectedDate.getDay()]} ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]} a las ${selectedTime}h`;
     display.classList.add('show');
   } else {
     display.classList.remove('show');
@@ -8214,7 +8204,7 @@ const translations = {
     sec_hospitality: 'Hostelería',
     sec_security: 'Seguridad',
     dual_eyebrow: 'Perfiles',
-    dual_title: 'Un sistema, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">dos experiencias</em>',
+    dual_title: 'Un sistema, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">dos experiencias</em>',
     dual_desc: 'Tu equipo no necesita aprender otro software. Cada perfil ve solo lo suyo, con la interfaz pensada para su rol.',
     dual_badge_admin: 'Perfil administrador',
     dual_admin_title: 'Visión completa, control total',
@@ -8297,7 +8287,7 @@ const translations = {
     hero_title_2: 'simplificada',
     hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.',
     hero_stat: 'Ahorra <strong>~18&nbsp;h al mes</strong> planificando turnos —y unos <strong>4.800&nbsp;€/año</strong> en un equipo típico.',
-    prod_pill: 'Motor Shiftia v8', prod_eyebrow: 'El producto', prod_title: 'Un motor probado, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configurado a tu convenio.</em>', prod_desc: 'No construimos una app desde cero para cada cliente —eso sería caro y lento—. Partes del motor Shiftia, ya probado en producción, y lo configuramos a tu convenio, tu vocabulario y los módulos que necesitas. Operativo en 5-7 días y con tarifa plana.', prod_c1_t: 'Motor estándar, probado', prod_c1_d: 'IA de cuadrantes, equidad nocturna, normativa laboral, auditoría y exportaciones: el núcleo ya planifica miles de turnos en producción. No estrenas software a medias.', prod_c2_t: 'Configurado a tu convenio', prod_c2_d: 'Tus reglas —máximos de noches, descansos mínimos, festivos, jornadas reducidas—, tu vocabulario y tus roles. La IA los respeta como sagrados en cada planilla.', prod_c3_t: 'Eliges tus módulos', prod_c3_d: 'El núcleo siempre incluido; añades IA, fichaje, integración con nómina o multi-centro cuando quieras. Pagas solo por lo que usas.', prod_foot: '<strong>Estándar por dentro, tuyo por fuera.</strong> Operativo en 5-7 días, tarifa plana y sin coste por trabajador.', prod_cta: 'Configura tu Shiftia al agendar la llamada',
+    prod_pill: 'Motor Shiftia v8', prod_eyebrow: 'El producto', prod_title: 'Un motor probado, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">configurado a tu convenio.</em>', prod_desc: 'No construimos una app desde cero para cada cliente —eso sería caro y lento—. Partes del motor Shiftia, ya probado en producción, y lo configuramos a tu convenio, tu vocabulario y los módulos que necesitas. Operativo en 5-7 días y con tarifa plana.', prod_c1_t: 'Motor estándar, probado', prod_c1_d: 'IA de cuadrantes, equidad nocturna, normativa laboral, auditoría y exportaciones: el núcleo ya planifica miles de turnos en producción. No estrenas software a medias.', prod_c2_t: 'Configurado a tu convenio', prod_c2_d: 'Tus reglas —máximos de noches, descansos mínimos, festivos, jornadas reducidas—, tu vocabulario y tus roles. La IA los respeta como sagrados en cada planilla.', prod_c3_t: 'Eliges tus módulos', prod_c3_d: 'El núcleo siempre incluido; añades IA, fichaje, integración con nómina o multi-centro cuando quieras. Pagas solo por lo que usas.', prod_foot: '<strong>Estándar por dentro, tuyo por fuera.</strong> Operativo en 5-7 días, tarifa plana y sin coste por trabajador.', prod_cta: 'Configura tu Shiftia al agendar la llamada',
     hero_cta: 'Solicitar demo', hero_cta2: 'Ver cómo funciona', hero_trial: 'Sin tarjeta · Respuesta en 24 h · Garantía de 30 días', hero_t1: 'Sin tarjeta', hero_t2: 'Respuesta en 24 h', hero_t3: 'Garantía de 30 días',
     pw_pre: 'desde', pw_unit: '€/trabajador al mes', pw_save_label: 'Ahorro anual', price_scarcity: 'Plazas de implantación limitadas cada mes · onboarding guiado en 5-7 días', sticky_cta_label: 'Solicitar demo',
     calc_eyebrow: 'Tu retorno', calc_title: 'Calcula cuánto ahorras con Shiftia', calc_desc: 'Ajusta los datos de tu equipo y mira el ahorro al instante. Sin registrarte.', calc_l_workers: 'Trabajadores', calc_l_hours: 'Horas/semana planificando turnos', calc_l_cost: 'Coste medio €/hora del responsable', calc_assume: 'Estimación basada en una reducción media del 70% del tiempo de planificación gracias a la auto-generación con IA.', calc_k_hours: 'Horas ahorradas/mes', calc_k_money: 'Ahorro al mes', calc_k_year: 'Ahorro al año', calc_plan_pre: 'Plan recomendado', calc_roi_pre: 'Por cada 1€ invertido, recuperas', calc_cta: 'Solicitar demo con estos datos', calc_help: '¿Más de 100 trabajadores? Te corresponde un plan Enterprise a medida — el ahorro real suele ser aún mayor.', calc_msg: 'Vengo de la calculadora de ahorro', calc_msg_workers: 'trabajadores', calc_msg_week: 'sem', calc_msg_save: 'Ahorro estimado', calc_msg_month: 'mes', calc_msg_year: 'año', calc_msg_end: 'Quiero una demo.',
@@ -8449,7 +8439,7 @@ const translations = {
     sec_hospitality: 'Hospitality',
     sec_security: 'Security',
     dual_eyebrow: 'Profiles',
-    dual_title: 'One system, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">two experiences</em>',
+    dual_title: 'One system, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">two experiences</em>',
     dual_desc: 'Your team doesn\'t need to learn another piece of software. Each profile sees only what\'s theirs, with an interface designed for their role.',
     dual_badge_admin: 'Admin profile',
     dual_admin_title: 'Full visibility, total control',
@@ -8531,7 +8521,7 @@ const translations = {
     hero_title_2: 'simplified',
     hero_desc: 'Shiftia automates shift planning, manages absences with AI, and ensures team equity. For hospitals, clinics, care homes, factories, and any business with rosters. Less Excel, more control.',
     hero_stat: 'Save <strong>~18&nbsp;h a month</strong> on shift planning —and around <strong>€4,800/year</strong> for a typical team.',
-    prod_pill: 'Shiftia v8 engine', prod_eyebrow: 'The product', prod_title: 'A proven engine, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configured to your rules.</em>', prod_desc: 'We don\'t build an app from scratch for each client —that would be slow and expensive—. You start from the Shiftia engine, already proven in production, and we configure it to your collective agreement, your wording and the modules you need. Live in 5-7 days, flat rate.', prod_c1_t: 'Standard engine, proven', prod_c1_d: 'AI scheduling, night equity, labor law, audit and exports: the core already plans thousands of shifts in production. You don\'t launch half-baked software.', prod_c2_t: 'Configured to your rules', prod_c2_d: 'Your rules —night caps, minimum rest, holidays, reduced hours—, your wording and your roles. The AI treats them as sacred in every roster.', prod_c3_t: 'You pick your modules', prod_c3_d: 'The core always included; add AI, time tracking, payroll integration or multi-site whenever you want. You pay only for what you use.', prod_foot: '<strong>Standard inside, yours outside.</strong> Live in 5-7 days, flat rate and no per-worker cost.', prod_cta: 'Configure your Shiftia when you book the call',
+    prod_pill: 'Shiftia v8 engine', prod_eyebrow: 'The product', prod_title: 'A proven engine, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">configured to your rules.</em>', prod_desc: 'We don\'t build an app from scratch for each client —that would be slow and expensive—. You start from the Shiftia engine, already proven in production, and we configure it to your collective agreement, your wording and the modules you need. Live in 5-7 days, flat rate.', prod_c1_t: 'Standard engine, proven', prod_c1_d: 'AI scheduling, night equity, labor law, audit and exports: the core already plans thousands of shifts in production. You don\'t launch half-baked software.', prod_c2_t: 'Configured to your rules', prod_c2_d: 'Your rules —night caps, minimum rest, holidays, reduced hours—, your wording and your roles. The AI treats them as sacred in every roster.', prod_c3_t: 'You pick your modules', prod_c3_d: 'The core always included; add AI, time tracking, payroll integration or multi-site whenever you want. You pay only for what you use.', prod_foot: '<strong>Standard inside, yours outside.</strong> Live in 5-7 days, flat rate and no per-worker cost.', prod_cta: 'Configure your Shiftia when you book the call',
     hero_cta: 'Request demo', hero_cta2: 'See how it works', hero_trial: 'No card · Reply within 24 h · 30-day guarantee', hero_t1: 'No card', hero_t2: 'Reply within 24 h', hero_t3: '30-day guarantee',
     pw_pre: 'from', pw_unit: '€/worker per month', pw_save_label: 'Annual saving', price_scarcity: 'Limited onboarding slots each month · guided setup in 5-7 days', sticky_cta_label: 'Request a demo',
     calc_eyebrow: 'Your return', calc_title: 'Calculate how much you save with Shiftia', calc_desc: 'Adjust your team data and see the savings instantly. No sign-up.', calc_l_workers: 'Workers', calc_l_hours: 'Hours/week planning shifts', calc_l_cost: 'Average €/hour of the manager', calc_assume: 'Estimate based on an average 70% reduction in planning time thanks to AI auto-generation.', calc_k_hours: 'Hours saved/month', calc_k_money: 'Monthly saving', calc_k_year: 'Yearly saving', calc_plan_pre: 'Recommended plan', calc_roi_pre: 'For every €1 invested, you get back', calc_cta: 'Request a demo with these figures', calc_help: 'More than 100 workers? You qualify for a tailored Enterprise plan — real savings are usually even higher.', calc_msg: 'Coming from the savings calculator', calc_msg_workers: 'workers', calc_msg_week: 'wk', calc_msg_save: 'Estimated saving', calc_msg_month: 'mo', calc_msg_year: 'yr', calc_msg_end: 'I would like a demo.',
@@ -8656,7 +8646,7 @@ const translations = {
     sec_hospitality: 'Gastgewerbe',
     sec_security: 'Sicherheit',
     dual_eyebrow: 'Profile',
-    dual_title: 'Ein System, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">zwei Erlebnisse</em>',
+    dual_title: 'Ein System, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">zwei Erlebnisse</em>',
     dual_desc: 'Ihr Team muss keine weitere Software lernen. Jedes Profil sieht nur das Eigene, mit einer auf die Rolle zugeschnittenen Oberfläche.',
     dual_badge_admin: 'Administrator-Profil',
     dual_admin_title: 'Volle Sicht, volle Kontrolle',
@@ -8738,7 +8728,7 @@ const translations = {
     hero_title_2: 'vereinfacht',
     hero_desc: 'Shiftia automatisiert Schichten, verwaltet Abwesenheiten mit KI und garantiert die Fairness Ihres Teams. Fur Krankenhäuser, Kliniken, Pflegeheime, Fabriken und jedes Unternehmen mit Dienstplanen.',
     hero_stat: 'Sparen Sie <strong>~18&nbsp;Std./Monat</strong> bei der Dienstplanung —und rund <strong>4.800&nbsp;€/Jahr</strong> bei einem typischen Team.',
-    prod_pill: 'Shiftia v8 Engine', prod_eyebrow: 'Das Produkt', prod_title: 'Eine bewährte Engine, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">auf Ihren Tarif konfiguriert.</em>', prod_desc: 'Wir bauen nicht für jeden Kunden eine App von Grund auf neu —das wäre teuer und langsam—. Sie starten mit der Shiftia-Engine, bereits in Produktion bewährt, und wir konfigurieren sie auf Ihren Tarifvertrag, Ihr Vokabular und die Module, die Sie brauchen. In 5-7 Tagen einsatzbereit, zum Pauschalpreis.', prod_c1_t: 'Standard-Engine, bewährt', prod_c1_d: 'KI-Dienstplanung, Nachtgerechtigkeit, Arbeitsrecht, Audit und Exporte: der Kern plant bereits Tausende Schichten in Produktion. Keine halbfertige Software.', prod_c2_t: 'Auf Ihren Tarif konfiguriert', prod_c2_d: 'Ihre Regeln —Nachtobergrenzen, Mindestruhezeiten, Feiertage, reduzierte Arbeitszeit—, Ihr Vokabular und Ihre Rollen. Die KI behandelt sie in jedem Dienstplan als heilig.', prod_c3_t: 'Sie wählen Ihre Module', prod_c3_d: 'Der Kern immer enthalten; fügen Sie KI, Zeiterfassung, Lohnintegration oder Multi-Standort hinzu, wann Sie wollen. Sie zahlen nur, was Sie nutzen.', prod_foot: '<strong>Standard innen, Ihres außen.</strong> In 5-7 Tagen einsatzbereit, Pauschalpreis und keine Kosten pro Mitarbeiter.', prod_cta: 'Konfigurieren Sie Ihr Shiftia bei der Terminbuchung',
+    prod_pill: 'Shiftia v8 Engine', prod_eyebrow: 'Das Produkt', prod_title: 'Eine bewährte Engine, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">auf Ihren Tarif konfiguriert.</em>', prod_desc: 'Wir bauen nicht für jeden Kunden eine App von Grund auf neu —das wäre teuer und langsam—. Sie starten mit der Shiftia-Engine, bereits in Produktion bewährt, und wir konfigurieren sie auf Ihren Tarifvertrag, Ihr Vokabular und die Module, die Sie brauchen. In 5-7 Tagen einsatzbereit, zum Pauschalpreis.', prod_c1_t: 'Standard-Engine, bewährt', prod_c1_d: 'KI-Dienstplanung, Nachtgerechtigkeit, Arbeitsrecht, Audit und Exporte: der Kern plant bereits Tausende Schichten in Produktion. Keine halbfertige Software.', prod_c2_t: 'Auf Ihren Tarif konfiguriert', prod_c2_d: 'Ihre Regeln —Nachtobergrenzen, Mindestruhezeiten, Feiertage, reduzierte Arbeitszeit—, Ihr Vokabular und Ihre Rollen. Die KI behandelt sie in jedem Dienstplan als heilig.', prod_c3_t: 'Sie wählen Ihre Module', prod_c3_d: 'Der Kern immer enthalten; fügen Sie KI, Zeiterfassung, Lohnintegration oder Multi-Standort hinzu, wann Sie wollen. Sie zahlen nur, was Sie nutzen.', prod_foot: '<strong>Standard innen, Ihres außen.</strong> In 5-7 Tagen einsatzbereit, Pauschalpreis und keine Kosten pro Mitarbeiter.', prod_cta: 'Konfigurieren Sie Ihr Shiftia bei der Terminbuchung',
     hero_cta: 'Demo anfragen', hero_cta2: 'So funktioniert es', hero_trial: 'Ohne Karte · Antwort in 24 h · 30 Tage Garantie', hero_t1: 'Ohne Karte', hero_t2: 'Antwort in 24 h', hero_t3: '30 Tage Garantie',
     pw_pre: 'ab', pw_unit: '€/Mitarbeiter pro Monat', pw_save_label: 'Jährliche Ersparnis', price_scarcity: 'Begrenzte Onboarding-Plätze pro Monat · geführt in 5-7 Tagen', sticky_cta_label: 'Demo anfragen',
     calc_eyebrow: 'Ihr Return', calc_title: 'Berechnen Sie Ihre Ersparnis mit Shiftia', calc_desc: 'Passen Sie Ihre Teamdaten an und sehen Sie die Ersparnis sofort. Ohne Anmeldung.', calc_l_workers: 'Mitarbeitende', calc_l_hours: 'Stunden/Woche für Dienstplanung', calc_l_cost: 'Durchschnittl. €/Stunde der Leitung', calc_assume: 'Schätzung auf Basis einer durchschnittlichen Reduzierung der Planungszeit um 70% dank KI-Autogenerierung.', calc_k_hours: 'Gesparte Std./Monat', calc_k_money: 'Ersparnis pro Monat', calc_k_year: 'Ersparnis pro Jahr', calc_plan_pre: 'Empfohlener Plan', calc_roi_pre: 'Für jeden investierten 1€ erhalten Sie', calc_cta: 'Demo mit diesen Werten anfragen', calc_help: 'Mehr als 100 Mitarbeitende? Sie erhalten einen maßgeschneiderten Enterprise-Plan — die reale Ersparnis ist meist noch höher.', calc_msg: 'Komme vom Ersparnisrechner', calc_msg_workers: 'Mitarbeitende', calc_msg_week: 'Wo', calc_msg_save: 'Geschätzte Ersparnis', calc_msg_month: 'Mon', calc_msg_year: 'Jahr', calc_msg_end: 'Ich möchte eine Demo.',
@@ -8863,7 +8853,7 @@ const translations = {
     sec_hospitality: 'Hôtellerie',
     sec_security: 'Sécurité',
     dual_eyebrow: 'Profils',
-    dual_title: 'Un système, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">deux expériences</em>',
+    dual_title: 'Un système, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">deux expériences</em>',
     dual_desc: 'Votre équipe n\'a pas besoin d\'apprendre un autre logiciel. Chaque profil ne voit que ce qui le concerne, avec une interface pensée pour son rôle.',
     dual_badge_admin: 'Profil administrateur',
     dual_admin_title: 'Vision complète, contrôle total',
@@ -8945,7 +8935,7 @@ const translations = {
     hero_title_2: 'simplifiee',
     hero_desc: 'Shiftia automatise les plannings, gere les absences avec l\'IA et garantit l\'equite de votre equipe. Pour hopitaux, cliniques, EHPAD, usines et toute entreprise avec des plannings.',
     hero_stat: 'Économisez <strong>~18&nbsp;h par mois</strong> de planification —et environ <strong>4 800&nbsp;€/an</strong> pour une équipe type.',
-    prod_pill: 'Moteur Shiftia v8', prod_eyebrow: 'Le produit', prod_title: 'Un moteur éprouvé, <em style="font-style:normal;background:linear-gradient(135deg,#4ecdc4,#2980b9);-webkit-background-clip:text;background-clip:text;color:transparent;">configuré à votre convention.</em>', prod_desc: 'Nous ne construisons pas une app de zéro pour chaque client —ce serait cher et lent—. Vous partez du moteur Shiftia, déjà éprouvé en production, et nous le configurons à votre convention, votre vocabulaire et les modules dont vous avez besoin. Opérationnel en 5-7 jours, au forfait.', prod_c1_t: 'Moteur standard, éprouvé', prod_c1_d: 'IA de plannings, équité de nuit, droit du travail, audit et exports : le cœur planifie déjà des milliers de postes en production. Pas de logiciel à moitié fait.', prod_c2_t: 'Configuré à votre convention', prod_c2_d: 'Vos règles —plafonds de nuits, repos minimum, jours fériés, temps partiel—, votre vocabulaire et vos rôles. L\'IA les respecte comme sacrés dans chaque planning.', prod_c3_t: 'Vous choisissez vos modules', prod_c3_d: 'Le cœur toujours inclus ; ajoutez l\'IA, le pointage, l\'intégration paie ou le multi-site quand vous voulez. Vous payez seulement ce que vous utilisez.', prod_foot: '<strong>Standard à l\'intérieur, à vous à l\'extérieur.</strong> Opérationnel en 5-7 jours, forfait et sans coût par employé.', prod_cta: 'Configurez votre Shiftia en réservant l\'appel',
+    prod_pill: 'Moteur Shiftia v8', prod_eyebrow: 'Le produit', prod_title: 'Un moteur éprouvé, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">configuré à votre convention.</em>', prod_desc: 'Nous ne construisons pas une app de zéro pour chaque client —ce serait cher et lent—. Vous partez du moteur Shiftia, déjà éprouvé en production, et nous le configurons à votre convention, votre vocabulaire et les modules dont vous avez besoin. Opérationnel en 5-7 jours, au forfait.', prod_c1_t: 'Moteur standard, éprouvé', prod_c1_d: 'IA de plannings, équité de nuit, droit du travail, audit et exports : le cœur planifie déjà des milliers de postes en production. Pas de logiciel à moitié fait.', prod_c2_t: 'Configuré à votre convention', prod_c2_d: 'Vos règles —plafonds de nuits, repos minimum, jours fériés, temps partiel—, votre vocabulaire et vos rôles. L\'IA les respecte comme sacrés dans chaque planning.', prod_c3_t: 'Vous choisissez vos modules', prod_c3_d: 'Le cœur toujours inclus ; ajoutez l\'IA, le pointage, l\'intégration paie ou le multi-site quand vous voulez. Vous payez seulement ce que vous utilisez.', prod_foot: '<strong>Standard à l\'intérieur, à vous à l\'extérieur.</strong> Opérationnel en 5-7 jours, forfait et sans coût par employé.', prod_cta: 'Configurez votre Shiftia en réservant l\'appel',
     hero_cta: 'Demander une demo', hero_cta2: 'Voir comment ça marche', hero_trial: 'Sans carte · Réponse sous 24 h · Garantie 30 jours', hero_t1: 'Sans carte', hero_t2: 'Réponse sous 24 h', hero_t3: 'Garantie 30 jours',
     pw_pre: 'à partir de', pw_unit: '€/employé par mois', pw_save_label: 'Économie annuelle', price_scarcity: 'Places d\'intégration limitées chaque mois · accompagnement en 5-7 jours', sticky_cta_label: 'Demander une démo',
     calc_eyebrow: 'Votre retour', calc_title: 'Calculez vos économies avec Shiftia', calc_desc: 'Ajustez les données de votre équipe et voyez les économies instantanément. Sans inscription.', calc_l_workers: 'Employés', calc_l_hours: 'Heures/semaine de planification', calc_l_cost: 'Coût moyen €/heure du responsable', calc_assume: 'Estimation basée sur une réduction moyenne de 70% du temps de planification grâce à l\'auto-génération par IA.', calc_k_hours: 'Heures économisées/mois', calc_k_money: 'Économie par mois', calc_k_year: 'Économie par an', calc_plan_pre: 'Plan recommandé', calc_roi_pre: 'Pour chaque 1€ investi, vous récupérez', calc_cta: 'Demander une démo avec ces données', calc_help: 'Plus de 100 employés ? Vous bénéficiez d\'un plan Enterprise sur mesure — les économies réelles sont souvent encore plus élevées.', calc_msg: 'Je viens du calculateur d\'économies', calc_msg_workers: 'employés', calc_msg_week: 'sem', calc_msg_save: 'Économie estimée', calc_msg_month: 'mois', calc_msg_year: 'an', calc_msg_end: 'Je souhaite une démo.',
@@ -9132,7 +9122,7 @@ document.addEventListener('click', e => {
 // ===================== FEATURE MODALS =====================
 const featData = [
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M9 15h6M9 19h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#dff5ee',
+    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M9 15h6M9 19h6" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#dff5ee',
     title: { es: 'Planilla visual', en: 'Visual roster', de: 'Visueller Dienstplan', fr: 'Planning visuel' },
     desc: {
       es: 'Shiftia presenta tu planilla mensual en una vista de calendario con colores por tipo de turno. Mañana en verde, tarde en azul, noche en ambar. Cada celda es editable con un clic: cambia turnos, asigna descansos, marca vacaciones. Todo el equipo visible de un vistazo, sin necesidad de navegar entre pestañas o archivos.',
@@ -9144,7 +9134,7 @@ const featData = [
     preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cuadrante semanal con turnos M, T y N"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><text x="14" y="18" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1.2" fill="#8a8a85">SEMANA 17 · UVI</text><g font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85" letter-spacing="0.5"><text x="86" y="36" text-anchor="middle">L</text><text x="134" y="36" text-anchor="middle">M</text><text x="182" y="36" text-anchor="middle">X</text><text x="230" y="36" text-anchor="middle">J</text><text x="278" y="36" text-anchor="middle">V</text></g><line x1="14" y1="42" x2="346" y2="42" stroke="#e8e6df"/><g font-family="\'Geist Mono\', monospace" font-size="9" font-weight="500"><g transform="translate(14,52)"><circle cx="8" cy="14" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">MC</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">María C.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="86" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="134" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="182" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="230" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="278" y="17" text-anchor="middle" fill="#8a8a85">L</text></g><g transform="translate(14,82)"><circle cx="8" cy="14" r="8" fill="#f4f2ec" stroke="#c8c5bb"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#4a4a47">JR</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Javier R.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="86" y="17" text-anchor="middle" fill="#faf9f6">N</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="134" y="17" text-anchor="middle" fill="#8a8a85">L</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="182" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="230" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="278" y="17" text-anchor="middle" fill="#5a4a2a">T</text></g><g transform="translate(14,112)"><circle cx="8" cy="14" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">AG</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Ana G.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="86" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="134" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="182" y="17" text-anchor="middle" fill="#faf9f6">N</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="230" y="17" text-anchor="middle" fill="#faf9f6">N</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="278" y="17" text-anchor="middle" fill="#8a8a85">L</text></g><g transform="translate(14,142)"><circle cx="8" cy="14" r="8" fill="#f4f2ec" stroke="#c8c5bb"/><text x="8" y="17" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#4a4a47">LS</text><text x="22" y="17" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Laura S.</text><rect x="68" y="2" width="36" height="22" rx="4" fill="#fff" stroke="#c8c5bb" stroke-dasharray="2 2"/><text x="86" y="17" text-anchor="middle" fill="#8a8a85">L</text><rect x="116" y="2" width="36" height="22" rx="4" fill="#e9f5f2"/><text x="134" y="17" text-anchor="middle" fill="#0a5950">M</text><rect x="164" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="182" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="212" y="2" width="36" height="22" rx="4" fill="#f4f2ec"/><text x="230" y="17" text-anchor="middle" fill="#5a4a2a">T</text><rect x="260" y="2" width="36" height="22" rx="4" fill="#0e0f0f"/><text x="278" y="17" text-anchor="middle" fill="#faf9f6">N</text></g></g><g transform="translate(14,178)" font-family="\'Geist\', sans-serif" font-size="8" fill="#8a8a85"><rect x="0" y="0" width="8" height="8" rx="2" fill="#e9f5f2"/><text x="12" y="7">Mañana</text><rect x="50" y="0" width="8" height="8" rx="2" fill="#f4f2ec"/><text x="62" y="7">Tarde</text><rect x="92" y="0" width="8" height="8" rx="2" fill="#0e0f0f"/><text x="104" y="7">Noche</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Planificación visual al instante</div></div>'
   },
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="6" y="3" width="12" height="13" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M9 6h6M9 10h6" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="3" y="18" width="18" height="2" rx="1" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M8 16v2M16 16v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#dbeafe',
+    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="6" y="3" width="12" height="13" rx="2" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M9 6h6M9 10h6" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><rect x="3" y="18" width="18" height="2" rx="1" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M8 16v2M16 16v2" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#dbeafe',
     title: { es: 'Motor IA de coberturas internas', en: 'Internal AI Coverage Engine', de: 'Interner KI-Abdeckungsmotor', fr: 'Moteur IA de remplacements internes' },
     desc: {
       es: 'Cuando alguien falta, el motor de IA analiza 11 criterios en tiempo real: disponibilidad, horas acumuladas, equidad de noches, competencias, preferencias, histórico de cambios y compatibilidad de turno. En menos de un segundo te presenta 3 candidatos ordenados por idoneidad con puntuación, impacto en equidad y nivel de confianza.',
@@ -9156,7 +9146,7 @@ const featData = [
     preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Motor IA sugiere 3 candidatos para cubrir un turno"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><g transform="translate(14,14)"><circle cx="6" cy="6" r="4" fill="#0f7a6d"/><text x="16" y="9" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Cobertura sugerida</text><text x="346" y="9" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#8a8a85">0.8s</text></g><line x1="14" y1="30" x2="346" y2="30" stroke="#e8e6df"/><text x="14" y="46" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1" fill="#8a8a85">TURNO NOCHE · MAR 14 · UVI</text><g transform="translate(14,56)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#e9f5f2" stroke="#0f7a6d"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#0a5950">MG</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">María G.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Disponible · 2 noches bajo media</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#0f7a6d"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#fff">94</text></g><g transform="translate(14,102)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#e9f5f2" stroke="#0f7a6d"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#0a5950">CP</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">Carlos P.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Sin turno · descanso 22h</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#e9f5f2" stroke="#0f7a6d"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#0a5950">87</text></g><g transform="translate(14,148)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><circle cx="20" cy="20" r="12" fill="#f4f2ec" stroke="#c8c5bb"/><text x="20" y="24" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" font-weight="600" fill="#4a4a47">SR</text><text x="40" y="17" font-family="\'Geist\', sans-serif" font-size="11" font-weight="500" fill="#0e0f0f">Sofía R.</text><text x="40" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Sin turno · 1 noche sobre media</text><rect x="270" y="11" width="50" height="18" rx="9" fill="#fff" stroke="#c8c5bb"/><text x="295" y="23" text-anchor="middle" font-family="\'Geist Mono\', monospace" font-size="10" font-weight="600" fill="#8a8a85">72</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Sugerencias en menos de 1 segundo</div></div>'
   },
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M12 2v6M12 2h8M12 2h-8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="8" x2="20" y2="8" stroke="#4ecdc4" stroke-width="2"/><path d="M8 8v10c0 1.1 1.8 2 4 2s4-.9 4-2V8" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M12 20v2" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#fef3c7',
+    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M12 2v6M12 2h8M12 2h-8" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="4" y1="8" x2="20" y2="8" stroke="#2fa393" stroke-width="2"/><path d="M8 8v10c0 1.1 1.8 2 4 2s4-.9 4-2V8" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M12 20v2" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#fef3c7',
     title: { es: 'Equidad nocturna', en: 'Night equity', de: 'Nachtgerechtigkeit', fr: 'Équité de nuit' },
     desc: {
       es: 'Shiftia calcula la media de turnos de noche solo entre los trabajadores que realmente rotan, excluyendo automáticamente a quienes tienen restricciones. Muestra indicadores visuales por trabajador: verde si esta en rango, ambar si se acerca al limite, rojo si hay desequilibrio. Detecta problemas antes de que se conviertan en quejas.',
@@ -9168,7 +9158,7 @@ const featData = [
     preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Panel de equidad nocturna con donut 96% y lista de reparto"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><text x="14" y="18" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1.2" fill="#8a8a85">EQUIDAD NOCTURNA · ABR</text><line x1="14" y1="26" x2="346" y2="26" stroke="#e8e6df"/><g transform="translate(28,44)"><circle cx="56" cy="56" r="48" fill="none" stroke="#f4f2ec" stroke-width="10"/><circle cx="56" cy="56" r="48" fill="none" stroke="#0f7a6d" stroke-width="10" stroke-dasharray="289.6 301.6" stroke-dashoffset="0" transform="rotate(-90 56 56)" stroke-linecap="round"/><text x="56" y="54" text-anchor="middle" font-family="\'Instrument Serif\', serif" font-size="30" fill="#0e0f0f">96</text><text x="56" y="68" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85" letter-spacing="0.6">% EQUILIBRIO</text></g><g transform="translate(166,42)"><text x="0" y="0" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.8" fill="#8a8a85">REPARTO · 3 ROTADORES</text><g transform="translate(0,14)"><rect x="0" y="0" width="176" height="30" rx="6" fill="#fff" stroke="#e8e6df"/><circle cx="14" cy="15" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="14" y="18" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">MG</text><text x="28" y="18" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">María G.</text><text x="128" y="18" font-family="\'Geist Mono\', monospace" font-size="10" fill="#0a5950">4n</text><rect x="148" y="11" width="22" height="8" rx="4" fill="#e9f5f2"/><rect x="148" y="11" width="11" height="8" rx="4" fill="#0f7a6d"/></g><g transform="translate(0,48)"><rect x="0" y="0" width="176" height="30" rx="6" fill="#fff" stroke="#e8e6df"/><circle cx="14" cy="15" r="8" fill="#f4f2ec" stroke="#c8c5bb"/><text x="14" y="18" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#4a4a47">CP</text><text x="28" y="18" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Carlos P.</text><text x="128" y="18" font-family="\'Geist Mono\', monospace" font-size="10" fill="#5a4a2a">7n</text><rect x="148" y="11" width="22" height="8" rx="4" fill="#f4f2ec"/><rect x="148" y="11" width="19" height="8" rx="4" fill="#c89849"/></g><g transform="translate(0,82)"><rect x="0" y="0" width="176" height="30" rx="6" fill="#fff" stroke="#e8e6df"/><circle cx="14" cy="15" r="8" fill="#e9f5f2" stroke="#0f7a6d"/><text x="14" y="18" text-anchor="middle" font-family="\'Geist\', sans-serif" font-size="7" font-weight="600" fill="#0a5950">SR</text><text x="28" y="18" font-family="\'Geist\', sans-serif" font-size="10" fill="#0e0f0f">Sofía R.</text><text x="128" y="18" font-family="\'Geist Mono\', monospace" font-size="10" fill="#0a5950">3n</text><rect x="148" y="11" width="22" height="8" rx="4" fill="#e9f5f2"/><rect x="148" y="11" width="8" height="8" rx="4" fill="#0f7a6d"/></g></g><g transform="translate(14,180)" font-family="\'Geist\', sans-serif" font-size="8" fill="#8a8a85"><text x="0" y="6">Media 4.7n · Spread 4 · Solo rotadores reales</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg>Reparto justo y transparente</div></div>'
   },
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M18 2l-2 4M6 2l2 4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2l-3 5v10h6V7l-3-5z" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="21" x2="15" y2="21" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><path d="M10 13h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#fee2e2',
+    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><path d="M18 2l-2 4M6 2l2 4" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2l-3 5v10h6V7l-3-5z" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="21" x2="15" y2="21" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><path d="M10 13h4" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#fee2e2',
     title: { es: 'Alertas de conflicto', en: 'Conflict alerts', de: 'Konfliktwarnungen', fr: 'Alertes de conflit' },
     desc: {
       es: 'Shiftia escanea continuamente la planilla en busca de problemas: cobertura insuficiente en un turno, descansos mínimos no respetados, turnos incompatibles asignados al mismo trabajador, o vacaciones solapadas. Los conflictos aparecen marcados en rojo con explicación detallada y sugerencia de solución automática.',
@@ -9180,7 +9170,7 @@ const featData = [
     preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Panel de alertas con 3 conflictos detectados y sugerencia de solución"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><g transform="translate(14,14)"><circle cx="6" cy="6" r="4" fill="#0f7a6d"/><text x="16" y="9" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Conflictos detectados</text><text x="346" y="9" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#8a8a85">3 activos</text></g><line x1="14" y1="30" x2="346" y2="30" stroke="#e8e6df"/><g transform="translate(14,42)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><rect x="0" y="0" width="3" height="40" rx="1.5" fill="#0e0f0f"/><g transform="translate(14,12)"><circle cx="8" cy="8" r="8" fill="#0e0f0f"/><path d="M8 4.5v4.5M8 11v1" stroke="#faf9f6" stroke-width="1.5" stroke-linecap="round"/></g><text x="36" y="17" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Cobertura insuficiente</text><text x="36" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Mar 3 · Noche UVI · 1 de 2 requeridos</text><text x="316" y="24" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">Fix →</text></g><g transform="translate(14,88)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><rect x="0" y="0" width="3" height="40" rx="1.5" fill="#c89849"/><g transform="translate(14,12)"><circle cx="8" cy="8" r="8" fill="none" stroke="#c89849" stroke-width="1.5"/><path d="M8 4.5v4.5M8 11v1" stroke="#c89849" stroke-width="1.5" stroke-linecap="round"/></g><text x="36" y="17" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Descanso no respetado</text><text x="36" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Pedro M. · 8h entre Noche L y Mañana M</text><text x="316" y="24" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">Fix →</text></g><g transform="translate(14,134)"><rect x="0" y="0" width="332" height="40" rx="8" fill="#fff" stroke="#e8e6df"/><rect x="0" y="0" width="3" height="40" rx="1.5" fill="#0f7a6d"/><g transform="translate(14,12)"><circle cx="8" cy="8" r="8" fill="none" stroke="#0f7a6d" stroke-width="1.5"/><path d="M4.5 8h7" stroke="#0f7a6d" stroke-width="1.5" stroke-linecap="round"/></g><text x="36" y="17" font-family="\'Geist\', sans-serif" font-size="10" font-weight="500" fill="#0e0f0f">Vacaciones solapadas</text><text x="36" y="30" font-family="\'Geist\', sans-serif" font-size="9" fill="#8a8a85">Ana R. + Laura S. · Sem 15 cobertura baja</text><text x="316" y="24" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">Fix →</text></g><g transform="translate(14,180)" font-family="\'Geist\', sans-serif" font-size="8" fill="#8a8a85"><text x="0" y="6">Escaneo continuo · auto-sugerencia de solución</text></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Problemas resueltos antes de escalar</div></div>'
   },
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="3" y="11" width="18" height="10" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M7 21V8M12 21V5M17 21v-3" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#f3e8ff',
+    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="3" y="11" width="18" height="10" rx="2" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M7 21V8M12 21V5M17 21v-3" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/></svg>', iconBg: '#f3e8ff',
     title: { es: 'Dashboard y KPIs', en: 'Dashboard & KPIs', de: 'Dashboard & KPIs', fr: 'Tableau de bord & KPIs' },
     desc: {
       es: 'Panel completo con métricas clave en tiempo real: horas mensuales por trabajador, distribución de tipos de turno, balance de vacaciones, carga de trabajo comparativa, tendencias de equidad nocturna y alertas activas. Graficos interactivos de barras, donut y lineas temporales. Todo actualizado automáticamente con cada cambio en la planilla.',
@@ -9192,7 +9182,7 @@ const featData = [
     preview: '<div style="padding:8px 0;text-align:center"><svg viewBox="0 0 360 200" style="width:100%;max-width:340px;height:auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dashboard con 3 KPIs y gráfico de tendencia de cobertura"><rect x="0.5" y="0.5" width="359" height="199" rx="10" fill="#fafafa" stroke="#e8e6df"/><text x="14" y="18" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="1.2" fill="#8a8a85">PANEL DE CONTROL · ABR</text><line x1="14" y1="26" x2="346" y2="26" stroke="#e8e6df"/><g transform="translate(14,36)"><rect x="0" y="0" width="104" height="52" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="22" font-family="\'Instrument Serif\', serif" font-size="24" fill="#0e0f0f">156</text><text x="56" y="22" font-family="\'Geist\', sans-serif" font-size="10" fill="#8a8a85">h</text><text x="12" y="40" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.6" fill="#8a8a85">MEDIA HORAS</text></g><g transform="translate(128,36)"><rect x="0" y="0" width="104" height="52" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="22" font-family="\'Instrument Serif\', serif" font-size="24" fill="#0e0f0f">0</text><text x="12" y="40" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.6" fill="#8a8a85">CONFLICTOS</text><circle cx="92" cy="14" r="4" fill="#e9f5f2" stroke="#0f7a6d"/></g><g transform="translate(242,36)"><rect x="0" y="0" width="104" height="52" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="22" font-family="\'Instrument Serif\', serif" font-size="24" fill="#0f7a6d">98</text><text x="52" y="22" font-family="\'Geist\', sans-serif" font-size="10" fill="#0a5950">%</text><text x="12" y="40" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.6" fill="#8a8a85">COBERTURA</text><path d="M68 22 L74 18 L80 20 L86 14 L92 16" fill="none" stroke="#0f7a6d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(14,98)"><rect x="0" y="0" width="332" height="90" rx="8" fill="#fff" stroke="#e8e6df"/><text x="12" y="16" font-family="\'Geist\', sans-serif" font-size="9" letter-spacing="0.8" fill="#8a8a85">COBERTURA · ÚLT. 8 SEMANAS</text><text x="320" y="16" text-anchor="end" font-family="\'Geist Mono\', monospace" font-size="9" fill="#0a5950">+2.4</text><g font-family="\'Geist Mono\', monospace" font-size="7" fill="#8a8a85"><text x="12" y="34">100</text><text x="12" y="78">80</text></g><line x1="28" y1="32" x2="320" y2="32" stroke="#e8e6df" stroke-dasharray="2 2"/><line x1="28" y1="56" x2="320" y2="56" stroke="#e8e6df" stroke-dasharray="2 2"/><line x1="28" y1="78" x2="320" y2="78" stroke="#e8e6df"/><path d="M32 64 L72 58 L112 52 L152 48 L192 42 L232 40 L272 36 L312 34" fill="none" stroke="#0f7a6d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M32 64 L72 58 L112 52 L152 48 L192 42 L232 40 L272 36 L312 34 L312 78 L32 78 Z" fill="#0f7a6d" opacity="0.08"/><g fill="#0f7a6d"><circle cx="32" cy="64" r="2"/><circle cx="112" cy="52" r="2"/><circle cx="192" cy="42" r="2"/><circle cx="272" cy="36" r="2"/><circle cx="312" cy="34" r="2.5" stroke="#fff" stroke-width="1.5"/></g><g font-family="\'Geist Mono\', monospace" font-size="7" fill="#8a8a85"><text x="32" y="88" text-anchor="middle">S1</text><text x="112" y="88" text-anchor="middle">S3</text><text x="192" y="88" text-anchor="middle">S5</text><text x="272" y="88" text-anchor="middle">S7</text><text x="312" y="88" text-anchor="middle">S8</text></g></g></svg><div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:#e9f5f2;color:#0a5950;border-radius:999px;font-family:Geist,sans-serif;font-size:11px;font-weight:500"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>Métricas en tiempo real</div></div>'
   },
   {
-    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="7" y="2" width="10" height="20" rx="2" stroke="#4ecdc4" stroke-width="2" fill="none"/><path d="M10 19h4" stroke="#4ecdc4" stroke-width="2" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="#4ecdc4" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="#4ecdc4" stroke-width="1" fill="none" opacity="0.5"/></svg>', iconBg: '#e0f2fe',
+    icon: '<svg viewBox="0 0 24 24" fill="none" style="width:1.2em;height:1.2em;vertical-align:middle"><rect x="7" y="2" width="10" height="20" rx="2" stroke="#2fa393" stroke-width="2" fill="none"/><path d="M10 19h4" stroke="#2fa393" stroke-width="2" stroke-linecap="round"/><rect x="2" y="6" width="6" height="10" rx="1" stroke="#2fa393" stroke-width="1" fill="none" opacity="0.5"/><rect x="16" y="4" width="6" height="12" rx="1" stroke="#2fa393" stroke-width="1" fill="none" opacity="0.5"/></svg>', iconBg: '#e0f2fe',
     title: { es: 'Acceso desde cualquier sitio', en: 'Access from anywhere', de: 'Zugriff von überall', fr: 'Accès depuis partout' },
     desc: {
       es: 'Shiftia funciona en cualquier dispositivo con navegador: ordenador, tablet o móvil. No necesitas instalar nada. Los datos se guardan automáticamente en la nube con cada cambio. Tus supervisores pueden consultar la planilla, aprobar coberturas o revisar el dashboard desde casa, la oficina o cualquier lugar con conexión.',
@@ -9441,8 +9431,7 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
 
 <div class="social-notif" id="socialNotif" style="display:none !important;" aria-hidden="true"></div>
 
-<!-- Scroll progress bar (se rellena con JS al scrollear) -->
-<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<!-- (barra de scroll-progress única: vive junto a la nav, al inicio del body) -->
 
 <script>
 /* ============================================================================
