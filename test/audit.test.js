@@ -100,3 +100,19 @@ test('cuadrante vacío no explota', () => {
   assert.equal(r.nights.total, 0);
   assert.equal(r.rest_violations.length, 0);
 });
+
+test('sector hostelería: 10h = revisar convenio; sanidad: 10h = incumplimiento', () => {
+  const sched = { workers: [w('Ana', [s('2026-07-01', 'T'), s('2026-07-02', 'M')])] }; // 10h
+  const host = analyzeSchedule(sched, { sector: 'Hostelería' });
+  assert.equal(host.rest_violations[0].severity, 'revisar_convenio');
+  assert.equal(host.legal_context.sector_label, 'Hostelería');
+  const san = analyzeSchedule(sched, { sector: 'Sanidad / Hospital' });
+  assert.equal(san.rest_violations[0].severity, 'incumplimiento');
+  assert.ok(san.legal_context.legal_refs.join(' ').includes('55/2003'));
+});
+
+test('sector desconocido: régimen general, <12h = incumplimiento', () => {
+  const r = analyzeSchedule({ workers: [w('Ana', [s('2026-07-01', 'T'), s('2026-07-02', 'M')])] }, { sector: 'Otro' });
+  assert.equal(r.legal_context.sector_label, 'Régimen general');
+  assert.equal(r.rest_violations[0].severity, 'incumplimiento');
+});

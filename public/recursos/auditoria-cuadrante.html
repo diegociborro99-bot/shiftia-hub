@@ -138,9 +138,9 @@ footer a:hover{color:var(--accent)}
       <div class="fgrid">
         <label class="field"><span>Tu nombre</span><input type="text" name="name" required autocomplete="name" maxlength="255"></label>
         <label class="field"><span>Tu email</span><input type="email" name="email" required autocomplete="email" maxlength="255" placeholder="tu@empresa.es"></label>
-        <label class="field"><span>Sector</span>
-          <select name="sector">
-            <option value="">Elige (opcional)</option>
+        <label class="field"><span>Sector (para aplicar tu convenio)</span>
+          <select name="sector" required>
+            <option value="">Elige tu sector</option>
             <option>Sanidad / Hospital</option>
             <option>Residencias</option>
             <option>Hostelería</option>
@@ -234,6 +234,7 @@ footer a:hover{color:var(--accent)}
     if (!String(fd.get('name') || '').trim()) return showMsg('err', 'Dinos tu nombre.');
     var email = String(fd.get('email') || '').trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showMsg('err', 'Revisa el email: lo necesitamos para enviarte el diagnóstico.');
+    if (!String(fd.get('sector') || '').trim()) return showMsg('err', 'Elige tu sector: lo usamos para aplicar el régimen de descansos de tu convenio.');
     if (fi.files[0] && fi.files[0].size > MAX) return showMsg('err', 'El archivo supera los 8 MB.');
 
     btn.disabled = true;

@@ -13,6 +13,7 @@ const multer = require('multer');
 const bookingLib = require('./lib/booking');
 const auditAI = require('./lib/audit-ai');
 const { analyzeSchedule } = require('./lib/audit');
+const { buildAuditPdf } = require('./lib/audit-pdf');
 
 const app = express();
 app.disable('x-powered-by');
@@ -1553,7 +1554,7 @@ function buildAuditReportBody({ metrics, summary, firstName }) {
   ).join('');
 
   return `
-    <p style="margin:0 0 18px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hola ${esc(firstName)}, aquí está el diagnóstico de tu cuadrante (${m.workers_count} personas · ${m.total_shifts} turnos analizados).</p>
+    <p style="margin:0 0 18px;color:#1a1a1a;line-height:1.6;font-size:15px;">Hola ${esc(firstName)}, aquí está el diagnóstico de tu cuadrante (${m.workers_count} personas · ${m.total_shifts} turnos analizados). <strong>Adjuntamos el informe completo en PDF</strong> — este correo es el resumen.</p>
     ${summaryHtml}
     <div style="margin:22px 0;padding:16px 20px;background:#faf9f6;border:1px solid #ece9e2;border-radius:10px;">
       <p style="margin:0;font-size:14px;color:#1a1a1a;">Equidad nocturna: <strong style="color:${verdictColor};">${verdictLabel}</strong> · desviación ${String(m.nights.stdev).replace('.', ',')} · rango ${m.nights.range} (${m.nights.min}–${m.nights.max}) · índice de equidad ${String(m.nights.jain).replace('.', ',')}/1</p>
@@ -1638,18 +1639,22 @@ async function runAutoAudit(lead, file) {
     });
   }
 
-  const metrics = analyzeSchedule(schedule);
+  const metrics = analyzeSchedule(schedule, { sector: lead.sector });
   const summary = await auditAI.writeSummary({ metrics, lead, extractionNotes: schedule.notes });
   if (!summary) throw Object.assign(new Error('resumen no disponible'), { manualReason: 'El resumen IA no se generó.' });
 
   const body = buildAuditReportBody({ metrics, summary, firstName: lead.cleanName.split(' ')[0] });
+  const generatedAt = new Intl.DateTimeFormat('es-ES', { dateStyle: 'long', timeZone: BOOKING_TIMEZONE }).format(new Date());
+  const pdfBuffer = await buildAuditPdf({ metrics, summary, lead, generatedAt });
+  const pdfAttachment = { filename: 'auditoria-cuadrante-shiftia.pdf', content: pdfBuffer };
   const seconds = Math.round((Date.now() - t0) / 1000);
 
   await sendMail({
     from: `"Shiftia" <${GMAIL_USER}>`,
     replyTo: NOTIFY_EMAIL,
     to: lead.email,
-    subject: 'Tu auditoría de cuadrante — diagnóstico completo · Shiftia',
+    subject: 'Tu auditoría de cuadrante — informe PDF · Shiftia',
+    attachments: [pdfAttachment],
     html: emailTemplate({
       preheader: `Equidad ${metrics.nights.verdict} · ${metrics.rest_violations.length} descansos <12h · ${metrics.night_streaks.length} rachas`,
       headline: 'Tu diagnóstico, listo',
@@ -1664,7 +1669,7 @@ async function runAutoAudit(lead, file) {
     resendFrom: INTERNAL_RESEND_FROM,
     replyTo: lead.email,
     subject: `[Auditoría AUTO ✓] ${esc(lead.cleanName)} · equidad ${metrics.nights.verdict} · ${metrics.rest_violations.length} descansos · ${seconds}s`,
-    attachments: file ? [{ filename: cap(file.originalname, 120) || 'cuadrante', content: file.buffer }] : [],
+    attachments: [pdfAttachment].concat(file ? [{ filename: cap(file.originalname, 120) || 'cuadrante', content: file.buffer }] : []),
     html: emailTemplate({
       preheader: `Informe automático enviado a ${esc(lead.email)}`,
       headline: 'Informe automático enviado',
