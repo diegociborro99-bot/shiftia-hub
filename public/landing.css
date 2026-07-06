@@ -3268,79 +3268,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 /* ============================================================================
    v2.8 — TRUST LOGO BAND
    ============================================================================ */
-.trust-logo-band {
-  background: var(--ds-bg, #faf9f6);
-  padding: 72px 0 80px;
-  border-top: 1px solid var(--ds-border, #e8e6df);
-}
-.tlb-eyebrow {
-  text-align: center;
-  font-family: var(--ds-font-sans, 'Geist', sans-serif);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ds-text-subtle, #8a8a85);
-  margin-bottom: 44px;
-}
-.tlb-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 24px 16px;
-  align-items: stretch;
-  justify-items: stretch;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-.tlb-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 18px 12px;
-  border-radius: 14px;
-  background: var(--ds-bg-elev, #fff);
-  border: 1px solid var(--ds-border, #e8e6df);
-  color: var(--ds-text-muted, #4a4a47);
-  text-align: center;
-  transition: transform 280ms cubic-bezier(0.16,1,0.3,1), border-color 280ms, color 280ms, box-shadow 280ms;
-  cursor: default;
-  min-height: 96px;
-}
-.tlb-item:hover {
-  transform: translateY(-3px);
-  border-color: var(--ds-accent, #0f7a6d);
-  color: var(--ds-text, #0e0f0f);
-  box-shadow: 0 1px 2px rgba(15,15,15,0.04), 0 8px 22px rgba(15,122,109,0.08);
-}
-.tlb-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: var(--ds-bg-subtle, #f4f2ec);
-  color: var(--ds-accent-text, #0a5950);
-  transition: background 280ms, color 280ms, transform 280ms cubic-bezier(0.16,1,0.3,1);
-}
-.tlb-item:hover .tlb-icon {
-  background: var(--ds-accent-soft, #e9f5f2);
-  transform: scale(1.06);
-}
-.tlb-icon svg { width: 22px; height: 22px; display: block; }
-.tlb-label {
-  font-family: var(--ds-font-sans, 'Geist', sans-serif);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-  color: inherit;
-  white-space: nowrap;
-}
-@media (max-width: 1100px) { .tlb-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-@media (max-width: 600px)  { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .tlb-item { padding: 16px 8px; min-height: 88px; } .tlb-icon { width: 36px; height: 36px; } .tlb-label { font-size: clamp(10px, 2.8vw, 13px); white-space: normal; text-align: center; } }
-@media (max-width: 360px)  { .tlb-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .tlb-item { padding: 12px 6px; min-height: 78px; } .tlb-icon { width: 32px; height: 32px; } .tlb-label { font-size: 10px; } }
 
 /* ============================================================================
    v3.1 — Flow diagram fluido + proof testimonios luminoso y creíble
@@ -3806,7 +3733,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .proof-arrows { display: none !important; }       /* dots bastan en móvil */
 
   /* Trust band: cards más compactas */
-  .trust-logo-band { padding: 56px 16px 64px !important; }
 
   /* Container: padding global a 16px */
   .container, .ds-container { padding-left: 16px !important; padding-right: 16px !important; }
@@ -4407,7 +4333,7 @@ section.centered p,
    MOBILE MASSIVE (≤768px)
    ============================================================================ */
 @media (max-width: 768px) {
-  .ds-section, section, .hero, .trust-logo-band, .orbit-section,
+  .ds-section, section, .hero, .orbit-section,
   .compare, .impact, .showcase, .features, .how, .usecases,
   .proof, .faq, .pricing, .contact, .roi-section, .vs-section {
     padding-left: 20px !important;
@@ -4438,8 +4364,6 @@ section.centered p,
 
   .nav, .navbar { padding: 12px 16px !important; }
 
-  .tlb-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 18px 16px !important; }
-  .tlb-item svg { height: 22px !important; }
 
   .orbit-map { transform: scale(0.75) !important; transform-origin: center center !important; margin: -8% 0 !important; }
 
@@ -4518,7 +4442,6 @@ section.centered p,
 @media (max-width: 420px) {
   .hero h1 { font-size: clamp(1.9rem, 11vw, 2.6rem) !important; }
   .section-h2 { font-size: clamp(1.6rem, 8.5vw, 2.2rem) !important; }
-  .tlb-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .impact-grid { grid-template-columns: 1fr !important; }
   .time-slots { grid-template-columns: repeat(2, 1fr) !important; }
   .footer-columns, .footer-grid { grid-template-columns: 1fr !important; }

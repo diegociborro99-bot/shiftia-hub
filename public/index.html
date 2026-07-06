@@ -301,8 +301,8 @@
 <link rel="stylesheet" href="/v36.css?v=363">
 <!-- Preload the main bundle so it starts fetching during HTML parse, not after -->
 <link rel="preload" as="script" href="/v36.min.js?v=382" fetchpriority="high">
-<link rel="preload" as="style" href="/landing.css?v=2">
-<link rel="stylesheet" href="/landing.css?v=2">
+<link rel="preload" as="style" href="/landing.css?v=3">
+<link rel="stylesheet" href="/landing.css?v=3">
 </head>
 <body>
 <a href="#main" class="skip-link">Saltar al contenido principal</a>
@@ -1744,50 +1744,7 @@
   </div>
 </section>
 
-<!-- TRUST LOGO BAND -->
-<section class="trust-logo-band" aria-label="Sectores que confían en Shiftia">
-  <div class="container">
-    <div class="tlb-eyebrow" data-i18n="trust_band">Confiado por equipos en sectores con turnos exigentes</div>
-    <div class="tlb-grid">
-      <div class="tlb-item">
-        <span class="tlb-icon" aria-hidden="true">
-          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="20" height="18" rx="2.5"/><path d="M14 11v8M10 15h8"/><circle cx="9" cy="9.5" r="0.7" fill="currentColor"/></svg>
-        </span>
-        <span class="tlb-label" data-i18n="sec_hospitals">Hospitales</span>
-      </div>
-      <div class="tlb-item">
-        <span class="tlb-icon" aria-hidden="true">
-          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 25V13l10-7 10 7v12"/><path d="M11 25v-7h6v7"/><path d="M4 25h20"/></svg>
-        </span>
-        <span class="tlb-label" data-i18n="sec_residences">Residencias</span>
-      </div>
-      <div class="tlb-item">
-        <span class="tlb-icon" aria-hidden="true">
-          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="9"/><path d="M14 9v10M9 14h10"/></svg>
-        </span>
-        <span class="tlb-label" data-i18n="sec_clinics">Clínicas</span>
-      </div>
-      <div class="tlb-item">
-        <span class="tlb-icon" aria-hidden="true">
-          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 24V11l6 4V11l6 4V11l6 4v9z"/><path d="M3 24h22"/><circle cx="9" cy="20" r="0.8" fill="currentColor"/><circle cx="14" cy="20" r="0.8" fill="currentColor"/><circle cx="19" cy="20" r="0.8" fill="currentColor"/></svg>
-        </span>
-        <span class="tlb-label" data-i18n="sec_factories">Fábricas</span>
-      </div>
-      <div class="tlb-item">
-        <span class="tlb-icon" aria-hidden="true">
-          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v18M5 5c4 0 4 6 0 6"/><path d="M11 5l4 6h6L17 5z" fill="none"/><path d="M11 11v12"/><path d="M21 11v12"/></svg>
-        </span>
-        <span class="tlb-label" data-i18n="sec_hospitality">Hostelería</span>
-      </div>
-      <div class="tlb-item">
-        <span class="tlb-icon" aria-hidden="true">
-          <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l9 4v6c0 5.5-3.8 9.5-9 11-5.2-1.5-9-5.5-9-11V8z"/><path d="M10.5 14.5l2.5 2.5L18 12.5"/></svg>
-        </span>
-        <span class="tlb-label" data-i18n="sec_security">Seguridad</span>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- (banda de sectores eliminada: la prueba social real es la banda de clientes del hero y la sección #clientes) -->
 
 <!-- TRUSTED BY -->
 <section class="proof" id="clientes">
@@ -2991,7 +2948,6 @@ function showPanel(name, btn) {
 let currentLang = 'es';
 const translations = {
   es: {
-    trust_band: 'Confiado por equipos en sectores con turnos exigentes',
     clients_label: 'Confían en Shiftia',
     clients_more: 'Conócelos ↓',
     cb_meta1: 'Retail · Gran Canaria',
@@ -2999,12 +2955,6 @@ const translations = {
     cb_meta3: 'Hostelería · León',
     cb_name4: 'Servicios sanitarios',
     cb_meta4: 'Sanidad · Asturias',
-    sec_hospitals: 'Hospitales',
-    sec_residences: 'Residencias',
-    sec_clinics: 'Clínicas',
-    sec_factories: 'Fábricas',
-    sec_hospitality: 'Hostelería',
-    sec_security: 'Seguridad',
     dual_eyebrow: 'Perfiles',
     dual_title: 'Un sistema, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">dos experiencias</em>',
     dual_desc: 'Tu equipo no necesita aprender otro software. Cada perfil ve solo lo suyo, con la interfaz pensada para su rol.',
@@ -3233,7 +3183,6 @@ const translations = {
     tab_planilla: 'Planilla', tab_dashboard: 'Dashboard', tab_ai: 'Cobertura IA',
   },
   en: {
-    trust_band: 'Trusted by teams in demanding shift sectors',
     clients_label: 'Trusted by',
     clients_more: 'Meet them ↓',
     cb_meta1: 'Retail · Gran Canaria',
@@ -3241,12 +3190,6 @@ const translations = {
     cb_meta3: 'Hospitality · León',
     cb_name4: 'Healthcare services',
     cb_meta4: 'Healthcare · Asturias',
-    sec_hospitals: 'Hospitals',
-    sec_residences: 'Care homes',
-    sec_clinics: 'Clinics',
-    sec_factories: 'Factories',
-    sec_hospitality: 'Hospitality',
-    sec_security: 'Security',
     dual_eyebrow: 'Profiles',
     dual_title: 'One system, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">two experiences</em>',
     dual_desc: 'Your team doesn\'t need to learn another piece of software. Each profile sees only what\'s theirs, with an interface designed for their role.',
@@ -3447,7 +3390,6 @@ const translations = {
     chip_nopermanencia: 'No lock-in', chip_garantia: '30-day guarantee', chip_sincoste: 'No per-worker cost', chip_implantacion: 'Setup in 5-7 business days',
   },
   de: {
-    trust_band: 'Vertraut von Teams in anspruchsvollen Schichtbranchen',
     clients_label: 'Sie vertrauen Shiftia',
     clients_more: 'Mehr erfahren ↓',
     cb_meta1: 'Einzelhandel · Gran Canaria',
@@ -3455,12 +3397,6 @@ const translations = {
     cb_meta3: 'Gastgewerbe · León',
     cb_name4: 'Gesundheitsdienste',
     cb_meta4: 'Gesundheitswesen · Asturien',
-    sec_hospitals: 'Krankenhäuser',
-    sec_residences: 'Pflegeheime',
-    sec_clinics: 'Kliniken',
-    sec_factories: 'Fabriken',
-    sec_hospitality: 'Gastgewerbe',
-    sec_security: 'Sicherheit',
     dual_eyebrow: 'Profile',
     dual_title: 'Ein System, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">zwei Erlebnisse</em>',
     dual_desc: 'Ihr Team muss keine weitere Software lernen. Jedes Profil sieht nur das Eigene, mit einer auf die Rolle zugeschnittenen Oberfläche.',
@@ -3661,7 +3597,6 @@ const translations = {
     chip_nopermanencia: 'Keine Mindestlaufzeit', chip_garantia: '30 Tage Garantie', chip_sincoste: 'Keine Kosten pro Mitarbeiter', chip_implantacion: 'Einführung in 5-7 Werktagen',
   },
   fr: {
-    trust_band: 'Adopté par des équipes dans des secteurs à horaires exigeants',
     clients_label: 'Ils font confiance à Shiftia',
     clients_more: 'Découvrez-les ↓',
     cb_meta1: 'Commerce · Gran Canaria',
@@ -3669,12 +3604,6 @@ const translations = {
     cb_meta3: 'Hôtellerie · León',
     cb_name4: 'Services de santé',
     cb_meta4: 'Santé · Asturies',
-    sec_hospitals: 'Hôpitaux',
-    sec_residences: 'Maisons de retraite',
-    sec_clinics: 'Cliniques',
-    sec_factories: 'Usines',
-    sec_hospitality: 'Hôtellerie',
-    sec_security: 'Sécurité',
     dual_eyebrow: 'Profils',
     dual_title: 'Un système, <em style="font-style:normal;background:linear-gradient(135deg,#2fa393,#0f7a6d);-webkit-background-clip:text;background-clip:text;color:transparent;">deux expériences</em>',
     dual_desc: 'Votre équipe n\'a pas besoin d\'apprendre un autre logiciel. Chaque profil ne voit que ce qui le concerne, avec une interface pensée pour son rôle.',
