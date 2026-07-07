@@ -186,9 +186,19 @@ function sendPublicHtml(res, fileName, next) {
   });
 }
 
+// Mapa inverso: /index.html → /, /recursos/index.html → /recursos, etc.
+// Los duplicados *.html de rutas bonitas se redirigen 301 a la canónica
+// (Google los veía como "página alternativa" y diluían la indexación).
+const HTML_TO_PRETTY = Object.fromEntries(
+  Object.entries(PRETTY_HTML_ROUTES).map(([pretty, file]) => ['/' + file, pretty])
+);
+
 // Middleware: intercepta rutas bonitas y *.html antes de express.static.
 function serveOwnHtml(req, res, next) {
   if (req.method !== 'GET') return next();
+  if (req.path.endsWith('.html') && HTML_TO_PRETTY[req.path]) {
+    return res.redirect(301, HTML_TO_PRETTY[req.path]);
+  }
   let fileName = PRETTY_HTML_ROUTES[req.path];
   if (!fileName) {
     if (!req.path.endsWith('.html')) return next();
@@ -2514,9 +2524,11 @@ app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Endpoint no encontrado' });
 });
 
-// SPA fallback (solo para rutas no-API)
+// 404 real para rutas desconocidas. Antes se servía la landing con 200
+// (soft-404): Google veía infinitos duplicados y penalizaba el rastreo.
 app.get('*', (req, res) => {
-  sendPublicHtml(res, 'index.html');
+  res.status(404);
+  sendPublicHtml(res, '404.html');
 });
 
 // ====== GLOBAL ERROR HANDLER ======
