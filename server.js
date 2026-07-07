@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 const multer = require('multer');
 const bookingLib = require('./lib/booking');
+const nurture = require('./lib/nurture');
 const auditAI = require('./lib/audit-ai');
 const { analyzeSchedule } = require('./lib/audit');
 const { buildAuditPdf } = require('./lib/audit-pdf');
@@ -138,6 +139,7 @@ const PRETTY_HTML_ROUTES = {
   '/recursos/calculadora-equidad-nocturna': 'recursos/calculadora-equidad-nocturna.html',
   '/recursos/excel-vs-software-turnos':     'recursos/excel-vs-software-turnos.html',
   '/recursos/auditoria-cuadrante':          'recursos/auditoria-cuadrante.html',
+  '/recursos/plantilla-excel-cuadrante-turnos': 'recursos/plantilla-excel-cuadrante-turnos.html',
 };
 const PUBLIC_DIR = path.resolve(__dirname, 'public');
 
@@ -387,6 +389,10 @@ async function initializeDatabase() {
       );
     `);
     await client.query('CREATE INDEX IF NOT EXISTS idx_tool_leads_email ON tool_leads (LOWER(email));').catch(() => {});
+    // Columnas de la secuencia de seguimiento (nurture) — idempotente.
+    await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS nurture_stage SMALLINT NOT NULL DEFAULT 0;').catch(() => {});
+    await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS nurture_last_at TIMESTAMPTZ;').catch(() => {});
+    await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS unsubscribed BOOLEAN NOT NULL DEFAULT FALSE;').catch(() => {});
 
     // Create password reset tokens table
     await client.query(`
@@ -1522,6 +1528,74 @@ app.post('/api/tools/email-results', contactLimiter, async (req, res) => {
   }
 });
 
+// 1b) Plantilla Excel de cuadrante: lead magnet — se envía el .xlsx por email.
+// El .xlsx vive FUERA de public/ a propósito: la puerta es el email.
+const PLANTILLA_PATH = path.join(__dirname, 'assets', 'downloads', 'plantilla-cuadrante-turnos-shiftia.xlsx');
+let __plantillaBuf = null;
+function plantillaBuffer() {
+  if (!__plantillaBuf) __plantillaBuf = fs.readFileSync(PLANTILLA_PATH);
+  return __plantillaBuf;
+}
+
+app.post('/api/tools/plantilla', contactLimiter, async (req, res) => {
+  try {
+    const { name, email, website } = req.body || {};
+    if (website) return res.json({ ok: true }); // honeypot
+    const cleanName = cap(name, 255).trim();
+    if (!cleanName) return res.status(400).json({ error: 'Falta el nombre' });
+    if (!email || !isValidEmail(email) || String(email).length > 255) {
+      return res.status(400).json({ error: 'Email no válido' });
+    }
+
+    if (global.__shiftiaDbReady) {
+      pool.query('INSERT INTO tool_leads (tool, name, email) VALUES ($1, $2, $3)', ['plantilla', cleanName, email])
+        .catch(err => console.error('tool_leads (plantilla) insert falló:', err.message));
+    }
+    res.json({ ok: true });
+
+    const esc = bookingLib.escHtml;
+    const first = esc(cleanName.split(' ')[0]);
+    sendMail({
+      from: `"Shiftia" <${GMAIL_USER}>`,
+      replyTo: NOTIFY_EMAIL,
+      to: email,
+      subject: 'Tu plantilla de cuadrante de turnos · Shiftia',
+      attachments: [{ filename: 'plantilla-cuadrante-turnos-shiftia.xlsx', content: plantillaBuffer() }],
+      html: emailTemplate({
+        preheader: 'La plantilla va adjunta — con recuentos automáticos y avisos de cobertura.',
+        headline: 'Tu plantilla, adjunta',
+        body: `
+          <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.65;font-size:15px;">Hola ${first}, aquí tienes la plantilla de cuadrante mensual (va adjunta en este correo). Tres cosas para sacarle partido en dos minutos:</p>
+          <ul style="margin:0 0 16px;padding-left:20px;">
+            <li style="margin:0 0 8px;color:#1a1a1a;line-height:1.6;font-size:15px;">Pon el <strong>año y el mes</strong> arriba a la izquierda: fechas y findes se recolocan solos.</li>
+            <li style="margin:0 0 8px;color:#1a1a1a;line-height:1.6;font-size:15px;">Rellena los turnos con <strong>M, T, N, L, V o B</strong> — las noches se sombrean y los recuentos por persona se actualizan.</li>
+            <li style="margin:0 0 8px;color:#1a1a1a;line-height:1.6;font-size:15px;">Ajusta la fila <strong>"Mínimo por turno"</strong>: la cobertura se pone en rojo el día que no llegas.</li>
+          </ul>
+          <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.65;font-size:15px;">Un aviso honesto: la plantilla cuenta, pero no vigila los descansos legales (12 h entre turnos, 36 h semanales) ni la equidad del reparto. Si quieres ese análisis de tu cuadrante real, la auditoría gratuita te lo devuelve en PDF en minutos.</p>
+          <p style="margin:16px 0 0;"><a href="${APP_URL}/recursos/auditoria-cuadrante?utm_source=plantilla_email" style="display:inline-block;background:#0e0f0f;color:#faf9f6;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;">Auditar mi cuadrante gratis</a></p>
+        `
+      })
+    }).catch(err => console.error('Email de plantilla falló:', err && err.message));
+
+    // Aviso interno ligero
+    sendMail({
+      from: `"Shiftia Leads" <${GMAIL_USER}>`,
+      to: NOTIFY_EMAIL,
+      resendFrom: INTERNAL_RESEND_FROM,
+      replyTo: email,
+      subject: `[Plantilla] ${esc(cleanName)} · ${esc(email)}`,
+      html: emailTemplate({
+        preheader: 'Nuevo lead de la plantilla Excel',
+        headline: 'Lead: plantilla Excel',
+        body: `<p style="margin:0;color:#1a1a1a;font-size:14px;">${esc(cleanName)} — <a href="mailto:${esc(email)}" style="color:#0f7a6d;">${esc(email)}</a> ha pedido la plantilla de cuadrante. Entra en la secuencia de seguimiento automática.</p>`
+      })
+    }).catch(() => {});
+  } catch (err) {
+    console.error('plantilla error:', err.message);
+    if (!res.headersSent) res.status(500).json({ error: 'Error interno' });
+  }
+});
+
 // 2) Auditoría gratuita de cuadrante: formulario con archivo adjunto (PDF/Excel/foto).
 //    v1 manual: el cuadrante llega a info@ con los datos del lead y respondemos a mano.
 const auditUpload = multer({
@@ -2289,6 +2363,7 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: '/recursos/calculadora-equidad-nocturna',     priority: '0.8', changefreq: 'monthly' },
     { loc: '/recursos/excel-vs-software-turnos',         priority: '0.8', changefreq: 'monthly' },
     { loc: '/recursos/auditoria-cuadrante',              priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/plantilla-excel-cuadrante-turnos', priority: '0.8', changefreq: 'monthly' },
     { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
     { loc: '/sobre-nosotros',                            priority: '0.6', changefreq: 'monthly' },
     { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
@@ -2519,6 +2594,103 @@ function startReminderScheduler() {
   console.log(`Recordatorios ON — escaneo cada ${REMINDER_SCAN_MS / 60000} min · 1h cliente + ${NOTIFY_EMAIL}`);
 }
 
+// ====== SECUENCIA DE SEGUIMIENTO (NURTURE) ======
+// Tres correos automáticos a los leads de herramientas gratuitas (día 2/5/10).
+// Se corta en cuanto el lead convierte (agenda llamada o se registra) o se da
+// de baja. Un solo hilo de secuencia por email aunque haya varios leads.
+const NURTURE_SCAN_MS = 30 * 60 * 1000;
+let __nurtureScanRunning = false;
+
+function nurtureUnsubUrl(email) {
+  const e = Buffer.from(String(email).trim().toLowerCase()).toString('base64url');
+  return `${APP_URL}/api/nurture/unsubscribe?e=${e}&t=${nurture.makeUnsubToken(email, JWT_SECRET)}`;
+}
+
+async function scanNurture() {
+  if (__nurtureScanRunning || !global.__shiftiaDbReady) return;
+  __nurtureScanRunning = true;
+  try {
+    for (const step of nurture.STEPS) {
+      const { rows } = await pool.query(
+        `SELECT DISTINCT ON (LOWER(email)) id, tool, name, email, sector, created_at
+           FROM tool_leads
+          WHERE nurture_stage = $1
+            AND unsubscribed = FALSE
+            AND created_at <= NOW() - ($2 * INTERVAL '1 day')
+            AND created_at >  NOW() - ($3 * INTERVAL '1 day')
+            AND (nurture_last_at IS NULL OR nurture_last_at <= NOW() - ($4 * INTERVAL '1 day'))
+          ORDER BY LOWER(email), created_at DESC
+          LIMIT 20`,
+        [step.stage - 1, step.afterDays, nurture.MAX_LEAD_AGE_DAYS, nurture.MIN_GAP_DAYS]
+      );
+      for (const lead of rows) {
+        try {
+          // ¿Ya convirtió? (llamada agendada o cuenta creada) → fin de secuencia.
+          const [booked, registered] = await Promise.all([
+            pool.query("SELECT 1 FROM bookings WHERE LOWER(email)=LOWER($1) AND status != 'cancelled' LIMIT 1", [lead.email]),
+            pool.query('SELECT 1 FROM users WHERE LOWER(email)=LOWER($1) LIMIT 1', [lead.email]).catch(() => ({ rows: [] }))
+          ]);
+          if (booked.rows.length || registered.rows.length) {
+            await pool.query('UPDATE tool_leads SET nurture_stage=$2 WHERE LOWER(email)=LOWER($1)', [lead.email, nurture.STAGE_CONVERTED]);
+            continue;
+          }
+          const mail = nurture.buildNurtureEmail(step.stage, lead, {
+            appUrl: APP_URL,
+            unsubUrl: nurtureUnsubUrl(lead.email),
+            escHtml: bookingLib.escHtml
+          });
+          await sendMail({
+            from: `"Shiftia" <${GMAIL_USER}>`,
+            replyTo: NOTIFY_EMAIL,
+            to: lead.email,
+            subject: mail.subject,
+            html: emailTemplate({ preheader: mail.preheader, headline: mail.headline, body: mail.body, footer: mail.footer })
+          });
+          await pool.query(
+            'UPDATE tool_leads SET nurture_stage=$2, nurture_last_at=NOW() WHERE LOWER(email)=LOWER($1) AND nurture_stage < $2',
+            [lead.email, step.stage]
+          );
+          console.log(`Nurture e${step.stage} enviado · ${lead.email} (${lead.tool})`);
+        } catch (err) {
+          console.error(`Nurture e${step.stage} falló para ${lead.email}:`, err && err.message);
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Escaneo de nurture falló:', e.message);
+  } finally {
+    __nurtureScanRunning = false;
+  }
+}
+
+function startNurtureScheduler() {
+  if (!RESEND_KEY && !transporter) { console.log('Nurture DESACTIVADO (sin email)'); return; }
+  setInterval(() => { scanNurture().catch(() => {}); }, NURTURE_SCAN_MS);
+  setTimeout(() => { scanNurture().catch(() => {}); }, 90 * 1000); // primer barrido al arrancar
+  console.log(`Nurture ON — secuencia día ${nurture.STEPS.map(s => s.afterDays).join('/')} · escaneo cada ${NURTURE_SCAN_MS / 60000} min`);
+}
+
+// Baja de la secuencia con token HMAC — un clic desde el correo, sin login.
+app.get('/api/nurture/unsubscribe', async (req, res) => {
+  const email = (() => { try { return Buffer.from(String(req.query.e || ''), 'base64url').toString('utf8'); } catch (e) { return ''; } })();
+  const page = (title, text) =>
+    `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${title} · Shiftia</title></head>` +
+    `<body style="margin:0;background:#faf9f6;font-family:Georgia,serif;color:#0e0f0f;"><div style="max-width:480px;margin:18vh auto 0;padding:0 24px;text-align:center;">` +
+    `<p style="font-style:italic;font-size:28px;margin:0 0 12px;">Shiftia</p><h1 style="font-weight:400;font-size:22px;margin:0 0 10px;">${title}</h1>` +
+    `<p style="font-family:system-ui,sans-serif;font-size:15px;color:#4a4a47;line-height:1.6;">${text}</p></div></body></html>`;
+  if (!email || !isValidEmail(email) || !nurture.verifyUnsubToken(email, req.query.t, JWT_SECRET)) {
+    return res.status(400).type('html').send(page('Enlace no válido', 'El enlace de baja no es válido o está incompleto. Escríbenos a info@shiftia.es y te damos de baja a mano.'));
+  }
+  try {
+    if (global.__shiftiaDbReady) {
+      await pool.query('UPDATE tool_leads SET unsubscribed=TRUE WHERE LOWER(email)=LOWER($1)', [email]);
+    }
+    res.type('html').send(page('Baja confirmada', 'No te enviaremos más correos de seguimiento. Las herramientas gratuitas siguen a tu disposición cuando quieras.'));
+  } catch (e) {
+    res.status(500).type('html').send(page('Algo falló', 'No hemos podido procesar la baja. Escríbenos a info@shiftia.es y lo hacemos a mano.'));
+  }
+});
+
 // ====== SERVER STARTUP ======
 async function startServer() {
   try {
@@ -2536,6 +2708,7 @@ async function startServer() {
       console.log(`  Billing: por llamada (Stripe deshabilitado)`);
       console.log(`  APP_URL: ${APP_URL}`);
       startReminderScheduler();
+      startNurtureScheduler();
     });
   } catch (err) {
     console.error('Failed to start server:', err.message);
