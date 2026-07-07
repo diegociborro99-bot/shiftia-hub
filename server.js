@@ -1561,6 +1561,9 @@ function buildAuditReportBody({ metrics, summary, firstName }) {
       <p style="margin:14px 0 4px;font-size:44px;color:${scoreColor};font-family:'Instrument Serif','Times New Roman',Georgia,serif;line-height:1;font-style:italic;">${m.score}<span style="font-size:20px;color:#9a958c;font-style:normal;">/100</span></p>
       <p style="margin:0;font-size:15px;color:#0e0f0f;font-family:'Instrument Serif','Times New Roman',Georgia,serif;">${esc(m.score_label)}</p>
       <p style="margin:14px 0 0;font-size:12px;color:#9a958c;">Equidad nocturna: <strong style="color:${verdictColor};">${verdictLabel}</strong> &nbsp;·&nbsp; Descansos &lt;12 h: <strong style="color:${m.rest_violations.length ? '#a31c22' : '#0a5950'};">${m.rest_violations.length}</strong> &nbsp;·&nbsp; Rachas ≥3 noches: <strong style="color:${m.night_streaks.length ? '#8a6220' : '#0a5950'};">${m.night_streaks.length}</strong></p>
+      <p style="margin:8px 0 0;font-size:12px;color:#9a958c;">Sin descanso semanal 36 h: <strong style="color:${m.weekly_rest_issues.length ? '#a31c22' : '#0a5950'};">${m.weekly_rest_issues.length}</strong> &nbsp;·&nbsp; Tramos ≥7 días seguidos: <strong style="color:${m.consecutive_work_runs.length ? '#8a6220' : '#0a5950'};">${m.consecutive_work_runs.length}</strong> &nbsp;·&nbsp; ${m.coverage.source === 'minimos_declarados'
+        ? `Días bajo tu mínimo: <strong style="color:${m.coverage.below_minimum.length ? '#a31c22' : '#0a5950'};">${m.coverage.below_minimum.length}</strong>`
+        : `Huecos de cobertura: <strong style="color:${m.coverage.empty_slots.length ? '#8a6220' : '#0a5950'};">${m.coverage.evaluated ? m.coverage.empty_slots.length : '—'}</strong>`} &nbsp;·&nbsp; Rotaciones antihorarias: <strong style="color:${m.backward_rotations.total ? '#8a6220' : '#0a5950'};">${m.backward_rotations.total}</strong></p>
     </div>
     ${summaryHtml}
     <p style="margin:22px 0 8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#7a766f;">Reparto de noches</p>
@@ -1630,7 +1633,7 @@ function sendManualAuditEmails({ cleanName, email, cleanSector, cleanWorkers, cl
 async function runAutoAudit(lead, file) {
   const esc = bookingLib.escHtml;
   const t0 = Date.now();
-  const schedule = await auditAI.extractSchedule(file);
+  const schedule = await auditAI.extractSchedule(file, { staffingNeeds: lead.staffing_needs });
   if (!schedule) throw Object.assign(new Error('formato no auto-analizable'), { manualReason: 'Formato no auto-analizable (¿Excel?).' });
 
   const conf = Number(schedule.confidence || 0);
@@ -1642,8 +1645,13 @@ async function runAutoAudit(lead, file) {
     });
   }
 
-  const metrics = analyzeSchedule(schedule, { sector: lead.sector });
-  const summary = await auditAI.writeSummary({ metrics, lead, extractionNotes: schedule.notes });
+  // Mínimos por franja: los interpreta la extracción a partir de la
+  // descripción libre del formulario cruzada con el cuadrante; el motor
+  // determinista es quien audita contra ellos (la IA no calcula nada).
+  const staffingMin = schedule.staffing_minimums || null;
+  const metrics = analyzeSchedule(schedule, { sector: lead.sector, minimums: staffingMin, expectLeaders: lead.has_leaders });
+  const extractionNotes = (schedule.notes || []).concat(staffingMin && staffingMin.notes ? [`Interpretación de necesidades de personal: ${staffingMin.notes}`] : []);
+  const summary = await auditAI.writeSummary({ metrics, lead, extractionNotes });
   if (!summary) throw Object.assign(new Error('resumen no disponible'), { manualReason: 'El resumen IA no se generó.' });
 
   const body = buildAuditReportBody({ metrics, summary, firstName: lead.cleanName.split(' ')[0] });
@@ -1687,7 +1695,7 @@ app.post('/api/audit-request', contactLimiter, (req, res) => {
   auditUpload.single('file')(req, res, async (upErr) => {
     try {
       if (upErr) return res.status(400).json({ error: 'Archivo no válido o demasiado grande (máx. 8 MB, PDF/Excel/CSV/imagen)' });
-      const { name, email, sector, workers, message, website } = req.body || {};
+      const { name, email, sector, workers, message, website, staffing_needs, has_leaders } = req.body || {};
       if (website) return res.json({ ok: true }); // honeypot
       const cleanName = cap(name, 255).trim();
       if (!cleanName) return res.status(400).json({ error: 'Falta el nombre' });
@@ -1697,17 +1705,23 @@ app.post('/api/audit-request', contactLimiter, (req, res) => {
       const cleanSector = cap(sector, 100).trim();
       const cleanWorkers = cap(workers, 50).trim();
       const cleanMessage = cap(message, 1500).trim();
+      // Datos de certeza del formulario: necesidades de personal en texto
+      // libre (las interpreta la IA junto con la planilla) y encargados.
+      const cleanStaffing = cap(staffing_needs, 600).trim();
+      const hasLeaders = has_leaders === 'si' ? true : has_leaders === 'no' ? false : null;
 
       if (global.__shiftiaDbReady) {
         pool.query(
           'INSERT INTO tool_leads (tool, name, email, sector, workers, summary) VALUES ($1, $2, $3, $4, $5, $6)',
-          ['auditoria', cleanName, email, cleanSector || null, cleanWorkers || null, cleanMessage || null]
+          ['auditoria', cleanName, email, cleanSector || null, cleanWorkers || null,
+            [cleanMessage, cleanStaffing ? `[necesidades: ${cleanStaffing}]` : '', hasLeaders === null ? '' : `[encargados: ${hasLeaders ? 'sí' : 'no'}]`].filter(Boolean).join(' ') || null]
         ).catch(err => console.error('tool_leads (auditoría) insert falló:', err.message));
       }
       res.json({ ok: true, auto: auditAI.isEnabled() && !!req.file });
 
-      const lead = { cleanName, email, sector: cleanSector, workers: cleanWorkers, message: cleanMessage };
-      const manualArgs = { cleanName, email, cleanSector, cleanWorkers, cleanMessage, file: req.file };
+      const lead = { cleanName, email, sector: cleanSector, workers: cleanWorkers, message: cleanMessage, staffing_needs: cleanStaffing, has_leaders: hasLeaders };
+      const manualCtx = [cleanMessage, cleanStaffing ? `Necesidades de personal descritas: ${cleanStaffing}` : ''].filter(Boolean).join('\n\n');
+      const manualArgs = { cleanName, email, cleanSector, cleanWorkers, cleanMessage: manualCtx, file: req.file };
 
       // Camino inteligente: solo con API key configurada y archivo presente.
       if (auditAI.isEnabled() && req.file) {

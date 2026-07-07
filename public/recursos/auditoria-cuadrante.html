@@ -128,7 +128,7 @@ footer a:hover{color:var(--accent)}
   <div class="points">
     <div class="point"><strong>Equidad nocturna</strong><span>¿Quién carga con más noches de la cuenta? Desviación y ranking por persona.</span></div>
     <div class="point"><strong>Descansos mínimos</strong><span>Incumplimientos de las 12 h del art. 34.3 ET (o tu régimen sectorial).</span></div>
-    <div class="point"><strong>Puntos de riesgo</strong><span>Rachas de noches, huecos de cobertura y patrones que generan quejas.</span></div>
+    <div class="point"><strong>Puntos de riesgo</strong><span>Rachas de noches, descanso semanal, días seguidos sin librar, cobertura contra tu mínimo, reparto de findes y rotación antihoraria.</span></div>
   </div>
 
   <div class="form-card">
@@ -151,6 +151,14 @@ footer a:hover{color:var(--accent)}
           </select>
         </label>
         <label class="field"><span>Nº de trabajadores</span><input type="text" name="workers" inputmode="numeric" maxlength="50" placeholder="p. ej. 18"></label>
+        <label class="field full"><span>¿Cuánta gente necesitas en cada turno? (opcional — cuéntanoslo con tus palabras y la cobertura se auditará contra tu necesidad real, no una estimación)</span><textarea name="staffing_needs" maxlength="600" placeholder="p. ej. por la mañana somos 3 y con 2 no llegamos; de tarde con 2 vale; de noche siempre tiene que haber 2; los sábados reforzamos con uno más…"></textarea></label>
+        <label class="field"><span>¿El cuadrante incluye encargados o responsables?</span>
+          <select name="has_leaders">
+            <option value="">No lo sé / no aplica</option>
+            <option value="si">Sí, y su categoría aparece en el cuadrante</option>
+            <option value="no">No hay encargados</option>
+          </select>
+        </label>
         <label class="field full"><span>Contexto (opcional)</span><textarea name="message" maxlength="1500" placeholder="Lo que más os duele: quejas por noches, bajas de última hora, convenio complicado…"></textarea></label>
         <div class="field full">
           <span>Tu cuadrante (PDF, Excel, CSV o foto · máx. 8 MB)</span>

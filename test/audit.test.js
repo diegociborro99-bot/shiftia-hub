@@ -117,6 +117,59 @@ test('sector desconocido: régimen general, <12h = incumplimiento', () => {
   assert.equal(r.rest_violations[0].severity, 'incumplimiento');
 });
 
+test('cobertura con mínimos declarados: día por debajo del mínimo detectado', () => {
+  // Noche: mínimo declarado 2. El 02-07 solo hay 1 persona de noche → hallazgo.
+  const r = analyzeSchedule({
+    workers: [
+      w('Ana', [s('2026-07-01', 'N'), s('2026-07-02', 'N')]),
+      w('Luis', [s('2026-07-01', 'N')])
+    ]
+  }, { minimums: { noche: 2 } });
+  assert.equal(r.coverage.source, 'minimos_declarados');
+  assert.equal(r.coverage.evaluated, true);
+  assert.equal(r.coverage.below_minimum.length, 1);
+  assert.deepEqual(r.coverage.below_minimum[0], { date: '2026-07-02', franja: 'noche', count: 1, minimum: 2 });
+  // Sin mínimos declarados con 2 trabajadores no se evalúa (deducción exige ≥3).
+  const sinMin = analyzeSchedule({
+    workers: [w('Ana', [s('2026-07-01', 'N')]), w('Luis', [s('2026-07-01', 'N')])]
+  });
+  assert.equal(sinMin.coverage.evaluated, false);
+  assert.equal(sinMin.coverage.source, 'deducido');
+});
+
+test('cobertura declarada: mínimos inválidos se ignoran; franjas M/T se clasifican', () => {
+  const r = analyzeSchedule({
+    workers: [
+      w('Ana', [s('2026-07-01', 'M'), s('2026-07-02', 'T')]),
+      w('Luis', [s('2026-07-01', 'T'), s('2026-07-02', 'M')])
+    ]
+  }, { minimums: { manana: 1, tarde: 1, noche: 0 } }); // noche:0 no es exigible → null
+  assert.equal(r.coverage.below_minimum.length, 0);
+  assert.equal(r.coverage.declared_minimums.noche, null);
+  const conHueco = analyzeSchedule({
+    workers: [w('Ana', [s('2026-07-01', 'M'), s('2026-07-02', 'M')])]
+  }, { minimums: { tarde: 1 } });
+  assert.equal(conHueco.coverage.below_minimum.length, 2); // ambos días sin nadie de tarde
+  assert.ok(conHueco.coverage.below_minimum.every(b => b.franja === 'tarde' && b.count === 0));
+});
+
+test('encargados declarados pero no identificables en el documento → aviso', () => {
+  const r = analyzeSchedule({
+    workers: [w('Ana', [s('2026-07-01', 'M')]), w('Luis', [s('2026-07-01', 'T')])]
+  }, { expectLeaders: true });
+  assert.equal(r.roles.declared_has_leaders, true);
+  assert.equal(r.roles.expected_but_not_identified, true);
+  const conRol = analyzeSchedule({
+    workers: [
+      Object.assign(w('Ana', [s('2026-07-01', 'M')]), { role: 'Encargada' }),
+      w('Luis', [s('2026-07-01', 'T'), s('2026-07-02', 'T')])
+    ]
+  }, { expectLeaders: true });
+  assert.equal(conRol.roles.expected_but_not_identified, false);
+  assert.deepEqual(conRol.roles.leaders, ['Ana']);
+  assert.deepEqual(conRol.roles.days_without_leader, ['2026-07-02']);
+});
+
 test('puntuación global: cuadrante limpio ≈100, cuadrante roto baja', () => {
   const limpio = analyzeSchedule({
     workers: [
