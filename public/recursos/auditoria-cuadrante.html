@@ -100,11 +100,30 @@ h1 em{font-style:italic;color:var(--accent)}
 footer{max-width:760px;margin:64px auto 0;padding:24px;text-align:center;font-size:0.82rem;color:var(--text3);border-top:1px solid var(--border)}
 footer a{color:var(--text3);text-decoration:none;margin:0 8px}
 footer a:hover{color:var(--accent)}
+.submit-btn,.dropzone,.nav-top .cta,.faq-mini summary{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.dz-mobile{display:none}
+@media (hover:none) and (pointer:coarse){
+  .dz-desktop{display:none}
+  .dz-mobile{display:inline}
+}
 @media (max-width:640px){
-  h1{font-size:2.1rem}
-  .points{grid-template-columns:1fr}
-  .fgrid{grid-template-columns:1fr}
-  .form-card{padding:24px 18px}
+  .wrap{padding:28px 18px 72px}
+  .nav-top{padding:12px 18px}
+  .breadcrumbs{margin-bottom:16px}
+  .eyebrow{margin-bottom:14px}
+  h1{font-size:2.15rem;line-height:1.12;margin-bottom:14px}
+  .lede{font-size:1.02rem;margin-bottom:24px}
+  .points{grid-template-columns:1fr;gap:10px;margin-bottom:28px}
+  .point{padding:14px 16px}
+  .fgrid{grid-template-columns:1fr;gap:14px}
+  .form-card{padding:22px 16px;border-radius:16px}
+  .form-card h2{font-size:1.5rem}
+  .form-note{margin-bottom:18px}
+  .dropzone{padding:18px 14px}
+  .submit-btn{padding:16px 24px}
+  .faq-mini{margin-top:36px}
+  .faq-mini h2{font-size:1.5rem}
+  footer{margin-top:40px}
 }
 </style>
 </head>
@@ -163,7 +182,7 @@ footer a:hover{color:var(--accent)}
         <div class="field full">
           <span>Tu cuadrante (PDF, Excel, CSV o foto · máx. 8 MB)</span>
           <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Adjuntar cuadrante">
-            <p id="dzText">Arrastra el archivo aquí o <span class="dz-file">haz clic para elegirlo</span></p>
+            <p id="dzText"><span class="dz-desktop">Arrastra el archivo aquí o <span class="dz-file">haz clic para elegirlo</span></span><span class="dz-mobile">Toca aquí para <span class="dz-file">hacer una foto del cuadrante</span> o elegir el archivo</span></p>
             <small>Si ahora no lo tienes a mano, envía el formulario igualmente y nos lo mandas respondiendo al email.</small>
           </div>
           <input type="file" id="fileInput" name="file" accept=".pdf,.xls,.xlsx,.csv,.png,.jpg,.jpeg" style="display:none">
@@ -211,6 +230,7 @@ footer a:hover{color:var(--accent)}
   var msg = document.getElementById('auditMsg');
   var btn = document.getElementById('auditSubmit');
   var MAX = 8 * 1024 * 1024;
+  var DZ_DEFAULT = dzText.innerHTML;
 
   function setFile(f) {
     if (!f) return;
@@ -234,6 +254,8 @@ footer a:hover{color:var(--accent)}
   function showMsg(kind, text) {
     msg.className = 'form-msg ' + kind;
     msg.textContent = text;
+    // En móvil el mensaje puede quedar fuera de pantalla (teclado/scroll)
+    try { msg.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
   }
 
   form.addEventListener('submit', function (e) {
@@ -252,7 +274,7 @@ footer a:hover{color:var(--accent)}
       .then(function (res) {
         if (!res.ok) throw new Error(res.j.error || 'No se pudo enviar');
         form.reset();
-        dzText.innerHTML = 'Arrastra el archivo aquí o <span class="dz-file">haz clic para elegirlo</span>';
+        dzText.innerHTML = DZ_DEFAULT;
         showMsg('ok', '¡Recibido! Si tu cuadrante se puede leer automáticamente, el diagnóstico te llegará al email en unos minutos; si no, lo revisa el equipo y lo tienes en 24-48 h. Revisa también la carpeta de spam.');
         try { if (window.posthog) posthog.capture('audit_request_submitted', { has_file: !!fi.files.length }); } catch (err) {}
       })
