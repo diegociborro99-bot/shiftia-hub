@@ -1596,6 +1596,28 @@ app.post('/api/tools/plantilla', contactLimiter, async (req, res) => {
   }
 });
 
+// 1c) Baja de la secuencia de nurture con token HMAC — un clic desde el
+//     correo, sin login. OJO: debe registrarse ANTES del catch-all /api 404.
+app.get('/api/nurture/unsubscribe', async (req, res) => {
+  const email = (() => { try { return Buffer.from(String(req.query.e || ''), 'base64url').toString('utf8'); } catch (e) { return ''; } })();
+  const page = (title, text) =>
+    `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${title} · Shiftia</title></head>` +
+    `<body style="margin:0;background:#faf9f6;font-family:Georgia,serif;color:#0e0f0f;"><div style="max-width:480px;margin:18vh auto 0;padding:0 24px;text-align:center;">` +
+    `<p style="font-style:italic;font-size:28px;margin:0 0 12px;">Shiftia</p><h1 style="font-weight:400;font-size:22px;margin:0 0 10px;">${title}</h1>` +
+    `<p style="font-family:system-ui,sans-serif;font-size:15px;color:#4a4a47;line-height:1.6;">${text}</p></div></body></html>`;
+  if (!email || !isValidEmail(email) || !nurture.verifyUnsubToken(email, req.query.t, JWT_SECRET)) {
+    return res.status(400).type('html').send(page('Enlace no válido', 'El enlace de baja no es válido o está incompleto. Escríbenos a info@shiftia.es y te damos de baja a mano.'));
+  }
+  try {
+    if (global.__shiftiaDbReady) {
+      await pool.query('UPDATE tool_leads SET unsubscribed=TRUE WHERE LOWER(email)=LOWER($1)', [email]);
+    }
+    res.type('html').send(page('Baja confirmada', 'No te enviaremos más correos de seguimiento. Las herramientas gratuitas siguen a tu disposición cuando quieras.'));
+  } catch (e) {
+    res.status(500).type('html').send(page('Algo falló', 'No hemos podido procesar la baja. Escríbenos a info@shiftia.es y lo hacemos a mano.'));
+  }
+});
+
 // 2) Auditoría gratuita de cuadrante: formulario con archivo adjunto (PDF/Excel/foto).
 //    v1 manual: el cuadrante llega a info@ con los datos del lead y respondemos a mano.
 const auditUpload = multer({
@@ -2669,27 +2691,6 @@ function startNurtureScheduler() {
   setTimeout(() => { scanNurture().catch(() => {}); }, 90 * 1000); // primer barrido al arrancar
   console.log(`Nurture ON — secuencia día ${nurture.STEPS.map(s => s.afterDays).join('/')} · escaneo cada ${NURTURE_SCAN_MS / 60000} min`);
 }
-
-// Baja de la secuencia con token HMAC — un clic desde el correo, sin login.
-app.get('/api/nurture/unsubscribe', async (req, res) => {
-  const email = (() => { try { return Buffer.from(String(req.query.e || ''), 'base64url').toString('utf8'); } catch (e) { return ''; } })();
-  const page = (title, text) =>
-    `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>${title} · Shiftia</title></head>` +
-    `<body style="margin:0;background:#faf9f6;font-family:Georgia,serif;color:#0e0f0f;"><div style="max-width:480px;margin:18vh auto 0;padding:0 24px;text-align:center;">` +
-    `<p style="font-style:italic;font-size:28px;margin:0 0 12px;">Shiftia</p><h1 style="font-weight:400;font-size:22px;margin:0 0 10px;">${title}</h1>` +
-    `<p style="font-family:system-ui,sans-serif;font-size:15px;color:#4a4a47;line-height:1.6;">${text}</p></div></body></html>`;
-  if (!email || !isValidEmail(email) || !nurture.verifyUnsubToken(email, req.query.t, JWT_SECRET)) {
-    return res.status(400).type('html').send(page('Enlace no válido', 'El enlace de baja no es válido o está incompleto. Escríbenos a info@shiftia.es y te damos de baja a mano.'));
-  }
-  try {
-    if (global.__shiftiaDbReady) {
-      await pool.query('UPDATE tool_leads SET unsubscribed=TRUE WHERE LOWER(email)=LOWER($1)', [email]);
-    }
-    res.type('html').send(page('Baja confirmada', 'No te enviaremos más correos de seguimiento. Las herramientas gratuitas siguen a tu disposición cuando quieras.'));
-  } catch (e) {
-    res.status(500).type('html').send(page('Algo falló', 'No hemos podido procesar la baja. Escríbenos a info@shiftia.es y lo hacemos a mano.'));
-  }
-});
 
 // ====== SERVER STARTUP ======
 async function startServer() {
