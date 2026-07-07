@@ -393,6 +393,11 @@ async function initializeDatabase() {
     await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS nurture_stage SMALLINT NOT NULL DEFAULT 0;').catch(() => {});
     await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS nurture_last_at TIMESTAMPTZ;').catch(() => {});
     await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS unsubscribed BOOLEAN NOT NULL DEFAULT FALSE;').catch(() => {});
+    // Resultado del informe automático (para personalizar el seguimiento).
+    await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS audit_score SMALLINT;').catch(() => {});
+    await client.query('ALTER TABLE tool_leads ADD COLUMN IF NOT EXISTS audit_meta TEXT;').catch(() => {});
+    // Estado interno de la app (p. ej. cuándo se envió el último resumen semanal).
+    await client.query('CREATE TABLE IF NOT EXISTS app_state (key TEXT PRIMARY KEY, value TEXT);').catch(() => {});
 
     // Create password reset tokens table
     await client.query(`
@@ -1587,7 +1592,7 @@ app.post('/api/tools/plantilla', contactLimiter, async (req, res) => {
       html: emailTemplate({
         preheader: 'Nuevo lead de la plantilla Excel',
         headline: 'Lead: plantilla Excel',
-        body: `<p style="margin:0;color:#1a1a1a;font-size:14px;">${esc(cleanName)} — <a href="mailto:${esc(email)}" style="color:#0f7a6d;">${esc(email)}</a> ha pedido la plantilla de cuadrante. Entra en la secuencia de seguimiento automática.</p>`
+        body: `<p style="margin:0;color:#1a1a1a;font-size:14px;">${esc(cleanName)} — <a href="mailto:${esc(email)}" style="color:#0f7a6d;">${esc(email)}</a> ha pedido la plantilla de cuadrante. Entra en la secuencia de seguimiento automática.</p>${nurtureStopFooter(email)}`
       })
     }).catch(() => {});
   } catch (err) {
@@ -1611,6 +1616,9 @@ app.get('/api/nurture/unsubscribe', async (req, res) => {
   try {
     if (global.__shiftiaDbReady) {
       await pool.query('UPDATE tool_leads SET unsubscribed=TRUE WHERE LOWER(email)=LOWER($1)', [email]);
+    }
+    if (req.query.via === 'interno') {
+      return res.type('html').send(page('Seguimiento detenido', `Este lead (${bookingLib.escHtml(email)}) ya no recibirá más correos automáticos de la secuencia.`));
     }
     res.type('html').send(page('Baja confirmada', 'No te enviaremos más correos de seguimiento. Las herramientas gratuitas siguen a tu disposición cuando quieras.'));
   } catch (e) {
@@ -1702,6 +1710,7 @@ function sendManualAuditEmails({ cleanName, email, cleanSector, cleanWorkers, cl
         </table>
         ${cleanMessage ? `<div style="margin-top:20px;padding:20px;background:#faf9f6;border-radius:10px;border:1px solid #ece9e2;"><p style="color:#7a766f;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 10px;">Contexto</p><p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">${esc(cleanMessage)}</p></div>` : ''}
         <p style="color:#9a958c;font-size:12px;margin:20px 0 0;">${esc(statusNote || 'Requiere análisis manual.')} Compromiso público: diagnóstico en 24-48 h laborables. Responde directamente a este correo (reply-to = cliente).</p>
+        ${nurtureStopFooter(email)}
       `
     })
   }).catch(err => console.error('Aviso interno de auditoría falló:', err && err.message));
@@ -1769,18 +1778,36 @@ async function runAutoAudit(lead, file) {
     })
   });
 
+  // Guarda el resultado en el lead: personaliza el seguimiento del día 2.
+  const auditMeta = {
+    label: metrics.score_label,
+    rest: metrics.rest_violations.length,
+    streaks: metrics.night_streaks.length,
+    below_min: metrics.coverage.below_minimum.length,
+    weekly: metrics.weekly_rest_issues.length
+  };
+  lead.leadIdPromise.then(id => {
+    if (!id || !global.__shiftiaDbReady) return;
+    return pool.query('UPDATE tool_leads SET audit_score=$2, audit_meta=$3 WHERE id=$1',
+      [id, metrics.score, JSON.stringify(auditMeta)]);
+  }).catch(err => console.error('Guardar score en lead falló:', err && err.message));
+
+  // Semáforo interno: cuadrante malo + plantilla grande = llamada de hoy.
+  const teamSize = metrics.workers_count >= 10 || (parseInt(lead.workers, 10) || 0) >= 10;
+  const hot = metrics.score < 65 && teamSize;
+
   // Copia interna con el informe + el archivo original.
   sendMail({
     from: `"Shiftia Auditoría" <${GMAIL_USER}>`,
     to: NOTIFY_EMAIL,
     resendFrom: INTERNAL_RESEND_FROM,
     replyTo: lead.email,
-    subject: `[Auditoría AUTO ✓] ${esc(lead.cleanName)} · equidad ${metrics.nights.verdict} · ${metrics.rest_violations.length} descansos · ${seconds}s`,
+    subject: `${hot ? '🔥 ' : ''}[Auditoría AUTO ✓] ${esc(lead.cleanName)} · ${metrics.score}/100 · ${metrics.rest_violations.length} descansos · ${seconds}s`,
     attachments: [pdfAttachment].concat(file ? [{ filename: cap(file.originalname, 120) || 'cuadrante', content: file.buffer }] : []),
     html: emailTemplate({
       preheader: `Informe automático enviado a ${esc(lead.email)}`,
-      headline: 'Informe automático enviado',
-      body: `<p style="margin:0 0 16px;color:#1a1a1a;font-size:14px;">Enviado a <a href="mailto:${esc(lead.email)}" style="color:#0f7a6d;">${esc(lead.email)}</a> en ${seconds}s (modelo ${esc(auditAI.MODEL)}, confianza ${conf.toFixed(2)}). Copia del informe:</p><div style="border:1px solid #ece9e2;border-radius:10px;padding:16px;">${body}</div>`
+      headline: hot ? 'Lead caliente: informe enviado' : 'Informe automático enviado',
+      body: `<p style="margin:0 0 16px;color:#1a1a1a;font-size:14px;">Enviado a <a href="mailto:${esc(lead.email)}" style="color:#0f7a6d;">${esc(lead.email)}</a> en ${seconds}s (modelo ${esc(auditAI.MODEL)}, confianza ${conf.toFixed(2)}).${hot ? ' <strong>Cuadrante con problemas serios y equipo grande — merece llamada hoy.</strong>' : ''} Copia del informe:</p><div style="border:1px solid #ece9e2;border-radius:10px;padding:16px;">${body}</div>${nurtureStopFooter(lead.email)}`
     })
   }).catch(err => console.error('Copia interna de auditoría auto falló:', err && err.message));
 
@@ -1806,16 +1833,19 @@ app.post('/api/audit-request', contactLimiter, (req, res) => {
       const cleanStaffing = cap(staffing_needs, 600).trim();
       const hasLeaders = has_leaders === 'si' ? true : has_leaders === 'no' ? false : null;
 
+      // Se captura el id para guardar después el score del informe en el
+      // mismo lead (personaliza el seguimiento automático).
+      let leadIdPromise = Promise.resolve(null);
       if (global.__shiftiaDbReady) {
-        pool.query(
-          'INSERT INTO tool_leads (tool, name, email, sector, workers, summary) VALUES ($1, $2, $3, $4, $5, $6)',
+        leadIdPromise = pool.query(
+          'INSERT INTO tool_leads (tool, name, email, sector, workers, summary) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
           ['auditoria', cleanName, email, cleanSector || null, cleanWorkers || null,
             [cleanMessage, cleanStaffing ? `[necesidades: ${cleanStaffing}]` : '', hasLeaders === null ? '' : `[encargados: ${hasLeaders ? 'sí' : 'no'}]`].filter(Boolean).join(' ') || null]
-        ).catch(err => console.error('tool_leads (auditoría) insert falló:', err.message));
+        ).then(r => r.rows[0] && r.rows[0].id).catch(err => { console.error('tool_leads (auditoría) insert falló:', err.message); return null; });
       }
       res.json({ ok: true, auto: auditAI.isEnabled() && !!req.file });
 
-      const lead = { cleanName, email, sector: cleanSector, workers: cleanWorkers, message: cleanMessage, staffing_needs: cleanStaffing, has_leaders: hasLeaders };
+      const lead = { cleanName, email, sector: cleanSector, workers: cleanWorkers, message: cleanMessage, staffing_needs: cleanStaffing, has_leaders: hasLeaders, leadIdPromise };
       const manualCtx = [cleanMessage, cleanStaffing ? `Necesidades de personal descritas: ${cleanStaffing}` : ''].filter(Boolean).join('\n\n');
       const manualArgs = { cleanName, email, cleanSector, cleanWorkers, cleanMessage: manualCtx, file: req.file };
 
@@ -2628,13 +2658,20 @@ function nurtureUnsubUrl(email) {
   return `${APP_URL}/api/nurture/unsubscribe?e=${e}&t=${nurture.makeUnsubToken(email, JWT_SECRET)}`;
 }
 
+// Pie para los avisos internos: un clic y ese lead deja de recibir la
+// secuencia (p. ej. porque ya estáis hablando por email y el automático
+// quedaría fuera de lugar).
+function nurtureStopFooter(email) {
+  return `<p style="margin:18px 0 0;font-size:12px;color:#9a958c;">⏸ <a href="${nurtureUnsubUrl(email)}&via=interno" style="color:#9a958c;">Detener el seguimiento automático para este lead</a> — si ya estáis en conversación, evita que le llegue el próximo correo de la serie.</p>`;
+}
+
 async function scanNurture() {
   if (__nurtureScanRunning || !global.__shiftiaDbReady) return;
   __nurtureScanRunning = true;
   try {
     for (const step of nurture.STEPS) {
       const { rows } = await pool.query(
-        `SELECT DISTINCT ON (LOWER(email)) id, tool, name, email, sector, created_at
+        `SELECT DISTINCT ON (LOWER(email)) id, tool, name, email, sector, created_at, audit_score, audit_meta
            FROM tool_leads
           WHERE nurture_stage = $1
             AND unsubscribed = FALSE
@@ -2656,6 +2693,7 @@ async function scanNurture() {
             await pool.query('UPDATE tool_leads SET nurture_stage=$2 WHERE LOWER(email)=LOWER($1)', [lead.email, nurture.STAGE_CONVERTED]);
             continue;
           }
+          try { lead.audit_meta = lead.audit_meta ? JSON.parse(lead.audit_meta) : null; } catch (e) { lead.audit_meta = null; }
           const mail = nurture.buildNurtureEmail(step.stage, lead, {
             appUrl: APP_URL,
             unsubUrl: nurtureUnsubUrl(lead.email),
@@ -2692,6 +2730,66 @@ function startNurtureScheduler() {
   console.log(`Nurture ON — secuencia día ${nurture.STEPS.map(s => s.afterDays).join('/')} · escaneo cada ${NURTURE_SCAN_MS / 60000} min`);
 }
 
+// ====== RESUMEN SEMANAL INTERNO ======
+// Cada lunes por la mañana (hora de Madrid): el pulso del embudo en un correo.
+// Idempotente entre reinicios: app_state guarda el lunes ya enviado.
+async function scanWeeklyReport() {
+  if (!global.__shiftiaDbReady) return;
+  const parts = new Intl.DateTimeFormat('es-ES', { timeZone: BOOKING_TIMEZONE, weekday: 'short', hour: 'numeric', hour12: false }).formatToParts(new Date());
+  const weekday = (parts.find(p => p.type === 'weekday') || {}).value || '';
+  const hour = parseInt((parts.find(p => p.type === 'hour') || {}).value, 10);
+  if (!/^lun/i.test(weekday) || !(hour >= 8 && hour < 13)) return; // ventana lunes 08-13h
+
+  const todayMadrid = new Intl.DateTimeFormat('en-CA', { timeZone: BOOKING_TIMEZONE }).format(new Date()); // YYYY-MM-DD
+  try {
+    const prev = await pool.query("SELECT value FROM app_state WHERE key='weekly_report_last'");
+    if (prev.rows.length && prev.rows[0].value === todayMadrid) return; // ya enviado hoy
+
+    const [byToolQ, bookingsQ, convertedQ, inSeqQ, unsubQ] = await Promise.all([
+      pool.query("SELECT tool, COUNT(*)::int AS n FROM tool_leads WHERE created_at > NOW() - INTERVAL '7 days' GROUP BY tool"),
+      pool.query("SELECT COUNT(*)::int AS n FROM bookings WHERE created_at > NOW() - INTERVAL '7 days' AND status != 'cancelled'"),
+      pool.query('SELECT COUNT(DISTINCT LOWER(email))::int AS n FROM tool_leads WHERE nurture_stage = $1', [nurture.STAGE_CONVERTED]),
+      pool.query("SELECT COUNT(DISTINCT LOWER(email))::int AS n FROM tool_leads WHERE nurture_stage BETWEEN 0 AND 2 AND unsubscribed = FALSE AND created_at > NOW() - INTERVAL '45 days'"),
+      pool.query('SELECT COUNT(DISTINCT LOWER(email))::int AS n FROM tool_leads WHERE unsubscribed = TRUE')
+    ]);
+    const byTool = {};
+    let totalLeads = 0;
+    for (const r of byToolQ.rows) { byTool[r.tool] = r.n; totalLeads += r.n; }
+
+    const fmt = d => new Intl.DateTimeFormat('es-ES', { timeZone: BOOKING_TIMEZONE, day: 'numeric', month: 'short' }).format(d);
+    const weekLabel = `${fmt(new Date(Date.now() - 7 * 24 * 3600 * 1000))} – ${fmt(new Date())}`;
+
+    const mail = nurture.buildWeeklyReportEmail({
+      weekLabel, byTool, totalLeads,
+      bookings: bookingsQ.rows[0].n,
+      converted: convertedQ.rows[0].n,
+      inSequence: inSeqQ.rows[0].n,
+      unsubscribed: unsubQ.rows[0].n
+    });
+    await sendMail({
+      from: `"Shiftia Resumen" <${GMAIL_USER}>`,
+      to: NOTIFY_EMAIL,
+      resendFrom: INTERNAL_RESEND_FROM,
+      subject: mail.subject,
+      html: emailTemplate({ preheader: mail.preheader, headline: mail.headline, body: mail.body })
+    });
+    await pool.query(
+      "INSERT INTO app_state (key, value) VALUES ('weekly_report_last', $1) ON CONFLICT (key) DO UPDATE SET value = $1",
+      [todayMadrid]
+    );
+    console.log(`Resumen semanal enviado (${weekLabel}) · ${totalLeads} leads · ${bookingsQ.rows[0].n} llamadas`);
+  } catch (e) {
+    console.error('Resumen semanal falló:', e.message);
+  }
+}
+
+function startWeeklyReportScheduler() {
+  if (!RESEND_KEY && !transporter) { console.log('Resumen semanal DESACTIVADO (sin email)'); return; }
+  setInterval(() => { scanWeeklyReport().catch(() => {}); }, 60 * 60 * 1000);
+  setTimeout(() => { scanWeeklyReport().catch(() => {}); }, 2 * 60 * 1000);
+  console.log('Resumen semanal ON — lunes por la mañana (hora de Madrid)');
+}
+
 // ====== SERVER STARTUP ======
 async function startServer() {
   try {
@@ -2710,6 +2808,7 @@ async function startServer() {
       console.log(`  APP_URL: ${APP_URL}`);
       startReminderScheduler();
       startNurtureScheduler();
+      startWeeklyReportScheduler();
     });
   } catch (err) {
     console.error('Failed to start server:', err.message);
