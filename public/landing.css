@@ -3863,6 +3863,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .cookie-banner, .cookies-bar { bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
 }
 
+/* En móvil, la barra CTA fija (.mobile-sticky-cta) no debe tapar el crédito del pie.
+   Va después del @supports anterior para ganar en cascada (misma especificidad). */
+@media (max-width: 768px) {
+  .footer { padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important; }
+}
+
 /* ============================================================================
    v3.3 — HOTFIX MOBILE FINAL (botones azules, doble menú, vs-table, badges)
    ============================================================================ */
