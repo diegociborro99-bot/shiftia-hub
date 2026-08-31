@@ -36,7 +36,11 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
       DATABASE_URL: '',
       PGHOST: '',
       JWT_SECRET: 'test-secret-not-production',
-      BOOKING_CANCEL_SECRET: 'test-cancel-secret'
+      BOOKING_CANCEL_SECRET: 'test-cancel-secret',
+      // Sin credenciales de Google: la reserva debe caer al flujo por teléfono.
+      GOOGLE_CLIENT_ID: '',
+      GOOGLE_CLIENT_SECRET: '',
+      GOOGLE_REFRESH_TOKEN: ''
     },
     stdio: ['ignore', 'pipe', 'pipe']
   });
@@ -76,6 +80,26 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
 
     const notFound = await fetch(`${BASE}/api/no-existe`);
     assert.equal(notFound.status, 404, 'las rutas /api desconocidas devuelven 404');
+
+    // Reservar sin DB ni Google configurado sigue funcionando (fallback:
+    // modo email-only + llamada por teléfono, sin enlace Meet).
+    const bookingDate = (() => {
+      for (let add = 3; add <= 7; add++) {
+        const d = new Date(Date.now() + add * 86400000);
+        const wd = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Madrid', weekday: 'short' }).format(d);
+        if (wd !== 'Sat' && wd !== 'Sun') {
+          return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+        }
+      }
+    })();
+    const bk = await fetch(`${BASE}/api/booking`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'Smoke Test', email: 'smoke@example.com', phone: '600111222', date: bookingDate, time: '10:00' })
+    });
+    assert.equal(bk.status, 200, 'la reserva responde 200 sin DB ni Google');
+    const bkJson = await bk.json();
+    assert.equal(bkJson.ok, true, 'la reserva sin Google configurado sigue OK');
   } catch (err) {
     err.message += '\n--- logs del servidor ---\n' + logs.slice(-2000);
     throw err;

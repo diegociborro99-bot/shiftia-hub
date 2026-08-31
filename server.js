@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 const multer = require('multer');
 const bookingLib = require('./lib/booking');
+const meetLib = require('./lib/meet');
 const nurture = require('./lib/nurture');
 const auditAI = require('./lib/audit-ai');
 const { analyzeSchedule } = require('./lib/audit');
@@ -460,7 +461,9 @@ async function initializeDatabase() {
       { name: 'ip',              type: 'VARCHAR(64)' },
       { name: 'user_agent',      type: 'VARCHAR(255)' },
       { name: 'reminder_24h_at', type: 'TIMESTAMPTZ' },
-      { name: 'reminder_1h_at',  type: 'TIMESTAMPTZ' }
+      { name: 'reminder_1h_at',  type: 'TIMESTAMPTZ' },
+      { name: 'meet_link',       type: 'TEXT' },
+      { name: 'google_event_id', type: 'TEXT' }
     ];
     for (const col of bookingCols) {
       await client.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS ${col.name} ${col.type}`).catch(() => {});
@@ -1491,6 +1494,56 @@ const makeCancelToken = (bookingId, email) => bookingLib.makeCancelToken(booking
 const verifyCancelToken = (bookingId, email, token) => bookingLib.verifyCancelToken(bookingId, email, token, BOOKING_CANCEL_SECRET);
 const buildIcs = bookingLib.buildIcs;
 
+// ====== GOOGLE MEET (enlace de videollamada automático por reserva) ======
+// Con las 3 credenciales presentes, cada reserva crea un evento con Meet en el
+// Google Calendar del organizador (lib/meet.js; credenciales una sola vez con
+// scripts/google-oauth-setup.mjs). Sin ellas, o si Google falla, la reserva
+// sigue el flujo de siempre (llamada por teléfono) — nunca se pierde un lead.
+const GOOGLE_CLIENT_ID     = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+const GOOGLE_REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN || '';
+const GOOGLE_CALENDAR_ID   = process.env.GOOGLE_CALENDAR_ID || 'primary';
+const MEET_ENABLED = !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET && GOOGLE_REFRESH_TOKEN);
+const GOOGLE_AUTH = { clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET, refreshToken: GOOGLE_REFRESH_TOKEN };
+if (!MEET_ENABLED) {
+  console.log('Google Meet DESACTIVADO — configura GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET y GOOGLE_REFRESH_TOKEN (ver scripts/google-oauth-setup.mjs)');
+}
+
+async function tryCreateMeetEvent(args) {
+  if (!MEET_ENABLED) return null;
+  try {
+    return await meetLib.createMeetEvent({
+      auth: GOOGLE_AUTH,
+      calendarId: GOOGLE_CALENDAR_ID,
+      timeZone: BOOKING_TIMEZONE,
+      ...args
+    });
+  } catch (err) {
+    console.error('Meet no generado (la reserva sigue por teléfono):', err.message);
+    return null;
+  }
+}
+
+// Borrado fire-and-forget del evento de Calendar al cancelar una reserva.
+function tryDeleteMeetEvent(eventId, bookingId) {
+  if (!MEET_ENABLED || !eventId) return;
+  meetLib.deleteMeetEvent({ auth: GOOGLE_AUTH, calendarId: GOOGLE_CALENDAR_ID, eventId })
+    .then(() => console.log('Evento de Calendar borrado · booking', bookingId))
+    .catch(err => console.error('No se pudo borrar el evento de Calendar · booking', bookingId, err.message));
+}
+
+// Bloque de email con el botón de Meet (mismo estilo que los bloques teal de
+// módulos). Cadena vacía si la reserva no tiene enlace.
+function meetLinkBlock(meetLink) {
+  if (!meetLink) return '';
+  return `
+    <div style="margin:24px 0;padding:24px;background:#f0fdfa;border-radius:12px;border:1px solid #99f6e4;text-align:center;">
+      <p style="margin:0 0 14px;font-size:12px;color:#0f766e;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;">Videollamada</p>
+      <a href="${meetLink}" style="display:inline-block;background:#0f7a6d;color:#ffffff;padding:13px 26px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">Unirse con Google Meet</a>
+      <p style="margin:14px 0 0;font-size:12px;color:#7a766f;word-break:break-all;"><a href="${meetLink}" style="color:#0f7a6d;">${meetLink}</a></p>
+    </div>`;
+}
+
 // ====== HERRAMIENTAS GRATUITAS — captura de leads ======
 // 1) "Envíame este análisis por email" desde las calculadoras de /recursos.
 //    El cliente manda un resumen en texto plano (≤2000 chars) que nosotros
@@ -2080,16 +2133,33 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     // Construir strings legibles en TZ Madrid
     const prettyDate = prettyDateMadrid(slotInstant);
     const prettyTime = prettyTimeMadrid(slotInstant);
+    const slotEnd = new Date(slotInstant.getTime() + 30 * 60 * 1000);
+
+    // Evento en Google Calendar con enlace Meet — antes de construir el .ics
+    // y los correos para poder incluir el enlace en ambos. Si devuelve null
+    // (sin credenciales o Google caído), todo lo de abajo sigue como siempre.
+    const meetEvent = await tryCreateMeetEvent({
+      summary: `Llamada con Shiftia — ${name}${company ? ' (' + company + ')' : ''}`,
+      description: `Demo personalizada de Shiftia.\nContacto: ${name} · ${email} · ${phone}${message ? '\nMensaje: ' + message : ''}`,
+      startUtc: slotInstant,
+      endUtc: slotEnd,
+      attendeeEmail: email,
+      requestId: `shiftia-booking-${bookingId}-${Date.now()}`
+    });
+    const meetLink = meetEvent ? meetEvent.meetLink : '';
+    if (meetEvent && typeof bookingId === 'number') {
+      pool.query('UPDATE bookings SET meet_link=$1, google_event_id=$2 WHERE id=$3',
+        [meetEvent.meetLink, meetEvent.eventId, bookingId]).catch(() => {});
+    }
 
     // .ics adjunto (30 min de duración)
-    const slotEnd = new Date(slotInstant.getTime() + 30 * 60 * 1000);
     const icsContent = buildIcs({
       uid: `booking-${bookingId}`,
       startUtc: slotInstant,
       endUtc: slotEnd,
       summary: `Llamada con Shiftia — ${name}${company ? ' (' + company + ')' : ''}`,
-      description: `Demo personalizada de Shiftia.\n\nContacto: ${name}\nEmpresa: ${company || '-'}\nTeléfono: ${phone}\n${message ? 'Mensaje: ' + message : ''}`,
-      location: 'Llamada por teléfono',
+      description: `Demo personalizada de Shiftia.\n\nContacto: ${name}\nEmpresa: ${company || '-'}\nTeléfono: ${phone}\n${message ? 'Mensaje: ' + message : ''}${meetLink ? '\nÚnete: ' + meetLink : ''}`,
+      location: meetLink || 'Llamada por teléfono',
       organizerEmail: NOTIFY_EMAIL,
       attendeeEmail: email
     });
@@ -2130,6 +2200,7 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
             <p style="margin:0;font-size:17px;color:#0e0f0f;font-family:'Instrument Serif','Times New Roman',Georgia,serif;line-height:1.3;">${prettyDate} a las ${prettyTime}</p>
             <p style="margin:6px 0 0;font-size:12px;color:#7a766f;">Hora de Madrid (Europe/Madrid)</p>
           </div>
+          ${meetLinkBlock(meetLink)}
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ece9e2;">
             <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;width:130px;border-bottom:1px solid #ece9e2;">Nombre</td><td style="padding:12px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #ece9e2;">${ESC_HTML(name)}</td></tr>
             <tr><td style="padding:12px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Email</td><td style="padding:12px 0;font-size:14px;border-bottom:1px solid #ece9e2;"><a href="mailto:${ESC_HTML(email)}" style="color:#0f7a6d;">${ESC_HTML(email)}</a></td></tr>
@@ -2175,7 +2246,10 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
             <p style="margin:0;font-size:32px;color:#0f7a6d;font-family:'Instrument Serif','Times New Roman',Georgia,serif;line-height:1.1;font-style:italic;">${prettyTime}</p>
             <p style="margin:12px 0 0;font-size:12px;color:#9a958c;">Hora de Madrid (Europe/Madrid)</p>
           </div>
-          <p style="margin:0 0 16px;">Te llamaremos al teléfono <span style="color:#0e0f0f;">${ESC_HTML(phone)}</span>. Adjuntamos un evento de calendario para que lo añadas a Google, Outlook o Apple en un clic.</p>
+          ${meetLinkBlock(meetLink)}
+          <p style="margin:0 0 16px;">${meetLink
+            ? `La reunión será por videollamada — únete con el botón de arriba a la hora acordada. Si lo prefieres, también podemos llamarte al <span style="color:#0e0f0f;">${ESC_HTML(phone)}</span>.`
+            : `Te llamaremos al teléfono <span style="color:#0e0f0f;">${ESC_HTML(phone)}</span>.`} Adjuntamos un evento de calendario para que lo añadas a Google, Outlook o Apple en un clic.</p>
           ${modulesList.length ? `
           <div style="margin:24px 0;padding:20px;background:linear-gradient(135deg,#f0fdfa,#e0f2fe);border-radius:10px;border:1px solid #99f6e4;">
             <p style="color:#0f766e;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;font-weight:700;">Funciones que te interesan · ${modulesList.length}</p>
@@ -2205,7 +2279,7 @@ app.get('/booking/cancel', async (req, res) => {
   if (!id || !token) return res.status(400).send('Parámetros inválidos.');
 
   try {
-    const r = await pool.query('SELECT id, email, name, status, cancel_token, booking_at FROM bookings WHERE id = $1', [id]);
+    const r = await pool.query('SELECT id, email, name, status, cancel_token, booking_at, google_event_id FROM bookings WHERE id = $1', [id]);
     if (r.rows.length === 0) return res.status(404).send('Reserva no encontrada.');
     const b = r.rows[0];
 
@@ -2222,6 +2296,9 @@ app.get('/booking/cancel', async (req, res) => {
       "UPDATE bookings SET status='cancelled', cancelled_at=NOW(), updated_at=NOW(), cancellation_reason='client_link' WHERE id=$1",
       [id]
     );
+
+    // El evento de Google Calendar (con su Meet) desaparece del calendario.
+    tryDeleteMeetEvent(b.google_event_id, id);
 
     // Notificación interna de cancelación
     sendMail({
@@ -2561,8 +2638,8 @@ function reminderIcs(b) {
     startUtc: start,
     endUtc: end,
     summary: `Llamada con Shiftia — ${b.name}${b.company ? ' (' + b.company + ')' : ''}`,
-    description: `Demo personalizada de Shiftia.\n\nContacto: ${b.name}\nTeléfono: ${b.phone || '-'}`,
-    location: 'Llamada por teléfono',
+    description: `Demo personalizada de Shiftia.\n\nContacto: ${b.name}\nTeléfono: ${b.phone || '-'}${b.meet_link ? '\nÚnete: ' + b.meet_link : ''}`,
+    location: b.meet_link || 'Llamada por teléfono',
     organizerEmail: NOTIFY_EMAIL,
     attendeeEmail: b.email
   });
@@ -2591,7 +2668,8 @@ function sendClientReminder(b, when) {
           <p style="margin:0;font-size:17px;color:#0e0f0f;font-family:'Instrument Serif','Times New Roman',Georgia,serif;line-height:1.3;">${prettyDate} a las ${prettyTime}</p>
           <p style="margin:6px 0 0;font-size:12px;color:#7a766f;">Hora de Madrid (Europe/Madrid)</p>
         </div>
-        <p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">Te llamaremos al teléfono que nos indicaste a la hora prevista. Si necesitas cambiar la cita${cancelUrl ? `, puedes <a href="${cancelUrl}" style="color:#0f7a6d;">cancelarla aquí</a>` : ', responde a este correo'}.</p>
+        ${meetLinkBlock(b.meet_link)}
+        <p style="color:#1a1a1a;line-height:1.6;margin:0;font-size:15px;">${b.meet_link ? 'Únete a la videollamada con el botón de arriba a la hora prevista.' : 'Te llamaremos al teléfono que nos indicaste a la hora prevista.'} Si necesitas cambiar la cita${cancelUrl ? `, puedes <a href="${cancelUrl}" style="color:#0f7a6d;">cancelarla aquí</a>` : ', responde a este correo'}.</p>
       `
     })
   });
@@ -2619,6 +2697,7 @@ function sendInternalReminder(b) {
           <tr><td style="padding:10px 0;color:#7a766f;font-size:13px;border-bottom:1px solid #ece9e2;">Teléfono</td><td style="padding:10px 0;font-size:14px;border-bottom:1px solid #ece9e2;"><a href="tel:${ESC_HTML(b.phone || '')}" style="color:#0f7a6d;">${ESC_HTML(b.phone || '-')}</a></td></tr>
           <tr><td style="padding:10px 0;color:#7a766f;font-size:13px;">Email</td><td style="padding:10px 0;font-size:14px;"><a href="mailto:${ESC_HTML(b.email)}" style="color:#0f7a6d;">${ESC_HTML(b.email)}</a></td></tr>
         </table>
+        ${meetLinkBlock(b.meet_link)}
       `
     })
   });
@@ -2632,7 +2711,7 @@ async function scanReminders() {
     // Recordatorio único: 1 h antes de la llamada — al cliente y a info@.
     // (La confirmación "al reservar" ya se envía en el momento de la reserva.)
     const due1 = await pool.query(
-      `SELECT id,name,email,phone,company,booking_at,cancel_token FROM bookings
+      `SELECT id,name,email,phone,company,booking_at,cancel_token,meet_link FROM bookings
        WHERE status != 'cancelled' AND booking_at IS NOT NULL AND reminder_1h_at IS NULL
          AND booking_at > NOW() AND booking_at <= NOW() + INTERVAL '1 hour'
        ORDER BY booking_at ASC LIMIT 50`
