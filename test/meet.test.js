@@ -108,10 +108,23 @@ test('createMeetEvent: sin hangoutLink usa el entryPoint de vídeo', async () =>
   assert.equal(r.meetLink, 'https://meet.google.com/zzz-zzzz-zzz');
 });
 
-test('createMeetEvent: evento sin ningún enlace → rechaza', async () => {
+test('createMeetEvent: evento sin ningún enlace → borra el huérfano y rechaza', async () => {
   const f = mockFetch([
     { status: 200, body: { access_token: 'at-1' } },
-    { status: 200, body: { id: 'ev-13' } }
+    { status: 200, body: { id: 'ev-13' } },
+    { status: 204, body: {} } // DELETE de limpieza del evento huérfano
+  ]);
+  await assert.rejects(() => createMeetEvent({ ...EVENT_ARGS(), fetchImpl: f }), /enlace/i);
+  assert.equal(f.calls.length, 3, 'debe intentar borrar el evento creado sin enlace');
+  assert.equal(f.calls[2].opts.method, 'DELETE');
+  assert.ok(f.calls[2].url.includes('/calendars/primary/events/ev-13'));
+});
+
+test('createMeetEvent: si la limpieza del huérfano falla, rechaza igualmente', async () => {
+  const f = mockFetch([
+    { status: 200, body: { access_token: 'at-1' } },
+    { status: 200, body: { id: 'ev-14' } },
+    { status: 500, body: {} }
   ]);
   await assert.rejects(() => createMeetEvent({ ...EVENT_ARGS(), fetchImpl: f }), /enlace/i);
 });

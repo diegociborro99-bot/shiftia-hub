@@ -1533,14 +1533,16 @@ function tryDeleteMeetEvent(eventId, bookingId) {
 }
 
 // Bloque de email con el botón de Meet (mismo estilo que los bloques teal de
-// módulos). Cadena vacía si la reserva no tiene enlace.
+// módulos). Cadena vacía si la reserva no tiene enlace. El enlace viene de la
+// API de Google, no del usuario, pero se escapa igualmente (defensa en capas).
 function meetLinkBlock(meetLink) {
   if (!meetLink) return '';
+  const safeLink = ESC_HTML(meetLink);
   return `
     <div style="margin:24px 0;padding:24px;background:#f0fdfa;border-radius:12px;border:1px solid #99f6e4;text-align:center;">
       <p style="margin:0 0 14px;font-size:12px;color:#0f766e;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;">Videollamada</p>
-      <a href="${meetLink}" style="display:inline-block;background:#0f7a6d;color:#ffffff;padding:13px 26px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">Unirse con Google Meet</a>
-      <p style="margin:14px 0 0;font-size:12px;color:#7a766f;word-break:break-all;"><a href="${meetLink}" style="color:#0f7a6d;">${meetLink}</a></p>
+      <a href="${safeLink}" style="display:inline-block;background:#0f7a6d;color:#ffffff;padding:13px 26px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">Unirse con Google Meet</a>
+      <p style="margin:14px 0 0;font-size:12px;color:#7a766f;word-break:break-all;"><a href="${safeLink}" style="color:#0f7a6d;">${safeLink}</a></p>
     </div>`;
 }
 
@@ -2134,6 +2136,21 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     const prettyDate = prettyDateMadrid(slotInstant);
     const prettyTime = prettyTimeMadrid(slotInstant);
     const slotEnd = new Date(slotInstant.getTime() + 30 * 60 * 1000);
+    const cancelUrl = `${APP_URL}/booking/cancel?id=${bookingId}&token=${cancelToken}`;
+    const supportEmail = NOTIFY_EMAIL;
+
+    // Responder OK al cliente DESPUÉS de confirmar la fila en BD — y ANTES de
+    // llamar a Google: el enlace Meet solo lo necesitan los correos, y con
+    // Google lento la confirmación en la web no debe esperar.
+    console.log(`Booking #${bookingId} OK: ${emailTag(email)} — ${date} ${time} (Madrid)`);
+    res.json({
+      ok: true,
+      bookingId,
+      cancelUrl,
+      prettyDate,
+      prettyTime,
+      timezone: BOOKING_TIMEZONE
+    });
 
     // Evento en Google Calendar con enlace Meet — antes de construir el .ics
     // y los correos para poder incluir el enlace en ambos. Si devuelve null
@@ -2148,8 +2165,11 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     });
     const meetLink = meetEvent ? meetEvent.meetLink : '';
     if (meetEvent && typeof bookingId === 'number') {
-      pool.query('UPDATE bookings SET meet_link=$1, google_event_id=$2 WHERE id=$3',
-        [meetEvent.meetLink, meetEvent.eventId, bookingId]).catch(() => {});
+      // Con await: si no se persistiera el event_id, una cancelación inmediata
+      // no podría borrar el evento del calendario.
+      await pool.query('UPDATE bookings SET meet_link=$1, google_event_id=$2 WHERE id=$3',
+        [meetEvent.meetLink, meetEvent.eventId, bookingId]).catch(err =>
+        console.error('No se pudo guardar meet_link · booking', bookingId, err.message));
     }
 
     // .ics adjunto (30 min de duración)
@@ -2168,20 +2188,6 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
       content: icsContent,
       contentType: 'text/calendar; method=REQUEST; charset=UTF-8'
     };
-
-    const cancelUrl = `${APP_URL}/booking/cancel?id=${bookingId}&token=${cancelToken}`;
-    const supportEmail = NOTIFY_EMAIL;
-
-    // Responder OK al cliente DESPUÉS de confirmar la fila en BD
-    console.log(`Booking #${bookingId} OK: ${emailTag(email)} — ${date} ${time} (Madrid)`);
-    res.json({
-      ok: true,
-      bookingId,
-      cancelUrl,
-      prettyDate,
-      prettyTime,
-      timezone: BOOKING_TIMEZONE
-    });
 
     // Emails fire-and-forget DESPUÉS de responder, pero registramos su estado
     // 1. Notificación interna
@@ -2382,10 +2388,13 @@ app.post('/api/admin/bookings/:id/status', express.json(), async (req, res) => {
       : '';
     const params = setExtra ? [status, id, reason] : [status, id];
     const r = await pool.query(
-      `UPDATE bookings SET status = $1, updated_at = NOW() ${setExtra} WHERE id = $2 RETURNING id`,
+      `UPDATE bookings SET status = $1, updated_at = NOW() ${setExtra} WHERE id = $2 RETURNING id, google_event_id`,
       params
     );
     if (r.rowCount === 0) return res.status(404).json({ error: 'No encontrada' });
+    // Cancelar desde el panel también limpia el evento de Google Calendar,
+    // igual que la cancelación por enlace del cliente.
+    if (status === 'cancelled') tryDeleteMeetEvent(r.rows[0].google_event_id, id);
     res.json({ ok: true, id, status });
   } catch (err) {
     console.error('[admin]', err);
