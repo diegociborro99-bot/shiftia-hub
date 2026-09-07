@@ -226,9 +226,9 @@ Sugerencia de canal: Capterra, porque la reseña se firma con perfil profesional
 
 Nota para Diego: si la persona elige la opción 3, guarda la autorización por escrito (sección 3.4) y publica siempre sin nombre de empresa. Aunque en privado lo diga, no se nombra al cliente en ningún sitio público.
 
-### 2.5 Servicio de Urología del Hospital Universitario Clínico San Cecilio (Granada; sanidad pública)
+### 2.5 Cliente hospitalario de Granada (sanidad pública; anonimizado hasta nuevo aviso)
 
-Contexto: sanidad pública andaluza (SAS). Un servicio hospitalario no suele poder dejar reseñas comerciales en nombre de la institución, y la persona de contacto puede tener limitaciones para hacerlo a título personal. Por eso el mensaje es institucional, ofrece la reseña como primera opción pero da dos salidas realistas: una carta de referencia interna (firmada por el responsable del servicio, para uso en propuestas a otros centros) o un testimonio anónimo para la web. Lo que ya está autorizado y se puede decir en público: "el Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada planifica sus turnos con Shiftia".
+Contexto: sanidad pública andaluza (SAS). Un servicio hospitalario no suele poder dejar reseñas comerciales en nombre de la institución, y la persona de contacto puede tener limitaciones para hacerlo a título personal. Por eso el mensaje es institucional, ofrece la reseña como primera opción pero da dos salidas realistas: una carta de referencia interna (firmada por el responsable del servicio, para uso en propuestas a otros centros) o un testimonio anónimo para la web. Hasta nuevo aviso (decisión 7-9-2026) en público solo se dice: "un servicio de un hospital público de Granada planifica sus turnos con Shiftia".
 
 **WhatsApp** (solo si ya hay canal de WhatsApp con la persona; si no, usar email)
 
@@ -265,7 +265,7 @@ Contexto: sanidad pública andaluza (SAS). Un servicio hospitalario no suele pod
 > Atentamente,
 >
 > Diego Ciborro
-> Director de Shiftia · Enfermero especialista, Hospital de Jove (Gijón)
+> Director de Shiftia · Enfermero especialista en activo
 > shiftia.es · 663 50 46 47
 
 Nota para Diego: en este cliente el tono importa más que la rapidez. No mandar recordatorio por WhatsApp; el recordatorio (sección 3.2) va por email y a los 7 días, no a los 5. Si eligen la carta de referencia, prepara el borrador en papel con membrete de Shiftia y deja que lo reescriban entero si quieren.
@@ -300,7 +300,7 @@ Solo uno. Si no hay respuesta después del recordatorio, se deja estar y se anot
 >
 > Diego
 
-Para el Hospital San Cecilio (institucional), a los 7 días y solo por email:
+Para el cliente hospitalario de Granada (institucional), a los 7 días y solo por email:
 
 > Asunto: Re: Solicitud de valoración de Shiftia por parte del Servicio de Urología
 >
@@ -334,7 +334,7 @@ Se envía el mismo día que se ve publicada, por el mismo canal que la petición
 >
 > Diego
 
-Institucional (San Cecilio):
+Institucional (hospital de Granada):
 
 > Estimado/a [NOMBRE]:
 >
@@ -405,9 +405,9 @@ Copiar a una hoja de cálculo o mantener aquí. Estados: `pendiente` (no enviado
 | NONWATIO (Valencia) | [NOMBRE Y CARGO] | WhatsApp | Google | [FECHA] | [FECHA +5] | pendiente | | | |
 | La Otra Abacería (León) | [NOMBRE Y CARGO] | WhatsApp | Google | [FECHA] | [FECHA +5] | pendiente | | | |
 | Cliente sanitario Asturias (confidencial) | [NOMBRE Y CARGO] | Email | Capterra | [FECHA] | [FECHA +7] | pendiente | | solo sector | |
-| Servicio de Urología, H. U. Clínico San Cecilio (Granada) | [NOMBRE Y CARGO] | Email | Google / carta / testimonio | [FECHA] | [FECHA +7, solo email] | pendiente | | ya autorizado (nombre del servicio) | |
+| Servicio hospitalario de Granada (sanidad pública) | [NOMBRE Y CARGO] | Email | Google / carta / testimonio | [FECHA] | [FECHA +7, solo email] | pendiente | | ya autorizado (nombre del servicio) | |
 
-Orden de prioridad según el plan: SPAR, cliente sanitario asturiano y NONWATIO primero; La Otra Abacería y San Cecilio en la misma semana, sin agobiar. Objetivo: 3-5 reseñas o testimonios en 2 semanas desde el primer envío.
+Orden de prioridad según el plan: SPAR, cliente sanitario asturiano y NONWATIO primero; La Otra Abacería y el hospital de Granada en la misma semana, sin agobiar. Objetivo: 3-5 reseñas o testimonios en 2 semanas desde el primer envío.
 
 Enlaces a guardar aquí cuando estén listos:
 

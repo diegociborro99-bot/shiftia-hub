@@ -159,7 +159,7 @@ Shiftia is a Spanish B2B SaaS for AI-powered shift scheduling and rostering, dev
 
 The platform generates a complete monthly or yearly roster from scratch in seconds (ShiftiaCore), respecting the collective labour agreement: minimum rest between shifts, maximum number of night shifts, reduced working hours, work-life balance rules, public holidays and on-call duties. When an employee is absent, the AI coverage engine scores 11 criteria and proposes 3 candidates from the client's own staff in under one second; the final decision is always made by a human. Other features include an AI reader that imports existing rosters from PDF or Excel, holiday and absence management, night-shift fairness metrics, a conflict detector, a 14-day risk radar, dashboards and an exportable audit trail. Business plans add multi-site management, coverage maps, AI reports, payroll integration and API access; Enterprise plans offer on-premise or private-cloud deployment and custom integrations (HIS, ERP, time and attendance).
 
-Shiftia only schedules the client's internal workforce: it is not a staffing agency or a marketplace. Pricing is a flat monthly fee from €29/month with no per-employee cost and no lock-in, with a 30-day money-back guarantee and go-live in 5-7 working days. Data is hosted in the EU under GDPR. Customers include public healthcare (the Urology Department of Hospital Universitario Clínico San Cecilio, Granada), laboratories and healthcare services in Asturias, SPAR Supermercados (retail, Gran Canaria), NONWATIO (industrial refrigeration, Valencia) and La Otra Abacería (hospitality, León). The interface is available in Spanish, English, German and French.
+Shiftia only schedules the client's internal workforce: it is not a staffing agency or a marketplace. Pricing is a flat monthly fee from €29/month with no per-employee cost and no lock-in, with a 30-day money-back guarantee and go-live in 5-7 working days. Data is hosted in the EU under GDPR. Customers include public healthcare (a department of a public hospital in Granada), laboratories and healthcare services in Asturias, SPAR Supermercados (retail, Gran Canaria), NONWATIO (industrial refrigeration, Valencia) and La Otra Abacería (hospitality, León). The interface is available in Spanish, English, German and French.
 ```
 
 **ES**
@@ -168,7 +168,7 @@ Shiftia es un SaaS B2B español de planificación de turnos y cuadrantes con int
 
 La plataforma genera el cuadrante mensual o anual completo desde cero en segundos (ShiftiaCore) respetando el convenio: descansos mínimos entre turnos, máximo de noches, jornadas reducidas, conciliación, festivos y guardias. Ante una ausencia, el motor IA de coberturas analiza 11 criterios y propone 3 candidatos de la propia plantilla en menos de un segundo; la decisión final siempre es humana. Incluye lector PDF con IA para importar cuadrantes existentes (PDF/Excel), vacaciones y ausencias, equidad nocturna, detector de conflictos, radar de riesgo a 14 días, dashboard e historial y auditoría exportable. El plan Business añade multi-centro, mapa de cobertura, informes con IA, integración con nómina y API; Enterprise ofrece on-premise o nube privada e integraciones a medida (HIS, ERP, fichaje).
 
-Shiftia solo planifica la plantilla interna del cliente: no es una ETT ni un marketplace de personal. Tarifa plana desde 29 €/mes, sin coste por trabajador y sin permanencia, con garantía de devolución de 30 días e implantación en 5-7 días laborables. Datos alojados en la UE con cumplimiento RGPD. Entre sus clientes están el Servicio de Urología del Hospital Universitario Clínico San Cecilio (Granada), laboratorios y servicios sanitarios en Asturias, SPAR Supermercados (retail, Gran Canaria), NONWATIO (frío industrial, Valencia) y La Otra Abacería (hostelería, León). Interfaz en español, inglés, alemán y francés.
+Shiftia solo planifica la plantilla interna del cliente: no es una ETT ni un marketplace de personal. Tarifa plana desde 29 €/mes, sin coste por trabajador y sin permanencia, con garantía de devolución de 30 días e implantación en 5-7 días laborables. Datos alojados en la UE con cumplimiento RGPD. Entre sus clientes están un servicio de un hospital público de Granada, laboratorios y servicios sanitarios en Asturias, SPAR Supermercados (retail, Gran Canaria), NONWATIO (frío industrial, Valencia) y La Otra Abacería (hostelería, León). Interfaz en español, inglés, alemán y francés.
 ```
 
 ### 2.4 Perfil de persona: Diego Ciborro
@@ -179,7 +179,7 @@ Shiftia solo planifica la plantilla interna del cliente: no es una ETT ni un mar
 | Primary job title | Founder & Director |
 | Primary organization | Shiftia |
 | Location | Oviedo / Gijón, Asturias, Spain `[elegir una]` |
-| Bio (EN) | Founder and Director of Shiftia, an AI shift scheduling platform. Registered nurse specialist working in the Spanish public health system (blood bank and blood products unit, Hospital de Jove, Gijón). Master's degree in Nursing Management and PhD candidate in Healthcare Quality. Has built machine learning models in healthcare, including demand forecasting for blood products. |
+| Bio (EN) | Founder and Director of Shiftia, an AI shift scheduling platform. Registered nurse specialist working in the Spanish public health system (blood bank and blood products unit). Master's degree in Nursing Management and PhD candidate in Healthcare Quality. Has built machine learning models in healthcare, including demand forecasting for blood products. |
 | LinkedIn | https://www.linkedin.com/in/diego-ciborro-4812183a2 |
 
 **Nota para Diego (Crunchbase):** confirmar forma jurídica y nombre registral exacto, año de fundación, rango de empleados y estado de financiación (si hay subvención o préstamo público, se puede indicar "Grant" solo con importe y fecha reales; si no se quiere publicar, dejar en blanco). Crunchbase tarda 1-3 días en aprobar el perfil; después reclamarlo con `info@shiftia.es` para poder editarlo.
@@ -218,7 +218,7 @@ Qué hace Shiftia:
 
 Lo que no somos: ni una ETT ni una bolsa de personal externo. Shiftia solo planifica la plantilla interna del cliente.
 
-Trabajamos con organizaciones de sanidad pública, laboratorios, retail, frío industrial y hostelería, como el Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada, SPAR Supermercados en Gran Canaria o NONWATIO en Valencia.
+Trabajamos con organizaciones de sanidad pública, laboratorios, retail, frío industrial y hostelería, como un servicio de un hospital público de Granada, SPAR Supermercados en Gran Canaria o NONWATIO en Valencia.
 
 Tarifa plana desde 29 €/mes, sin coste por trabajador y sin permanencia. Implantación en 5-7 días laborables y garantía de devolución de 30 días. Datos en la UE, RGPD y cifrado. Interfaz en español, inglés, alemán y francés.
 
@@ -239,7 +239,7 @@ What Shiftia does:
 
 What we are not: a staffing agency or a marketplace for external workers. Shiftia only schedules the client's own internal staff.
 
-We work with public healthcare organisations, laboratories, retail, industrial refrigeration and hospitality businesses, including the Urology Department of Hospital Universitario Clínico San Cecilio in Granada, SPAR Supermercados in Gran Canaria and NONWATIO in Valencia.
+We work with public healthcare organisations, laboratories, retail, industrial refrigeration and hospitality businesses, including a department of a public hospital in Granada, SPAR Supermercados in Gran Canaria and NONWATIO in Valencia.
 
 Flat pricing from €29/month, no per-employee fees, no lock-in. Go-live in 5-7 working days and a 30-day money-back guarantee. Data hosted in the EU, GDPR-compliant and encrypted. Interface in Spanish, English, German and French.
 

@@ -6,8 +6,8 @@ Regla de uso: **no envíes nada de la sección 2 (no confirmados) sin comprobarl
 
 **Tres decisiones que Diego debe cerrar ANTES del envío (bloquean el kit):**
 1. **Sede oficial.** La web dice "Asturias", LinkedIn dice "Langreo" y el briefing interno dice "Oviedo". Todo este kit está escrito con **Oviedo**. Si la sede registral es otra, hay que cambiarlo en la nota y en los diez pitches (y afecta a las bases de los Premios Gijón Impulsa).
-2. **¿Se puede nombrar el Hospital de Jove?** La web pública de Shiftia no lo nombra: solo dice "banco de sangre, sanidad pública". Es el gancho de toda la historia local. Confirmar si el centro exige autorización para que un empleado se identifique como tal en prensa junto a un proyecto empresarial propio. Si no se puede, sustituir por "enfermero en activo en un hospital público asturiano".
-3. **Autorización del Servicio de Urología del Hospital Universitario Clínico San Cecilio (Granada)** para citarlo en prensa. Que ya figure en la web no equivale a autorización para una nota de prensa. Ver sección 6.
+2. **Hospital de Jove: decisión del 7-9-2026, no se nombra hasta nuevo aviso.** Nota y pitches ya están en versión neutra («enfermero especialista en activo en la sanidad pública asturiana»). Cuando haya autorización del centro, se restituye el nombre en la entradilla, el boilerplate y los pitches 3.1-3.3.
+3. **Cliente hospitalario de Granada: decisión del 7-9-2026, no se nombra hasta nuevo aviso.** En todos los textos públicos figura como «un servicio de un hospital público de Granada». Ojo a la incoherencia: la web (shiftia.es) sí lo nombra por petición expresa de Diego; un periodista lo verá en diez segundos. Cuando llegue la autorización por escrito (sección 6), se restituye el nombre.
 
 ---
 
@@ -77,7 +77,7 @@ Regla de uso: **no envíes nada de la sección 2 (no confirmados) sin comprobarl
 Shiftia, con sede en Oviedo, planifica ya la plantilla de un servicio hospitalario público en Granada, de supermercados en Gran Canaria, de una industria de frío en Valencia y de hostelería en León. Tarifa plana desde 29 euros al mes, sin coste por trabajador.
 
 **ENTRADILLA**
-Diego Ciborro, enfermero especialista en activo en la sanidad pública asturiana (Hospital de Jove, Gijón) y fundador de Shiftia, ha desarrollado desde Oviedo un software que genera cuadrantes de turnos completos con inteligencia artificial en segundos, respetando el convenio colectivo, los descansos mínimos entre turnos y el reparto equitativo de las noches. Lo hizo porque conoce el problema desde dentro: en cualquier servicio que funciona 24 horas, el cuadrante se hace a mano, en hojas de cálculo, y una baja de última hora obliga a rehacerlo entero.
+Diego Ciborro, enfermero especialista en activo en la sanidad pública asturiana y fundador de Shiftia, ha desarrollado desde Oviedo un software que genera cuadrantes de turnos completos con inteligencia artificial en segundos, respetando el convenio colectivo, los descansos mínimos entre turnos y el reparto equitativo de las noches. Lo hizo porque conoce el problema desde dentro: en cualquier servicio que funciona 24 horas, el cuadrante se hace a mano, en hojas de cálculo, y una baja de última hora obliga a rehacerlo entero.
 
 **CUERPO**
 
@@ -89,7 +89,7 @@ El segundo es la cobertura de ausencias. Ante una baja de última hora, el siste
 
 El tercero es la equidad. Shiftia mide la media de noches únicamente entre quienes rotan y avisa de los desequilibrios antes de que escalen a conflicto. Esa es, según su fundador, la parte que más se descuida cuando el cuadrante se hace a mano.
 
-La empresa opera desde Oviedo y trabaja hoy con clientes de sectores muy distintos: el Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada, servicios sanitarios en Asturias, los supermercados SPAR en Gran Canaria, la empresa de frío industrial NONWATIO en Valencia y el negocio de hostelería La Otra Abacería en León. La idea nació en un hospital, pero el planteamiento de la compañía es que si funciona en un hospital funciona en cualquier sector con turnos.
+La empresa opera desde Oviedo y trabaja hoy con clientes de sectores muy distintos: un servicio de un hospital público de Granada, servicios sanitarios en Asturias, los supermercados SPAR en Gran Canaria, la empresa de frío industrial NONWATIO en Valencia y el negocio de hostelería La Otra Abacería en León. La idea nació en un hospital, pero el planteamiento de la compañía es que si funciona en un hospital funciona en cualquier sector con turnos.
 
 El modelo comercial es de tarifa plana, sin coste por trabajador: 29 euros al mes hasta 15 trabajadores, 69 euros hasta 40 (con la generación por IA incluida) y 129 euros hasta 100 y varios centros, con descuento del 20 % en pago anual y una modalidad Enterprise a medida para plantillas mayores. Sin permanencia, con garantía de devolución de 30 días y una implantación de entre cinco y siete días laborables.
 
@@ -112,7 +112,7 @@ El modelo comercial es de tarifa plana, sin coste por trabajador: 29 euros al me
 - Auditoría gratuita de cuadrante: https://www.shiftia.es/recursos/auditoria-cuadrante
 
 **SOBRE SHIFTIA (boilerplate)**
-Shiftia (https://www.shiftia.es) es un software español de planificación de turnos y cuadrantes con inteligencia artificial para empresas con plantilla propia. Con sede en Oviedo (Asturias), es un producto de Highkey Labs Software Solutions. Genera cuadrantes mensuales y anuales respetando el convenio, mide la equidad de las noches, detecta conflictos y propone coberturas internas ante ausencias, siempre con validación humana. Funciona en la nube, cumple el RGPD con los datos alojados en la Unión Europea y ofrece modalidad on-premise o nube privada para grandes organizaciones. Interfaz en español, inglés, alemán y francés. Su fundador y director es Diego Ciborro, enfermero especialista en activo, máster en Dirección y Gestión de Enfermería y doctorando en Calidad Asistencial. **Shiftia es un proyecto empresarial privado: no está vinculado al Hospital de Jove, al Servicio de Salud del Principado de Asturias ni a ningún servicio público de salud, y ninguno de ellos respalda el producto.**
+Shiftia (https://www.shiftia.es) es un software español de planificación de turnos y cuadrantes con inteligencia artificial para empresas con plantilla propia. Con sede en Oviedo (Asturias), es un producto de Highkey Labs Software Solutions. Genera cuadrantes mensuales y anuales respetando el convenio, mide la equidad de las noches, detecta conflictos y propone coberturas internas ante ausencias, siempre con validación humana. Funciona en la nube, cumple el RGPD con los datos alojados en la Unión Europea y ofrece modalidad on-premise o nube privada para grandes organizaciones. Interfaz en español, inglés, alemán y francés. Su fundador y director es Diego Ciborro, enfermero especialista en activo, máster en Dirección y Gestión de Enfermería y doctorando en Calidad Asistencial. **Shiftia es un proyecto empresarial privado: no está vinculado a ningún centro sanitario ni servicio de salud público, que tampoco lo avalan ni participan en él.**
 
 **CONTACTO DE PRENSA**
 Diego Ciborro · Fundador y director de Shiftia
@@ -148,7 +148,7 @@ Hola:
 
 Os escribo por si os encaja una historia de empresa asturiana. Me llamo Diego Ciborro, soy enfermero especialista en activo en la sanidad pública y he fundado Shiftia (shiftia.es), un software con inteligencia artificial que genera cuadrantes de turnos completos en segundos respetando el convenio: descansos mínimos, máximo de noches, jornadas reducidas y conciliación.
 
-La empresa opera desde Oviedo y sus clientes están fuera de Asturias: un servicio del Hospital Universitario Clínico San Cecilio de Granada, los supermercados SPAR en Gran Canaria, una industria de frío en Valencia y hostelería en León. Es decir, tecnología hecha aquí que se vende en el resto de España, en un mercado dominado por software de Madrid, Valencia y París.
+La empresa opera desde Oviedo y sus clientes están fuera de Asturias: un servicio de un hospital público de Granada, los supermercados SPAR en Gran Canaria, una industria de frío en Valencia y hostelería en León. Es decir, tecnología hecha aquí que se vende en el resto de España, en un mercado dominado por software de Madrid, Valencia y París.
 
 Puedo aportar datos concretos, capturas, la demo en directo y la explicación de cómo funciona el motor. Estoy disponible para entrevista en Oviedo o en la delegación de Gijón.
 
@@ -161,13 +161,13 @@ Un saludo,
 
 ### 3.2 El Comercio — `gijon.co@elcomercio.es` (+ copia a `audiovisual@elcomercio.es`) · ángulo humano + AsturiasInnova+
 
-**Asunto:** Un enfermero del Hospital de Jove crea una IA que hace los cuadrantes de turnos (y ya la usan supermercados de Canarias)
+**Asunto:** Un enfermero asturiano en activo crea una IA que hace los cuadrantes de turnos (y ya la usan supermercados de Canarias)
 
 Hola:
 
-Soy Diego Ciborro, enfermero especialista en activo en el Hospital de Jove, en Gijón. Después de años haciendo y sufriendo cuadrantes de turnos he creado Shiftia (shiftia.es), un software con inteligencia artificial que genera el cuadrante mensual en segundos respetando el convenio y repartiendo las noches de forma equitativa. Ante una baja, propone tres compañeros de la propia plantilla en menos de un segundo; la decisión final la toma siempre una persona.
+Soy Diego Ciborro, enfermero especialista en activo en la sanidad pública asturiana. Después de años haciendo y sufriendo cuadrantes de turnos he creado Shiftia (shiftia.es), un software con inteligencia artificial que genera el cuadrante mensual en segundos respetando el convenio y repartiendo las noches de forma equitativa. Ante una baja, propone tres compañeros de la propia plantilla en menos de un segundo; la decisión final la toma siempre una persona.
 
-La empresa está en Oviedo y ya planifica turnos de un servicio del hospital San Cecilio de Granada, de supermercados SPAR en Gran Canaria, de una industria de frío en Valencia y de hostelería en León.
+La empresa está en Oviedo y ya planifica turnos de un servicio de un hospital público de Granada, de supermercados SPAR en Gran Canaria, de una industria de frío en Valencia y de hostelería en León.
 
 Os lo propongo por dos vías: como historia gijonesa —de las noches del hospital a montar una empresa— y como pieza para AsturiasInnova+. Tengo capturas, demo en directo y disponibilidad para grabar.
 
@@ -372,7 +372,7 @@ Os envío una nota de prensa para la redacción.
 
 Shiftia (shiftia.es) es una startup española de planificación de turnos con inteligencia artificial, con sede en Oviedo y producto de Highkey Labs Software Solutions. Su motor genera el cuadrante mensual y anual completo en segundos respetando el convenio de cada empresa —descansos mínimos, máximo de noches, jornadas reducidas, conciliación— y, ante una ausencia, propone tres candidatos de la plantilla en menos de un segundo tras analizar once criterios, siempre con aprobación humana.
 
-La fundó Diego Ciborro, enfermero especialista en activo en la sanidad pública. Clientes actuales: un servicio del Hospital Universitario Clínico San Cecilio de Granada, servicios sanitarios en Asturias, SPAR en Gran Canaria, NONWATIO en Valencia y La Otra Abacería en León.
+La fundó Diego Ciborro, enfermero especialista en activo en la sanidad pública. Clientes actuales: un servicio de un hospital público de Granada, servicios sanitarios en Asturias, SPAR en Gran Canaria, NONWATIO en Valencia y La Otra Abacería en León.
 
 Modelo: tarifa plana de 29, 69 y 129 €/mes por tramos de plantilla, sin coste por trabajador, sin permanencia, garantía de 30 días e implantación en 5-7 días laborables.
 
@@ -404,7 +404,7 @@ Para Dependencia.info, Balance Sociosanitario, Enfermería21/Diario Dicen, ConSa
 >
 > Shiftia genera el cuadrante mensual y anual completo en segundos respetando el convenio de cada empresa: descansos mínimos entre turnos, máximo de noches, jornadas reducidas, conciliación y restricciones individuales. Ante una ausencia propone tres candidatos de la propia plantilla en menos de un segundo analizando once criterios; la aprobación es siempre humana. Mide además la equidad de las noches entre quienes rotan.
 >
-> Clientes: un servicio del Hospital Universitario Clínico San Cecilio de Granada, servicios sanitarios en Asturias, SPAR en Gran Canaria, NONWATIO en Valencia y La Otra Abacería en León. Tarifa plana desde 29 €/mes, sin coste por trabajador, sin permanencia.
+> Clientes: un servicio de un hospital público de Granada, servicios sanitarios en Asturias, SPAR en Gran Canaria, NONWATIO en Valencia y La Otra Abacería en León. Tarifa plana desde 29 €/mes, sin coste por trabajador, sin permanencia.
 >
 > Os puedo enviar nota de prensa, capturas y foto, o hacer una demo. info@shiftia.es · 663 50 46 47
 
@@ -440,7 +440,7 @@ No hay ninguna fuente verificada sobre las mejores horas de envío a redacciones
 ### 5.3 Si aceptan
 
 1. **Responde en menos de 2 horas.** Es el único plazo que importa; una redacción que no recibe respuesta el mismo día cambia de tema.
-2. **Ten preparado un dosier de un folio** con: qué es Shiftia en dos líneas, las cifras autorizadas (3 candidatos en <1 s, 11 criterios, implantación 5-7 días, garantía 30 días, precios 29/69/129 €), la lista de clientes autorizados y la frase de deslinde respecto al Hospital de Jove y al SESPA.
+2. **Ten preparado un dosier de un folio** con: qué es Shiftia en dos líneas, las cifras autorizadas (3 candidatos en <1 s, 11 criterios, implantación 5-7 días, garantía 30 días, precios 29/69/129 €), la lista de clientes autorizados y la frase de deslinde respecto a la sanidad pública (ningún centro ni servicio de salud avala Shiftia).
 3. **Demo en directo:** 15 minutos, con un cuadrante de demostración (nunca con datos de un cliente real). Guion: (1) importar una planilla, (2) generar el mes con ShiftiaCore, (3) meter una baja y enseñar los tres candidatos y sus criterios, (4) enseñar el panel de equidad nocturna. Prepara un entorno de demostración estable y un plan B: si falla la conexión, un vídeo grabado de 60 segundos.
 4. **Fotos:** el retrato disponible es `/equipo/diego-ciborro.webp`. Ofrece sesión en la oficina de Oviedo o en exterior neutro.
 5. **Fotos o grabación en el hospital: solo con autorización expresa del centro.** No propongas el Hospital de Jove como localización hasta tenerla por escrito, y jamás con pacientes, personal o material identificable de fondo. Si el centro no autoriza, di que no y ofrece otra localización: no negocies con la redacción algo que no depende de ti.
@@ -454,7 +454,7 @@ No hay ninguna fuente verificada sobre las mejores horas de envío a redacciones
 
 1. **Ni el Hospital de Jove ni el SESPA avalan Shiftia.** No se puede sugerir lo contrario ni con la redacción ni con las imágenes. La nota de prensa incluye una frase explícita de deslinde en el boilerplate: no la quites aunque el medio pida acortar. Prohibido: "software usado en el Hospital de Jove", "desarrollado en la sanidad pública asturiana", "con el respaldo de", logos institucionales, fotos con uniforme corporativo o señalética del centro.
 2. **Separar el rol de enfermero del de fundador.** Diego habla en prensa **como fundador de Shiftia**, y menciona su condición de enfermero en activo como origen del producto y como credencial de conocimiento del problema. Nunca como portavoz del centro, del servicio de salud ni de la profesión. Antes de la primera pieza conviene comprobar si el centro exige comunicación previa de actividades empresariales o si hay incompatibilidades aplicables. **[NO CONFIRMADO: comprobar con el servicio de personal del centro y, si procede, con el Colegio de Enfermería de Asturias.]**
-3. **Servicio de Urología del Hospital Universitario Clínico San Cecilio (Granada): pedir autorización por escrito antes de citarlo en prensa.** Que ya figure en la web de Shiftia no equivale a consentimiento para una nota de prensa ni para una entrevista, y un hospital público del SAS tiene su propio gabinete de comunicación. Mensaje sugerido al responsable del servicio: "Vamos a enviar una nota de prensa sobre Shiftia. Nos gustaría poder decir que el Servicio de Urología planifica sus turnos con nosotros, sin más detalle, sin cifras y sin nombres de personas. ¿Nos lo autorizáis o preferís que no os mencionemos? ¿Debemos pedírselo también al gabinete de prensa del hospital?" Si no hay respuesta antes del día 0, **envía la nota sin esa mención**: sustituye por "un servicio de urología de un hospital público" y ajusta los pitches 3.1, 3.2, 3.8 y 3.12.
+3. **un servicio de un hospital público de Granada: pedir autorización por escrito antes de citarlo en prensa.** Que ya figure en la web de Shiftia no equivale a consentimiento para una nota de prensa ni para una entrevista, y un hospital público del SAS tiene su propio gabinete de comunicación. Mensaje sugerido al responsable del servicio: "Vamos a enviar una nota de prensa sobre Shiftia. Nos gustaría poder decir que el Servicio de Urología planifica sus turnos con nosotros, sin más detalle, sin cifras y sin nombres de personas. ¿Nos lo autorizáis o preferís que no os mencionemos? ¿Debemos pedírselo también al gabinete de prensa del hospital?" Si no hay respuesta antes del día 0, **envía la nota sin esa mención**: sustituye por "un servicio de urología de un hospital público" y ajusta los pitches 3.1, 3.2, 3.8 y 3.12.
 4. **Cliente sanitario asturiano confidencial:** no dar pistas que permitan identificarlo (ni ciudad, ni tamaño, ni especialidad). "Servicios sanitarios en Asturias" es el máximo nivel de detalle.
 5. **RGPD.** Nada de datos personales de trabajadores de clientes en materiales de prensa: ni nombres, ni iniciales, ni cuadrantes reales, ni capturas con datos de producción. Todas las capturas y la demo deben usar un entorno de demostración con datos ficticios. Si un medio pide "un caso real con números", solo pueden darse cifras agregadas y anonimizadas y **con autorización escrita del cliente**. Los datos de contacto de los periodistas que recojas también son datos personales: guárdalos en un único fichero de trabajo, con base jurídica de interés legítimo, y bórralos cuando dejen de ser útiles.
 6. **No inventar clientes ni testimonios.** Solo pueden citarse los clientes de la ficha de marca. No existen testimonios con nombre y foto: si un medio los pide, se le ofrece una referencia de hechos sin comillas, o se le pone en contacto con un cliente que haya aceptado hablar.
@@ -506,8 +506,8 @@ Todo lo que sigue está tomado de la investigación cerrada el 07/09/2026. Antes
 ## 8. Checklist antes del día 0
 
 - [ ] Sede oficial decidida y coherente en web, LinkedIn, nota y pitches.
-- [ ] Confirmado si se puede nombrar el Hospital de Jove; si no, texto alternativo aplicado en los 12 pitches y en la nota.
-- [ ] Autorización (o negativa) del Servicio de Urología del San Cecilio, por escrito.
+- [x] Hospital de Jove: no se nombra hasta nuevo aviso (7-9-2026); texto neutro aplicado en los 12 pitches y en la nota.
+- [ ] Autorización (o negativa) el cliente hospitalario de Granada, por escrito.
 - [x] Teléfono sustituido en la nota, en los pitches y en la versión de formulario (663 50 46 47).
 - [ ] Las tres citas aprobadas o reescritas por Diego.
 - [ ] Nota exportada a PDF, con foto y logo en resolución de imprenta.

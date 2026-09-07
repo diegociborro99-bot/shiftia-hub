@@ -30,7 +30,7 @@ Rotación: Personal → Normativa → Producto → Caso (se empieza por Personal
 | 1 | Mar 8 sep 2026 | Personal | De hacer cuadrantes a mano en el hospital a fundar Shiftia | "Hice cuadrantes a mano en un hospital durante años. Por eso monté una empresa de software siendo enfermero." | Foto de Diego con uniforme o en el hospital (sin pacientes ni datos), o foto de una planilla en papel/Excel antigua sin nombres | https://www.shiftia.es/sobre-nosotros |
 | 2 | Mar 15 sep 2026 | Normativa | Descanso mínimo de 12 h entre turnos (art. 34.3 ET) | "Tarde el lunes hasta las 22:00 y mañana el martes a las 8:00. Es el doblete más habitual de España. Y es ilegal." | Imagen sencilla: dos relojes (22:00 → 08:00 = 10 h) con una cruz; o captura de la calculadora de descansos | https://www.shiftia.es/recursos/descanso-minimo-entre-turnos |
 | 3 | Mié 23 sep 2026 | Producto | Vídeo de 30 s: ShiftiaCore genera un cuadrante mensual desde cero | "Esto es un cuadrante mensual completo generándose en segundos. Sin trucos: es la demo pública." | Vídeo/GIF de 30 s (guion en la sección 4), grabado en /demo | https://www.shiftia.es/demo |
-| 4 | Mar 29 sep 2026 | Caso | Servicio de Urología del Hospital Universitario Clínico San Cecilio (Granada) | "Un servicio de un hospital público andaluz planifica sus turnos con un software hecho por un enfermero asturiano." | Captura anonimizada de una planilla mensual (datos de demo) o imagen del hospital solo si el servicio lo autoriza | [PENDIENTE bloque 3] https://www.shiftia.es/cuadrantes-enfermeria-clinicas; si no está publicada, https://www.shiftia.es/sobre-nosotros |
+| 4 | Mar 29 sep 2026 | Caso | un servicio de un hospital público de Granada | "Un servicio de un hospital público andaluz planifica sus turnos con un software hecho por un enfermero asturiano." | Captura anonimizada de una planilla mensual (datos de demo) o imagen del hospital solo si el servicio lo autoriza | [PENDIENTE bloque 3] https://www.shiftia.es/cuadrantes-enfermeria-clinicas; si no está publicada, https://www.shiftia.es/sobre-nosotros |
 | 5 | Mar 6 oct 2026 | Personal | La equidad de noches es un problema de salud y de justicia | "Nadie protesta por hacer noches. Protestan por hacer más noches que la de al lado." | Captura de la calculadora de equidad nocturna con datos de demo; o imagen de una tabla de noches por persona | https://www.shiftia.es/recursos/calculadora-equidad-nocturna (ya publicada); cuando exista, añadir en el mismo comentario /recursos/reparto-equitativo-de-noches |
 | 6 | Mié 14 oct 2026 (el 12 es festivo) | Normativa | Registro horario (art. 34.9 ET) y por qué el cuadrante no es el registro | "El cuadrante dice a qué hora entra cada persona. El registro horario dice a qué hora entró. La Inspección compara los dos." | Imagen de dos columnas "Planificado / Real" con una diferencia marcada | [PENDIENTE bloque 3] https://www.shiftia.es/recursos/registro-horario-residencias; si no está publicada, https://www.shiftia.es/recursos |
 | 7 | Mar 20 oct 2026 | Producto | Gestor de Cobertura IA: una baja a las 7:00, 3 candidatos en menos de 1 s | "Son las 6:52 y te escriben: 'no puedo ir, estoy con fiebre'. Lo que pasa en los siguientes 20 minutos define tu día." | GIF de 10-15 s del gestor de cobertura proponiendo 3 candidatos (datos de demo) | [PENDIENTE bloque 3] https://www.shiftia.es/software-turnos-residencias; si no está publicada, https://www.shiftia.es/#features |
@@ -58,7 +58,7 @@ Convenciones:
 ```text
 Hice cuadrantes a mano en un hospital durante años. Por eso monté una empresa de software siendo enfermero.
 
-Soy enfermero especialista y sigo en activo en el Hospital de Jove, en Gijón. [AJUSTAR: una frase con la unidad y los años en que hacías o ayudabas a hacer el cuadrante]
+Soy enfermero especialista y sigo en activo en la sanidad pública asturiana. [AJUSTAR: una frase con la unidad y los años en que hacías o ayudabas a hacer el cuadrante]
 
 El cuadrante era un Excel. Y detrás del Excel, una libreta: quién debía noches, quién tenía reducción de jornada, quién había cambiado el fin de semana con quién.
 
@@ -86,7 +86,7 @@ Nuestro fundador, Diego Ciborro, es enfermero especialista y sigue en activo en 
 
 De ahí sale lo que hacemos: un software de planificación de turnos que genera el cuadrante mensual en segundos y que no permite un turno que rompa el convenio. Descansos mínimos, máximo de noches, jornadas reducidas, conciliación, restricciones individuales.
 
-Lo que aprendimos en el hospital vale para cualquier equipo con turnos. Hoy planifican con Shiftia desde un servicio del Hospital Universitario Clínico San Cecilio de Granada hasta supermercados en Gran Canaria, hostelería en León o frío industrial en Valencia.
+Lo que aprendimos en el hospital vale para cualquier equipo con turnos. Hoy planifican con Shiftia desde un servicio de un hospital público de Granada hasta supermercados en Gran Canaria, hostelería en León o frío industrial en Valencia.
 
 Somos de Oviedo. Cada semana contaremos aquí algo útil sobre turnos, convenio y equidad. Sin humo.
 
@@ -207,16 +207,16 @@ ShiftiaCore está en los planes Pro, Business y Enterprise. La demo interactiva 
 
 ---
 
-### Semana 4 · Caso · Servicio de Urología del Hospital Universitario Clínico San Cecilio (Granada)
+### Semana 4 · Caso · un servicio de un hospital público de Granada (anonimizado hasta nuevo aviso, decisión 7-9-2026)
 
-Nota para Diego: la ficha solo permite afirmar que "el Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada planifica sus turnos con Shiftia". Todo lo demás (tamaño de plantilla, tiempo antes/después, qué problema pesaba más) hay que pedírselo al servicio por escrito y, si no lo confirman, borrar la frase. Qué pedir: (a) número de profesionales del cuadrante, (b) cuánto tardaban en hacerlo antes y cuánto ahora, (c) qué problema querían resolver (noches, descansos, cambios, bajas), (d) autorización para nombrarles en LinkedIn y si quieren que se les etiquete, (e) si alguien del servicio quiere comentar el post (mejor que una cita entrecomillada, que no está permitida).
+Nota para Diego: hasta nuevo aviso el cliente no se nombra; la única formulación pública es "un servicio de un hospital público de Granada planifica sus turnos con Shiftia". Todo lo demás (tamaño de plantilla, tiempo antes/después, qué problema pesaba más) hay que pedírselo al servicio por escrito y, si no lo confirman, borrar la frase. Qué pedir: (a) número de profesionales del cuadrante, (b) cuánto tardaban en hacerlo antes y cuánto ahora, (c) qué problema querían resolver (noches, descansos, cambios, bajas), (d) autorización para nombrarles en LinkedIn y si quieren que se les etiquete, (e) si alguien del servicio quiere comentar el post (mejor que una cita entrecomillada, que no está permitida).
 
 **Versión perfil personal (Diego)**
 
 ```text
 Un servicio de un hospital público andaluz planifica sus turnos con un software hecho por un enfermero asturiano. Os cuento cómo.
 
-El Servicio de Urología del Hospital Universitario Clínico San Cecilio, en Granada, hace su cuadrante con Shiftia.
+Un servicio de un hospital público de Granada hace su cuadrante con Shiftia.
 
 Para mí es el caso que más significa, porque es sanidad pública, que es de donde vengo y donde sigo trabajando.
 
@@ -238,7 +238,7 @@ Cómo lo aplicamos en enfermería y clínicas, en comentarios.
 **Versión página de empresa (Shiftia)**
 
 ```text
-El Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada planifica sus turnos con Shiftia.
+Un servicio de un hospital público de Granada planifica sus turnos con Shiftia.
 
 Lo contamos con lo que podemos afirmar, sin adornos.
 
@@ -563,7 +563,7 @@ Para RRHH y gerencia de hostelería y retail:
 | Marcador | Dónde | Qué hacer |
 |---|---|---|
 | [AJUSTAR: unidad y años haciendo el cuadrante] | Semana 1, versión personal | Una frase real sobre en qué unidad y durante cuántos años hizo o ayudó a hacer el cuadrante. Si no quiere concretar, borrar la frase. |
-| [DATO REAL: número de profesionales] · [DATO REAL: horas o días por mes] · [DATO REAL: problema principal] | Semana 4 (San Cecilio), ambas versiones | Pedir por escrito al Servicio de Urología: tamaño del cuadrante, tiempo que dedicaban antes y ahora, problema que querían resolver, autorización para nombrar y etiquetar, y si alguien del servicio quiere comentar el post. Sin confirmación escrita, se borran las frases. |
+| [DATO REAL: número de profesionales] · [DATO REAL: horas o días por mes] · [DATO REAL: problema principal] | Semana 4 (hospital de Granada), ambas versiones | Pedir por escrito al Servicio de Urología: tamaño del cuadrante, tiempo que dedicaban antes y ahora, problema que querían resolver, autorización para nombrar y etiquetar, y si alguien del servicio quiere comentar el post. Sin confirmación escrita, se borran las frases. |
 | [DATO REAL: cómo lo hacían antes] · [DATO REAL: problema que más pesaba] | Semana 8 (La Otra Abacería), ambas versiones | Lo mismo con el restaurante: plantilla, método anterior, tiempo, problema, autorización para nombrar y etiquetar. |
 | [CONFIRMAR CON EL SERVICIO qué funciones usan] | Semana 4, ambas versiones | La ficha no dice qué plan tiene el Servicio de Urología ni qué funciones usa (ShiftiaCore, cobertura IA, auditoría). Preguntarlo junto con los otros datos; si no se confirma, dejar el post en "planifica sus turnos con Shiftia" y describir las funciones en general, no como "lo que hace ahí". |
 | [VERIFICAR EN LA DEMO: texto del botón] | Sección 4 (guion) y semana 3 | Sustituir "Generar con ShiftiaCore" por el literal real del botón de la interfaz. |

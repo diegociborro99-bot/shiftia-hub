@@ -114,7 +114,7 @@ Software SaaS de planificación de turnos y cuadrantes con IA para empresas con 
 
 **Guion de 60 segundos para la llamada comercial**
 
-> Shiftia es un software español de planificación de turnos con IA, hecho en Oviedo. Lo dirijo yo, que soy enfermero en activo en la sanidad pública. Genera el cuadrante mensual completo en segundos respetando el convenio —descansos mínimos, máximo de noches, jornadas reducidas, conciliación— y, cuando alguien falta, propone tres candidatos de la propia plantilla en menos de un segundo analizando once criterios; la decisión final siempre la toma una persona. Tarifa plana: 29, 69 o 129 euros al mes según el tamaño del equipo, sin coste por trabajador y sin permanencia. Implantación en 5-7 días laborables. Clientes en sanidad pública (Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada), servicios sanitarios en Asturias, retail (SPAR), frío industrial (NONWATIO) y hostelería (La Otra Abacería). No somos una ETT ni una bolsa de personal: solo planificamos la plantilla interna del cliente.
+> Shiftia es un software español de planificación de turnos con IA, hecho en Oviedo. Lo dirijo yo, que soy enfermero en activo en la sanidad pública. Genera el cuadrante mensual completo en segundos respetando el convenio —descansos mínimos, máximo de noches, jornadas reducidas, conciliación— y, cuando alguien falta, propone tres candidatos de la propia plantilla en menos de un segundo analizando once criterios; la decisión final siempre la toma una persona. Tarifa plana: 29, 69 o 129 euros al mes según el tamaño del equipo, sin coste por trabajador y sin permanencia. Implantación en 5-7 días laborables. Clientes en sanidad pública (un servicio de un hospital público de Granada), servicios sanitarios en Asturias, retail (SPAR), frío industrial (NONWATIO) y hostelería (La Otra Abacería). No somos una ETT ni una bolsa de personal: solo planificamos la plantilla interna del cliente.
 
 Preguntas que hay que hacerles: precio de premium y de PPC por escrito, si la ficha básica aparece en el comparador guiado, en cuántas categorías se puede estar y cuándo se publica.
 
@@ -352,7 +352,7 @@ Desarrollado en **§4** de este documento (categorías, elegibilidad, verificaci
 
 ## 3. Descripción base actualizada (ES y EN, tres longitudes)
 
-Reutilizable en cualquier directorio salvo G2 Digital Markets, que exige texto único (usar §2.2.4). Incluye ya el **Hospital Universitario Clínico San Cecilio – Servicio de Urología (Granada)** entre los clientes y el "creado por un enfermero en activo".
+Reutilizable en cualquier directorio salvo G2 Digital Markets, que exige texto único (usar §2.2.4). Incluye el cliente hospitalario de Granada **sin nombrarlo** (decisión 7-9-2026, hasta nuevo aviso) entre los clientes y el "creado por un enfermero en activo".
 
 ### 3.1 Español
 
@@ -368,7 +368,7 @@ Shiftia es un software español de planificación de turnos con IA, creado por u
 
 **≤ 1.000 caracteres — 992**
 ```
-Shiftia es un software español de planificación de turnos con inteligencia artificial, creado en Oviedo por un enfermero en activo de la sanidad pública. Genera el cuadrante mensual y anual completo en segundos respetando el convenio: descansos mínimos entre turnos, máximo de noches, jornadas reducidas y conciliación. Ante una ausencia, el motor de IA analiza 11 criterios y propone 3 candidatos de la propia plantilla en menos de un segundo; la decisión final siempre es humana. Incluye lector de PDF y Excel con IA, vacaciones y ausencias, equidad nocturna, detector de conflictos, radar de riesgo a 14 días y auditoría exportable. Tarifa plana desde 29 €/mes, sin coste por trabajador y sin permanencia, con implantación en 5-7 días laborables. Lo usan el Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada, servicios sanitarios en Asturias, SPAR Supermercados, NONWATIO y La Otra Abacería. Si funciona en un hospital, funciona en cualquier sector con turnos.
+Shiftia es un software español de planificación de turnos con inteligencia artificial, creado en Oviedo por un enfermero en activo de la sanidad pública. Genera el cuadrante mensual y anual completo en segundos respetando el convenio: descansos mínimos entre turnos, máximo de noches, jornadas reducidas y conciliación. Ante una ausencia, el motor de IA analiza 11 criterios y propone 3 candidatos de la propia plantilla en menos de un segundo; la decisión final siempre es humana. Incluye lector de PDF y Excel con IA, vacaciones y ausencias, equidad nocturna, detector de conflictos, radar de riesgo a 14 días y auditoría exportable. Tarifa plana desde 29 €/mes, sin coste por trabajador y sin permanencia, con implantación en 5-7 días laborables. Lo usan un servicio de un hospital público de Granada, servicios sanitarios en Asturias, SPAR Supermercados, NONWATIO y La Otra Abacería. Si funciona en un hospital, funciona en cualquier sector con turnos.
 ```
 
 ### 3.2 Inglés
@@ -385,14 +385,14 @@ Shiftia is a Spanish AI shift scheduling software built by a nurse who still wor
 
 **≤ 1.000 characters — 976**
 ```
-Shiftia is a Spanish AI-powered shift scheduling and rostering platform, built in Oviedo by a nurse who still works in the public health system. It generates the complete monthly and yearly roster in seconds under the collective labour agreement: minimum rest between shifts, maximum night shifts, reduced working hours and work-life balance rules. When someone is absent, the AI engine scores 11 criteria and suggests 3 candidates from the company's own staff in under a second; the final decision is always human. It also includes an AI reader for PDF and Excel rosters, holiday and absence management, night-shift fairness metrics, a conflict detector, a 14-day risk radar and an exportable audit trail. Flat pricing from €29/month, no per-employee fee, no lock-in, go-live in 5-7 working days. Users include the Urology Department of Hospital Universitario Clínico San Cecilio in Granada, healthcare services in Asturias, SPAR Supermercados, NONWATIO and La Otra Abacería.
+Shiftia is a Spanish AI-powered shift scheduling and rostering platform, built in Oviedo by a nurse who still works in the public health system. It generates the complete monthly and yearly roster in seconds under the collective labour agreement: minimum rest between shifts, maximum night shifts, reduced working hours and work-life balance rules. When someone is absent, the AI engine scores 11 criteria and suggests 3 candidates from the company's own staff in under a second; the final decision is always human. It also includes an AI reader for PDF and Excel rosters, holiday and absence management, night-shift fairness metrics, a conflict detector, a 14-day risk radar and an exportable audit trail. Flat pricing from €29/month, no per-employee fee, no lock-in, go-live in 5-7 working days. Users include a department of a public hospital in Granada, healthcare services in Asturias, SPAR Supermercados, NONWATIO and La Otra Abacería.
 ```
 
 ### 3.3 Reglas al recortar o adaptar
 
 - No decir nunca que Shiftia tiene **fichaje/registro horario, nómina propia o app nativa**. Sí se puede decir: "se integra con nómina (plan Business)" e "integraciones a medida con fichaje (Enterprise)".
 - No llamarse "#1", "líder" ni "el mejor": además de que Capterra lo prohíbe, autocoronarse dispara el efecto rebote (la IA acaba recomendando a un competidor el 43 % de las veces, Ahrefs jul-2026).
-- Del cliente de Granada solo esta formulación: *"el Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada planifica sus turnos con Shiftia"*. Sin nombres de personas, sin citas textuales, sin cifras de ahorro atribuidas a ese cliente. **Y solo con la autorización por escrito del servicio** (mismo requisito y mismo mensaje sugerido que en `prensa-pitches.md` §6.3): una ficha de directorio es tan pública como una nota de prensa.
+- Del cliente de Granada, hasta nuevo aviso, solo esta formulación anónima: *"un servicio de un hospital público de Granada planifica sus turnos con Shiftia"*. Sin nombres de personas, sin citas textuales, sin cifras de ahorro atribuidas a ese cliente. **Y solo con la autorización por escrito del servicio** (mismo requisito y mismo mensaje sugerido que en `prensa-pitches.md` §6.3): una ficha de directorio es tan pública como una nota de prensa.
 - Nada de residencias como cliente. Se puede decir que Shiftia se dirige al sector sociosanitario y que el convenio es configurable; **no** que "se usa en residencias": no hay ninguna entre los clientes de la ficha de marca.
 - Del cliente sanitario asturiano, solo "servicios sanitarios en Asturias" (es confidencial).
 - Cifras permitidas: 3 candidatos en < 1 s, 11 criterios, 5-7 días de implantación, 30 días de garantía, "~18 h al mes" y "~4.800 €/año" **siempre con "~" o "estimado"**. Nada de porcentajes de mejora por cliente.
@@ -480,7 +480,7 @@ Sustituir `[NOMBRE]`, `[TÍTULO]` y `[URL]` por los de la tabla. Enviar desde `i
 
 **Dos comprobaciones antes de pulsar enviar:**
 - El último párrafo enlaza `https://www.shiftia.es/mejores-software-turnos-espana`. Esa página forma parte del Bloque 3 y **a 07/09/2026 no está publicada**. Si en el momento del envío todavía no está en línea, quita ese párrafo entero: enlazar un 404 a un comparador es la forma más rápida de que no te vuelvan a leer.
-- La mención al **Servicio de Urología del Hospital Universitario Clínico San Cecilio (Granada)** exige la misma autorización por escrito que se pide en `prensa-pitches.md` §6.3. Un correo a un comparador es difusión pública igual que una nota de prensa. Sin autorización, sustituir por "un servicio de urología de un hospital público" y no dar el nombre del centro.
+- El cliente de Granada va **anonimizado** («un servicio de un hospital público de Granada») hasta nuevo aviso (decisión 7-9-2026); su nombre solo se restituye con la autorización por escrito que se pide en `prensa-pitches.md` §6.3. Un correo a un comparador es difusión pública igual que una nota de prensa. Sin autorización, sustituir por "un servicio de urología de un hospital público" y no dar el nombre del centro.
 
 ```
 Asunto: Propuesta para vuestra comparativa de software de turnos: falta una opción española con IA
@@ -493,7 +493,7 @@ Os escribo por vuestro artículo "[TÍTULO]" ([URL]): le falta una opción que e
 
 - Precio público y plano: 29 €/mes hasta 15 trabajadores, 69 € hasta 40 y 129 € hasta 100. Sin coste por trabajador, sin permanencia y con garantía de devolución de 30 días.
 - IA aplicada al cuadrante, no al chat: genera el cuadrante mensual completo respetando el convenio (descansos mínimos, máximo de noches, jornadas reducidas, conciliación) y, ante una baja, propone 3 candidatos de la propia plantilla en menos de un segundo analizando 11 criterios. La decisión final siempre es humana.
-- Clientes reales en varios sectores: el Servicio de Urología del Hospital Universitario Clínico San Cecilio de Granada, servicios sanitarios en Asturias, SPAR Supermercados, NONWATIO y La Otra Abacería.
+- Clientes reales en varios sectores: un servicio de un hospital público de Granada, servicios sanitarios en Asturias, SPAR Supermercados, NONWATIO y La Otra Abacería.
 - Implantación en 5-7 días laborables y demo interactiva sin registro ni tarjeta.
 
 Como referencia de datos, nosotros publicamos nuestra propia comparativa con precios verificados y fecha de consulta, competidores incluidos: https://www.shiftia.es/mejores-software-turnos-espana. Y si os viene bien, os doy acceso de prueba, capturas o una demo en directo cuando queráis.
@@ -527,7 +527,7 @@ I am writing about your article "[TITLE]" ([URL]). Shiftia is not listed there, 
 
 - Public flat pricing: €29/month up to 15 employees, €69 up to 40, €129 up to 100. No per-employee fee, no lock-in, 30-day money-back guarantee.
 - Scheduling AI, not a chatbot: it builds the full monthly roster under the collective labour agreement (minimum rest, maximum night shifts, reduced hours, work-life balance) and, when someone is absent, proposes 3 candidates from the company's own staff in under a second, scoring 11 criteria. The final decision is always human.
-- Customers across sectors: the Urology Department of Hospital Universitario Clínico San Cecilio (Granada), healthcare services in Asturias, SPAR Supermercados, NONWATIO and La Otra Abacería.
+- Customers across sectors: a department of a public hospital in Granada, healthcare services in Asturias, SPAR Supermercados, NONWATIO and La Otra Abacería.
 - Go-live in 5-7 working days, interactive demo with no sign-up and no credit card.
 
 We publish our own comparison with verified prices and access dates, competitors included: https://www.shiftia.es/mejores-software-turnos-espana. Happy to provide a test account, screenshots or a live demo.
