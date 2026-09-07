@@ -66,7 +66,7 @@ Regla de uso: **no envíes nada de la sección 2 (no confirmados) sin comprobarl
 
 ## 2. Nota de prensa (lista para enviar)
 
-> Copia desde "TITULAR" hasta el final del boilerplate. Sustituye `[TELÉFONO]` antes de enviar. Extensión (recontada): **712 palabras** de texto redaccional (titular, subtítulo, entradilla, cuerpo y citas) y **962 palabras** contando datos verificables, boilerplate y contacto.
+> Copia desde "TITULAR" hasta el final del boilerplate. El teléfono (663 50 46 47) ya está puesto. Extensión (recontada): **712 palabras** de texto redaccional (titular, subtítulo, entradilla, cuerpo y citas) y **962 palabras** contando datos verificables, boilerplate y contacto.
 
 ---
 
@@ -116,7 +116,7 @@ Shiftia (https://www.shiftia.es) es un software español de planificación de tu
 
 **CONTACTO DE PRENSA**
 Diego Ciborro · Fundador y director de Shiftia
-info@shiftia.es · [TELÉFONO]
+info@shiftia.es · 663 50 46 47
 https://www.shiftia.es
 
 ---
@@ -138,7 +138,7 @@ https://www.shiftia.es
 
 Cada uno lleva asunto y cuerpo de 120-180 palabras. Firma común (ajusta el teléfono):
 
-> Diego Ciborro · Fundador y director de Shiftia · info@shiftia.es · [TELÉFONO] · https://www.shiftia.es
+> Diego Ciborro · Fundador y director de Shiftia · info@shiftia.es · 663 50 46 47 · https://www.shiftia.es
 
 ### 3.1 La Nueva España — `lne.redaccion@epi.es` · ángulo local/económico
 
@@ -406,7 +406,7 @@ Para Dependencia.info, Balance Sociosanitario, Enfermería21/Diario Dicen, ConSa
 >
 > Clientes: un servicio del Hospital Universitario Clínico San Cecilio de Granada, servicios sanitarios en Asturias, SPAR en Gran Canaria, NONWATIO en Valencia y La Otra Abacería en León. Tarifa plana desde 29 €/mes, sin coste por trabajador, sin permanencia.
 >
-> Os puedo enviar nota de prensa, capturas y foto, o hacer una demo. info@shiftia.es · [TELÉFONO]
+> Os puedo enviar nota de prensa, capturas y foto, o hacer una demo. info@shiftia.es · 663 50 46 47
 
 *(993 caracteres recontados, saltos de línea incluidos. Si el formulario admite menos, corta el párrafo de clientes.)*
 
@@ -508,7 +508,7 @@ Todo lo que sigue está tomado de la investigación cerrada el 07/09/2026. Antes
 - [ ] Sede oficial decidida y coherente en web, LinkedIn, nota y pitches.
 - [ ] Confirmado si se puede nombrar el Hospital de Jove; si no, texto alternativo aplicado en los 12 pitches y en la nota.
 - [ ] Autorización (o negativa) del Servicio de Urología del San Cecilio, por escrito.
-- [ ] `[TELÉFONO]` sustituido en la nota, en los pitches y en la versión de formulario.
+- [x] Teléfono sustituido en la nota, en los pitches y en la versión de formulario (663 50 46 47).
 - [ ] Las tres citas aprobadas o reescritas por Diego.
 - [ ] Nota exportada a PDF, con foto y logo en resolución de imprenta.
 - [ ] 3-5 capturas del producto con datos de demostración, sin ningún dato real.

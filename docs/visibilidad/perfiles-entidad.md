@@ -20,7 +20,7 @@ Alta en https://business.google.com. Tipo de negocio: **empresa de servicios sin
 | Categoría principal | **Empresa de software** |
 | Categorías secundarias | Empresa de desarrollo de software · Servicio de informática (no marcar "Consultoría de recursos humanos": Shiftia no presta consultoría) |
 | Dirección | Oviedo, Asturias. Marcar "Presto servicios a clientes en su ubicación" y ocultar la dirección postal. Zona de servicio: **España** |
-| Teléfono | `[TELÉFONO]` |
+| Teléfono | +34 663 50 46 47 |
 | Web | `https://www.shiftia.es` |
 | Enlace de cita/demo | `https://www.shiftia.es/demo` |
 | Horario | `[HORARIO: p. ej. L-V 9:00-18:00]` (Google muestra "Cerrado" fuera de horario; si se prefiere, no poner horario) |
@@ -104,7 +104,7 @@ En Google Business Profile el propietario puede publicar preguntas y responderla
 
 Consejo: subir las capturas desde la demo (`/demo`) con datos ficticios; Google rechaza a veces imágenes con demasiado texto pequeño, así que mejor vistas limpias y con zoom.
 
-**Nota para Diego (GBP):** rellenar `[TELÉFONO]`, `[HORARIO]` y `[AÑO/MES DE FUNDACIÓN]`. Guardar el **enlace corto de reseñas** (Perfil → "Pedir reseñas") y pegarlo en `docs/visibilidad/resenas-mensajes.md` para el paso 1.4. Confirmar los idiomas de atención antes de marcarlos.
+**Nota para Diego (GBP):** rellenar `[HORARIO]` y `[AÑO/MES DE FUNDACIÓN]` (teléfono: +34 663 50 46 47). Guardar el **enlace corto de reseñas** (Perfil → "Pedir reseñas") y pegarlo en `docs/visibilidad/resenas-mensajes.md` para el paso 1.4. Confirmar los idiomas de atención antes de marcarlos.
 
 ---
 
@@ -131,7 +131,7 @@ Alta en https://www.crunchbase.com/add-new (perfil gratuito "Organization"). Se 
 | Website | https://www.shiftia.es |
 | LinkedIn | https://www.linkedin.com/company/shiftia |
 | Contact email | info@shiftia.es |
-| Phone | `[TELÉFONO]` |
+| Phone | +34 663 50 46 47 |
 | Number of employees | `[CONFIRMAR: rango 1-10 / 11-50]` |
 | Business model | B2B, SaaS (subscription, flat monthly/annual pricing) |
 | Markets / Geography served | Spain (primary); interface also available in English, German and French |
@@ -450,7 +450,7 @@ Mientras se toca el fichero, conviene añadir dos propiedades más al Organizati
   "@type": "ContactPoint",
   "contactType": "sales",
   "email": "info@shiftia.es",
-  "telephone": "[TELÉFONO con prefijo +34]",
+  "telephone": "+34 663 50 46 47",
   "availableLanguage": ["es", "en"]
 }
 ```
@@ -465,7 +465,7 @@ Comprobar después en https://validator.schema.org y en la prueba de resultados 
 
 | Marcador | Dónde | Quién lo rellena |
 |---|---|---|
-| `[TELÉFONO]` | GBP, Crunchbase, JSON-LD | Diego |
+| ~~`[TELÉFONO]`~~ | GBP, Crunchbase, JSON-LD | Resuelto: +34 663 50 46 47 (provisional); ya en el JSON-LD de la web |
 | `[HORARIO]` | GBP | Diego |
 | `[AÑO/MES DE FUNDACIÓN]` | GBP, Crunchbase, LinkedIn, Wikidata, JSON-LD | Diego (según escritura de constitución) |
 | `[forma jurídica exacta]` | Crunchbase, Wikidata, JSON-LD | Diego (registro mercantil) |

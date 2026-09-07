@@ -266,7 +266,7 @@ Buscar en la página el nombre del autor o el correo de contacto del medio (pie 
 > Tarifa plana desde 29 €/mes sin coste por trabajador, sin permanencia y con demo sin registro en shiftia.es/demo; lo usan desde un servicio de un hospital público hasta supermercados y hostelería.
 > Si os encaja, os paso capturas, ficha de funciones y acceso a una demo en directo cuando queráis.
 > Gracias por vuestro tiempo y un saludo,
-> Diego Ciborro · Director de Shiftia · [TELÉFONO]
+> Diego Ciborro · Director de Shiftia · 663 50 46 47
 
 Reglas: un solo correo y un recordatorio a los 10 días; no ofrecer pago ni intercambio de enlaces; si el listado es de pago (patrocinado), anotarlo en el tracker y decidir aparte. Apuntar el envío en la pestaña "Prensa" del tracker con sección "Listado/comparativa".
 
@@ -293,7 +293,7 @@ Rellenar la pestaña "Resumen" del tracker no requiere nada: las fórmulas cuent
 
 | Marcador | Dónde | Qué poner |
 |---|---|---|
-| `[TELÉFONO]` | Plantilla de email de la sección 4.1 | Teléfono de contacto de Shiftia (el mismo que en el pitch de prensa). |
+| ~~`[TELÉFONO]`~~ | Plantilla de email de la sección 4.1 | Resuelto: 663 50 46 47 (ya sustituido en la plantilla). |
 | `[NOMBRE]`, `[TÍTULO DEL ARTÍCULO]` | Plantilla 4.1 | Se rellenan en cada envío. |
 | Slugs 7-9 de la lista de la sección 1.7 | Sección 1.7 y pestaña "GSC quick wins" | Confirmar con Highkey Labs los slugs definitivos de las tres guías nuevas de /recursos. |
 | Enlace de reseña de Google y de Capterra | Pestaña "Reseñas" del tracker | Se obtienen como explica `resenas-mensajes.md`, sección 1. |

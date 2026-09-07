@@ -8,7 +8,6 @@ Antes de enviar nada, Diego tiene que sustituir todos los marcadores entre corch
 - `[ENLACE CAPTERRA]`: enlace de "escribir reseña" de la ficha de Shiftia en Capterra (sección 1.2).
 - `[NOMBRE]`: nombre de pila de la persona de contacto en cada cliente.
 - `[DATO REAL: …]`: un hecho concreto de ese cliente que Diego conozca de primera mano. Si no lo hay, se borra la frase entera; nunca se estima ni se redondea al alza.
-- `[TELÉFONO]`: teléfono de contacto de Shiftia para la firma del email.
 
 Regla de oro: solo se pide la reseña a clientes que usan Shiftia de verdad y con los que hay relación directa. Nada de reseñas de amigos, familiares o empleados propios.
 
@@ -98,7 +97,7 @@ Contexto para personalizar (supuestos genéricos del sector, no datos del client
 > Muchas gracias por el tiempo y por la confianza.
 >
 > Diego Ciborro
-> Director de Shiftia · shiftia.es · [TELÉFONO]
+> Director de Shiftia · shiftia.es · 663 50 46 47
 
 Nota para Diego: SPAR es el cliente con más marca reconocible. Si la reseña llega, pide permiso por escrito (sección 3.4) para citar "SPAR Supermercados (Gran Canaria)" en la web con un bloque de referencia real, sin comillas ni nombre de persona.
 
@@ -142,7 +141,7 @@ Contexto para personalizar (supuestos genéricos del sector, no datos del client
 > Gracias por vuestro tiempo.
 >
 > Diego Ciborro
-> Director de Shiftia · shiftia.es · [TELÉFONO]
+> Director de Shiftia · shiftia.es · 663 50 46 47
 
 ### 2.3 La Otra Abacería (León, hostelería)
 
@@ -182,7 +181,7 @@ Contexto para personalizar (supuestos genéricos del sector, no datos del client
 > Gracias de verdad por la confianza.
 >
 > Diego Ciborro
-> Director de Shiftia · shiftia.es · [TELÉFONO]
+> Director de Shiftia · shiftia.es · 663 50 46 47
 
 ### 2.4 Cliente sanitario de Asturias (confidencial)
 
@@ -223,7 +222,7 @@ Sugerencia de canal: Capterra, porque la reseña se firma con perfil profesional
 > Gracias por el tiempo.
 >
 > Diego Ciborro
-> Director de Shiftia · shiftia.es · [TELÉFONO]
+> Director de Shiftia · shiftia.es · 663 50 46 47
 
 Nota para Diego: si la persona elige la opción 3, guarda la autorización por escrito (sección 3.4) y publica siempre sin nombre de empresa. Aunque en privado lo diga, no se nombra al cliente en ningún sitio público.
 
@@ -267,7 +266,7 @@ Contexto: sanidad pública andaluza (SAS). Un servicio hospitalario no suele pod
 >
 > Diego Ciborro
 > Director de Shiftia · Enfermero especialista, Hospital de Jove (Gijón)
-> shiftia.es · [TELÉFONO]
+> shiftia.es · 663 50 46 47
 
 Nota para Diego: en este cliente el tono importa más que la rapidez. No mandar recordatorio por WhatsApp; el recordatorio (sección 3.2) va por email y a los 7 días, no a los 5. Si eligen la carta de referencia, prepara el borrador en papel con membrete de Shiftia y deja que lo reescriban entero si quieren.
 
@@ -375,7 +374,7 @@ Se envía cuando el cliente responde que prefiere no publicar en Google/Capterra
 > Gracias.
 >
 > Diego Ciborro
-> Director de Shiftia · shiftia.es · [TELÉFONO]
+> Director de Shiftia · shiftia.es · 663 50 46 47
 
 Nota para Diego: el testimonio se publica en la web como "referencia real" (hechos: empresa, sector, localidad, qué usan) y no con comillas atribuidas a una persona, tal como marca la ficha de marca. Solo si el cliente escribe él mismo las frases y autoriza por escrito publicarlas se pueden citar entrecomilladas, atribuidas a la empresa ("SPAR Supermercados, Gran Canaria"), nunca a una persona con nombre. Mientras no exista esa autorización escrita, siempre sin comillas.
 
@@ -422,7 +421,6 @@ Enlaces a guardar aquí cuando estén listos:
 
 - `[ENLACE GOOGLE]` y `[ENLACE CAPTERRA]`: sección 1.
 - `[NOMBRE]` y `[NOMBRE Y CARGO]`: persona de contacto real en cada cliente.
-- `[TELÉFONO]`: teléfono de Shiftia para la firma.
 - `[DATO REAL: …]`: un hecho que Diego conozca de primera mano de ese cliente (por ejemplo, cuánto tardaban antes en cerrar el cuadrante). Si no lo conoce con certeza, borra la frase; no se sugiere ninguna cifra al cliente.
 - `[EMPRESA]`, `[SECTOR]`, `[PROVINCIA]`: en el mensaje de testimonio alternativo.
 - `[FECHA]`: en la tabla de seguimiento.

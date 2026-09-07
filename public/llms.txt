@@ -106,3 +106,9 @@ Toda contratación se cierra por llamada previa: se elige el plan, se acuerda fo
 - ¿Es una ETT o aporta personal? No. Shiftia solo planifica la plantilla interna del propio cliente; no aporta trabajadores ni es un marketplace de personal.
 - ¿Para qué sectores sirve? Cualquier organización con trabajo a turnos: hospitales, clínicas, residencias, fábricas, seguridad privada y hostelería.
 - ¿Hay garantía? Sí, devolución de 30 días.
+
+## Contacto
+- Email: info@shiftia.es
+- Teléfono: +34 663 50 46 47
+- Demo interactiva sin registro: https://www.shiftia.es/demo
+- Auditoría gratuita del cuadrante: https://www.shiftia.es/recursos/auditoria-cuadrante

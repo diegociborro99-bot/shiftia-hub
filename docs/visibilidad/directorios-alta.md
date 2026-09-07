@@ -6,7 +6,7 @@ Desarrolla los **pasos 1.1, 1.2 y 1.3** del plan de visibilidad (SoftDoit, Capte
 
 **Convenciones**
 - Todo lo que sigue sobre plataformas de terceros está **verificado el 7 de septiembre de 2026** salvo cuando aparece la marca `[NO CONFIRMADO: …]`, que indica exactamente qué comprobar y dónde.
-- Dos tipos de marcador más: `[EN MAYÚSCULAS]` (por ejemplo `[TELÉFONO]`, `[AÑO DE FUNDACIÓN]`) son datos que Diego tiene que rellenar antes de enviar nada; `[CONFIRMAR: …]` son decisiones o comprobaciones internas pendientes. Ninguna ficha se envía con un marcador sin resolver.
+- Dos tipos de marcador más: `[EN MAYÚSCULAS]` (por ejemplo `[AÑO DE FUNDACIÓN]`) son datos que Diego tiene que rellenar antes de enviar nada; `[CONFIRMAR: …]` son decisiones o comprobaciones internas pendientes. Ninguna ficha se envía con un marcador sin resolver.
 - Los perfiles de entidad (Google Business Profile, Crunchbase, LinkedIn, Product Hunt, Wikidata) están desarrollados en **`docs/visibilidad/perfiles-entidad.md`**; aquí no se duplican textos, se enlazan.
 - Los mensajes para pedir reseñas a clientes (paso 1.4) están en **`docs/visibilidad/resenas-mensajes.md`**.
 
@@ -54,7 +54,7 @@ Prepararlo una vez y reutilizarlo. Sin esto, la mitad de los formularios se qued
 | Elemento | Especificación | Estado |
 |---|---|---|
 | Email corporativo | `info@shiftia.es` (o `[EMAIL PERSONAL @shiftia.es]`). Varias plataformas rechazan Gmail/Outlook | `[CONFIRMAR que se reciben correos]` |
-| Teléfono | `[TELÉFONO]` — obligatorio en SoftDoit y GBP | Pendiente |
+| Teléfono | +34 663 50 46 47 (provisional) — obligatorio en SoftDoit y GBP | Listo |
 | Entidad legal | Highkey Labs Software Solutions, NIF 32894332P (según `shiftia.es/privacidad`) | `[CONFIRMAR forma jurídica y nombre registral exacto]` |
 | Dirección | Oviedo (Asturias) | `[CONFIRMAR dirección postal completa]` |
 | Logo | PNG cuadrado con fondo transparente. Referencia secundaria: 300×300 px `[NO CONFIRMADO: el tamaño exacto no consta en las guidelines oficiales de G2 Digital Markets; subir 512×512 y dejar que la plataforma reescale]` | `public/icon-512.png` |
@@ -86,7 +86,7 @@ Prepararlo una vez y reutilizarlo. Sin esto, la mitad de los formularios se qued
 | Empresa* — "¿Cómo se llama la empresa o solución?" | `Shiftia` |
 | Nombre del contacto principal* | `Diego Ciborro [APELLIDO(S) COMPLETOS]` |
 | Email* — "Email profesional (de la empresa)" | `info@shiftia.es` |
-| Teléfono* | `[TELÉFONO]` |
+| Teléfono* | +34 663 50 46 47 |
 | Web de la empresa* | `https://www.shiftia.es` |
 | País de la empresa* | `España` |
 | Tipo de empresa* (selector) | Elegir la opción de fabricante/desarrollador de software. `[NO CONFIRMADO: las opciones exactas del selector no se pudieron leer; si aparece "Fabricante de software" o similar, esa es la correcta — no marcar "Implementador/Partner"]` |
@@ -499,7 +499,7 @@ Os escribo por vuestro artículo "[TÍTULO]" ([URL]): le falta una opción que e
 Como referencia de datos, nosotros publicamos nuestra propia comparativa con precios verificados y fecha de consulta, competidores incluidos: https://www.shiftia.es/mejores-software-turnos-espana. Y si os viene bien, os doy acceso de prueba, capturas o una demo en directo cuando queráis.
 
 Un saludo,
-Diego Ciborro · Fundador de Shiftia · [EMAIL] · [TELÉFONO]
+Diego Ciborro · Fundador de Shiftia · info@shiftia.es · 663 50 46 47
 ```
 
 Variante para el nº 15 (MASMOVIL, artículo de 2022), sustituyendo el segundo párrafo:
@@ -569,7 +569,7 @@ Diego Ciborro · Founder, Shiftia · [EMAIL] · [PHONE]
 
 **Preparación**
 - [ ] Email corporativo `info@shiftia.es` operativo y revisado a diario
-- [ ] `[TELÉFONO]` decidido y publicable
+- [x] Teléfono decidido y publicable: 663 50 46 47 (provisional, 7 sep 2026)
 - [ ] Forma jurídica y nombre registral exactos confirmados
 - [ ] Dirección postal de Oviedo confirmada (y decidido si se muestra u oculta)
 - [ ] Logo PNG cuadrado con margen (≥512 px, fondo transparente)
