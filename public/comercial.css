@@ -79,7 +79,7 @@ blockquote{margin:28px 0;padding:18px 22px;background:rgba(15,122,109,.06);borde
 .map-row .dolor{background:var(--bg-subtle);border-right:1px solid var(--border)}
 .map-row .tag{display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;color:var(--text3)}
 .map-row .sol .tag{color:var(--accent)}
-.map-row h4{font-size:1rem;font-weight:700;color:var(--text1);margin-bottom:6px;letter-spacing:-0.01em}
+.map-row h3,.map-row h4{font-size:1rem;font-weight:700;color:var(--text1);margin:0 0 6px;letter-spacing:-0.01em}
 .map-row p{margin:0;font-size:0.93rem;line-height:1.55}
 .map-row .feat{display:inline-block;margin-top:10px;font-size:0.78rem;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:999px}
 
