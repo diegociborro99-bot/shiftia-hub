@@ -134,6 +134,7 @@ const PRETTY_HTML_ROUTES = {
   '/docs':     'docs.html',
   '/demo':     'demo.html',
   '/sobre-nosotros': 'sobre-nosotros.html',
+  '/status':   'status.html', // enlazado desde llms.txt; sin esta entrada devolvía 404
   '/recursos': 'recursos/index.html',
   '/recursos/descanso-minimo-entre-turnos': 'recursos/descanso-minimo-entre-turnos.html',
   '/recursos/calculadora-equidad-nocturna': 'recursos/calculadora-equidad-nocturna.html',
@@ -2429,10 +2430,21 @@ app.get('/docs', (req, res) => {
 });
 
 // Serve legal pages
-// Sitemap dinámico — siempre con lastmod = hoy. Sustituye al sitemap.xml estático
-// (que servirá express.static como fallback si por algún motivo este endpoint cae).
+// Sitemap dinámico. lastmod = fecha real de modificación del HTML que sirve cada
+// ruta (no "hoy"): un lastmod idéntico en todas las URL le dice a Google y a Bing
+// que nada cambia nunca y desincentiva el re-rastreo. Sustituye al sitemap.xml
+// estático (que servirá express.static si por algún motivo este endpoint cae).
 app.get('/sitemap.xml', (req, res) => {
   const today = new Date().toISOString().slice(0, 10);
+  const lastmodOf = (loc) => {
+    const file = PRETTY_HTML_ROUTES[loc];
+    if (!file) return today;
+    try {
+      return fs.statSync(path.join(PUBLIC_DIR, file)).mtime.toISOString().slice(0, 10);
+    } catch (_) {
+      return today;
+    }
+  };
   const urls = [
     { loc: '/',                                          priority: '1.0', changefreq: 'weekly'  },
     { loc: '/demo',                                      priority: '0.9', changefreq: 'monthly' },
@@ -2453,6 +2465,7 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: '/mejores-software-turnos-espana',            priority: '0.9', changefreq: 'monthly' },
     { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
     { loc: '/sobre-nosotros',                            priority: '0.6', changefreq: 'monthly' },
+    { loc: '/status',                                    priority: '0.3', changefreq: 'weekly'  },
     { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
     { loc: '/terminos',                                  priority: '0.3', changefreq: 'yearly'  },
     { loc: '/cookies',                                   priority: '0.3', changefreq: 'yearly'  }
@@ -2461,7 +2474,7 @@ app.get('/sitemap.xml', (req, res) => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url>
     <loc>https://${CANONICAL_HOST}${u.loc}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastmodOf(u.loc)}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('\n')}
