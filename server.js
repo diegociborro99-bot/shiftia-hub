@@ -275,6 +275,8 @@ app.use(express.static(path.join(__dirname, 'public'), {
       'design-system.css',
       'landing.css', // versionado con ?v= en el <link> de index.html
       'comercial.css', // páginas de sector y comparativas, versionado con ?v=
+      'demo-app.css', // «Funciones en acción» (portada), versionado con ?v=
+      'demo-app.js',
       'favicon.svg',
       'apple-touch-icon.svg',
       'product-mockup.svg'

@@ -295,8 +295,9 @@
 <link rel="stylesheet" href="/v36.css?v=363">
 <!-- Preload the main bundle so it starts fetching during HTML parse, not after -->
 <link rel="preload" as="script" href="/v36.min.js?v=382" fetchpriority="high">
-<link rel="preload" as="style" href="/landing.css?v=6">
-<link rel="stylesheet" href="/landing.css?v=6">
+<link rel="preload" as="style" href="/landing.css?v=7">
+<link rel="stylesheet" href="/landing.css?v=7">
+<link rel="stylesheet" href="/demo-app.css?v=1">
 </head>
 <body>
 <a href="#main" class="skip-link">Saltar al contenido principal</a>
@@ -608,811 +609,79 @@
   </svg>
 </div>
 
-<!-- DEMOS: funciones en acción (auto-gen + equidad nocturna), anonimizadas -->
+<!-- DEMOS: funciones en acción — ventana de producto (demo-app.css / demo-app.js) -->
 <section class="fdemo-section" id="demo-funciones" aria-labelledby="fdemoTitle">
   <div class="container centered">
     <div class="section-eyebrow reveal">Funciones en acción</div>
     <h2 class="section-h2 reveal" id="fdemoTitle">No te lo contamos: <em>pruébalo</em></h2>
-    <p class="section-p reveal">Cinco funciones reales del producto, jugables aquí mismo con datos de ejemplo.</p>
+    <p class="section-p reveal">La interfaz real de Shiftia con datos de ejemplo: elige tu sector y el tamaño del equipo, y juega con cinco funciones tal y como las verás en tu cuenta.</p>
   </div>
-  <div class="container">
-
-    <div class="demo-perso reveal">
-      <div class="dp-group">
-        <span class="dp-label">Tu sector</span>
-        <div class="dp-chips" id="demoSector">
-          <button type="button" class="dp-chip active" data-s="sanidad">Hospital / Residencia</button>
-          <button type="button" class="dp-chip" data-s="retail">Retail</button>
-          <button type="button" class="dp-chip" data-s="hosteleria">Hostelería</button>
+  <div class="sx-wrap">
+    <div class="sx-perso reveal">
+      <div class="sx-perso-g">
+        <span class="sx-perso-l">Tu sector</span>
+        <div class="sx-chips" id="sxSector" role="group" aria-label="Sector">
+          <button type="button" class="sx-chip is-on" data-s="sanidad" aria-pressed="true">Hospital / Residencia</button>
+          <button type="button" class="sx-chip" data-s="retail" aria-pressed="false">Retail</button>
+          <button type="button" class="sx-chip" data-s="hosteleria" aria-pressed="false">Hostelería</button>
         </div>
       </div>
-      <div class="dp-group">
-        <span class="dp-label">Tu equipo</span>
-        <div class="dp-stepper">
-          <button type="button" id="demoTeamMinus" aria-label="Menos personas">−</button>
-          <span id="demoTeamVal">6</span>
-          <button type="button" id="demoTeamPlus" aria-label="Más personas">+</button>
-          <span class="dp-unit">personas</span>
-        </div>
+      <div class="sx-perso-g">
+        <span class="sx-perso-l">Tu equipo</span>
+        <div class="sx-step"><button type="button" id="sxTeamMinus" aria-label="Menos personas">−</button><output id="sxTeamVal" aria-live="polite">6</output><button type="button" id="sxTeamPlus" aria-label="Más personas">+</button></div>
+        <span class="sx-perso-unit">personas</span>
       </div>
     </div>
 
-    <div class="demo-tabs" id="demoTabs" role="tablist">
-      <button class="demo-tab active" data-tab="0" type="button">Cubrir una baja</button>
-      <button class="demo-tab" data-tab="1" type="button">Auto-generar</button>
-      <button class="demo-tab" data-tab="2" type="button">Equidad nocturna</button>
-      <button class="demo-tab" data-tab="3" type="button">Lector PDF/Excel</button>
-      <button class="demo-tab" data-tab="4" type="button">Conflictos</button>
+    <div class="sx-tabs reveal" role="tablist" aria-label="Funciones del producto">
+      <button type="button" class="sx-tab" role="tab" id="sxTab0" aria-controls="sxView0" aria-selected="true"><span class="sx-tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></span><span><b>Cubrir una baja</b><small>Candidatos legales en menos de 1 s</small></span></button>
+      <button type="button" class="sx-tab" role="tab" id="sxTab1" aria-controls="sxView1" aria-selected="false"><span class="sx-tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg></span><span><b>Auto-generar el mes</b><small>Un cuadrante completo desde una frase</small></span></button>
+      <button type="button" class="sx-tab" role="tab" id="sxTab2" aria-controls="sxView2" aria-selected="false"><span class="sx-tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M5 21h14"/><path d="m3 9 4-6 4 6H3zM13 9l4-6 4 6h-8z"/></svg></span><span><b>Equidad de noches</b><small>Reparto justo, sin romper descansos</small></span></button>
+      <button type="button" class="sx-tab" role="tab" id="sxTab3" aria-controls="sxView3" aria-selected="false"><span class="sx-tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><span><b>Lector PDF / Excel</b><small>Tu plantilla importada sin teclear</small></span></button>
+      <button type="button" class="sx-tab" role="tab" id="sxTab4" aria-controls="sxView4" aria-selected="false"><span class="sx-tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span><b>Conflictos</b><small>Detecta y propone el arreglo exacto</small></span></button>
     </div>
 
-    <div class="demo-panel active" data-panel="0">
-      <div class="cdemo-card reveal">
-        <div class="cdemo-head">
-          <span class="cdemo-tag">Cobertura inteligente</span>
-          <span class="cdemo-model">modelo local · <span id="cdemoUpdates">3</span> correcciones aprendidas</span>
+    <div class="sx-stage reveal">
+      <div class="sx-win">
+        <div class="sx-browser" aria-hidden="true">
+          <span class="sx-dots"><span></span><span></span><span></span></span>
+          <span class="sx-url"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span id="sxUrl">app.shiftia.es</span></span>
+          <span class="sx-browser-r"></span>
         </div>
-        <div class="cdemo-gap" id="cdemoGap">
-          <div class="cdemo-gap-info">
-            <strong>Sábado</strong>
-            <span class="cdemo-chip bad" id="cdemoChip">Tarde · falta 1</span>
-            <span class="cdemo-gap-sub">Marina L. ha causado baja — falta 1 persona para el mínimo del turno</span>
+        <div class="sx-app">
+          <div class="sx-top">
+            <span class="sx-brand"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><defs><linearGradient id="sxG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sxG)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sxG)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sxG)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Sh<em>iftia</em></span></span>
+            <span class="sx-org" id="sxOrg">Residencia Los Robles · Planta 2</span>
+            <nav class="sx-nav" aria-label="Vistas de la app">
+              <button type="button" data-nav="dia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Día</button>
+              <button type="button" data-nav="semana"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01"/></svg>Semana</button>
+              <button type="button" data-nav="mes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M7 14h2M11 14h2M15 14h2M7 18h2M11 18h2"/></svg>Mes</button>
+              <button type="button" data-nav="cobertura"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>Cobertura</button>
+              <button type="button" data-nav="equipo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>Equipo</button>
+              <button type="button" data-nav="conflictos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>Conflictos</button>
+              <button type="button" data-nav="importar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V6M8 10l4-4 4 4M5 19h14"/></svg>Importar</button>
+            </nav>
+            <span class="sx-tright" aria-hidden="true"><span class="sx-ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></span><span class="sx-ib grad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg></span><span class="sx-ib"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></span>
           </div>
-          <button class="cdemo-btn" id="cdemoSuggest" type="button">Sugerir con IA</button>
-        </div>
-        <div class="cdemo-analyzing" id="cdemoAnalyzing" hidden>
-          <div class="cdemo-bar"><span></span></div>
-          <span class="cdemo-analyzing-text">Analizando 11 criterios entre tu plantilla… (objetivos, subjetivos e historial)</span>
-        </div>
-        <div class="cdemo-candidates" id="cdemoCandidates" hidden></div>
-        <div class="cdemo-applied" id="cdemoApplied" hidden></div>
-        <div class="cdemo-foot">
-          <span>Objetivos (carga, convenio) + subjetivos (valoraciones) + historial.</span>
-          <button class="cdemo-reset" id="cdemoReset" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg> Probar otra vez</button>
+          <div class="sx-body">
+            <div class="sx-view is-on" data-view="0" role="tabpanel" id="sxView0" aria-labelledby="sxTab0"></div>
+            <div class="sx-view" data-view="1" role="tabpanel" id="sxView1" aria-labelledby="sxTab1"></div>
+            <div class="sx-view" data-view="2" role="tabpanel" id="sxView2" aria-labelledby="sxTab2"></div>
+            <div class="sx-view" data-view="3" role="tabpanel" id="sxView3" aria-labelledby="sxTab3"></div>
+            <div class="sx-view" data-view="4" role="tabpanel" id="sxView4" aria-labelledby="sxTab4"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="demo-panel" data-panel="1">
-
-    <!-- FLAGSHIP: Auto-generar el cuadrante con IA (cuadrante en vivo) -->
-    <div class="cgen2 reveal">
-      <div class="cgen2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg></span>
-        <div>
-          <h3>Auto-generar el cuadrante con IA</h3>
-          <p>Describe en una frase cómo quieres el mes y la IA construye el cuadrante completo: respeta el convenio, equilibra cargas y resuelve los huecos en segundos. Tú solo revisas y publicas.</p>
-        </div>
-      </div>
-      <div class="cgen2-body">
-        <div class="cgen2-left">
-          <span class="cgen2-label">Instrucción en lenguaje natural</span>
-          <div class="cgen2-input" id="cgenInput">Cuadrante semanal equilibrado, respetando convenio</div>
-          <div class="cgen2-examples">
-            <button class="cgen-ex" type="button">Refuerza las tardes del finde</button>
-            <button class="cgen-ex" type="button">Cierra la tarde del sábado</button>
-            <button class="cgen-ex" type="button">Máximo 5 días seguidos</button>
-            <button class="cgen-ex" type="button">Respeta las reducciones de jornada</button>
-          </div>
-          <button class="fdemo-btn cgen2-go" id="cgenGo" type="button">Generar cuadrante</button>
-          <div class="cgen2-metrics" id="cgenMetrics" hidden>
-            <div class="cgen2-ring" id="cgenRing"><div class="cgen2-ring-in"><strong id="cgenConf">0%</strong><span>confianza</span></div></div>
-            <div class="cgen2-kpis">
-              <div class="cgen2-kpi"><strong id="cgenAssigned">0</strong><span>turnos asignados</span></div>
-              <div class="cgen2-kpi"><strong id="cgenGaps">0</strong><span>huecos resueltos</span></div>
-              <div class="cgen2-kpi ok"><strong>0</strong><span>conflictos de convenio</span></div>
-            </div>
-          </div>
-          <div class="cgen2-bars" id="cgenBars" hidden>
-            <div class="cgen-bar" style="--w:97%"><label>Cobertura mínima</label><i></i></div>
-            <div class="cgen-bar" style="--w:91%"><label>Equidad de carga</label><i></i></div>
-            <div class="cgen-bar" style="--w:100%"><label>Descansos legales</label><i></i></div>
-            <div class="cgen-bar" style="--w:84%"><label>Preferencias de turno</label><i></i></div>
-          </div>
-        </div>
-        <div class="cgen2-right">
-          <div class="cgen2-grid-head">
-            <span class="cgen2-gh-title">Cuadrante semanal · 5 personas</span>
-            <span class="cgen2-legend"><i class="lg M"></i>Mañana <i class="lg T"></i>Tarde <i class="lg D"></i>Libre</span>
-          </div>
-          <div class="cgen2-grid" id="cgenGrid"></div>
-          <div class="cgen2-valid" id="cgenValid" hidden></div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-    <div class="demo-panel" data-panel="2">
-    <!-- Equidad nocturna: redistribución de planilla -->
-    <div class="ceq2 reveal">
-      <div class="ceq2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
-        <div>
-          <h3>Equidad nocturna: redistribución automática</h3>
-          <p>Cuando alguien acumula demasiadas noches, Shiftia las redistribuye entre quienes rotan —respetando exenciones (jornada reducida, lactancia), descansos y cobertura— hasta igualar el reparto.</p>
-        </div>
-      </div>
-      <div class="ceq2-body">
-        <div class="ceq2-left">
-          <span class="cgen2-label">Reparto de noches · últimas 2 semanas (14 noches)</span>
-          <div class="ceq2-grid" id="ceqGrid"></div>
-          <div class="ceq2-legend"><span class="ceq2-lg-on"></span>Noche asignada <span class="ceq2-lg-off"></span>Libre <span class="ceq2-lg-ex"></span>Exenta por convenio</div>
-        </div>
-        <div class="ceq2-right">
-          <span class="cgen2-label">Noches por persona</span>
-          <div class="ceq2-totals" id="ceqTotals"></div>
-          <div class="ceq2-metrics3" id="ceqMetrics">
-            <div class="ceq2-m"><span class="ceq2-m-l">Desviación típica</span><span class="ceq2-m-vals"><b id="ceqDev">2,2</b><span class="ceq2-arrow" id="ceqDevA" hidden>→</span><i id="ceqDevT" hidden></i></span></div>
-            <div class="ceq2-m"><span class="ceq2-m-l">Diferencia máx-mín</span><span class="ceq2-m-vals"><b id="ceqRange">6</b><span class="ceq2-arrow" id="ceqRangeA" hidden>→</span><i id="ceqRangeT" hidden></i></span></div>
-            <div class="ceq2-m"><span class="ceq2-m-l">Índice de equidad <span class="ceq2-m-h" title="Índice de Jain: 100% = reparto perfectamente igual">(Jain)</span></span><span class="ceq2-m-vals"><b id="ceqIdx">53%</b><span class="ceq2-arrow" id="ceqIdxA" hidden>→</span><i id="ceqIdxT" hidden></i></span></div>
-          </div>
-          <button class="fdemo-btn ceq2-go" id="ceqGo" type="button">Redistribuir noches con IA</button>
-          <div class="ceq2-valid" id="ceqValid" hidden></div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-    <div class="demo-panel" data-panel="3">
-    <!-- Lector PDF/Excel con IA -->
-    <div class="cimp2 reveal">
-      <div class="cimp2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
-        <div>
-          <h3>Lector de PDF/Excel con IA</h3>
-          <p>Sube tu cuadrante o tu lista de personal en PDF/Excel y la IA detecta las columnas, valida los DNIs y rellena la app — sin teclear nada.</p>
-        </div>
-      </div>
-      <div class="cimp2-body">
-        <div class="cimp2-left">
-          <button class="cimp-drop" id="cimpDrop" type="button">
-            <span class="cimp-up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V6M8 10l4-4 4 4M5 19h14"/></svg></span>
-            <span class="cimp-drop-txt">Arrastra tu <strong>PDF/Excel</strong> o <u>usa un ejemplo</u></span>
-            <span class="cimp2-file" id="cimpFile" hidden>plantilla_personal.xlsx · 6 filas</span>
-          </button>
-          <div class="cimp2-steps" id="cimpSteps" hidden>
-            <div class="cimp2-step" data-s="0"><span class="cimp2-dot"></span>Leyendo documento y detectando separador</div>
-            <div class="cimp2-step" data-s="1"><span class="cimp2-dot"></span>Identificando columnas: Nombre · DNI · Grupo · Rol</div>
-            <div class="cimp2-step" data-s="2"><span class="cimp2-dot"></span>Infiriendo roles y reglas de convenio</div>
-            <div class="cimp2-step" data-s="3"><span class="cimp2-dot"></span>Validando DNIs y descartando duplicados</div>
-          </div>
-          <div class="cimp2-cols" id="cimpCols" hidden>
-            <span class="cimp2-cols-l">Columnas detectadas</span>
-            <div class="cimp2-coltags" id="cimpColtags"></div>
-          </div>
-          <div class="cimp2-summary" id="cimpDone" hidden></div>
-        </div>
-        <div class="cimp2-right">
-          <div class="cimp2-placeholder" id="cimpPh">La tabla detectada aparecerá aquí</div>
-          <div class="cimp2-table" id="cimpTable" hidden>
-            <div class="cimp2-thead"><span>Nombre</span><span>DNI</span><span>Grupo</span><span>Rol</span></div>
-            <div class="cimp2-rows" id="cimpRows"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-
-    <div class="demo-panel" data-panel="4">
-    <!-- Detección y resolución de conflictos -->
-    <div class="cconf2 reveal">
-      <div class="cconf2-head">
-        <span class="cgen2-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
-        <div>
-          <h3>Detección y resolución de conflictos</h3>
-          <p>Shiftia vigila el cuadrante en tiempo real: detecta choques de convenio y propone el arreglo exacto, que tú apruebas con un clic.</p>
-        </div>
-      </div>
-      <div class="cconf2-body">
-        <div class="cconf2-left">
-          <span class="cgen2-label">Conflictos detectados <span class="cconf-count" id="cconfCount">4</span></span>
-          <div class="cconf2-issues" id="cconfIssues"></div>
-          <button class="fdemo-btn" id="cconfGo" type="button">Resolver con IA</button>
-          <div class="cconf2-cost" id="cconfCost" hidden></div>
-          <div class="cconf2-valid" id="cconfDone" hidden><span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <span id="cconfDoneTxt">Conflictos resueltos.</span></div>
-        </div>
-        <div class="cconf2-right">
-          <span class="cgen2-label">Cuadrante de la semana</span>
-          <div class="ccw" id="cconfWeek"></div>
-          <div class="ccw-legend"><i class="ccw-lg m"></i>Mañana <i class="ccw-lg e" id="cconfLgE"></i><span id="cconfLgEtxt">Tarde</span> <i class="ccw-lg d"></i>Libre</div>
-          <div class="cconf2-prop" id="cconfProp" hidden>
-            <div class="cconf-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M3 12h6M15 12h6M5.6 5.6l4.2 4.2M14.2 14.2l4.2 4.2M18.4 5.6l-4.2 4.2M9.8 14.2l-4.2 4.2"/></svg> Propuesta de resolución <span class="cconf-newzero" id="cconfNewZero">0 conflictos nuevos</span></div>
-            <div id="cconfChanges"></div>
-            <button class="fdemo-btn" id="cconfApply" type="button">Aplicar cambios</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-    <p class="cdemo-note reveal">Datos de ejemplo. En tu Shiftia trabaja sobre tu plantilla y tu convenio reales.</p>
-    <div class="demo-cta reveal">
+    <p class="sx-foot reveal">Datos de ejemplo y nombres ficticios. En tu cuenta, Shiftia trabaja sobre tu plantilla y tu convenio reales.</p>
+    <div class="sx-cta reveal">
       <span>¿Lo quieres funcionando con tu plantilla y tu convenio?</span>
-      <a href="#contact" class="fdemo-btn demo-cta-btn">Pedir mi demo</a>
+      <a href="#contact">Pedir mi demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </div>
 </section>
-<script>
-(function fdemoInit(){
-  var REFRESH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg>';
-  var OKICON='<svg class="cgv-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-  // ── Config de personalización (sector + tamaño de equipo) ──
-  var SECTORS={
-    sanidad:{label:'Hospital / Residencia', roles:['Enfermería','Auxiliar','Celador','T.C.A.E.'], night:true, min:6},
-    retail:{label:'Retail', roles:['Cajera','Reponedor','Encargada','Mozo'], night:false, min:5},
-    hosteleria:{label:'Hostelería', roles:['Camarero/a','Cocina','Office','Barra'], night:false, min:5}
-  };
-  var POOL=['Ana G.','Marcos R.','Lucía P.','Iván T.','Sara M.','Diego N.','Marta V.','Pablo R.'];
-  var CFG={ sector:'sanidad', team:6 };
-  window.__demoCfg=CFG; window.__SECTORS=SECTORS;
-  // ── Auto-generar cuadrante: generador real que respeta la instrucción ──
-  var go=document.getElementById('cgenGo'), gridEl=document.getElementById('cgenGrid'),
-      metrics=document.getElementById('cgenMetrics'), bars=document.getElementById('cgenBars'),
-      ring=document.getElementById('cgenRing'), conf=document.getElementById('cgenConf'),
-      gaps=document.getElementById('cgenGaps'), assigned=document.getElementById('cgenAssigned'),
-      input=document.getElementById('cgenInput'), valid=document.getElementById('cgenValid');
-  if(go && gridEl){
-    var days=['L','M','X','J','V','S','D'];
-    var legendEl=document.querySelector('.cgen2-legend');
-    function people(){ return POOL.slice(0, CFG.team); }
-    function parseRules(txt){
-      txt=(txt||'').toLowerCase();
-      var night=SECTORS[CFG.sector].night;
-      var r={minM:[2,2,2,2,2,2,2],minT:[2,2,2,2,2,2,2],minN:[0,0,0,0,0,0,0],maxConsec:6,partTime:null,notes:[]};
-      if(night){ for(var d=0;d<7;d++) r.minN[d]=1; r.notes.push('cobertura de noche 24/7'); }
-      if(txt.indexOf('finde')>=0){ r.minT[5]=3; r.minT[6]=3; r.notes.push('tardes de finde reforzadas (3)'); }
-      if(txt.indexOf('sábado')>=0||txt.indexOf('sabado')>=0){ r.minT[5]=0; r.notes.push('tarde del sábado cerrada'); }
-      if(txt.indexOf('5 día')>=0||txt.indexOf('5 dia')>=0||txt.indexOf('máximo 5')>=0||txt.indexOf('maximo 5')>=0){ r.maxConsec=5; r.notes.push('máximo 5 días seguidos'); }
-      if(txt.indexOf('reduc')>=0){ r.partTime={idx:2,max:4}; r.notes.push('jornada reducida (≤4 días)'); }
-      return r;
-    }
-    function gen(r){
-      var N=CFG.team, best=null;
-      for(var att=0; att<500; att++){
-        var g=[], streak=[], work=[], ok=true;
-        for(var p=0;p<N;p++){ g[p]=['D','D','D','D','D','D','D']; streak[p]=0; work[p]=0; }
-        for(var d=0;d<7;d++){
-          var need=r.minM[d]+r.minT[d]+r.minN[d], avail=[];
-          for(var p=0;p<N;p++){
-            if(streak[p]>=r.maxConsec) continue;
-            if(r.partTime && r.partTime.idx===p && work[p]>=r.partTime.max) continue;
-            avail.push(p);
-          }
-          if(avail.length<need){ ok=false; break; }
-          avail.sort(function(a,b){ return (work[a]-work[b])+(Math.random()-0.5); });
-          var workers=avail.slice(0,need);
-          workers.sort(function(){ return Math.random()-0.5; });
-          for(var k=0;k<workers.length;k++){ g[workers[k]][d]=(k<r.minM[d])?'M':((k<r.minM[d]+r.minT[d])?'T':'N'); }
-          for(var p=0;p<N;p++){ if(g[p][d]!=='D'){ streak[p]++; work[p]++; } else streak[p]=0; }
-        }
-        if(!ok) continue;
-        var mn=99,mx=0,bad=false;
-        for(var p=0;p<N;p++){
-          if(r.partTime && r.partTime.idx===p) continue;
-          if(work[p]<2) bad=true;
-          if(work[p]<mn)mn=work[p]; if(work[p]>mx)mx=work[p];
-        }
-        if(bad) continue;
-        if(!best) best=g;
-        if(mx-mn<=2) return g;
-      }
-      return best;
-    }
-    function maxRun(g){ var m=0; g.forEach(function(row){ var c=0; row.forEach(function(x){ if(x!=='D'){ c++; if(c>m)m=c; } else c=0; }); }); return m; }
-    function buildEmpty(r){
-      var ppl=people();
-      gridEl.style.gridTemplateColumns='auto repeat(7,minmax(0,1fr)) auto';
-      var h='<div class="cg-cell cg-corner"></div>';
-      for(var d=0;d<7;d++){ var cl=(r&&r.minT[d]===0); h+='<div class="cg-cell cg-day'+(cl?' cg-closed':'')+'">'+days[d]+'</div>'; }
-      h+='<div class="cg-cell cg-toth">Días</div>';
-      ppl.forEach(function(p,row){
-        var tag=(r&&r.partTime&&r.partTime.idx===row)?'<span class="cg-redtag">red.</span>':'';
-        h+='<div class="cg-cell cg-name">'+p+tag+'</div>';
-        for(var c=0;c<7;c++){ h+='<div class="cg-cell cg-slot" data-r="'+row+'" data-c="'+c+'"></div>'; }
-        h+='<div class="cg-cell cg-tot" data-tr="'+row+'"><span class="cg-totd">0</span><span class="cg-tothrs">0h</span></div>';
-      });
-      h+='<div class="cg-cell cg-covh">Cob.</div>';
-      for(var d=0;d<7;d++){ h+='<div class="cg-cell cg-cov" data-cc="'+d+'">·</div>'; }
-      h+='<div class="cg-cell"></div>';
-      gridEl.innerHTML=h;
-      if(legendEl) legendEl.innerHTML='<i class="lg M"></i>Mañana <i class="lg T"></i>Tarde '+(SECTORS[CFG.sector].night?'<i class="lg N"></i>Noche ':'')+'<i class="lg D"></i>Libre';
-    }
-    function freshGrid(){ buildEmpty(parseRules('')); if(metrics) metrics.hidden=true; if(bars){ bars.hidden=true; bars.classList.remove('show'); } if(valid) valid.hidden=true; go.disabled=false; go.textContent='Generar cuadrante'; }
-    freshGrid();
-    window.__autogenReset=freshGrid;
-    Array.prototype.forEach.call(document.querySelectorAll('.cgen-ex'),function(b){
-      b.addEventListener('click',function(){ input.textContent=b.textContent; });
-    });
-    var running=false, variant=0;
-    go.addEventListener('click',function(){
-      if(running) return;
-      var r=parseRules(input.textContent);
-      var g=gen(r); if(!g) return; variant++;
-      buildEmpty(r);
-      running=true; go.disabled=true; go.textContent='Generando…';
-      metrics.hidden=false; bars.hidden=false; bars.classList.remove('show'); if(valid) valid.hidden=true;
-      var night=SECTORS[CFG.sector].night, N=CFG.team;
-      var slots=gridEl.querySelectorAll('.cg-slot'), i=0, total=slots.length, wk=0;
-      var tot=[]; for(var z=0;z<N;z++) tot[z]=0;
-      var covM=[0,0,0,0,0,0,0], covT=[0,0,0,0,0,0,0], covN=[0,0,0,0,0,0,0];
-      var tConf=93+Math.floor(Math.random()*6), tGaps=8+Math.floor(Math.random()*7);
-      var t=setInterval(function(){
-        if(i<total){
-          var s=slots[i], rr=+s.getAttribute('data-r'), cc=+s.getAttribute('data-c'), code=g[rr][cc];
-          s.className='cg-cell cg-slot fill code-'+code; s.textContent=(code==='D'?'L':code);
-          if(code==='M') covM[cc]++; else if(code==='T') covT[cc]++; else if(code==='N') covN[cc]++;
-          if(code!=='D'){ wk++; tot[rr]++; var tc=gridEl.querySelector('.cg-tot[data-tr="'+rr+'"]'); if(tc) tc.innerHTML='<span class="cg-totd">'+tot[rr]+'</span><span class="cg-tothrs">'+(tot[rr]*8)+'h</span>'; }
-          var ce=gridEl.querySelector('.cg-cov[data-cc="'+cc+'"]');
-          if(ce){ var closed=r.minT[cc]===0; ce.textContent=covM[cc]+'·'+(closed?'—':covT[cc])+(night?'·'+covN[cc]:''); if(closed) ce.classList.add('cg-cov-closed'); }
-          i++;
-          var pr=i/total;
-          conf.textContent=Math.round(tConf*pr)+'%';
-          assigned.textContent=wk;
-          gaps.textContent=Math.round(tGaps*pr);
-          ring.style.background='conic-gradient(var(--ds-accent,#0f7a6d) '+(tConf*pr*3.6)+'deg, var(--ds-border,#e8e6df) 0deg)';
-        } else {
-          clearInterval(t); bars.classList.add('show'); running=false;
-          var mr=maxRun(g), hi=(r.maxConsec<6);
-          if(hi){
-            var bL=0,bR=-1,bS=0;
-            for(var pp=0;pp<N;pp++){ var run=0,st=0; for(var dd=0;dd<7;dd++){ if(g[pp][dd]!=='D'){ if(run===0)st=dd; run++; if(run>bL){bL=run;bR=pp;bS=st;} } else run=0; } }
-            for(var dd2=bS; dd2<bS+bL; dd2++){ var rc=gridEl.querySelector('.cg-slot[data-r="'+bR+'"][data-c="'+dd2+'"]'); if(rc) rc.classList.add('cg-run'); }
-          }
-          if(valid){ valid.hidden=false;
-            valid.innerHTML=OKICON+' Variante '+variant+' · convenio respetado: máx. '+mr+' días seguidos (límite '+r.maxConsec+')'+(hi?' — racha más larga resaltada':'')+' · cobertura mínima cumplida'+(r.notes.length?' · '+r.notes.join(' · '):'')+'.';
-          }
-          go.disabled=false; go.innerHTML=REFRESH+' Generar otra variante';
-        }
-      },42);
-    });
-  }
-  // ── Equidad nocturna/festivos: redistribución con exenciones (sector + equipo) ──
-  var eqGrid=document.getElementById('ceqGrid'), eqTotals=document.getElementById('ceqTotals'),
-      eqGo=document.getElementById('ceqGo'), eqDev=document.getElementById('ceqDev'),
-      eqRange=document.getElementById('ceqRange'), eqIdx=document.getElementById('ceqIdx'),
-      eqDevT=document.getElementById('ceqDevT'), eqRangeT=document.getElementById('ceqRangeT'),
-      eqIdxT=document.getElementById('ceqIdxT'), eqDevA=document.getElementById('ceqDevA'),
-      eqRangeA=document.getElementById('ceqRangeA'), eqIdxA=document.getElementById('ceqIdxA'),
-      eqValid=document.getElementById('ceqValid');
-  if(eqGrid && eqGo){
-    var EN=14;
-    function nightWord(cap){ var w=(SECTORS[CFG.sector]&&SECTORS[CFG.sector].night)?'noches':'festivos'; return cap?(w.charAt(0).toUpperCase()+w.slice(1)):w; }
-    function eqPeople(){ return POOL.slice(0, CFG.team); }
-    function nUse(){ return Math.max(2, CFG.team-1); } // personas que rotan (la última está exenta)
-    function genInitial(n){ var o=[], heavy=Math.max(6,Math.round(EN*0.5)); for(var i=0;i<heavy;i++)o.push(0); var p=1; for(var i=heavy;i<EN;i++){ o.push(p); p++; if(p>=n)p=1; } return o; }
-    function genBalanced(n){ var o=[]; for(var i=0;i<EN;i++)o.push(i%n); return o; }
-    function counts(o,n){ var c=[]; for(var i=0;i<n;i++)c[i]=0; o.forEach(function(x){ if(x<n)c[x]++; }); return c; }
-    function stdv(c){ var m=c.reduce(function(a,b){return a+b;},0)/c.length; var v=c.reduce(function(a,b){return a+(b-m)*(b-m);},0)/c.length; return Math.sqrt(v); }
-    function jain(c){ var s=c.reduce(function(a,b){return a+b;},0), s2=c.reduce(function(a,b){return a+b*b;},0); return s2?(s*s)/(c.length*s2):1; }
-    function metricsOf(o){ var n=nUse(), c=counts(o,n); return { std:stdv(c), range:(Math.max.apply(null,c)-Math.min.apply(null,c)), idx:Math.round(jain(c)*100) }; }
-    function fmt1(x){ return x.toFixed(1).replace('.',','); }
-    function tween(from,to,dur,cb){ var t0=null; function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/dur); cb(from+(to-from)*p); if(p<1)requestAnimationFrame(step); else cb(to); } requestAnimationFrame(step); }
-    function buildGrid(){
-      var ppl=eqPeople(), ex=ppl.length-1;
-      eqGrid.style.gridTemplateColumns='auto repeat('+EN+',minmax(0,1fr))';
-      var h='';
-      ppl.forEach(function(p,r){
-        var exTag=(r===ex)?'<span class="ceq2-extag">'+(SECTORS[CFG.sector]&&SECTORS[CFG.sector].night?'reducción':'turno fijo')+'</span>':'';
-        h+='<div class="ceq2-name'+(r===ex?' ex':'')+'">'+p+exTag+'</div>';
-        for(var n=0;n<EN;n++){ h+='<div class="ceq2-cell'+(r===ex?' ex':'')+'" data-r="'+r+'" data-n="'+n+'"></div>'; }
-      });
-      eqGrid.innerHTML=h;
-    }
-    function applyDist(o, animated){
-      Array.prototype.forEach.call(eqGrid.querySelectorAll('.ceq2-cell'),function(cell){
-        if(cell.classList.contains('ex')){ cell.classList.remove('on'); return; }
-        var r=+cell.getAttribute('data-r'), n=+cell.getAttribute('data-n');
-        cell.style.transitionDelay = animated ? (n*26)+'ms' : '0ms';
-        cell.classList.toggle('on', o[n]===r);
-      });
-    }
-    function renderTotals(o){
-      var ppl=eqPeople(), ex=ppl.length-1, c=counts(o, ppl.length), mx=Math.max.apply(null,c)||1;
-      eqTotals.innerHTML=ppl.map(function(p,r){
-        var isEx=(r===ex);
-        return '<div class="ceq2-trow'+(isEx?' ex':'')+'"><span class="ceq2-tname">'+p+'</span><span class="ceq2-tbar"><i style="width:'+Math.round((c[r]||0)/mx*100)+'%"></i></span><span class="ceq2-tval">'+(isEx?'—':c[r])+'</span></div>';
-      }).join('');
-    }
-    function updateTotals(o){
-      var ppl=eqPeople(), c=counts(o, ppl.length), mx=Math.max.apply(null,c)||1;
-      var rows=eqTotals.querySelectorAll('.ceq2-trow');
-      Array.prototype.forEach.call(rows,function(row,r){
-        if(row.classList.contains('ex')) return;
-        var bar=row.querySelector('.ceq2-tbar i'); if(bar) bar.style.width=Math.round((c[r]||0)/mx*100)+'%';
-        var val=row.querySelector('.ceq2-tval'); if(val) val.textContent=c[r];
-      });
-    }
-    function eqLabels(){
-      var W=nightWord(false), Wc=nightWord(true);
-      var h3=document.querySelector('.ceq2-head h3'); if(h3) h3.textContent='Equidad de '+W+': redistribución automática';
-      var lblL=document.querySelector('.ceq2-left .cgen2-label'); if(lblL) lblL.textContent='Reparto de '+W+' · últimas 2 semanas (14 '+W+')';
-      var lblR=document.querySelector('.ceq2-right .cgen2-label'); if(lblR) lblR.textContent=Wc+' por persona';
-      var leg=document.querySelector('.ceq2-legend'); if(leg) leg.innerHTML='<span class="ceq2-lg-on"></span>'+Wc.slice(0,-1)+' asignad'+(W==='noches'?'a':'o')+' <span class="ceq2-lg-off"></span>Libre <span class="ceq2-lg-ex"></span>Exenta por convenio';
-    }
-    var eqState='init';
-    function eqReset(){
-      eqState='init'; buildGrid(); eqLabels();
-      var o=genInitial(nUse());
-      applyDist(o,false); renderTotals(o);
-      var m=metricsOf(o);
-      eqDev.textContent=fmt1(m.std); eqRange.textContent=m.range; eqIdx.textContent=m.idx+'%';
-      [eqDevA,eqRangeA,eqIdxA,eqDevT,eqRangeT,eqIdxT].forEach(function(e){ if(e)e.hidden=true; });
-      [eqDev,eqRange,eqIdx].forEach(function(e){ if(e)e.classList.remove('bad'); });
-      eqGo.disabled=false; eqGo.innerHTML='Redistribuir '+nightWord(false)+' con IA';
-      if(eqValid) eqValid.hidden=true;
-    }
-    eqReset();
-    window.__equityReset=eqReset;
-    eqGo.addEventListener('click',function(){
-      if(eqState==='done'){ eqReset(); return; }
-      var n=nUse(), before=metricsOf(genInitial(n)), after=metricsOf(genBalanced(n)), ob=genBalanced(n);
-      eqGo.disabled=true; eqGo.textContent='Redistribuyendo…';
-      [eqDev,eqRange,eqIdx].forEach(function(e){ if(e)e.classList.add('bad'); });
-      applyDist(ob,true); updateTotals(ob);
-      [eqDevA,eqRangeA,eqIdxA,eqDevT,eqRangeT,eqIdxT].forEach(function(e){ if(e)e.hidden=false; });
-      tween(before.std, after.std, 800, function(v){ eqDevT.textContent=fmt1(v); });
-      tween(before.range, after.range, 800, function(v){ eqRangeT.textContent=Math.round(v); });
-      tween(before.idx, after.idx, 800, function(v){ eqIdxT.textContent=Math.round(v)+'%'; });
-      setTimeout(function(){
-        eqState='done'; eqGo.disabled=false; eqGo.innerHTML=REFRESH+' Ver desequilibrio inicial';
-        if(eqValid){ eqValid.hidden=false; eqValid.innerHTML=OKICON+' '+nightWord(true)+' equilibradas · índice de equidad '+after.idx+'% · exención respetada · cobertura y descansos intactos.'; }
-      }, 950);
-    });
-  }
-
-  // ── Lector PDF/Excel: detección de columnas + inferencia de rol/reglas + validación de DNI ──
-  var drop=document.getElementById('cimpDrop'), impFile=document.getElementById('cimpFile'),
-      impSteps=document.getElementById('cimpSteps'), impTable=document.getElementById('cimpTable'),
-      impRows=document.getElementById('cimpRows'), impDone=document.getElementById('cimpDone'),
-      impPh=document.getElementById('cimpPh'), impCols=document.getElementById('cimpCols'),
-      impColtags=document.getElementById('cimpColtags');
-  if(drop){
-    var CHK='<svg class="cimp2-chk ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-    var WARN='<svg class="cimp2-chk warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>';
-    function roleArr(){ return (SECTORS[CFG.sector]||{}).roles||['Rol A','Rol B','Rol C','Rol D']; }
-    function impSample(){
-      var R=roleArr();
-      return [
-        {name:'Ana G.',    dni:'····0001A', grp:'1', role:R[0],       inferred:false, st:'ok'},
-        {name:'Marcos R.', dni:'····0002B', grp:'2', role:R[0],       inferred:false, st:'ok'},
-        {name:'Lucía P.',  dni:'····0003C', grp:'1', role:R[2],       inferred:true,  rule:'reducción', st:'ok'},
-        {name:'Iván T.',   dni:'',          grp:'1', role:R[1],       inferred:false, st:'nodni'},
-        {name:'Sara M.',   dni:'····0002B', grp:'2', role:R[3]||R[1], inferred:true,  st:'dup'},
-        {name:'Diego N.',  dni:'····0006F', grp:'1', role:R[2],       inferred:true,  st:'ok'}
-      ];
-    }
-    var COLS=[['Nombre',99,false],['DNI',96,false],['Grupo',93,false],['Rol',87,true]];
-    var impBusy=false;
-    drop.addEventListener('click',function(){
-      if(impBusy) return; impBusy=true;
-      var sample=impSample();
-      impFile.hidden=false; drop.classList.add('loading');
-      impSteps.hidden=false; impDone.hidden=true; impTable.hidden=true; if(impPh) impPh.hidden=true; impRows.innerHTML='';
-      if(impCols) impCols.hidden=true;
-      var steps=impSteps.querySelectorAll('.cimp2-step');
-      Array.prototype.forEach.call(steps,function(s){ s.className='cimp2-step'; });
-      var si=0;
-      var st=setInterval(function(){
-        if(si>0){ steps[si-1].classList.remove('active'); steps[si-1].classList.add('done'); }
-        if(si===2 && impCols && impColtags){
-          impColtags.innerHTML=COLS.map(function(c){ return '<span class="cimp2-coltag"><b>'+c[0]+'</b><i'+(c[2]?' class="inf"':'')+'>'+c[1]+'%'+(c[2]?' · inferido':'')+'</i></span>'; }).join('');
-          impCols.hidden=false;
-        }
-        if(si<steps.length){ steps[si].classList.add('active'); si++; }
-        else {
-          clearInterval(st); impTable.hidden=false;
-          var i=0, dup=0, nodni=0, inferred=0;
-          var t=setInterval(function(){
-            if(i>=sample.length){
-              clearInterval(t);
-              impDone.innerHTML='<span class="cdemo-check">'+CHK+'</span> <strong>'+(sample.length-dup)+'</strong> listos · <strong>'+dup+'</strong> duplicado descartado · <strong>'+nodni+'</strong> sin DNI (aviso) · <strong>'+inferred+'</strong> roles inferidos';
-              impDone.hidden=false; drop.classList.remove('loading'); impBusy=false; return;
-            }
-            var r=sample[i];
-            if(r.st==='dup') dup++; else if(r.st==='nodni') nodni++;
-            if(r.inferred && r.st!=='dup') inferred++;
-            var el=document.createElement('div'); el.className='cimp2-row'+(r.st==='dup'?' dup':'');
-            var dniCell = r.st==='dup'
-              ? '<span class="cimp2-c dni">'+r.dni+' '+WARN+'<span class="cimp2-tag warn">duplicado</span></span>'
-              : (r.st==='nodni'
-                 ? '<span class="cimp2-c dni"><span class="cimp2-tag warn">sin DNI</span></span>'
-                 : '<span class="cimp2-c dni">'+r.dni+' '+CHK+'</span>');
-            var roleCell='<span class="cimp2-c rolecell"><span class="cimp2-role">'+r.role+'</span>'+(r.inferred?'<span class="cimp2-tag inf">inferido</span>':'')+(r.rule?'<span class="cimp2-tag rule">'+r.rule+'</span>':'')+'</span>';
-            el.innerHTML='<span class="cimp2-c name">'+r.name+'</span>'+dniCell+'<span class="cimp2-c grp">'+r.grp+'</span>'+roleCell;
-            impRows.appendChild(el);
-            requestAnimationFrame(function(){ el.classList.add('show'); });
-            i++;
-          },170);
-        }
-      },430);
-    });
-  }
-
-  // ── Conflictos: detección multi-tipo + resolución calculada (sector + equipo) ──
-  var cGo=document.getElementById('cconfGo'), cApply=document.getElementById('cconfApply'),
-      cDone=document.getElementById('cconfDone'), cDoneTxt=document.getElementById('cconfDoneTxt'),
-      cProp=document.getElementById('cconfProp'), cWeek=document.getElementById('cconfWeek'),
-      cIssues=document.getElementById('cconfIssues'), cChanges=document.getElementById('cconfChanges'),
-      cCount=document.getElementById('cconfCount'), cCost=document.getElementById('cconfCost');
-  if(cGo && cWeek){
-    var DSH=['L','M','X','J','V','S','D'], DLONG=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-    var MINM=2, MINE=1, RESP=[2,3];
-    var BASE0=[['M','M','M','M','E','M','M'],['E','E','E','E','D','D','M'],['M','M','M','M','M','D','D'],['M','D','M','D','M','M','D'],['D','M','D','M','D','M','E']];
-    var WEIGHT={turnaround:100,consec:20,cov:100,noresp:60};
-    var grid, names, roles;
-    function clone(g){ return g.map(function(r){ return r.slice(); }); }
-    function sectorRoles(){ var s=CFG.sector; if(s==='sanidad') return ['Enfermería','Enfermería','Supervisora','Coord. enfermería','Auxiliar']; if(s==='hosteleria') return ['Camarero/a','Cocina','Jefe/a de sala','2º de sala','Barra']; return ['Cajera','Reponedor','Encargada','2ª responsable','Mozo']; }
-    function isNight(){ return !!(SECTORS[CFG.sector]&&SECTORS[CFG.sector].night); }
-    function evCode(){ return isNight()?'N':'T'; }
-    function evWord(cap){ var w=isNight()?'noche':'tarde'; return cap?(w.charAt(0).toUpperCase()+w.slice(1)):w; }
-    function disp(c){ return c==='M'?'M':(c==='E'?evCode():'L'); }
-    function codeLabel(c){ return c==='M'?'Mañana':(c==='E'?evWord(true):'Descanso'); }
-    function codePill(c){ return c==='M'?'m':(c==='E'?(isNight()?'n':'t'):'d'); }
-    function maxRun(row){ var m=0,c=0; row.forEach(function(x){ if(x!=='D'){ c++; if(c>m)m=c; } else c=0; }); return m; }
-    function validate(g){
-      var iss=[];
-      g.forEach(function(row,p){
-        for(var d=0;d<6;d++){ if(row[d]==='E'&&row[d+1]==='M') iss.push({k:'turnaround',p:p,d:d}); }
-        if(maxRun(row)>6) iss.push({k:'consec',p:p});
-      });
-      for(var d=0;d<7;d++){
-        var cm=0,ce=0,respM=false;
-        for(var p=0;p<g.length;p++){ if(g[p][d]==='M'){ cm++; if(RESP.indexOf(p)>=0) respM=true; } if(g[p][d]==='E') ce++; }
-        if(cm<MINM) iss.push({k:'cov',d:d,sh:'M'});
-        if(ce<MINE) iss.push({k:'cov',d:d,sh:'E'});
-        if(cm>0&&!respM) iss.push({k:'noresp',d:d});
-      }
-      return iss;
-    }
-    function costOf(iss){ return iss.reduce(function(a,i){ return a+(WEIGHT[i.k]||0); },0); }
-    function canM(g,q,d){ return g[q][d]==='D'&&(d===0||g[q][d-1]!=='E'); }
-    function canE(g,q,d){ return g[q][d]==='D'&&(d===6||g[q][d+1]!=='M'); }
-    function resolve(g){
-      var ch=[], gg=clone(g);
-      function mv(p,d,to){ ch.push({who:p,d:d,from:gg[p][d],to:to}); gg[p][d]=to; }
-      validate(gg).filter(function(i){return i.k==='consec';}).forEach(function(it){ var p=it.p,day=3; for(var q=0;q<gg.length;q++){ if(q!==p&&canM(gg,q,day)){ mv(q,day,gg[p][day]); mv(p,day,'D'); break; } } });
-      validate(gg).filter(function(i){return i.k==='turnaround';}).forEach(function(it){ var p=it.p,day=it.d+1; for(var q=0;q<gg.length;q++){ if(q!==p&&canM(gg,q,day)){ mv(p,day,'D'); mv(q,day,'M'); break; } } });
-      validate(gg).filter(function(i){return i.k==='cov'&&i.sh==='E';}).forEach(function(it){ var done=false; for(var q=0;q<gg.length;q++){ if(RESP.indexOf(q)<0&&canE(gg,q,it.d)){ mv(q,it.d,'E'); done=true; break; } } if(!done){ for(var q=0;q<gg.length;q++){ if(canE(gg,q,it.d)){ mv(q,it.d,'E'); break; } } } });
-      validate(gg).filter(function(i){return i.k==='cov'&&i.sh==='M';}).forEach(function(it){ for(var q=0;q<gg.length;q++){ if(canM(gg,q,it.d)){ mv(q,it.d,'M'); break; } } });
-      validate(gg).filter(function(i){return i.k==='noresp';}).forEach(function(it){ for(var ri=0;ri<RESP.length;ri++){ var q=RESP[ri]; if(canM(gg,q,it.d)){ mv(q,it.d,'M'); break; } } });
-      return {grid:gg, changes:ch};
-    }
-    function issueText(it){
-      if(it.k==='turnaround') return {sev:'high',sevTxt:'Crítico',html:'<strong>'+names[it.p]+'</strong> encadena '+evWord(false)+' ('+DLONG[it.d]+') → mañana ('+DLONG[it.d+1]+'): descanso inferior a 12 h <em>(Art. 34.3 ET)</em>.'};
-      if(it.k==='consec') return {sev:'high',sevTxt:'Crítico',html:'<strong>'+names[it.p]+'</strong> encadena <strong>7 días seguidos</strong> (máximo de convenio: 6).'};
-      if(it.k==='cov') return {sev:'mid',sevTxt:'Aviso',html:DLONG[it.d]+' '+(it.sh==='E'?evWord(false):'mañana')+': <strong>1 persona</strong> por debajo del mínimo de cobertura.'};
-      if(it.k==='noresp') return {sev:'high',sevTxt:'Crítico',html:DLONG[it.d]+' mañana: turno <strong>sin '+roles[2]+'</strong> de guardia.'};
-      return {sev:'mid',sevTxt:'Aviso',html:'Incidencia.'};
-    }
-    function renderIssues(iss, resolved){
-      cIssues.innerHTML=iss.map(function(it){
-        var t=issueText(it);
-        return '<div class="cconf2-issue'+(resolved?' resolved':'')+'"><span class="cconf2-sev '+(resolved?'ok':t.sev)+'">'+(resolved?'OK':t.sevTxt)+'</span> <span>'+t.html+'</span></div>';
-      }).join('');
-      if(cCount){ cCount.textContent=resolved?'0':iss.length; cCount.classList.toggle('zero', resolved); }
-    }
-    function cellMeta(iss){
-      // marca celdas implicadas en conflictos
-      var bad={};
-      iss.forEach(function(it){
-        if(it.k==='turnaround'){ bad[it.p+'-'+it.d]=1; bad[it.p+'-'+(it.d+1)]=1; }
-        if(it.k==='consec'){ for(var d=0;d<7;d++) if(grid[it.p][d]!=='D') bad[it.p+'-'+d]='run'; }
-      });
-      return bad;
-    }
-    function renderWeek(bad, changed){
-      bad=bad||{}; changed=changed||{};
-      cWeek.style.gridTemplateColumns='minmax(96px,auto) repeat(7,minmax(0,1fr))';
-      var h='<div class="ccw-corner"></div>';
-      for(var d=0;d<7;d++) h+='<div class="ccw-dh">'+DSH[d]+'</div>';
-      grid.forEach(function(row,p){
-        var resp=RESP.indexOf(p)>=0;
-        h+='<div class="ccw-name"><span class="ccw-nm">'+names[p]+'</span><span class="ccw-role'+(resp?' resp':'')+'">'+roles[p]+'</span></div>';
-        for(var d=0;d<7;d++){
-          var code=row[d], cls='ccw-cell code-'+(code==='E'?evCode():code);
-          var key=p+'-'+d;
-          if(bad[key]==='run') cls+=' run'; else if(bad[key]) cls+=' bad';
-          if(changed[key]) cls+=' target';
-          h+='<div class="'+cls+'">'+disp(code)+'</div>';
-        }
-      });
-      cWeek.innerHTML=h;
-    }
-    function changeRow(c){
-      return '<div class="cconf-change"><span class="cconf-who">'+names[c.who]+'</span><span class="cconf-when">'+DLONG[c.d]+'</span><span class="cconf-flow"><i class="cconf-pill '+codePill(c.from)+'">'+codeLabel(c.from)+'</i><span class="cconf-arrow">→</span><i class="cconf-pill '+codePill(c.to)+'">'+codeLabel(c.to)+'</i></span></div>';
-    }
-    var sol=null;
-    function cReset(){
-      grid=clone(BASE0); names=POOL.slice(0,5); roles=sectorRoles(); sol=null;
-      var lgE=document.getElementById('cconfLgE'), lgEt=document.getElementById('cconfLgEtxt');
-      if(lgE) lgE.className='ccw-lg '+(isNight()?'n':'e'); if(lgEt) lgEt.textContent=evWord(true);
-      var iss=validate(grid);
-      renderIssues(iss,false); renderWeek(cellMeta(iss),{});
-      cProp.hidden=true; cDone.hidden=true; if(cCost) cCost.hidden=true;
-      cGo.hidden=false; cGo.disabled=false; cGo.textContent='Resolver con IA';
-    }
-    cReset();
-    window.__conflictReset=cReset;
-    cGo.addEventListener('click',function(){
-      if(sol) return;
-      cGo.disabled=true; cGo.textContent='Analizando convenio…';
-      var iss=validate(grid); sol=resolve(grid);
-      var changed={}; sol.changes.forEach(function(c){ changed[c.who+'-'+c.d]=1; });
-      setTimeout(function(){
-        renderWeek(cellMeta(iss), changed);
-        cChanges.innerHTML=sol.changes.map(changeRow).join('');
-        cProp.hidden=false; cGo.hidden=true;
-      },420);
-    });
-    cApply.addEventListener('click',function(){
-      if(!sol) return;
-      grid=sol.grid;
-      var after=validate(grid), before=costOf(validate(BASE0));
-      renderWeek({}, {});
-      renderIssues(validate(BASE0), true);
-      cProp.hidden=true;
-      if(cCost){ cCost.hidden=false; cCost.innerHTML='<span class="cconf-cost-l">Coste del cuadrante</span><span class="cconf-cost-v"><b class="bad">'+before+'</b><span class="cconf-cost-a">→</span><b class="ok">'+costOf(after)+'</b></span>'; }
-      if(cDoneTxt) cDoneTxt.textContent=sol.changes.length+' cambios · convenio respetado · cobertura cubierta · 0 conflictos nuevos.';
-      cDone.hidden=false;
-      sol='done';
-    });
-  }
-
-  // ── Pestañas "Pruébalo" ──
-  var tabsEl=document.getElementById('demoTabs');
-  if(tabsEl){
-    var tabBtns=tabsEl.querySelectorAll('.demo-tab');
-    var panels=document.querySelectorAll('.demo-panel');
-    Array.prototype.forEach.call(tabBtns,function(b){
-      b.addEventListener('click',function(){
-        var n=b.getAttribute('data-tab');
-        Array.prototype.forEach.call(tabBtns,function(x){ x.classList.toggle('active', x===b); });
-        Array.prototype.forEach.call(panels,function(p){ p.classList.toggle('active', p.getAttribute('data-panel')===n); });
-      });
-    });
-  }
-})();
-</script>
-
-<!-- DEMO INTERACTIVA: cobertura inteligente (réplica anonimizada del producto real) -->
-<script>
-(function cdemoInit(){
-  var gap=document.getElementById('cdemoGap');
-  var suggestBtn=document.getElementById('cdemoSuggest');
-  var analyzing=document.getElementById('cdemoAnalyzing');
-  var list=document.getElementById('cdemoCandidates');
-  var applied=document.getElementById('cdemoApplied');
-  var resetBtn=document.getElementById('cdemoReset');
-  var updatesEl=document.getElementById('cdemoUpdates');
-  var chip=document.getElementById('cdemoChip');
-  if(!gap||!suggestBtn) return;
-  // 11 features reales del modelo: 5 objetivas + 3 subjetivas + 3 de historial
-  var FEATURES=[
-    {k:'Carga',g:'obj',why:'Equidad de carga'},
-    {k:'Racha',g:'obj',why:'Evita días seguidos'},
-    {k:'Descanso',g:'obj',why:'Descanso de 12 h seguro'},
-    {k:'Contrato',g:'obj',why:'Margen de contrato'},
-    {k:'Prefer.',g:'obj',why:'Encaja su preferencia'},
-    {k:'Poliv.',g:'sub',why:'Polivalente'},
-    {k:'Fiab.',g:'sub',why:'Alta fiabilidad'},
-    {k:'Desemp.',g:'sub',why:'Buen desempeño'},
-    {k:'Absent.',g:'his',why:'Baja ausencia ese día'},
-    {k:'Acept.',g:'his',why:'Suele aceptar coberturas'},
-    {k:'Frescura',g:'his',why:'Poco usado últimamente'}
-  ];
-  var GROUPS=[{id:'obj',label:'Objetivo'},{id:'sub',label:'Subjetivo'},{id:'his',label:'Historial'}];
-  function cfgRoles(){ return (window.__SECTORS&&window.__demoCfg)?window.__SECTORS[window.__demoCfg.sector].roles:['Cajera','Reponedor','Encargada','Mozo']; }
-  function shiftLbl(){ return (window.__SECTORS&&window.__demoCfg&&window.__SECTORS[window.__demoCfg.sector].night)?'Noche':'Tarde'; }
-  var candidates=[
-    {rank:1,name:'Ana G.',ri:0,score:94,crit:[92,90,100,88,86,95,96,90,93,91,84]},
-    {rank:2,name:'Marcos R.',ri:1,score:88,crit:[85,88,100,82,92,80,86,88,90,78,95]},
-    {rank:3,name:'Lucía P.',ri:3,score:79,crit:[78,84,95,80,70,90,82,76,72,88,82]}
-  ];
-  function esc(s){return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
-  function topReasons(c){ return c.crit.map(function(v,i){return {i:i,v:v};}).sort(function(a,b){return b.v-a.v;}).slice(0,3).map(function(o){return FEATURES[o.i].why;}); }
-  function render(){
-    var roles=cfgRoles();
-    list.innerHTML=candidates.map(function(c,i){
-      var role=roles[c.ri]||roles[0];
-      var reasons=topReasons(c).map(function(r){return '<span class="cdemo-reason">'+esc(r)+'</span>';}).join('');
-      var groups=GROUPS.map(function(g){
-        var bars=FEATURES.map(function(f,j){ if(f.g!==g.id) return ''; return '<span class="cdemo-cc" title="'+esc(f.k)+': '+c.crit[j]+'/100"><span class="cdemo-cc-bar"><i data-h="'+c.crit[j]+'%"></i></span><span class="cdemo-cc-l">'+esc(f.k)+'</span></span>'; }).join('');
-        return '<span class="cdemo-grp"><span class="cdemo-grp-l">'+g.label+'</span><span class="cdemo-grp-bars">'+bars+'</span></span>';
-      }).join('');
-      return '<button class="cdemo-cand" type="button" data-i="'+i+'" style="transition-delay:'+(i*90)+'ms">'+
-        '<span class="cdemo-cand-top">'+
-          '<span class="cdemo-cand-name"><span class="rk">#'+c.rank+'</span>'+esc(c.name)+' <span class="cdemo-cand-role">· '+esc(role)+'</span></span>'+
-          '<span class="cdemo-score" title="puntuación 0-100">'+c.score+'</span>'+
-        '</span>'+
-        '<span class="cdemo-reasons">'+reasons+'</span>'+
-        '<span class="cdemo-crit">'+groups+'</span>'+
-      '</button>';
-    }).join('');
-    Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){
-      el.addEventListener('click',function(){choose(+el.getAttribute('data-i'));});
-    });
-  }
-  function setGapText(){
-    var sl=shiftLbl();
-    if(chip.className.indexOf('good')>=0){ chip.textContent=sl+' · cubierto'; }
-    else { chip.textContent=sl+' · falta 1'; }
-    var sub=gap.querySelector('.cdemo-gap-sub');
-    if(sub) sub.textContent='Marina L. ha causado baja — falta 1 persona para el turno de '+sl.toLowerCase();
-  }
-  var busy=false;
-  suggestBtn.addEventListener('click',function(){
-    if(busy) return; busy=true;
-    suggestBtn.disabled=true; suggestBtn.textContent='Analizando…';
-    analyzing.hidden=false; list.hidden=true; applied.hidden=true;
-    setTimeout(function(){
-      analyzing.hidden=true; render(); list.hidden=false;
-      requestAnimationFrame(function(){
-        Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cand'),function(el){el.classList.add('show');});
-        Array.prototype.forEach.call(list.querySelectorAll('.cdemo-cc-bar i'),function(b){ b.style.height=b.getAttribute('data-h'); });
-      });
-      busy=false;
-    },850);
-  });
-  function choose(i){
-    var c=candidates[i];
-    list.hidden=true; applied.hidden=false;
-    applied.innerHTML='<span class="cdemo-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span> <strong>'+esc(c.name)+'</strong> asignada al turno · el modelo aprende de tu elección para la próxima';
-    gap.classList.add('is-covered');
-    chip.className='cdemo-chip good'; setGapText();
-    suggestBtn.hidden=true;
-    if(updatesEl) updatesEl.textContent=((parseInt(updatesEl.textContent,10)||3)+1);
-    resetBtn.hidden=false;
-  }
-  function resetDemo(){
-    applied.hidden=true; list.hidden=true; resetBtn.hidden=true;
-    gap.classList.remove('is-covered');
-    chip.className='cdemo-chip bad'; setGapText();
-    suggestBtn.hidden=false; suggestBtn.disabled=false; suggestBtn.textContent='Sugerir con IA';
-  }
-  resetBtn.addEventListener('click',resetDemo);
-  window.__coverageReset=resetDemo;
-  setGapText();
-  // Auto-play: al entrar el hub en pantalla, lanza la 1ª demo (si no hay reduced-motion)
-  (function(){
-    var hub=document.getElementById('demo-funciones'); if(!hub) return;
-    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if(!('IntersectionObserver' in window)) return;
-    var fired=false;
-    var io=new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(e.isIntersecting && !fired){
-          fired=true; io.disconnect();
-          var p0=document.querySelector('.demo-panel[data-panel="0"]');
-          if(p0 && p0.classList.contains('active') && !busy && suggestBtn && !suggestBtn.disabled && !suggestBtn.hidden){
-            setTimeout(function(){ if(!busy) suggestBtn.click(); }, 700);
-          }
-        }
-      });
-    },{threshold:0.35});
-    io.observe(hub);
-  })();
-})();
-</script>
-<script>
-(function demoPerso(){
-  var cfg=window.__demoCfg, SEC=window.__SECTORS;
-  if(!cfg||!SEC) return;
-  var sectorEl=document.getElementById('demoSector');
-  var minus=document.getElementById('demoTeamMinus'), plus=document.getElementById('demoTeamPlus'), val=document.getElementById('demoTeamVal');
-  function clampTeam(){ var min=SEC[cfg.sector].min||5, max=8; if(cfg.team<min)cfg.team=min; if(cfg.team>max)cfg.team=max; if(val) val.textContent=cfg.team; }
-  function apply(){ clampTeam(); if(window.__autogenReset) window.__autogenReset(); if(window.__coverageReset) window.__coverageReset(); if(window.__equityReset) window.__equityReset(); if(window.__conflictReset) window.__conflictReset(); }
-  if(sectorEl){
-    Array.prototype.forEach.call(sectorEl.querySelectorAll('.dp-chip'),function(b){
-      b.addEventListener('click',function(){
-        cfg.sector=b.getAttribute('data-s');
-        Array.prototype.forEach.call(sectorEl.querySelectorAll('.dp-chip'),function(x){ x.classList.toggle('active',x===b); });
-        apply();
-      });
-    });
-  }
-  if(minus) minus.addEventListener('click',function(){ cfg.team--; apply(); });
-  if(plus) plus.addEventListener('click',function(){ cfg.team++; apply(); });
-  clampTeam();
-})();
-</script>
+<script src="/demo-app.js?v=1" defer></script>
 
 <!-- PROFILES: dos experiencias -->
 <!-- ═══════════════════════════════════════════════════════════
