@@ -218,18 +218,35 @@ footer a:hover{color:var(--accent)}
   th,td{padding:10px 12px}
 }
 </style>
+<link rel="stylesheet" href="/comercial.css?v=2">
 </head>
 <body>
 
-<nav class="nav-top">
-  <a href="/" class="brand">Shiftia</a>
-  <a href="/#contact" class="cta">Solicitar demo</a>
-</nav>
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="/" class="logo" aria-label="Shiftia, ir a la portada"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGn" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGn)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="/#features">Funciones</a>
+      <a href="/#pricing">Planes</a>
+      <div class="nav-dd"><a href="/software-turnos-residencias">Sectores</a><div class="dd"><a href="/software-turnos-residencias">Residencias<small>Cobertura 24/7 y convenio de dependencia</small></a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas<small>Noches equitativas y descansos</small></a><a href="/turnos-hosteleria">Hostelería<small>Turno partido y temporada</small></a></div></div>
+      <div class="nav-dd"><a href="/mejores-software-turnos-espana">Comparativas</a><div class="dd"><a href="/mejores-software-turnos-espana">Mejores software de turnos<small>Siete opciones, precios verificados</small></a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos<small>Cuándo elegir a cada uno</small></a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR<small>Planificador o suite de RRHH</small></a></div></div>
+      <a href="/recursos" aria-current="page">Recursos</a>
+    </nav>
+    <div class="nav-actions"><a href="/demo" class="nav-ghost">Probar la demo</a><a href="/#contact" class="nav-cta">Solicitar demo</a></div>
+    <button class="burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="navPanel"><span></span><span></span><span></span></button>
+    <div class="nav-panel" id="navPanel">
+      <a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos">Recursos</a>
+      <div class="panel-sub">Sectores</div><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a>
+      <div class="panel-sub">Comparativas</div><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a>
+    </div>
+  </div>
+</header>
 
-<main class="wrap">
+<main class="wrap narrow" id="main">
   <div class="breadcrumbs">
     <a href="/">Inicio</a> · <a href="/recursos">Recursos</a> · Turnos rotativos y convenio en 2026
   </div>
+  <section class="hero hero-editorial"><div class="hero-aurora" aria-hidden="true"><span class="ha-blob ha-blob-1"></span><span class="ha-blob ha-blob-2"></span><span class="ha-blob ha-blob-3"></span></div><div class="hero-copy">
 
   <div class="eyebrow">Guía legal · Actualizada en septiembre de 2026</div>
 
@@ -244,6 +261,7 @@ footer a:hover{color:var(--accent)}
     <span>·</span>
     <span>Aplicable a: España, sector privado</span>
   </div>
+  </div></section>
 
   <!-- Comprobador de patrón rotativo: cálculo 100 % en el navegador, sin envío de datos. -->
   <div class="tool-card" id="comprobador">
@@ -383,16 +401,16 @@ footer a:hover{color:var(--accent)}
   <p>Transgredir los límites legales o pactados de jornada, trabajo nocturno, horas extraordinarias, descansos y registro de jornada es una <strong>infracción grave del artículo 7.5 de la LISOS</strong>. Las cuantías vigentes las fijó la Ley 10/2021:</p>
 
   <div class="table-scroll">
-    <table>
+    <div class="table-wrap"><table>
       <thead>
         <tr><th>Grado</th><th>Leves</th><th>Graves (jornada, descansos, registro)</th><th>Muy graves</th></tr>
       </thead>
       <tbody>
-        <tr><td><strong>Mínimo</strong></td><td>70-150 €</td><td><strong>751-1.500 €</strong></td><td>7.501-30.000 €</td></tr>
-        <tr><td><strong>Medio</strong></td><td>151-370 €</td><td><strong>1.501-3.750 €</strong></td><td>30.001-120.005 €</td></tr>
-        <tr><td><strong>Máximo</strong></td><td>371-750 €</td><td><strong>3.751-7.500 €</strong></td><td>120.006-225.018 €</td></tr>
+        <tr><td data-label="Grado"><strong>Mínimo</strong></td><td data-label="Leves">70-150 €</td><td data-label="Graves (jornada, descansos, registro)"><strong>751-1.500 €</strong></td><td data-label="Muy graves">7.501-30.000 €</td></tr>
+        <tr><td data-label="Grado"><strong>Medio</strong></td><td data-label="Leves">151-370 €</td><td data-label="Graves (jornada, descansos, registro)"><strong>1.501-3.750 €</strong></td><td data-label="Muy graves">30.001-120.005 €</td></tr>
+        <tr><td data-label="Grado"><strong>Máximo</strong></td><td data-label="Leves">371-750 €</td><td data-label="Graves (jornada, descansos, registro)"><strong>3.751-7.500 €</strong></td><td data-label="Muy graves">120.006-225.018 €</td></tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 
   <p>Una precisión que corrige el mito más repetido: la infracción del artículo 7.5 se sanciona <strong>por infracción, no por trabajador</strong>. El número de personas afectadas es uno de los criterios de graduación del artículo 39.2, y es lo que empuja la multa del grado mínimo al máximo. A la multa puede sumarse la reclamación de las horas extraordinarias no abonadas y, en su caso, las actas de liquidación de cuotas a la Seguridad Social.</p>
@@ -410,34 +428,34 @@ footer a:hover{color:var(--accent)}
   <p>Los tres se pueden pegar tal cual en el comprobador de arriba, con los horarios por defecto.</p>
 
   <div class="table-scroll">
-    <table>
+    <div class="table-wrap"><table>
       <thead>
         <tr><th>Patrón</th><th>Ciclo</th><th>Noches seguidas</th><th>Libranzas / 14 días</th><th>Veredicto</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>5x2 fijo de mañana</strong><br>Servicios centrales</td>
-          <td>M,M,M,M,M,L,L<br>(7 días)</td>
-          <td>0</td>
-          <td>4</td>
-          <td>Cumple con holgura los mínimos del ET, pero no cubre 24 horas: sirve de apoyo, no de rueda.</td>
+          <td data-label="Patrón"><strong>5x2 fijo de mañana</strong><br>Servicios centrales</td>
+          <td data-label="Ciclo">M,M,M,M,M,L,L<br>(7 días)</td>
+          <td data-label="Noches seguidas">0</td>
+          <td data-label="Libranzas / 14 días">4</td>
+          <td data-label="Veredicto">Cumple con holgura los mínimos del ET, pero no cubre 24 horas: sirve de apoyo, no de rueda.</td>
         </tr>
         <tr>
-          <td><strong>6x3 rotativo M/T/N</strong><br>Residencias, hospitalización, seguridad</td>
-          <td>M,M,T,T,N,N,L,L,L<br>(9 días)</td>
-          <td>2</td>
-          <td>4,7</td>
-          <td>El más equilibrado: rota hacia delante (M→T→N), nunca baja de 14 horas entre turnos y deja 72 horas libres tras las noches.</td>
+          <td data-label="Patrón"><strong>6x3 rotativo M/T/N</strong><br>Residencias, hospitalización, seguridad</td>
+          <td data-label="Ciclo">M,M,T,T,N,N,L,L,L<br>(9 días)</td>
+          <td data-label="Noches seguidas">2</td>
+          <td data-label="Libranzas / 14 días">4,7</td>
+          <td data-label="Veredicto">El más equilibrado: rota hacia delante (M→T→N), nunca baja de 14 horas entre turnos y deja 72 horas libres tras las noches.</td>
         </tr>
         <tr>
-          <td><strong>Proceso continuo, bloques largos</strong><br>Industria a cuatro equipos</td>
-          <td>7 M, 2 L, 7 T, 2 L, 7 N, 3 L<br>(28 días)</td>
-          <td>7</td>
-          <td>3,5</td>
-          <td>Legal: no llega a las dos semanas de noche del art. 36.3 ET y supera el día y medio semanal. Pero siete noches seguidas quedan muy por encima de lo recomendable.</td>
+          <td data-label="Patrón"><strong>Proceso continuo, bloques largos</strong><br>Industria a cuatro equipos</td>
+          <td data-label="Ciclo">7 M, 2 L, 7 T, 2 L, 7 N, 3 L<br>(28 días)</td>
+          <td data-label="Noches seguidas">7</td>
+          <td data-label="Libranzas / 14 días">3,5</td>
+          <td data-label="Veredicto">Legal: no llega a las dos semanas de noche del art. 36.3 ET y supera el día y medio semanal. Pero siete noches seguidas quedan muy por encima de lo recomendable.</td>
         </tr>
       </tbody>
-    </table>
+    </table></div>
   </div>
 
   <p>El contraejemplo que nadie escribe en la planilla, pero que aparece cubriendo bajas, es <strong>T,M</strong>: tarde el lunes y mañana el martes. Diez horas de descanso. Solo encaja si ese día es el del cambio de turno y se compensa después; si se repite semana tras semana, es un incumplimiento sistemático.</p>
@@ -515,9 +533,18 @@ footer a:hover{color:var(--accent)}
   </div>
 </main>
 
-<footer>
-  <a href="/">Shiftia</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a>
-  <p style="margin-top:8px;font-size:0.78rem;opacity:0.8">Esta guía es informativa y no constituye asesoramiento legal. Consulta tu convenio colectivo aplicable y, si tienes dudas, a un asesor laboral.</p>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="/" class="logo"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGf)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a><p>Planificación de turnos y cuadrantes con IA para cualquier sector. Creado por un enfermero en activo; hecho en Asturias.</p></div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>Producto</h5><a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos/auditoria-cuadrante">Auditoría gratuita</a></div>
+      <div class="footer-col"><h5>Sectores</h5><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a></div>
+      <div class="footer-col"><h5>Comparativas</h5><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a></div>
+      <div class="footer-col"><h5>Empresa</h5><a href="/recursos">Recursos</a><a href="/sobre-nosotros">Sobre nosotros</a><a href="/privacidad">Privacidad</a><a href="/terminos">Términos</a><a href="/cookies">Cookies</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Shiftia · Highkey Labs Software Solutions</span><a href="mailto:info@shiftia.es">info@shiftia.es</a></div>
+  <p class="disclaimer">Esta guía es informativa y no constituye asesoramiento legal. Consulta tu convenio colectivo aplicable y, si tienes dudas, a un asesor laboral.</p>
 </footer>
 
 <script>
@@ -818,5 +845,15 @@ footer a:hover{color:var(--accent)}
 })();
 </script>
 
+<script id="navScript">(function(){
+  var nav=document.getElementById('siteNav'),b=nav&&nav.querySelector('.burger');
+  if(b){b.addEventListener('click',function(){var o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Cerrar el menú':'Abrir el menú');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('open')){nav.classList.remove('open');b.setAttribute('aria-expanded','false');}});}
+  var h2s=[].slice.call(document.querySelectorAll('main h2')).filter(function(h){return !h.closest('.cta-card,.tool-card,.tool,.toc')&&h.textContent.trim().length>3});
+  var anchor=document.querySelector('main .hero-editorial')||document.querySelector('main .meta-line');
+  if(h2s.length>=4&&anchor){var box=document.createElement('nav');box.className='toc';box.setAttribute('aria-label','Contenido de la guía');var used={};
+    box.innerHTML='<div class="toc-title">En esta guía</div><ol>'+h2s.map(function(h,i){var id=h.id||('s-'+(h.textContent.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||i));while(used[id])id+='-'+i;used[id]=1;h.id=id;return '<li><a href="#'+id+'">'+h.textContent.replace(/</g,'&lt;')+'</a></li>'}).join('')+'</ol>';
+    anchor.insertAdjacentElement('afterend',box);}
+})();</script>
 </body>
 </html>

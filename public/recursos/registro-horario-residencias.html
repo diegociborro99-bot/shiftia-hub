@@ -201,18 +201,35 @@ footer a:hover{color:var(--accent)}
   th,td{padding:10px 12px}
 }
 </style>
+<link rel="stylesheet" href="/comercial.css?v=2">
 </head>
 <body>
 
-<nav class="nav-top">
-  <a href="/" class="brand">Shiftia</a>
-  <a href="/#contact" class="cta">Solicitar demo</a>
-</nav>
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="/" class="logo" aria-label="Shiftia, ir a la portada"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGn" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGn)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="/#features">Funciones</a>
+      <a href="/#pricing">Planes</a>
+      <div class="nav-dd"><a href="/software-turnos-residencias">Sectores</a><div class="dd"><a href="/software-turnos-residencias">Residencias<small>Cobertura 24/7 y convenio de dependencia</small></a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas<small>Noches equitativas y descansos</small></a><a href="/turnos-hosteleria">Hostelería<small>Turno partido y temporada</small></a></div></div>
+      <div class="nav-dd"><a href="/mejores-software-turnos-espana">Comparativas</a><div class="dd"><a href="/mejores-software-turnos-espana">Mejores software de turnos<small>Siete opciones, precios verificados</small></a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos<small>Cuándo elegir a cada uno</small></a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR<small>Planificador o suite de RRHH</small></a></div></div>
+      <a href="/recursos" aria-current="page">Recursos</a>
+    </nav>
+    <div class="nav-actions"><a href="/demo" class="nav-ghost">Probar la demo</a><a href="/#contact" class="nav-cta">Solicitar demo</a></div>
+    <button class="burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="navPanel"><span></span><span></span><span></span></button>
+    <div class="nav-panel" id="navPanel">
+      <a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos">Recursos</a>
+      <div class="panel-sub">Sectores</div><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a>
+      <div class="panel-sub">Comparativas</div><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a>
+    </div>
+  </div>
+</header>
 
-<main class="wrap">
+<main class="wrap narrow" id="main">
   <div class="breadcrumbs">
     <a href="/">Inicio</a> · <a href="/recursos">Recursos</a> · Registro horario en residencias
   </div>
+  <section class="hero hero-editorial"><div class="hero-aurora" aria-hidden="true"><span class="ha-blob ha-blob-1"></span><span class="ha-blob ha-blob-2"></span><span class="ha-blob ha-blob-3"></span></div><div class="hero-copy">
 
   <div class="eyebrow">Guía legal · Residencias · Septiembre 2026</div>
 
@@ -225,6 +242,7 @@ footer a:hover{color:var(--accent)}
     <span>·</span>
     <span>Para dirección y coordinación de centros</span>
   </div>
+  </div></section>
 
   <!-- Checklist interactivo: 12 preguntas sí/no, puntuación 0-100 y semáforo.
        Todo el cálculo se hace en el navegador; no se envía ningún dato. -->
@@ -416,38 +434,38 @@ footer a:hover{color:var(--accent)}
 
   <p>Lo que este convenio aporta al registro horario:</p>
 
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>Regla</th><th>Qué dice</th><th>Qué implica para el registro</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Jornada anual</strong></td>
-        <td>1.772 horas efectivas al año en residencias desde 2025 (1.735 en ayuda a domicilio), en cómputo semestral, con distribución irregular de hasta el 10 %.</td>
-        <td>El registro es la única forma de saber, a mitad de año, quién va sobrado y quién va corto de horas. Sin él, el ajuste se hace en diciembre y a ciegas.</td>
+        <td data-label="Regla"><strong>Jornada anual</strong></td>
+        <td data-label="Qué dice">1.772 horas efectivas al año en residencias desde 2025 (1.735 en ayuda a domicilio), en cómputo semestral, con distribución irregular de hasta el 10 %.</td>
+        <td data-label="Qué implica para el registro">El registro es la única forma de saber, a mitad de año, quién va sobrado y quién va corto de horas. Sin él, el ajuste se hace en diciembre y a ciegas.</td>
       </tr>
       <tr>
-        <td><strong>Descanso semanal</strong></td>
-        <td>36 horas ininterrumpidas, con domingo al menos una vez cada cuatro semanas, salvo el personal con contratos específicos de fin de semana. El descanso compensatorio por festivo trabajado no puede solaparse con el semanal.</td>
-        <td>Hay que poder demostrar las 36 horas seguidas persona a persona, y que el compensatorio se disfrutó aparte.</td>
+        <td data-label="Regla"><strong>Descanso semanal</strong></td>
+        <td data-label="Qué dice">36 horas ininterrumpidas, con domingo al menos una vez cada cuatro semanas, salvo el personal con contratos específicos de fin de semana. El descanso compensatorio por festivo trabajado no puede solaparse con el semanal.</td>
+        <td data-label="Qué implica para el registro">Hay que poder demostrar las 36 horas seguidas persona a persona, y que el compensatorio se disfrutó aparte.</td>
       </tr>
       <tr>
-        <td><strong>Calendario laboral</strong></td>
-        <td>Se elabora en el primer mes del año previa negociación con la representación del personal, es revisable trimestralmente y se entrega copia a esa representación una semana antes.</td>
-        <td>El calendario y el cuadrante mensual son la previsión; el registro, el resultado. Las revisiones trimestrales deben quedar documentadas.</td>
+        <td data-label="Regla"><strong>Calendario laboral</strong></td>
+        <td data-label="Qué dice">Se elabora en el primer mes del año previa negociación con la representación del personal, es revisable trimestralmente y se entrega copia a esa representación una semana antes.</td>
+        <td data-label="Qué implica para el registro">El calendario y el cuadrante mensual son la previsión; el registro, el resultado. Las revisiones trimestrales deben quedar documentadas.</td>
       </tr>
       <tr>
-        <td><strong>Nocturnidad</strong></td>
-        <td>Plus específico para las horas trabajadas entre las 22:00 y las 7:00, según el anexo I, y también en vacaciones para el turno fijo de noche.</td>
-        <td>Sin horas concretas de inicio y fin no se puede calcular bien el plus de una noche que se alargó.</td>
+        <td data-label="Regla"><strong>Nocturnidad</strong></td>
+        <td data-label="Qué dice">Plus específico para las horas trabajadas entre las 22:00 y las 7:00, según el anexo I, y también en vacaciones para el turno fijo de noche.</td>
+        <td data-label="Qué implica para el registro">Sin horas concretas de inicio y fin no se puede calcular bien el plus de una noche que se alargó.</td>
       </tr>
       <tr>
-        <td><strong>Festivos</strong></td>
-        <td>Descanso compensatorio de un día laborable más plus, y plus adicional en los festivos de especial significación (24 y 25 de diciembre, 31 de diciembre y 1 de enero).</td>
-        <td>El compensatorio pendiente es una deuda que solo se ve si el registro y el cuadrante están conectados.</td>
+        <td data-label="Regla"><strong>Festivos</strong></td>
+        <td data-label="Qué dice">Descanso compensatorio de un día laborable más plus, y plus adicional en los festivos de especial significación (24 y 25 de diciembre, 31 de diciembre y 1 de enero).</td>
+        <td data-label="Qué implica para el registro">El compensatorio pendiente es una deuda que solo se ve si el registro y el cuadrante están conectados.</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
 
   <p>Una advertencia útil: el convenio estatal <strong>no fija un máximo de noches al mes ni de noches consecutivas</strong>. Ese tope, cuando existe, viene del convenio de empresa, del autonómico o de un acuerdo con la representación legal. El límite legal general es el del artículo 36.3 del Estatuto: en procesos continuos de 24 horas, nadie más de dos semanas consecutivas en el turno de noche salvo adscripción voluntaria. Cualquier sistema que uses debería permitir configurar ese máximo, no imponerte uno inventado.</p>
 
@@ -479,16 +497,16 @@ footer a:hover{color:var(--accent)}
 
   <p>La transgresión de las normas y límites en materia de jornada, trabajo nocturno, horas extraordinarias, horas complementarias, descansos, vacaciones, permisos y <strong>registro de jornada</strong> es <strong>infracción grave</strong> del artículo 7.5 de la Ley sobre Infracciones y Sanciones en el Orden Social. Las cuantías del artículo 40.1, vigentes desde el 1 de octubre de 2021, son estas:</p>
 
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>Grado</th><th>Infracción grave</th><th>Cuándo se aplica</th></tr>
     </thead>
     <tbody>
-      <tr><td>Mínimo</td><td>751-1.500 €</td><td rowspan="3">La graduación depende de los criterios del artículo 39.2: intencionalidad o negligencia, incumplimiento de advertencias previas, cifra de negocios, <strong>número de personas trabajadoras afectadas</strong> y perjuicio causado.</td></tr>
-      <tr><td>Medio</td><td>1.501-3.750 €</td></tr>
-      <tr><td>Máximo</td><td>3.751-7.500 €</td></tr>
+      <tr><td data-label="Grado">Mínimo</td><td data-label="Infracción grave">751-1.500 €</td><td rowspan="3" data-label="Cuándo se aplica">La graduación depende de los criterios del artículo 39.2: intencionalidad o negligencia, incumplimiento de advertencias previas, cifra de negocios, <strong>número de personas trabajadoras afectadas</strong> y perjuicio causado.</td></tr>
+      <tr><td data-label="Grado">Medio</td><td data-label="Infracción grave">1.501-3.750 €</td></tr>
+      <tr><td data-label="Grado">Máximo</td><td data-label="Infracción grave">3.751-7.500 €</td></tr>
     </tbody>
-  </table>
+  </table></div>
 
   <p>Dos precisiones que corrigen mitos muy extendidos. La primera: la sanción del artículo 7.5 se impone <strong>por infracción, no por trabajador</strong>; el número de afectados agrava el grado, pero no multiplica la multa. La idea de una multa por cada empleado procede de borradores no aprobados, no de la norma vigente. La segunda: además de la multa puede haber reclamación de las horas no abonadas y actas de liquidación de cuotas a la Seguridad Social, y no facilitar el registro a la Inspección puede constituir obstrucción, con su propio régimen sancionador.</p>
 
@@ -558,9 +576,18 @@ footer a:hover{color:var(--accent)}
   </div>
 </main>
 
-<footer>
-  <a href="/">Shiftia</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a>
-  <p style="margin-top:8px;font-size:0.78rem;opacity:0.8">Esta guía es informativa y no constituye asesoramiento legal. Consulta tu convenio colectivo aplicable y, si tienes dudas, a un asesor laboral.</p>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="/" class="logo"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGf)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a><p>Planificación de turnos y cuadrantes con IA para cualquier sector. Creado por un enfermero en activo; hecho en Asturias.</p></div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>Producto</h5><a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos/auditoria-cuadrante">Auditoría gratuita</a></div>
+      <div class="footer-col"><h5>Sectores</h5><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a></div>
+      <div class="footer-col"><h5>Comparativas</h5><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a></div>
+      <div class="footer-col"><h5>Empresa</h5><a href="/recursos">Recursos</a><a href="/sobre-nosotros">Sobre nosotros</a><a href="/privacidad">Privacidad</a><a href="/terminos">Términos</a><a href="/cookies">Cookies</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Shiftia · Highkey Labs Software Solutions</span><a href="mailto:info@shiftia.es">info@shiftia.es</a></div>
+  <p class="disclaimer">Esta guía es informativa y no constituye asesoramiento legal. Consulta tu convenio colectivo aplicable y, si tienes dudas, a un asesor laboral.</p>
 </footer>
 
 <script>
@@ -680,5 +707,15 @@ footer a:hover{color:var(--accent)}
 })();
 </script>
 
+<script id="navScript">(function(){
+  var nav=document.getElementById('siteNav'),b=nav&&nav.querySelector('.burger');
+  if(b){b.addEventListener('click',function(){var o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Cerrar el menú':'Abrir el menú');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('open')){nav.classList.remove('open');b.setAttribute('aria-expanded','false');}});}
+  var h2s=[].slice.call(document.querySelectorAll('main h2')).filter(function(h){return !h.closest('.cta-card,.tool-card,.tool,.toc')&&h.textContent.trim().length>3});
+  var anchor=document.querySelector('main .hero-editorial')||document.querySelector('main .meta-line');
+  if(h2s.length>=4&&anchor){var box=document.createElement('nav');box.className='toc';box.setAttribute('aria-label','Contenido de la guía');var used={};
+    box.innerHTML='<div class="toc-title">En esta guía</div><ol>'+h2s.map(function(h,i){var id=h.id||('s-'+(h.textContent.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||i));while(used[id])id+='-'+i;used[id]=1;h.id=id;return '<li><a href="#'+id+'">'+h.textContent.replace(/</g,'&lt;')+'</a></li>'}).join('')+'</ol>';
+    anchor.insertAdjacentElement('afterend',box);}
+})();</script>
 </body>
 </html>
