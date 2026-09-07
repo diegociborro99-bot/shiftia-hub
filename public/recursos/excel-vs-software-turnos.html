@@ -117,18 +117,35 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
   th,td{padding:10px 12px}
 }
 </style>
+<link rel="stylesheet" href="/comercial.css?v=2">
 </head>
 <body>
 
-<nav class="nav-top">
-  <a href="/" class="brand">Shiftia</a>
-  <a href="/#contact" class="cta">Solicitar demo</a>
-</nav>
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="/" class="logo" aria-label="Shiftia, ir a la portada"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGn" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGn)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="/#features">Funciones</a>
+      <a href="/#pricing">Planes</a>
+      <div class="nav-dd"><a href="/software-turnos-residencias">Sectores</a><div class="dd"><a href="/software-turnos-residencias">Residencias<small>Cobertura 24/7 y convenio de dependencia</small></a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas<small>Noches equitativas y descansos</small></a><a href="/turnos-hosteleria">Hostelería<small>Turno partido y temporada</small></a></div></div>
+      <div class="nav-dd"><a href="/mejores-software-turnos-espana">Comparativas</a><div class="dd"><a href="/mejores-software-turnos-espana">Mejores software de turnos<small>Siete opciones, precios verificados</small></a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos<small>Cuándo elegir a cada uno</small></a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR<small>Planificador o suite de RRHH</small></a></div></div>
+      <a href="/recursos" aria-current="page">Recursos</a>
+    </nav>
+    <div class="nav-actions"><a href="/demo" class="nav-ghost">Probar la demo</a><a href="/#contact" class="nav-cta">Solicitar demo</a></div>
+    <button class="burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="navPanel"><span></span><span></span><span></span></button>
+    <div class="nav-panel" id="navPanel">
+      <a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos">Recursos</a>
+      <div class="panel-sub">Sectores</div><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a>
+      <div class="panel-sub">Comparativas</div><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a>
+    </div>
+  </div>
+</header>
 
-<main class="wrap">
+<main class="wrap narrow" id="main">
   <div class="breadcrumbs">
     <a href="/">Inicio</a> · <a href="/recursos">Recursos</a> · Excel vs software de turnos
   </div>
+  <section class="hero hero-editorial"><div class="hero-aurora" aria-hidden="true"><span class="ha-blob ha-blob-1"></span><span class="ha-blob ha-blob-2"></span><span class="ha-blob ha-blob-3"></span></div><div class="hero-copy">
 
   <div class="eyebrow">Comparativa honesta</div>
 
@@ -141,6 +158,7 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
     <span>·</span>
     <span>Sin sesgo comercial — cuando Excel basta, lo decimos</span>
   </div>
+  </div></section>
 
   <h2>Cuándo Excel es suficiente</h2>
 
@@ -209,48 +227,48 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
 
   <p>La gestión de turnos es transversal: fábricas, hospitales, residencias, seguridad privada, hostelería, contact centers y transporte tienen el mismo problema de fondo (asignar personas a franjas horarias respetando reglas). Pero cada sector pone el énfasis en cosas distintas.</p>
 
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>Sector</th><th>Dolor principal</th><th>Cuándo Excel deja de servir</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Industria 24/7</strong></td>
-        <td>Rotación M/T/N de varios cuartos, cumplimiento estricto del convenio sectorial, ratios de seguridad mínimos.</td>
-        <td>A partir de 15-20 operarios con cadena continua.</td>
+        <td data-label="Sector"><strong>Industria 24/7</strong></td>
+        <td data-label="Dolor principal">Rotación M/T/N de varios cuartos, cumplimiento estricto del convenio sectorial, ratios de seguridad mínimos.</td>
+        <td data-label="Cuándo Excel deja de servir">A partir de 15-20 operarios con cadena continua.</td>
       </tr>
       <tr>
-        <td><strong>Hospitales y clínicas</strong></td>
-        <td>Convenio del Estatuto Marco, ratios paciente/enfermero, guardias localizadas, equidad nocturna.</td>
-        <td>A partir de 12-15 profesionales por unidad o cuando hay rotación obligatoria.</td>
+        <td data-label="Sector"><strong>Hospitales y clínicas</strong></td>
+        <td data-label="Dolor principal">Convenio del Estatuto Marco, ratios paciente/enfermero, guardias localizadas, equidad nocturna.</td>
+        <td data-label="Cuándo Excel deja de servir">A partir de 12-15 profesionales por unidad o cuando hay rotación obligatoria.</td>
       </tr>
       <tr>
-        <td><strong>Residencias 3ª edad</strong></td>
-        <td>Cobertura mínima 24h, alta rotación de personal, convenio estatal específico.</td>
-        <td>A partir de 20 cuidadores con dos plantas o más.</td>
+        <td data-label="Sector"><strong>Residencias 3ª edad</strong></td>
+        <td data-label="Dolor principal">Cobertura mínima 24h, alta rotación de personal, convenio estatal específico.</td>
+        <td data-label="Cuándo Excel deja de servir">A partir de 20 cuidadores con dos plantas o más.</td>
       </tr>
       <tr>
-        <td><strong>Seguridad privada</strong></td>
-        <td>Servicios distribuidos en varios clientes, descansos por convenio reducidos, libranzas en cómputo trimestral.</td>
-        <td>A partir de 3-4 servicios o equipos en diferentes ubicaciones.</td>
+        <td data-label="Sector"><strong>Seguridad privada</strong></td>
+        <td data-label="Dolor principal">Servicios distribuidos en varios clientes, descansos por convenio reducidos, libranzas en cómputo trimestral.</td>
+        <td data-label="Cuándo Excel deja de servir">A partir de 3-4 servicios o equipos en diferentes ubicaciones.</td>
       </tr>
       <tr>
-        <td><strong>Hostelería y restauración</strong></td>
-        <td>Picos estacionales, jornadas partidas, contratos temporales, propinas y horas extras.</td>
-        <td>A partir de 12 trabajadores con dos turnos diferenciados.</td>
+        <td data-label="Sector"><strong>Hostelería y restauración</strong></td>
+        <td data-label="Dolor principal">Picos estacionales, jornadas partidas, contratos temporales, propinas y horas extras.</td>
+        <td data-label="Cuándo Excel deja de servir">A partir de 12 trabajadores con dos turnos diferenciados.</td>
       </tr>
       <tr>
-        <td><strong>Transporte y logística</strong></td>
-        <td>Tacógrafo, descansos legales reglamento UE, asignación a rutas.</td>
-        <td>Casi desde el primer momento por la complejidad del reglamento.</td>
+        <td data-label="Sector"><strong>Transporte y logística</strong></td>
+        <td data-label="Dolor principal">Tacógrafo, descansos legales reglamento UE, asignación a rutas.</td>
+        <td data-label="Cuándo Excel deja de servir">Casi desde el primer momento por la complejidad del reglamento.</td>
       </tr>
       <tr>
-        <td><strong>Contact centers</strong></td>
-        <td>Forecast de llamadas, adherencia, multi-skill, picos horarios.</td>
-        <td>A partir de 25 agentes con varias colas.</td>
+        <td data-label="Sector"><strong>Contact centers</strong></td>
+        <td data-label="Dolor principal">Forecast de llamadas, adherencia, multi-skill, picos horarios.</td>
+        <td data-label="Cuándo Excel deja de servir">A partir de 25 agentes con varias colas.</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
 
   <p>El umbral concreto varía, pero el patrón es universal: <strong>cuando el número de personas × número de variables del convenio supera lo que tu memoria puede sostener, dejas de planificar y empiezas a apagar fuegos</strong>.</p>
 
@@ -283,9 +301,28 @@ footer a{color:var(--text3);text-decoration:none;margin:0 8px}
   </div>
 </main>
 
-<footer>
-  <a href="/">Shiftia</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="/" class="logo"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGf)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a><p>Planificación de turnos y cuadrantes con IA para cualquier sector. Creado por un enfermero en activo; hecho en Asturias.</p></div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>Producto</h5><a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos/auditoria-cuadrante">Auditoría gratuita</a></div>
+      <div class="footer-col"><h5>Sectores</h5><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a></div>
+      <div class="footer-col"><h5>Comparativas</h5><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a></div>
+      <div class="footer-col"><h5>Empresa</h5><a href="/recursos">Recursos</a><a href="/sobre-nosotros">Sobre nosotros</a><a href="/privacidad">Privacidad</a><a href="/terminos">Términos</a><a href="/cookies">Cookies</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Shiftia · Highkey Labs Software Solutions</span><a href="mailto:info@shiftia.es">info@shiftia.es</a></div>
 </footer>
 
+<script id="navScript">(function(){
+  var nav=document.getElementById('siteNav'),b=nav&&nav.querySelector('.burger');
+  if(b){b.addEventListener('click',function(){var o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Cerrar el menú':'Abrir el menú');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('open')){nav.classList.remove('open');b.setAttribute('aria-expanded','false');}});}
+  var h2s=[].slice.call(document.querySelectorAll('main h2')).filter(function(h){return !h.closest('.cta-card,.tool-card,.tool,.toc')&&h.textContent.trim().length>3});
+  var anchor=document.querySelector('main .hero-editorial')||document.querySelector('main .meta-line');
+  if(h2s.length>=4&&anchor){var box=document.createElement('nav');box.className='toc';box.setAttribute('aria-label','Contenido de la guía');var used={};
+    box.innerHTML='<div class="toc-title">En esta guía</div><ol>'+h2s.map(function(h,i){var id=h.id||('s-'+(h.textContent.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||i));while(used[id])id+='-'+i;used[id]=1;h.id=id;return '<li><a href="#'+id+'">'+h.textContent.replace(/</g,'&lt;')+'</a></li>'}).join('')+'</ol>';
+    anchor.insertAdjacentElement('afterend',box);}
+})();</script>
 </body>
 </html>

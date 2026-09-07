@@ -126,12 +126,28 @@ footer a:hover{color:var(--accent)}
   footer{margin-top:40px}
 }
 </style>
+<link rel="stylesheet" href="/comercial.css?v=2">
 </head>
 <body>
-<nav class="nav-top">
-  <a href="/" class="brand">Shiftia</a>
-  <a href="/#contact" class="cta">Solicitar demo</a>
-</nav>
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="/" class="logo" aria-label="Shiftia, ir a la portada"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGn" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGn)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="/#features">Funciones</a>
+      <a href="/#pricing">Planes</a>
+      <div class="nav-dd"><a href="/software-turnos-residencias">Sectores</a><div class="dd"><a href="/software-turnos-residencias">Residencias<small>Cobertura 24/7 y convenio de dependencia</small></a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas<small>Noches equitativas y descansos</small></a><a href="/turnos-hosteleria">Hostelería<small>Turno partido y temporada</small></a></div></div>
+      <div class="nav-dd"><a href="/mejores-software-turnos-espana">Comparativas</a><div class="dd"><a href="/mejores-software-turnos-espana">Mejores software de turnos<small>Siete opciones, precios verificados</small></a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos<small>Cuándo elegir a cada uno</small></a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR<small>Planificador o suite de RRHH</small></a></div></div>
+      <a href="/recursos" aria-current="page">Recursos</a>
+    </nav>
+    <div class="nav-actions"><a href="/demo" class="nav-ghost">Probar la demo</a><a href="/#contact" class="nav-cta">Solicitar demo</a></div>
+    <button class="burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="navPanel"><span></span><span></span><span></span></button>
+    <div class="nav-panel" id="navPanel">
+      <a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos">Recursos</a>
+      <div class="panel-sub">Sectores</div><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a>
+      <div class="panel-sub">Comparativas</div><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a>
+    </div>
+  </div>
+</header>
 
 <div class="wrap">
   <div class="breadcrumbs">
@@ -216,8 +232,17 @@ footer a:hover{color:var(--accent)}
   </div>
 </div>
 
-<footer>
-  <a href="/">Shiftia</a> · <a href="/recursos">Recursos</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="/" class="logo"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGf)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a><p>Planificación de turnos y cuadrantes con IA para cualquier sector. Creado por un enfermero en activo; hecho en Asturias.</p></div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>Producto</h5><a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos/auditoria-cuadrante">Auditoría gratuita</a></div>
+      <div class="footer-col"><h5>Sectores</h5><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a></div>
+      <div class="footer-col"><h5>Comparativas</h5><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a></div>
+      <div class="footer-col"><h5>Empresa</h5><a href="/recursos">Recursos</a><a href="/sobre-nosotros">Sobre nosotros</a><a href="/privacidad">Privacidad</a><a href="/terminos">Términos</a><a href="/cookies">Cookies</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Shiftia · Highkey Labs Software Solutions</span><a href="mailto:info@shiftia.es">info@shiftia.es</a></div>
 </footer>
 
 <script>
@@ -283,5 +308,10 @@ footer a:hover{color:var(--accent)}
   });
 })();
 </script>
+<script id="navScript">(function(){
+  var nav=document.getElementById('siteNav'),b=nav&&nav.querySelector('.burger');
+  if(b){b.addEventListener('click',function(){var o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Cerrar el menú':'Abrir el menú');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('open')){nav.classList.remove('open');b.setAttribute('aria-expanded','false');}});}
+})();</script>
 </body>
 </html>

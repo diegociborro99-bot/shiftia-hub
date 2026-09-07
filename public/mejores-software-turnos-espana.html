@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/design-system.css">
-<link rel="stylesheet" href="/comercial.css?v=1">
+<link rel="stylesheet" href="/comercial.css?v=2">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -139,26 +139,42 @@
 <body>
 <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
-<nav class="nav-top">
-  <a href="/" class="brand">Shiftia</a>
-  <div class="nav-links">
-    <a href="/#features">Funciones</a>
-    <a href="/#pricing">Planes</a>
-    <a href="/recursos">Recursos</a>
-    <a href="/demo">Demo</a>
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="/" class="logo" aria-label="Shiftia, ir a la portada"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGn" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGn)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="/#features">Funciones</a>
+      <a href="/#pricing">Planes</a>
+      <div class="nav-dd"><a href="/software-turnos-residencias">Sectores</a><div class="dd"><a href="/software-turnos-residencias">Residencias<small>Cobertura 24/7 y convenio de dependencia</small></a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas<small>Noches equitativas y descansos</small></a><a href="/turnos-hosteleria">Hostelería<small>Turno partido y temporada</small></a></div></div>
+      <div class="nav-dd"><a href="/mejores-software-turnos-espana" aria-current="page">Comparativas</a><div class="dd"><a href="/mejores-software-turnos-espana">Mejores software de turnos<small>Siete opciones, precios verificados</small></a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos<small>Cuándo elegir a cada uno</small></a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR<small>Planificador o suite de RRHH</small></a></div></div>
+      <a href="/recursos">Recursos</a>
+    </nav>
+    <div class="nav-actions"><a href="/demo" class="nav-ghost">Probar la demo</a><a href="/#contact" class="nav-cta">Solicitar demo</a></div>
+    <button class="burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="navPanel"><span></span><span></span><span></span></button>
+    <div class="nav-panel" id="navPanel">
+      <a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos">Recursos</a>
+      <div class="panel-sub">Sectores</div><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a>
+      <div class="panel-sub">Comparativas</div><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a>
+    </div>
   </div>
-  <a href="/#contact" class="cta">Solicitar demo</a>
-</nav>
+</header>
 
 <main id="main" class="wrap">
   <div class="breadcrumbs"><a href="/">Inicio</a> · Comparativas · Mejores software de turnos en España</div>
 
-  <section class="hero">
+  <section class="hero"><div class="hero-aurora" aria-hidden="true"><span class="ha-blob ha-blob-1"></span><span class="ha-blob ha-blob-2"></span><span class="ha-blob ha-blob-3"></span></div><div class="hero-grid"><div class="hero-copy">
     <div class="eyebrow">Comparativa honesta · 2026</div>
     <h1>Los mejores software de gestión de turnos en España (2026)</h1>
     <p class="lede">Los mejores software de turnos en España no son los mismos para todo el mundo. Hemos analizado siete herramientas con presencia real aquí, con sus precios y sus funciones tal y como aparecen en sus webs oficiales. No hay un ganador único: hay un encaje distinto para cada tipo de empresa, y en cada ficha decimos para quién es mejor cada una.</p>
     <p class="verified">Precios y funciones consultados en las webs oficiales de cada proveedor el 7 de septiembre de 2026; las notas de reseñas proceden de Capterra y de las tiendas de aplicaciones en esa misma fecha. Importes sin IVA. Si ves un dato desactualizado, escríbenos a info@shiftia.es.</p>
-  </section>
+  </div>
+    <aside class="hero-side" aria-label="Qué hay en esta comparativa">
+      <div class="side-title"><span>En esta comparativa</span><span>07·09·2026</span></div>
+      <div class="row" style="border-top:none;padding-top:0"><span class="lbl">Herramientas analizadas</span><span style="grid-column:1/-1"><div class="chips"><span class="me">Shiftia</span><span>aTurnos</span><span>Sesame HR</span><span>Factorial</span><span>Skello</span><span>Cuadly</span><span>Bizneo HR</span></div></span></div>
+      <div class="row"><span class="lbl">Criterio</span><span><b>Precio real</b> para 15, 40 y 100 personas</span><span><b>Cuadrante con IA</b> y reglas de convenio</span></div>
+      <div class="row"><span class="lbl">Orden</span><span style="grid-column:1/-1">Del comprador más pequeño al más grande. No es un ranking y una de las siete es nuestra.</span></div>
+      <p class="foot">Precios tomados de las webs oficiales; los que no se publican se indican como «a presupuesto».</p>
+    </aside></div></section>
 
   <div class="callout accent">
     <div class="callout-title">Aviso: una de las siete es nuestra</div>
@@ -174,25 +190,25 @@
       </thead>
       <tbody>
         <tr>
-          <td><strong>Skello</strong></td><td>Planificador con fichaje</td><td>Restaurante, tienda o farmacia con uno o pocos locales</td><td>Planificación desde 59 €/mes; Duo desde 79 €</td><td class="partial">~ solo en planes Max</td>
+          <td data-label="Herramienta"><strong>Skello</strong></td><td data-label="Tipo">Planificador con fichaje</td><td data-label="Mejor para">Restaurante, tienda o farmacia con uno o pocos locales</td><td data-label="Precio publicado (07/09/2026)">Planificación desde 59 €/mes; Duo desde 79 €</td><td class="partial" data-label="Auto-generación del cuadrante">~ solo en planes Max</td>
         </tr>
         <tr>
-          <td><strong>Sesame HR</strong></td><td>Suite de RRHH</td><td>Pymes de 15 o más personas que quieren un solo proveedor</td><td>4,75-8 €/empleado/mes con pago anual, mínimo 15 empleados</td><td class="partial">~ complemento sobre turnos ya creados</td>
+          <td data-label="Herramienta"><strong>Sesame HR</strong></td><td data-label="Tipo">Suite de RRHH</td><td data-label="Mejor para">Pymes de 15 o más personas que quieren un solo proveedor</td><td data-label="Precio publicado (07/09/2026)">4,75-8 €/empleado/mes con pago anual, mínimo 15 empleados</td><td class="partial" data-label="Auto-generación del cuadrante">~ complemento sobre turnos ya creados</td>
         </tr>
         <tr>
-          <td><strong>Factorial</strong></td><td>Suite de RRHH</td><td>Digitalizar recursos humanos al completo</td><td>Desde 5,5 €/persona/mes; turnos sin precio</td><td class="no">✗ no declarada</td>
+          <td data-label="Herramienta"><strong>Factorial</strong></td><td data-label="Tipo">Suite de RRHH</td><td data-label="Mejor para">Digitalizar recursos humanos al completo</td><td data-label="Precio publicado (07/09/2026)">Desde 5,5 €/persona/mes; turnos sin precio</td><td class="no" data-label="Auto-generación del cuadrante">✗ no declarada</td>
         </tr>
         <tr>
-          <td><strong>Shiftia</strong></td><td>Planificador con IA</td><td>10 a 100 personas con turnos rotativos y convenio exigente</td><td>29 / 69 / 129 €/mes, tarifa plana por tramo</td><td class="yes">✓ desde el plan Pro</td>
+          <td data-label="Herramienta"><strong>Shiftia</strong></td><td data-label="Tipo">Planificador con IA</td><td data-label="Mejor para">10 a 100 personas con turnos rotativos y convenio exigente</td><td data-label="Precio publicado (07/09/2026)">29 / 69 / 129 €/mes, tarifa plana por tramo</td><td class="yes" data-label="Auto-generación del cuadrante">✓ desde el plan Pro</td>
         </tr>
         <tr>
-          <td><strong>Cuadly</strong></td><td>Especialista en residencias</td><td>Residencias con ratios por comunidad autónoma</td><td>3,00 / 2,50 / 2,00 €/empleado/mes, mínimo 49 €/mes</td><td class="yes">✓ sí</td>
+          <td data-label="Herramienta"><strong>Cuadly</strong></td><td data-label="Tipo">Especialista en residencias</td><td data-label="Mejor para">Residencias con ratios por comunidad autónoma</td><td data-label="Precio publicado (07/09/2026)">3,00 / 2,50 / 2,00 €/empleado/mes, mínimo 49 €/mes</td><td class="yes" data-label="Auto-generación del cuadrante">✓ sí</td>
         </tr>
         <tr>
-          <td><strong>Bizneo HR</strong></td><td>Suite de RRHH modular</td><td>50 a 500 personas con proyecto consultivo</td><td>Planes desde 6 €; Pro y Avanzado a presupuesto</td><td class="partial">~ rotativos por plantillas, según directorios</td>
+          <td data-label="Herramienta"><strong>Bizneo HR</strong></td><td data-label="Tipo">Suite de RRHH modular</td><td data-label="Mejor para">50 a 500 personas con proyecto consultivo</td><td data-label="Precio publicado (07/09/2026)">Planes desde 6 €; Pro y Avanzado a presupuesto</td><td class="partial" data-label="Auto-generación del cuadrante">~ rotativos por plantillas, según directorios</td>
         </tr>
         <tr>
-          <td><strong>aTurnos</strong></td><td>Planificador y control horario</td><td>Más de 100 empleados, multicentro y hardware de fichaje</td><td>Desde 2 €/empleado/mes con 100 empleados, anual</td><td class="yes">✓ en el plan Smart, a presupuesto</td>
+          <td data-label="Herramienta"><strong>aTurnos</strong></td><td data-label="Tipo">Planificador y control horario</td><td data-label="Mejor para">Más de 100 empleados, multicentro y hardware de fichaje</td><td data-label="Precio publicado (07/09/2026)">Desde 2 €/empleado/mes con 100 empleados, anual</td><td class="yes" data-label="Auto-generación del cuadrante">✓ en el plan Smart, a presupuesto</td>
         </tr>
       </tbody>
     </table>
@@ -386,46 +402,46 @@
       </thead>
       <tbody>
         <tr>
-          <td><strong>Skello</strong></td>
-          <td>Planificación desde 59 €; su web no aclara la unidad</td>
-          <td>Duo Estándar desde 79 €; Turnozo cita 295 € para 40 empleados</td>
-          <td>No calculable: su web no aclara la unidad</td>
+          <td data-label="Herramienta"><strong>Skello</strong></td>
+          <td data-label="15 trabajadores">Planificación desde 59 €; su web no aclara la unidad</td>
+          <td data-label="40 trabajadores">Duo Estándar desde 79 €; Turnozo cita 295 € para 40 empleados</td>
+          <td data-label="100 trabajadores">No calculable: su web no aclara la unidad</td>
         </tr>
         <tr>
-          <td><strong>Sesame HR</strong></td>
-          <td>71,25 € (mínimo de 15 empleados, Essential anual)</td>
-          <td>190 € (Essential anual)</td>
-          <td>475 € (Essential anual)</td>
+          <td data-label="Herramienta"><strong>Sesame HR</strong></td>
+          <td data-label="15 trabajadores">71,25 € (mínimo de 15 empleados, Essential anual)</td>
+          <td data-label="40 trabajadores">190 € (Essential anual)</td>
+          <td data-label="100 trabajadores">475 € (Essential anual)</td>
         </tr>
         <tr>
-          <td><strong>Factorial</strong></td>
-          <td>Desde 82,50 €, más módulos</td>
-          <td>Desde 220 €, más el módulo de turnos</td>
-          <td>Desde 550 €, más módulos</td>
+          <td data-label="Herramienta"><strong>Factorial</strong></td>
+          <td data-label="15 trabajadores">Desde 82,50 €, más módulos</td>
+          <td data-label="40 trabajadores">Desde 220 €, más el módulo de turnos</td>
+          <td data-label="100 trabajadores">Desde 550 €, más módulos</td>
         </tr>
         <tr>
-          <td><strong>Shiftia</strong></td>
-          <td class="hl">29 € (Esencial); 23 € con pago anual</td>
-          <td class="hl">69 € (Pro, con IA); 55 € con pago anual</td>
-          <td class="hl">129 € (Business, multicentro); 103 € con pago anual</td>
+          <td data-label="Herramienta"><strong>Shiftia</strong></td>
+          <td class="hl" data-label="15 trabajadores">29 € (Esencial); 23 € con pago anual</td>
+          <td class="hl" data-label="40 trabajadores">69 € (Pro, con IA); 55 € con pago anual</td>
+          <td class="hl" data-label="100 trabajadores">129 € (Business, multicentro); 103 € con pago anual</td>
         </tr>
         <tr>
-          <td><strong>Cuadly</strong></td>
-          <td>49 € (mínimo mensual; a 3,00 € saldrían 45 €)</td>
-          <td>100 € (a 2,50 € por empleado)</td>
-          <td>200 € (a 2,00 € por empleado)</td>
+          <td data-label="Herramienta"><strong>Cuadly</strong></td>
+          <td data-label="15 trabajadores">49 € (mínimo mensual; a 3,00 € saldrían 45 €)</td>
+          <td data-label="40 trabajadores">100 € (a 2,50 € por empleado)</td>
+          <td data-label="100 trabajadores">200 € (a 2,00 € por empleado)</td>
         </tr>
         <tr>
-          <td><strong>Bizneo HR</strong></td>
-          <td>Desde 90 €, cierre por presupuesto</td>
-          <td>Desde 240 €, cierre por presupuesto</td>
-          <td>Desde 600 €, cierre por presupuesto</td>
+          <td data-label="Herramienta"><strong>Bizneo HR</strong></td>
+          <td data-label="15 trabajadores">Desde 90 €, cierre por presupuesto</td>
+          <td data-label="40 trabajadores">Desde 240 €, cierre por presupuesto</td>
+          <td data-label="100 trabajadores">Desde 600 €, cierre por presupuesto</td>
         </tr>
         <tr>
-          <td><strong>aTurnos</strong></td>
-          <td>No publica precio por debajo de 100 empleados</td>
-          <td>No publica precio por debajo de 100 empleados</td>
-          <td>Desde 200 € (2 € por empleado con 100 empleados y pago anual)</td>
+          <td data-label="Herramienta"><strong>aTurnos</strong></td>
+          <td data-label="15 trabajadores">No publica precio por debajo de 100 empleados</td>
+          <td data-label="40 trabajadores">No publica precio por debajo de 100 empleados</td>
+          <td data-label="100 trabajadores">Desde 200 € (2 € por empleado con 100 empleados y pago anual)</td>
         </tr>
       </tbody>
     </table>
@@ -506,9 +522,23 @@
   </div>
 </main>
 
-<footer>
-  <a href="/">Shiftia</a> · <a href="/sobre-nosotros">Sobre nosotros</a> · <a href="/recursos">Recursos</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="/" class="logo"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGf)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a><p>Planificación de turnos y cuadrantes con IA para cualquier sector. Creado por un enfermero en activo; hecho en Asturias.</p></div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>Producto</h5><a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos/auditoria-cuadrante">Auditoría gratuita</a></div>
+      <div class="footer-col"><h5>Sectores</h5><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a></div>
+      <div class="footer-col"><h5>Comparativas</h5><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a></div>
+      <div class="footer-col"><h5>Empresa</h5><a href="/recursos">Recursos</a><a href="/sobre-nosotros">Sobre nosotros</a><a href="/privacidad">Privacidad</a><a href="/terminos">Términos</a><a href="/cookies">Cookies</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Shiftia · Highkey Labs Software Solutions</span><a href="mailto:info@shiftia.es">info@shiftia.es</a></div>
   <p class="disclaimer">Skello, Sesame HR, Factorial, Cuadly, Bizneo HR, aTurnos y el resto de marcas citadas pertenecen a sus titulares. La información sobre terceros procede de sus webs públicas y de directorios de reseñas a 7 de septiembre de 2026 y puede cambiar; no existe relación comercial entre Shiftia y ninguna de ellas.</p>
 </footer>
+<script id="navScript">(function(){
+  var nav=document.getElementById('siteNav'),b=nav&&nav.querySelector('.burger');
+  if(b){b.addEventListener('click',function(){var o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Cerrar el menú':'Abrir el menú');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('open')){nav.classList.remove('open');b.setAttribute('aria-expanded','false');}});}
+})();</script>
 </body>
 </html>

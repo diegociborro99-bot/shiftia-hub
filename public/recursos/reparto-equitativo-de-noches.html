@@ -196,18 +196,35 @@ footer a:hover{color:var(--accent)}
   th,td{padding:10px 12px}
 }
 </style>
+<link rel="stylesheet" href="/comercial.css?v=2">
 </head>
 <body>
 
-<nav class="nav-top">
-  <a href="/" class="brand">Shiftia</a>
-  <a href="/#contact" class="cta">Solicitar demo</a>
-</nav>
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="/" class="logo" aria-label="Shiftia, ir a la portada"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGn" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGn)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGn)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a>
+    <nav class="nav-links" aria-label="Principal">
+      <a href="/#features">Funciones</a>
+      <a href="/#pricing">Planes</a>
+      <div class="nav-dd"><a href="/software-turnos-residencias">Sectores</a><div class="dd"><a href="/software-turnos-residencias">Residencias<small>Cobertura 24/7 y convenio de dependencia</small></a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas<small>Noches equitativas y descansos</small></a><a href="/turnos-hosteleria">Hostelería<small>Turno partido y temporada</small></a></div></div>
+      <div class="nav-dd"><a href="/mejores-software-turnos-espana">Comparativas</a><div class="dd"><a href="/mejores-software-turnos-espana">Mejores software de turnos<small>Siete opciones, precios verificados</small></a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos<small>Cuándo elegir a cada uno</small></a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR<small>Planificador o suite de RRHH</small></a></div></div>
+      <a href="/recursos" aria-current="page">Recursos</a>
+    </nav>
+    <div class="nav-actions"><a href="/demo" class="nav-ghost">Probar la demo</a><a href="/#contact" class="nav-cta">Solicitar demo</a></div>
+    <button class="burger" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="navPanel"><span></span><span></span><span></span></button>
+    <div class="nav-panel" id="navPanel">
+      <a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos">Recursos</a>
+      <div class="panel-sub">Sectores</div><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a>
+      <div class="panel-sub">Comparativas</div><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a>
+    </div>
+  </div>
+</header>
 
-<main class="wrap">
+<main class="wrap narrow" id="main">
   <div class="breadcrumbs">
     <a href="/">Inicio</a> · <a href="/recursos">Recursos</a> · Reparto equitativo de noches
   </div>
+  <section class="hero hero-editorial"><div class="hero-aurora" aria-hidden="true"><span class="ha-blob ha-blob-1"></span><span class="ha-blob ha-blob-2"></span><span class="ha-blob ha-blob-3"></span></div><div class="hero-copy">
 
   <div class="eyebrow">Guía y calculadora · Septiembre de 2026</div>
 
@@ -220,6 +237,7 @@ footer a:hover{color:var(--accent)}
     <span>·</span>
     <span>Para supervisión de enfermería, coordinación de residencias y responsables de turnos</span>
   </div>
+  </div></section>
 
   <!-- Calculadora de reparto de noches: el cálculo se hace en el navegador; solo se
        envían datos si la persona pide el resumen por email. -->
@@ -288,43 +306,43 @@ footer a:hover{color:var(--accent)}
   <p>Conviene separar tres niveles: lo que obliga la norma, lo que recomienda un organismo público y lo que propone la literatura científica. Mezclarlos es la forma más rápida de perder credibilidad delante del comité de empresa.</p>
 
   <div class="table-scroll">
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>Regla</th><th>Qué dice</th><th>Nivel</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Máximo de semanas seguidas de noche</strong></td>
-        <td>En procesos continuos de 24 h, nadie más de dos semanas consecutivas salvo adscripción voluntaria (art. 36.3 ET).</td>
-        <td><strong>Norma vigente</strong></td>
+        <td data-label="Regla"><strong>Máximo de semanas seguidas de noche</strong></td>
+        <td data-label="Qué dice">En procesos continuos de 24 h, nadie más de dos semanas consecutivas salvo adscripción voluntaria (art. 36.3 ET).</td>
+        <td data-label="Nivel"><strong>Norma vigente</strong></td>
       </tr>
       <tr>
-        <td><strong>Jornada nocturna y descansos</strong></td>
-        <td>Máximo 8 horas de promedio en 15 días, sin horas extraordinarias (art. 36.1 ET); 12 horas entre jornadas (art. 34.3 ET), reducibles a 7 h solo el día del cambio de turno y compensando después (art. 19.2 del RD 1561/1995).</td>
-        <td><strong>Norma vigente</strong></td>
+        <td data-label="Regla"><strong>Jornada nocturna y descansos</strong></td>
+        <td data-label="Qué dice">Máximo 8 horas de promedio en 15 días, sin horas extraordinarias (art. 36.1 ET); 12 horas entre jornadas (art. 34.3 ET), reducibles a 7 h solo el día del cambio de turno y compensando después (art. 19.2 del RD 1561/1995).</td>
+        <td data-label="Nivel"><strong>Norma vigente</strong></td>
       </tr>
       <tr>
-        <td><strong>Rotación rápida</strong></td>
-        <td>«Se recomienda cambiar de turno cada dos o tres días» y dar a conocer el calendario con antelación (INSST, NTP 455, 1998).</td>
-        <td>Recomendación de organismo público</td>
+        <td data-label="Regla"><strong>Rotación rápida</strong></td>
+        <td data-label="Qué dice">«Se recomienda cambiar de turno cada dos o tres días» y dar a conocer el calendario con antelación (INSST, NTP 455, 1998).</td>
+        <td data-label="Nivel">Recomendación de organismo público</td>
       </tr>
       <tr>
-        <td><strong>Rotación hacia delante (M→T→N)</strong></td>
-        <td>Rotar mañana, luego tarde, luego noche es preferible a la rotación hacia atrás (EU-OSHA, OSHwiki, citando a Knauth y Hornberger, 2003).</td>
-        <td>Recomendación técnica europea</td>
+        <td data-label="Regla"><strong>Rotación hacia delante (M→T→N)</strong></td>
+        <td data-label="Qué dice">Rotar mañana, luego tarde, luego noche es preferible a la rotación hacia atrás (EU-OSHA, OSHwiki, citando a Knauth y Hornberger, 2003).</td>
+        <td data-label="Nivel">Recomendación técnica europea</td>
       </tr>
       <tr>
-        <td><strong>Noches consecutivas y descanso posterior</strong></td>
-        <td>Máximo 3 noches seguidas (Garde y col., <em>Scandinavian Journal of Work, Environment &amp; Health</em>, 2020) y al menos dos días libres después de una noche (EU-OSHA, OSHwiki); el HSE británico, 2-3 turnos de noche consecutivos.</td>
-        <td>Recomendación científica / guía técnica</td>
+        <td data-label="Regla"><strong>Noches consecutivas y descanso posterior</strong></td>
+        <td data-label="Qué dice">Máximo 3 noches seguidas (Garde y col., <em>Scandinavian Journal of Work, Environment &amp; Health</em>, 2020) y al menos dos días libres después de una noche (EU-OSHA, OSHwiki); el HSE británico, 2-3 turnos de noche consecutivos.</td>
+        <td data-label="Nivel">Recomendación científica / guía técnica</td>
       </tr>
       <tr>
-        <td><strong>Embarazo</strong></td>
-        <td>No más de una noche por semana (Garde y col., 2020). El art. 26 de la Ley de Prevención de Riesgos Laborales obliga a adaptar o cambiar el puesto —incluido no hacer trabajo nocturno o a turnos— cuando hay riesgo.</td>
-        <td>Recomendación científica + norma vigente</td>
+        <td data-label="Regla"><strong>Embarazo</strong></td>
+        <td data-label="Qué dice">No más de una noche por semana (Garde y col., 2020). El art. 26 de la Ley de Prevención de Riesgos Laborales obliga a adaptar o cambiar el puesto —incluido no hacer trabajo nocturno o a turnos— cuando hay riesgo.</td>
+        <td data-label="Nivel">Recomendación científica + norma vigente</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
   </div>
 
   <p>Un mito muy repetido: <strong>no existe un «máximo de tres noches seguidas» en la ley española</strong>. El tres es recomendación científica; el límite legal en procesos continuos son dos semanas. El convenio estatal de dependencia <strong>no fija máximo de noches ni de noches consecutivas</strong>. Por eso, en un software de turnos, ese máximo tiene que ser configurable, nunca una constante. Qué puede pactar tu convenio en materia de rotación y qué no, en <a href="/recursos/turnos-rotativos-convenio-2026">turnos rotativos y convenio en 2026</a>.</p>
@@ -398,43 +416,43 @@ footer a:hover{color:var(--accent)}
   <p>Toda plantilla real tiene personas que no pueden hacer noches. El principio: <strong>la exención se respeta, se documenta y se declara</strong>, y la media se recalcula sobre quien sí rota.</p>
 
   <div class="table-scroll">
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>Situación</th><th>Base</th><th>Cómo tratarla en el cuadrante</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td><strong>Jornada reducida</strong></td>
-        <td>Reducción de jornada por guarda legal o cuidado de familiares</td>
-        <td>Objetivo de noches prorrateado a su porcentaje de jornada, declarado en la tabla para que no se lea como trato de favor.</td>
+        <td data-label="Situación"><strong>Jornada reducida</strong></td>
+        <td data-label="Base">Reducción de jornada por guarda legal o cuidado de familiares</td>
+        <td data-label="Cómo tratarla en el cuadrante">Objetivo de noches prorrateado a su porcentaje de jornada, declarado en la tabla para que no se lea como trato de favor.</td>
       </tr>
       <tr>
-        <td><strong>Adaptación por conciliación</strong></td>
-        <td>Art. 34.8 ET (hijos hasta 12 años, familiares hasta 2.º grado); negociación de máximo 15 días</td>
-        <td>Es un derecho, no un favor: se acuerda por escrito, con alcance y fecha de revisión. Si excluye noches, sale del denominador mientras dure.</td>
+        <td data-label="Situación"><strong>Adaptación por conciliación</strong></td>
+        <td data-label="Base">Art. 34.8 ET (hijos hasta 12 años, familiares hasta 2.º grado); negociación de máximo 15 días</td>
+        <td data-label="Cómo tratarla en el cuadrante">Es un derecho, no un favor: se acuerda por escrito, con alcance y fecha de revisión. Si excluye noches, sale del denominador mientras dure.</td>
       </tr>
       <tr>
-        <td><strong>Embarazo y lactancia</strong></td>
-        <td>Art. 26 LPRL: adaptación o cambio de puesto, incluido no realizar trabajo nocturno o a turnos, cuando hay riesgo</td>
-        <td>Exención inmediata cuando el servicio de prevención lo indique. No se compensa después: no es una deuda de la trabajadora.</td>
+        <td data-label="Situación"><strong>Embarazo y lactancia</strong></td>
+        <td data-label="Base">Art. 26 LPRL: adaptación o cambio de puesto, incluido no realizar trabajo nocturno o a turnos, cuando hay riesgo</td>
+        <td data-label="Cómo tratarla en el cuadrante">Exención inmediata cuando el servicio de prevención lo indique. No se compensa después: no es una deuda de la trabajadora.</td>
       </tr>
       <tr>
-        <td><strong>Exención médica</strong></td>
-        <td>Art. 36.4 ET: derecho a puesto diurno si hay problemas de salud ligados a la noche</td>
-        <td>Se aplica con el informe de aptitud del servicio de prevención. La causa es confidencial; la exención, no.</td>
+        <td data-label="Situación"><strong>Exención médica</strong></td>
+        <td data-label="Base">Art. 36.4 ET: derecho a puesto diurno si hay problemas de salud ligados a la noche</td>
+        <td data-label="Cómo tratarla en el cuadrante">Se aplica con el informe de aptitud del servicio de prevención. La causa es confidencial; la exención, no.</td>
       </tr>
       <tr>
-        <td><strong>Edad</strong></td>
-        <td>El Estatuto <strong>no</strong> fija una edad de exención de noches: depende del convenio o del acuerdo de centro</td>
-        <td>Si tu convenio la recoge, se aplica como cualquier otra exención. Si no, no cabe aplicarla unilateralmente.</td>
+        <td data-label="Situación"><strong>Edad</strong></td>
+        <td data-label="Base">El Estatuto <strong>no</strong> fija una edad de exención de noches: depende del convenio o del acuerdo de centro</td>
+        <td data-label="Cómo tratarla en el cuadrante">Si tu convenio la recoge, se aplica como cualquier otra exención. Si no, no cabe aplicarla unilateralmente.</td>
       </tr>
       <tr>
-        <td><strong>Turno fijo de noche</strong></td>
-        <td>Art. 36.3 ET: la permanencia prolongada en noche exige adscripción voluntaria</td>
-        <td>No entra en la media de rotantes. Conviene revisar la voluntariedad por escrito una vez al año.</td>
+        <td data-label="Situación"><strong>Turno fijo de noche</strong></td>
+        <td data-label="Base">Art. 36.3 ET: la permanencia prolongada en noche exige adscripción voluntaria</td>
+        <td data-label="Cómo tratarla en el cuadrante">No entra en la media de rotantes. Conviene revisar la voluntariedad por escrito una vez al año.</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
   </div>
 
   <p>Un apunte para la sanidad pública: el <strong>proyecto de nuevo Estatuto Marco</strong> del personal estatutario, aprobado por el Consejo de Ministros el 1 de septiembre de 2026 y remitido al Congreso, plantea exenciones de guardias y noches para mayores de 55 años, embarazo, lactancia, reducción por cuidado de hijos y motivos de salud. <strong>Es un proyecto de ley en tramitación: no está aprobado ni publicado en el BOE.</strong> Si prospera, habrá más exentos sin más plantilla: las mismas noches entre menos gente.</p>
@@ -508,9 +526,18 @@ footer a:hover{color:var(--accent)}
   </div>
 </main>
 
-<footer>
-  <a href="/">Shiftia</a> · <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/cookies">Cookies</a>
-  <p style="margin-top:8px;font-size:0.78rem;opacity:0.8">Esta guía es informativa y no constituye asesoramiento legal. Consulta tu convenio colectivo aplicable y, si tienes dudas, a un asesor laboral.</p>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><a href="/" class="logo"><svg viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sGf" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sGf)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sGf)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a><p>Planificación de turnos y cuadrantes con IA para cualquier sector. Creado por un enfermero en activo; hecho en Asturias.</p></div>
+    <div class="footer-cols">
+      <div class="footer-col"><h5>Producto</h5><a href="/#features">Funciones</a><a href="/#pricing">Planes</a><a href="/demo">Demo interactiva</a><a href="/recursos/auditoria-cuadrante">Auditoría gratuita</a></div>
+      <div class="footer-col"><h5>Sectores</h5><a href="/software-turnos-residencias">Residencias</a><a href="/cuadrantes-enfermeria-clinicas">Enfermería y clínicas</a><a href="/turnos-hosteleria">Hostelería</a></div>
+      <div class="footer-col"><h5>Comparativas</h5><a href="/mejores-software-turnos-espana">Mejores software de turnos</a><a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a><a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a></div>
+      <div class="footer-col"><h5>Empresa</h5><a href="/recursos">Recursos</a><a href="/sobre-nosotros">Sobre nosotros</a><a href="/privacidad">Privacidad</a><a href="/terminos">Términos</a><a href="/cookies">Cookies</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Shiftia · Highkey Labs Software Solutions</span><a href="mailto:info@shiftia.es">info@shiftia.es</a></div>
+  <p class="disclaimer">Esta guía es informativa y no constituye asesoramiento legal. Consulta tu convenio colectivo aplicable y, si tienes dudas, a un asesor laboral.</p>
 </footer>
 
 <script>
@@ -692,5 +719,15 @@ footer a:hover{color:var(--accent)}
 })();
 </script>
 
+<script id="navScript">(function(){
+  var nav=document.getElementById('siteNav'),b=nav&&nav.querySelector('.burger');
+  if(b){b.addEventListener('click',function(){var o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Cerrar el menú':'Abrir el menú');});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&nav.classList.contains('open')){nav.classList.remove('open');b.setAttribute('aria-expanded','false');}});}
+  var h2s=[].slice.call(document.querySelectorAll('main h2')).filter(function(h){return !h.closest('.cta-card,.tool-card,.tool,.toc')&&h.textContent.trim().length>3});
+  var anchor=document.querySelector('main .hero-editorial')||document.querySelector('main .meta-line');
+  if(h2s.length>=4&&anchor){var box=document.createElement('nav');box.className='toc';box.setAttribute('aria-label','Contenido de la guía');var used={};
+    box.innerHTML='<div class="toc-title">En esta guía</div><ol>'+h2s.map(function(h,i){var id=h.id||('s-'+(h.textContent.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||i));while(used[id])id+='-'+i;used[id]=1;h.id=id;return '<li><a href="#'+id+'">'+h.textContent.replace(/</g,'&lt;')+'</a></li>'}).join('')+'</ol>';
+    anchor.insertAdjacentElement('afterend',box);}
+})();</script>
 </body>
 </html>
