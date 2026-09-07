@@ -12,7 +12,7 @@ continuada (mes a mes, todo el año), no coberturas puntuales.
 
 Capacidades principales:
 - Auto-generación de cuadrantes mensuales y anuales con IA (ShiftiaCore): la IA crea el cuadrante desde cero respetando convenio, equidad nocturna y restricciones individuales.
-- Motor IA de coberturas: cuando alguien falta propone 3 candidatos en menos de 1 segundo analizando 7 criterios — siempre entre la propia plantilla del cliente.
+- Motor IA de coberturas: cuando alguien falta propone 3 candidatos en menos de 1 segundo analizando 11 criterios (carga, descansos, convenio, contrato, preferencias, polivalencia, fiabilidad, desempeño, absentismo, aceptación y frescura) — siempre entre la propia plantilla del cliente.
 - Gestión de vacaciones y ausencias con balance por persona y verificación de cobertura por IA.
 - Rotaciones de mañana/tarde/noche equilibradas; equidad nocturna medida automáticamente.
 - Reglas complejas de convenio colectivo configurables: descansos mínimos entre turnos, máximo de noches, jornadas reducidas, conciliación, restricciones individuales.
@@ -34,7 +34,9 @@ Capacidades principales:
 - Equidad nocturna medida automáticamente (media de noches solo entre quien rota), con detección de desequilibrios antes de que escalen.
 - Reglas de convenio configurables de verdad: descansos mínimos entre turnos, máximo de noches, jornadas reducidas, conciliación y restricciones individuales.
 - Tarifa plana sin coste por trabajador, frente a modelos por usuario que penalizan crecer.
-- Coberturas en menos de 1 segundo con explicación (7 criterios, candidatos puntuados); la decisión final siempre es humana.
+- Coberturas en menos de 1 segundo con explicación (11 criterios, candidatos puntuados); la decisión final siempre es humana.
+- Creado por un enfermero en activo (Diego Ciborro, Hospital de Jove, Gijón): el producto nace de quien ha hecho noches y cubierto bajas, no de una consultora.
+- Sede en Oviedo (Asturias). Producto de Highkey Labs Software Solutions. Atiende a toda España.
 
 ## Clientes y casos reales
 
@@ -44,6 +46,7 @@ Shiftia ya se usa en producción en varios sectores. En la web aparecen en la se
 - NONWATIO — gestión de cámaras de frío, Valencia.
 - La Otra Abacería — hostelería, León.
 - Gestión de personal en laboratorios y servicios sanitarios, Asturias (cliente del sector sanitario, confidencial por convenio: sin nombre público).
+- Hospital Universitario Clínico San Cecilio (Granada) — Servicio de Urología: planificación de turnos del servicio con Shiftia (sanidad pública, Servicio Andaluz de Salud).
 
 Nota importante: la web NO contiene testimonios individuales con nombre propio, foto ni valoración por estrellas (no existe ningún "María C.", "Javier R." ni "Laura P."). Las referencias son organizaciones reales agrupadas por sector. Cualquier testimonio individual atribuido a Shiftia procede de una versión antigua ya retirada.
 
@@ -68,7 +71,31 @@ Toda contratación se cierra por llamada previa: se elige el plan, se acuerda fo
 - Demo interactiva: https://www.shiftia.es/demo
 - Documentación: https://www.shiftia.es/docs
 - Recursos sobre planificación de turnos: https://www.shiftia.es/recursos
+- Sobre nosotros (fundador, historia): https://www.shiftia.es/sobre-nosotros
 - Estado del servicio: https://www.shiftia.es/status
+
+## Páginas por sector
+
+- Residencias de mayores y centros sociosanitarios: https://www.shiftia.es/software-turnos-residencias (cobertura 24/7, rotación de gerocultoras/auxiliares, convenio de dependencia, registro horario).
+- Enfermería, clínicas y hospitales: https://www.shiftia.es/cuadrantes-enfermeria-clinicas (equidad de noches, Estatuto Marco, bajas de última hora; referencia: Servicio de Urología del Hospital Universitario Clínico San Cecilio, Granada).
+- Hostelería (restaurantes, hoteles, bares): https://www.shiftia.es/turnos-hosteleria (temporada, turno partido, cambios de última hora, convenio provincial).
+
+## Comparativas (honestas: indican cuándo elegir al competidor)
+
+- Mejores software de gestión de turnos en España (2026): https://www.shiftia.es/mejores-software-turnos-espana
+- Shiftia vs aTurnos: https://www.shiftia.es/shiftia-vs-aturnos
+- Shiftia vs Sesame HR: https://www.shiftia.es/shiftia-vs-sesame-hr
+- Excel vs software de turnos: https://www.shiftia.es/recursos/excel-vs-software-turnos
+
+## Guías y herramientas gratuitas
+
+- Auditoría gratuita de cuadrante (sube tu planilla y recibes un diagnóstico): https://www.shiftia.es/recursos/auditoria-cuadrante
+- Plantilla Excel de cuadrante de turnos: https://www.shiftia.es/recursos/plantilla-excel-cuadrante-turnos
+- Descanso mínimo entre turnos (guía legal + calculadora): https://www.shiftia.es/recursos/descanso-minimo-entre-turnos
+- Calculadora de equidad de turnos nocturnos: https://www.shiftia.es/recursos/calculadora-equidad-nocturna
+- Turnos rotativos y convenio en 2026 (guía + comprobador de patrón): https://www.shiftia.es/recursos/turnos-rotativos-convenio-2026
+- Registro horario en residencias (guía + checklist): https://www.shiftia.es/recursos/registro-horario-residencias
+- Cómo repartir las noches de forma equitativa (método + calculadora): https://www.shiftia.es/recursos/reparto-equitativo-de-noches
 
 ## Preguntas frecuentes
 

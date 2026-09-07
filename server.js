@@ -134,12 +134,25 @@ const PRETTY_HTML_ROUTES = {
   '/docs':     'docs.html',
   '/demo':     'demo.html',
   '/sobre-nosotros': 'sobre-nosotros.html',
+  '/status':   'status.html', // enlazado desde llms.txt; sin esta entrada devolvía 404
   '/recursos': 'recursos/index.html',
   '/recursos/descanso-minimo-entre-turnos': 'recursos/descanso-minimo-entre-turnos.html',
   '/recursos/calculadora-equidad-nocturna': 'recursos/calculadora-equidad-nocturna.html',
   '/recursos/excel-vs-software-turnos':     'recursos/excel-vs-software-turnos.html',
   '/recursos/auditoria-cuadrante':          'recursos/auditoria-cuadrante.html',
   '/recursos/plantilla-excel-cuadrante-turnos': 'recursos/plantilla-excel-cuadrante-turnos.html',
+  // Guías de /recursos (contenido informacional, 1/mes)
+  '/recursos/turnos-rotativos-convenio-2026': 'recursos/turnos-rotativos-convenio-2026.html',
+  '/recursos/registro-horario-residencias':   'recursos/registro-horario-residencias.html',
+  '/recursos/reparto-equitativo-de-noches':   'recursos/reparto-equitativo-de-noches.html',
+  // Páginas de intención comercial: por sector
+  '/software-turnos-residencias':     'software-turnos-residencias.html',
+  '/cuadrantes-enfermeria-clinicas':  'cuadrantes-enfermeria-clinicas.html',
+  '/turnos-hosteleria':               'turnos-hosteleria.html',
+  // Páginas de intención comercial: comparativas (lo que citan los LLM)
+  '/shiftia-vs-aturnos':              'shiftia-vs-aturnos.html',
+  '/shiftia-vs-sesame-hr':            'shiftia-vs-sesame-hr.html',
+  '/mejores-software-turnos-espana':  'mejores-software-turnos-espana.html',
 };
 const PUBLIC_DIR = path.resolve(__dirname, 'public');
 
@@ -261,6 +274,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
     const longCacheAssets = new Set([
       'design-system.css',
       'landing.css', // versionado con ?v= en el <link> de index.html
+      'comercial.css', // páginas de sector y comparativas, versionado con ?v=
       'favicon.svg',
       'apple-touch-icon.svg',
       'product-mockup.svg'
@@ -1497,7 +1511,10 @@ const buildIcs = bookingLib.buildIcs;
 //    escapamos y envolvemos en la plantilla de marca. Guarda lead en tool_leads.
 const TOOL_NAMES = {
   equidad: 'Calculadora de equidad nocturna',
-  descanso: 'Calculadora de descanso entre turnos'
+  descanso: 'Calculadora de descanso entre turnos',
+  noches: 'Calculadora de reparto de noches',
+  rotativo: 'Comprobador de patrón de turnos rotativos',
+  registro: 'Checklist de registro horario en residencias'
 };
 
 app.post('/api/tools/email-results', contactLimiter, async (req, res) => {
@@ -2413,10 +2430,21 @@ app.get('/docs', (req, res) => {
 });
 
 // Serve legal pages
-// Sitemap dinámico — siempre con lastmod = hoy. Sustituye al sitemap.xml estático
-// (que servirá express.static como fallback si por algún motivo este endpoint cae).
+// Sitemap dinámico. lastmod = fecha real de modificación del HTML que sirve cada
+// ruta (no "hoy"): un lastmod idéntico en todas las URL le dice a Google y a Bing
+// que nada cambia nunca y desincentiva el re-rastreo. Sustituye al sitemap.xml
+// estático (que servirá express.static si por algún motivo este endpoint cae).
 app.get('/sitemap.xml', (req, res) => {
   const today = new Date().toISOString().slice(0, 10);
+  const lastmodOf = (loc) => {
+    const file = PRETTY_HTML_ROUTES[loc];
+    if (!file) return today;
+    try {
+      return fs.statSync(path.join(PUBLIC_DIR, file)).mtime.toISOString().slice(0, 10);
+    } catch (_) {
+      return today;
+    }
+  };
   const urls = [
     { loc: '/',                                          priority: '1.0', changefreq: 'weekly'  },
     { loc: '/demo',                                      priority: '0.9', changefreq: 'monthly' },
@@ -2426,8 +2454,18 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: '/recursos/excel-vs-software-turnos',         priority: '0.8', changefreq: 'monthly' },
     { loc: '/recursos/auditoria-cuadrante',              priority: '0.8', changefreq: 'monthly' },
     { loc: '/recursos/plantilla-excel-cuadrante-turnos', priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/turnos-rotativos-convenio-2026',   priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/registro-horario-residencias',     priority: '0.8', changefreq: 'monthly' },
+    { loc: '/recursos/reparto-equitativo-de-noches',     priority: '0.8', changefreq: 'monthly' },
+    { loc: '/software-turnos-residencias',               priority: '0.9', changefreq: 'monthly' },
+    { loc: '/cuadrantes-enfermeria-clinicas',            priority: '0.9', changefreq: 'monthly' },
+    { loc: '/turnos-hosteleria',                         priority: '0.9', changefreq: 'monthly' },
+    { loc: '/shiftia-vs-aturnos',                        priority: '0.8', changefreq: 'monthly' },
+    { loc: '/shiftia-vs-sesame-hr',                      priority: '0.8', changefreq: 'monthly' },
+    { loc: '/mejores-software-turnos-espana',            priority: '0.9', changefreq: 'monthly' },
     { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
     { loc: '/sobre-nosotros',                            priority: '0.6', changefreq: 'monthly' },
+    { loc: '/status',                                    priority: '0.3', changefreq: 'weekly'  },
     { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
     { loc: '/terminos',                                  priority: '0.3', changefreq: 'yearly'  },
     { loc: '/cookies',                                   priority: '0.3', changefreq: 'yearly'  }
@@ -2436,7 +2474,7 @@ app.get('/sitemap.xml', (req, res) => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url>
     <loc>https://${CANONICAL_HOST}${u.loc}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastmodOf(u.loc)}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('\n')}

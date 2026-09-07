@@ -32,9 +32,38 @@
       "url": "https://www.shiftia.es/",
       "logo": "https://www.shiftia.es/icon-512.png",
       "email": "info@shiftia.es",
-      "description": "Plataforma SaaS de planificación de turnos y cuadrantes con IA para hospitales, clínicas, residencias y empresas con planillas.",
+      "description": "Plataforma SaaS de planificación de turnos y cuadrantes con IA para hospitales, clínicas, residencias, hostelería, retail, industria y cualquier empresa con planillas. Sede en Oviedo (Asturias), España.",
       "areaServed": "ES",
-      "sameAs": ["https://www.linkedin.com/company/shiftia"]
+      "foundingLocation": {
+        "@type": "Place",
+        "name": "Oviedo, Asturias, España"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Oviedo",
+        "addressRegion": "Asturias",
+        "addressCountry": "ES"
+      },
+      "founder": {
+        "@type": "Person",
+        "name": "Diego Ciborro",
+        "jobTitle": "Fundador y Director de Shiftia · Enfermero",
+        "url": "https://www.shiftia.es/sobre-nosotros",
+        "sameAs": [
+          "https://www.linkedin.com/in/diego-ciborro-4812183a2"
+        ]
+      },
+      "knowsAbout": [
+        "Planificación de turnos",
+        "Cuadrantes de enfermería",
+        "Convenios colectivos y descansos",
+        "Equidad de turnos nocturnos",
+        "Software para residencias",
+        "Turnos en hostelería"
+      ],
+      "sameAs": [
+        "https://www.linkedin.com/company/shiftia"
+      ]
     },
     {
       "@type": "WebSite",
@@ -42,7 +71,9 @@
       "url": "https://www.shiftia.es/",
       "name": "Shiftia",
       "inLanguage": "es-ES",
-      "publisher": { "@id": "https://www.shiftia.es/#organization" }
+      "publisher": {
+        "@id": "https://www.shiftia.es/#organization"
+      }
     },
     {
       "@type": "SoftwareApplication",
@@ -52,7 +83,12 @@
       "operatingSystem": "Web",
       "url": "https://www.shiftia.es/",
       "description": "Planificación de turnos y cuadrantes con IA. Motor de coberturas en menos de 1 segundo, equidad nocturna automática, lector PDF, convenio inteligente y multidispositivo.",
-      "inLanguage": ["es", "en", "de", "fr"],
+      "inLanguage": [
+        "es",
+        "en",
+        "de",
+        "fr"
+      ],
       "featureList": "Planilla anual con códigos de turno, Planificación continuada de plantilla interna, Gestión de ausencias y vacaciones, Rotaciones equilibradas mañana/tarde/noche, Reglas complejas de convenio (descansos mínimos, máximo de noches, jornadas reducidas), Gestor de Cobertura IA (sustituciones internas), Radar de Riesgo 14 días, Detector de Conflictos, Mapa de Cobertura, Lector PDF con IA, Vacaciones IA, Informes con IA, Briefing diario IA, Convenio inteligente, Equipo y roles, Multidispositivo, Histórico y auditoría exportable",
       "offers": [
         {
@@ -90,7 +126,9 @@
           "availability": "https://schema.org/InStock"
         }
       ],
-      "publisher": { "@id": "https://www.shiftia.es/#organization" }
+      "publisher": {
+        "@id": "https://www.shiftia.es/#organization"
+      }
     },
     {
       "@type": "FAQPage",
@@ -98,10 +136,74 @@
       "mainEntity": [
         {
           "@type": "Question",
+          "name": "¿Para qué sectores funciona Shiftia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Shiftia funciona para cualquier organización con planillas: hospitales, residencias, clínicas, fábricas, seguridad privada, hostelería y centros de atención 24/7. La IA aprende tu convenio específico."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo respeta Shiftia el convenio colectivo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Codificamos tus reglas (máximo de noches consecutivas, descanso mínimo entre turnos, festivos, guardias) como restricciones que la IA respeta como sagradas. El motor no genera nunca un turno que rompa el convenio."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "¿Cuánto cuesta Shiftia?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Tarifa plana sin coste por trabajador. Esencial 29€/mes (hasta 15 trabajadores), Pro 69€/mes (hasta 40), Business 129€/mes (multi-centro hasta 100). Enterprise a medida. -20% si pagas anual. Garantía de devolución de 30 días."
+            "text": "Tarifa plana sin coste por trabajador: Esencial 29€/mes (hasta 15 trabajadores), Pro 69€/mes (hasta 40, incluye la IA), Business 129€/mes (multi-centro hasta 100). Enterprise a medida. -20% si pagas anual. Sin permanencia y garantía de devolución de 30 días."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo importar mi planilla actual desde un PDF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. El Lector PDF con IA reconoce los códigos de turno (M, T, N, CMP, VAC, PRL, LIB, CHG) y los sufijos de turno extra, y vuelca tu planilla histórica a la app automáticamente. Cero introducción manual."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Mis datos están seguros?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Cumplimos RGPD, los datos se cifran en tránsito (HTTPS/TLS) y en reposo, no compartimos información con terceros, y dispones de Single Sign-On y autenticación 2FA opcional para entornos corporativos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo cancelar en cualquier momento?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Sin permanencia ni penalizaciones. Puedes cancelar tu plan en cualquier momento, mantienes el acceso hasta el final del período facturado y puedes exportar tus datos cuando quieras."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Shiftia es una ETT o un marketplace de personal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Shiftia no es una ETT ni una bolsa de profesionales externos: es un software de planificación de turnos. Tu equipo es el tuyo. Shiftia genera los cuadrantes, gestiona ausencias y vacaciones y propone sustituciones entre tu propia plantilla. Ninguna persona externa interviene en tu operación."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Sirve para una empresa de 30 trabajadores con planificación continuada?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, ese es el caso típico de Shiftia: planillas equilibradas generadas de forma continuada, mes a mes durante todo el año, con rotaciones, descansos legales, vacaciones y equidad de noches. La cobertura urgente de bajas es solo una función más, no el producto. El plan Pro cubre hasta 40 trabajadores por 69€/mes (55€/mes en pago anual)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Shiftia gestiona vacaciones, ausencias, rotaciones y reglas complejas de convenio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Vacaciones con balance por persona y verificación de cobertura, ausencias y bajas con sustitución sugerida por IA, rotaciones de mañana/tarde/noche equilibradas, y reglas de convenio configurables: máximo de noches, descansos mínimos entre turnos, jornadas reducidas y conciliación. Todo auditado y exportable."
           }
         },
         {
@@ -180,115 +282,7 @@
     if (document.body) killDark();
     else document.addEventListener('DOMContentLoaded', killDark);
   } catch (e) {}
-})();</script><script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"Organization",
-  "name":"Shiftia",
-  "url":"https://www.shiftia.es",
-  "logo":"https://www.shiftia.es/favicon.svg",
-  "description":"Software de planificación de turnos con IA para hospitales, residencias, fábricas y empresas con cuadrantes.",
-  "sameAs":["https://www.linkedin.com/company/shiftia"]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"WebSite",
-  "name":"Shiftia",
-  "url":"https://www.shiftia.es",
-  "inLanguage":"es-ES",
-  "potentialAction":{
-    "@type":"SearchAction",
-    "target":{
-      "@type":"EntryPoint",
-      "urlTemplate":"https://www.shiftia.es/?q={search_term_string}"
-    },
-    "query-input":"required name=search_term_string"
-  }
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context":"https://schema.org",
-  "@type":"FAQPage",
-  "mainEntity":[
-    {
-      "@type":"Question",
-      "name":"¿Para qué sectores funciona Shiftia?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Shiftia funciona para cualquier organización con planillas: hospitales, residencias, clínicas, fábricas, seguridad privada, hostelería y centros de atención 24/7. La IA aprende tu convenio específico."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Cómo respeta Shiftia el convenio colectivo?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Codificamos tus reglas (máximo de noches consecutivas, descanso mínimo entre turnos, festivos, guardias) como restricciones que la IA respeta como sagradas. El motor no genera nunca un turno que rompa el convenio."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Cuánto cuesta Shiftia?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Desde 20€ al mes. El precio depende del tamaño del equipo y de los módulos que actives (Gestor de Cobertura IA, Radar de Riesgo, Multi-centro, etc.). Garantía de devolución de 30 días."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Puedo importar mi planilla actual desde un PDF?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Sí. El Lector PDF con IA reconoce los códigos de turno (M, T, N, CMP, VAC, PRL, LIB, CHG) y los sufijos de turno extra, y vuelca tu planilla histórica a la app automáticamente. Cero introducción manual."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Mis datos están seguros?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Sí. Cumplimos RGPD, los datos se cifran en tránsito (HTTPS/TLS) y en reposo, no compartimos información con terceros, y dispones de Single Sign-On y autenticación 2FA opcional para entornos corporativos."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Puedo cancelar en cualquier momento?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Sí. Sin permanencia ni penalizaciones. Puedes cancelar tu plan en cualquier momento, mantienes el acceso hasta el final del período facturado y puedes exportar tus datos cuando quieras."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Shiftia es una ETT o un marketplace de personal?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"No. Shiftia no es una ETT ni una bolsa de profesionales externos: es un software de planificación de turnos. Tu equipo es el tuyo. Shiftia genera los cuadrantes, gestiona ausencias y vacaciones y propone sustituciones entre tu propia plantilla. Ninguna persona externa interviene en tu operación."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Sirve para una empresa de 30 trabajadores con planificación continuada?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Sí, ese es el caso típico de Shiftia: planillas equilibradas generadas de forma continuada, mes a mes durante todo el año, con rotaciones, descansos legales, vacaciones y equidad de noches. La cobertura urgente de bajas es solo una función más, no el producto. El plan Pro cubre hasta 40 trabajadores por 30€/mes."
-      }
-    },
-    {
-      "@type":"Question",
-      "name":"¿Shiftia gestiona vacaciones, ausencias, rotaciones y reglas complejas de convenio?",
-      "acceptedAnswer":{
-        "@type":"Answer",
-        "text":"Sí. Vacaciones con balance por persona y verificación de cobertura, ausencias y bajas con sustitución sugerida por IA, rotaciones de mañana/tarde/noche equilibradas, y reglas de convenio configurables: máximo de noches, descansos mínimos entre turnos, jornadas reducidas y conciliación. Todo auditado y exportable."
-      }
-    }
-  ]
-}
-</script>
-<title>Shiftia — Planificación inteligente de turnos y planillas</title>
+})();</script><title>Shiftia — Planificación inteligente de turnos y planillas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- DNS prefetch for runtime-injected third-party (Crisp chat, PostHog analytics) -->
@@ -441,6 +435,10 @@
       <div class="client-band-item">
         <span class="client-band-name" data-i18n="cb_name4">Servicios sanitarios</span>
         <span class="client-band-meta" data-i18n="cb_meta4">Sanidad · Asturias</span>
+      </div>
+      <div class="client-band-item">
+        <span class="client-band-name" data-i18n="cb_name5">Hospital Univ. Clínico San Cecilio</span>
+        <span class="client-band-meta" data-i18n="cb_meta5">Servicio de Urología · Granada</span>
       </div>
     </div>
   </div>
@@ -2143,6 +2141,20 @@
         <h5 data-i18n="footer_product">Producto</h5>
         <a href="#features">Funciones</a>
         <a href="#pricing">Planes</a>
+        <a href="/demo" data-i18n="footer_demo">Demo interactiva</a>
+        <a href="/recursos/auditoria-cuadrante" data-i18n="footer_audit">Auditoría gratuita</a>
+      </div>
+      <div class="footer-col">
+        <h5 data-i18n="footer_sectors">Sectores</h5>
+        <a href="/software-turnos-residencias" data-i18n="footer_sec_res">Residencias</a>
+        <a href="/cuadrantes-enfermeria-clinicas" data-i18n="footer_sec_enf">Enfermería y clínicas</a>
+        <a href="/turnos-hosteleria" data-i18n="footer_sec_hos">Hostelería</a>
+      </div>
+      <div class="footer-col">
+        <h5 data-i18n="footer_compare">Comparativas</h5>
+        <a href="/mejores-software-turnos-espana" data-i18n="footer_cmp_best">Mejores software de turnos</a>
+        <a href="/shiftia-vs-aturnos">Shiftia vs aTurnos</a>
+        <a href="/shiftia-vs-sesame-hr">Shiftia vs Sesame HR</a>
       </div>
       <div class="footer-col">
         <h5 data-i18n="footer_company">Empresa</h5>
@@ -2796,6 +2808,8 @@ const translations = {
     cb_meta3: 'Hostelería · León',
     cb_name4: 'Servicios sanitarios',
     cb_meta4: 'Sanidad · Asturias',
+    cb_name5: 'Hospital Univ. Clínico San Cecilio',
+    cb_meta5: 'Servicio de Urología · Granada',
     audit_eyebrow: 'Auditoría gratuita',
     audit_title: '¿Tu cuadrante actual aguantaría <em>una auditoría</em>?',
     audit_desc: 'Sube tu planilla (PDF, foto o CSV) y te devolvemos un diagnóstico con números verificables: equidad de noches, descansos incumplidos con fechas y puntos de riesgo. Gratis, sin registro y en minutos.',
@@ -3018,6 +3032,9 @@ const translations = {
     success_title: 'Solicitud enviada', success_desc: 'Hemos recibido tu caso. Te contactaremos en menos de 24 horas.',
     footer_desc: 'Planificación inteligente de turnos y planillas para cualquier sector.',
     footer_product: 'Producto', footer_company: 'Empresa', footer_contact: 'Contacto',
+    footer_demo: 'Demo interactiva', footer_audit: 'Auditoría gratuita',
+    footer_sectors: 'Sectores', footer_sec_res: 'Residencias', footer_sec_enf: 'Enfermería y clínicas', footer_sec_hos: 'Hostelería',
+    footer_compare: 'Comparativas', footer_cmp_best: 'Mejores software de turnos',
     footer_about: 'Sobre nosotros', footer_privacy: 'Privacidad', footer_terms: 'Términos',
     footer_quote: 'Pedir información',
     footer_copy: '© 2026 Shiftia. Todos los derechos reservados.',
@@ -3036,6 +3053,8 @@ const translations = {
     cb_meta3: 'Hospitality · León',
     cb_name4: 'Healthcare services',
     cb_meta4: 'Healthcare · Asturias',
+    cb_name5: 'San Cecilio University Hospital',
+    cb_meta5: 'Urology Department · Granada',
     audit_eyebrow: 'Free audit',
     audit_title: 'Would your current rota survive <em>an audit</em>?',
     audit_desc: 'Upload your rota (PDF, photo or CSV) and get a diagnosis with verifiable numbers: night-shift fairness, rest violations with dates, and risk points. Free, no sign-up, in minutes.',
@@ -3216,6 +3235,9 @@ const translations = {
     success_title: 'Request sent', success_desc: 'We\'ve received your case. We\'ll contact you within 24 hours.',
     footer_desc: 'Intelligent shift and roster planning for any sector.',
     footer_product: 'Product', footer_company: 'Company', footer_contact: 'Contact',
+    footer_demo: 'Interactive demo', footer_audit: 'Free schedule audit',
+    footer_sectors: 'Industries', footer_sec_res: 'Care homes', footer_sec_enf: 'Nursing & clinics', footer_sec_hos: 'Hospitality',
+    footer_compare: 'Comparisons', footer_cmp_best: 'Best shift scheduling software',
     footer_about: 'About us', footer_privacy: 'Privacy', footer_terms: 'Terms',
     footer_quote: 'Get info',
     footer_copy: '© 2026 Shiftia. All rights reserved.',
@@ -3248,6 +3270,8 @@ const translations = {
     cb_meta3: 'Gastgewerbe · León',
     cb_name4: 'Gesundheitsdienste',
     cb_meta4: 'Gesundheitswesen · Asturien',
+    cb_name5: 'Universitätsklinikum San Cecilio',
+    cb_meta5: 'Urologische Abteilung · Granada',
     audit_eyebrow: 'Kostenloses Audit',
     audit_title: 'Würde Ihr Dienstplan <em>ein Audit</em> bestehen?',
     audit_desc: 'Laden Sie Ihren Dienstplan hoch (PDF, Foto oder CSV) und erhalten Sie eine Diagnose mit überprüfbaren Zahlen: Nachtdienst-Fairness, Ruhezeitverstöße mit Daten und Risikopunkte. Kostenlos, ohne Registrierung, in Minuten.',
@@ -3428,6 +3452,9 @@ const translations = {
     success_title: 'Anfrage gesendet', success_desc: 'Wir haben Ihren Fall erhalten. Wir melden uns innerhalb von 24 Stunden.',
     footer_desc: 'Intelligente Schicht- und Dienstplanung fur jeden Sektor.',
     footer_product: 'Produkt', footer_company: 'Unternehmen', footer_contact: 'Kontakt',
+    footer_demo: 'Interaktive Demo', footer_audit: 'Kostenloses Dienstplan-Audit',
+    footer_sectors: 'Branchen', footer_sec_res: 'Pflegeheime', footer_sec_enf: 'Pflege & Kliniken', footer_sec_hos: 'Gastgewerbe',
+    footer_compare: 'Vergleiche', footer_cmp_best: 'Beste Schichtplanungssoftware',
     footer_about: 'Uber uns', footer_privacy: 'Datenschutz', footer_terms: 'AGB',
     footer_quote: 'Info anfragen',
     footer_copy: '© 2026 Shiftia. Alle Rechte vorbehalten.',
@@ -3460,6 +3487,8 @@ const translations = {
     cb_meta3: 'Hôtellerie · León',
     cb_name4: 'Services de santé',
     cb_meta4: 'Santé · Asturies',
+    cb_name5: 'Hôpital universitaire San Cecilio',
+    cb_meta5: 'Service d’urologie · Grenade',
     audit_eyebrow: 'Audit gratuit',
     audit_title: 'Votre planning actuel survivrait-il à <em>un audit</em> ?',
     audit_desc: 'Envoyez votre planning (PDF, photo ou CSV) et recevez un diagnostic avec des chiffres vérifiables : équité des nuits, repos non respectés avec dates et points de risque. Gratuit, sans inscription, en quelques minutes.',
@@ -3640,6 +3669,9 @@ const translations = {
     success_title: 'Demande envoyee', success_desc: 'Nous avons recu votre cas. Nous vous contacterons sous 24 heures.',
     footer_desc: 'Planification intelligente des equipes et plannings pour tout secteur.',
     footer_product: 'Produit', footer_company: 'Entreprise', footer_contact: 'Contact',
+    footer_demo: 'Démo interactive', footer_audit: 'Audit gratuit du planning',
+    footer_sectors: 'Secteurs', footer_sec_res: 'Maisons de retraite', footer_sec_enf: 'Soins infirmiers et cliniques', footer_sec_hos: 'Hôtellerie-restauration',
+    footer_compare: 'Comparatifs', footer_cmp_best: 'Meilleurs logiciels de planning',
     footer_about: 'A propos', footer_privacy: 'Confidentialite', footer_terms: 'CGU',
     footer_quote: 'Demander des infos',
     footer_copy: '© 2026 Shiftia. Tous droits reserves.',

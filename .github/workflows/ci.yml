@@ -33,3 +33,6 @@ jobs:
 
       - name: Verificador de posicionamiento (copy/SEO de la landing)
         run: node scripts/verify-positioning.js
+
+      - name: Verificador de páginas públicas (canonical, JSON-LD, FAQ, enlaces)
+        run: node scripts/verify-pages.js

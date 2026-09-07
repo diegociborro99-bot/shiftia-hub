@@ -76,6 +76,33 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
 
     const notFound = await fetch(`${BASE}/api/no-existe`);
     assert.equal(notFound.status, 404, 'las rutas /api desconocidas devuelven 404');
+
+    // Páginas de intención comercial y guías nuevas: 200, canonical y FAQ en JSON-LD.
+    const commercial = [
+      '/software-turnos-residencias', '/cuadrantes-enfermeria-clinicas', '/turnos-hosteleria',
+      '/shiftia-vs-aturnos', '/shiftia-vs-sesame-hr', '/mejores-software-turnos-espana',
+    ];
+    const guides = [
+      '/recursos/turnos-rotativos-convenio-2026', '/recursos/registro-horario-residencias', '/recursos/reparto-equitativo-de-noches',
+    ];
+    for (const route of [...commercial, ...guides]) {
+      const r = await fetch(`${BASE}${route}`);
+      assert.equal(r.status, 200, `${route} responde 200`);
+      const body = await r.text();
+      assert.ok(body.includes(`<link rel="canonical" href="https://www.shiftia.es${route}">`), `${route} lleva canonical`);
+      assert.ok((r.headers.get('content-security-policy') || '').includes("'nonce-"), `${route} lleva CSP con nonce`);
+      if (commercial.includes(route)) assert.ok(body.includes('"FAQPage"'), `${route} lleva FAQPage`);
+      // El duplicado .html redirige a la ruta bonita.
+      const dup = await fetch(`${BASE}${route}.html`, { redirect: 'manual' });
+      assert.equal(dup.status, 301, `${route}.html redirige 301`);
+      assert.equal(dup.headers.get('location'), route, `${route}.html apunta a la canónica`);
+    }
+
+    // El sitemap incluye las páginas nuevas.
+    const sitemap = await (await fetch(`${BASE}/sitemap.xml`)).text();
+    for (const route of [...commercial, ...guides]) {
+      assert.ok(sitemap.includes(`<loc>https://www.shiftia.es${route}</loc>`), `sitemap incluye ${route}`);
+    }
   } catch (err) {
     err.message += '\n--- logs del servidor ---\n' + logs.slice(-2000);
     throw err;
