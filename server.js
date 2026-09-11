@@ -14,6 +14,7 @@ const bookingLib = require('./lib/booking');
 const nurture = require('./lib/nurture');
 const auditAI = require('./lib/audit-ai');
 const { analyzeSchedule } = require('./lib/audit');
+const { fixSchedule } = require('./lib/roster-fix');
 const { buildAuditPdf } = require('./lib/audit-pdf');
 
 const app = express();
@@ -1665,7 +1666,7 @@ const auditUpload = multer({
 
 // --- Informe de auditoría automática (IA lee el documento; los números
 //     salen SOLO de lib/audit.js, matemática determinista y testeada) ---
-function buildAuditReportBody({ metrics, summary, firstName }) {
+function buildAuditReportBody({ metrics, summary, firstName, fix }) {
   const esc = bookingLib.escHtml;
   const m = metrics;
   const verdictLabel = { justo: 'Justo', mejorable: 'Mejorable', critico: 'Crítico' }[m.nights.verdict] || m.nights.verdict;
@@ -1708,6 +1709,12 @@ function buildAuditReportBody({ metrics, summary, firstName }) {
     ${m.night_streaks.length ? `
       <p style="margin:22px 0 8px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#7a766f;">Rachas de noches</p>
       <ul style="margin:0;padding-left:18px;">${streaksHtml}</ul>` : ''}
+    ${fix ? `
+      <div style="margin:26px 0 0;padding:20px;background:#e9f5f2;border-radius:10px;border:1px solid #cfe6e0;">
+        <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#0a5950;">Además del diagnóstico: tu cuadrante corregido</p>
+        <p style="margin:0 0 12px;color:#1a1a1a;line-height:1.65;font-size:15px;">En el PDF adjunto va una propuesta con <strong>${fix.changes.length} ${fix.changes.length === 1 ? 'día cambiado' : 'días cambiados'}</strong> que sube la puntuación de <strong>${metrics.score}</strong> a <strong>${fix.after.score}</strong> sobre 100${metrics.rest_violations.length && !fix.after.rest_violations.length ? ` y deja en cero los ${metrics.rest_violations.length} descansos por debajo del mínimo` : ''}. Cada día sigue teniendo exactamente la misma gente en cada turno que en tu cuadrante: lo único que cambia es quién lo hace, y cada cambio lleva su motivo.</p>
+        <p style="margin:0;color:#4a4a47;line-height:1.6;font-size:13px;">Es una propuesta, no una corrección impuesta: tú decides cuál aplicar.</p>
+      </div>` : ''}
     <p style="margin:24px 0 0;color:#1a1a1a;line-height:1.6;font-size:15px;">Si quieres que esto no vuelva a pasar — la IA de Shiftia genera el cuadrante respetando descansos, equidad y tu convenio — te lo enseñamos con tus datos en una llamada de 15 minutos.</p>
     <p style="margin:16px 0 0;"><a href="${APP_URL}/#contact" style="display:inline-block;background:#0e0f0f;color:#faf9f6;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;">Agendar llamada gratuita</a></p>
     <p style="margin:22px 0 0;color:#9a958c;font-size:12px;line-height:1.6;">Supuestos del cálculo: descanso mínimo ${m.assumptions.min_rest_hours} h entre fin e inicio de turno; horarios ${bookingLib.escHtml(m.assumptions.assumed_defs || m.assumptions.shift_definitions.join(', '))}. Los números salen de un cálculo automático verificado — la IA solo lee el documento, no calcula. Tu cuadrante se elimina tras el análisis. Este diagnóstico es informativo y no constituye asesoramiento legal.</p>
@@ -1788,9 +1795,25 @@ async function runAutoAudit(lead, file) {
   const summary = await auditAI.writeSummary({ metrics, lead, extractionNotes });
   if (!summary) throw Object.assign(new Error('resumen no disponible'), { manualReason: 'El resumen IA no se generó.' });
 
-  const body = buildAuditReportBody({ metrics, summary, firstName: lead.cleanName.split(' ')[0] });
+  // Cuadrante corregido: los mismos turnos cada día, repartidos de otra forma,
+  // de modo que desaparezcan los incumplimientos. Es determinista y opcional:
+  // si falla, el informe sale igual con el diagnóstico solo.
+  let fix = null;
+  try {
+    const opts = { sector: lead.sector, expectLeaders: lead.has_leaders };
+    const candidate = fixSchedule(schedule, opts);
+    if (candidate.changed) {
+      candidate.after = analyzeSchedule(candidate.schedule, { ...opts, minimums: staffingMin });
+      // Solo se propone si de verdad mejora: nunca se envía un cuadrante peor.
+      if (candidate.after.score > metrics.score) fix = candidate;
+    }
+  } catch (err) {
+    console.error('Corrección de cuadrante falló (se envía solo el diagnóstico):', err && err.message);
+  }
+
+  const body = buildAuditReportBody({ metrics, summary, firstName: lead.cleanName.split(' ')[0], fix });
   const generatedAt = new Intl.DateTimeFormat('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: BOOKING_TIMEZONE }).format(new Date()) + ' (hora de Madrid)';
-  const pdfBuffer = await buildAuditPdf({ metrics, summary, lead, generatedAt });
+  const pdfBuffer = await buildAuditPdf({ metrics, summary, lead, generatedAt, schedule, fix });
   const pdfAttachment = { filename: 'auditoria-cuadrante-shiftia.pdf', content: pdfBuffer };
   const seconds = Math.round((Date.now() - t0) / 1000);
 
@@ -1798,11 +1821,15 @@ async function runAutoAudit(lead, file) {
     from: `"Shiftia" <${GMAIL_USER}>`,
     replyTo: NOTIFY_EMAIL,
     to: lead.email,
-    subject: 'Tu auditoría de cuadrante — informe PDF · Shiftia',
+    subject: fix
+      ? 'Tu auditoría de cuadrante y una propuesta corregida · Shiftia'
+      : 'Tu auditoría de cuadrante — informe PDF · Shiftia',
     attachments: [pdfAttachment],
     html: emailTemplate({
-      preheader: `Equidad ${metrics.nights.verdict} · ${metrics.rest_violations.length} descansos <12h · ${metrics.night_streaks.length} rachas`,
-      headline: 'Tu diagnóstico, listo',
+      preheader: fix
+        ? `${metrics.rest_violations.length} descansos <12h · propuesta corregida con ${fix.changes.length} cambios`
+        : `Equidad ${metrics.nights.verdict} · ${metrics.rest_violations.length} descansos <12h · ${metrics.night_streaks.length} rachas`,
+      headline: fix ? 'Tu diagnóstico y tu cuadrante corregido' : 'Tu diagnóstico, listo',
       body
     })
   });
