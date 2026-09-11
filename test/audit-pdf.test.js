@@ -91,3 +91,41 @@ test('la corrección de un cuadrante grande respeta su presupuesto de tiempo', (
   assert.ok(elapsed < 12000, `la búsqueda no puede dispararse (tardó ${elapsed} ms)`);
   assert.ok(Array.isArray(fix.changes));
 });
+
+test('el informe de propuesta se sostiene sin cuadrante del cliente', async () => {
+  const { generateRoster } = require('../lib/roster-gen');
+  const gen = generateRoster({
+    team_size: 7,
+    shifts: [
+      { code: 'A', label: 'Apertura', start: '09:30', end: '15:30', is_night: false },
+      { code: 'C', label: 'Cierre', start: '15:30', end: '21:30', is_night: false }
+    ],
+    min_staffing: { A: 2, C: 2 }, days: 14, start_date: '2026-09-14'
+  });
+  assert.equal(gen.ok, true);
+  const metrics = analyzeSchedule(gen.schedule, { sector: 'Retail' });
+  const buf = await buildAuditPdf({
+    metrics, summary: 'Titular.\n\nCuerpo.', lead: LEAD, generatedAt: WHEN,
+    schedule: gen.schedule, fix: null, mode: 'proposal', assumptions: gen.assumptions
+  });
+  assert.ok(buf.length > 15000);
+  assert.equal(pageCount(buf), 3, 'la propuesta no lleva página de corrección');
+});
+
+test('un cuadrante sin turnos de noche usa el reparto de fines de semana', async () => {
+  const { generateRoster } = require('../lib/roster-gen');
+  const gen = generateRoster({
+    team_size: 6,
+    shifts: [{ code: 'A', label: 'Apertura', start: '09:00', end: '15:00', is_night: false },
+      { code: 'C', label: 'Cierre', start: '15:00', end: '21:00', is_night: false }],
+    min_staffing: { A: 2, C: 2 }, days: 14, start_date: '2026-09-14'
+  });
+  const metrics = analyzeSchedule(gen.schedule, { sector: 'Retail' });
+  assert.equal(metrics.nights.total, 0, 'el caso de prueba no debe tener noches');
+  // Es lo que alimenta el bloque alternativo del informe: sin esto saldría vacío
+  assert.ok(metrics.weekends.per_worker.length === 6, 'hay reparto de findes por persona');
+  assert.ok(metrics.weekends.per_worker.every(p => typeof p.weekend_shifts === 'number'));
+  const buf = await buildAuditPdf({ metrics, summary: 'Sin noches.', lead: LEAD, generatedAt: WHEN, schedule: gen.schedule, mode: 'proposal', assumptions: gen.assumptions });
+  assert.equal(buf.subarray(0, 5).toString(), '%PDF-');
+  assert.ok(buf.length > 10000);
+});

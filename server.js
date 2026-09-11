@@ -15,6 +15,7 @@ const nurture = require('./lib/nurture');
 const auditAI = require('./lib/audit-ai');
 const { analyzeSchedule } = require('./lib/audit');
 const { fixSchedule } = require('./lib/roster-fix');
+const { generateRoster } = require('./lib/roster-gen');
 const { buildAuditPdf } = require('./lib/audit-pdf');
 
 const app = express();
@@ -1870,6 +1871,94 @@ async function runAutoAudit(lead, file) {
   console.log(`Auditoría AUTO OK · ${lead.cleanName} · ${metrics.workers_count} personas · ${seconds}s`);
 }
 
+// Sin cuadrante adjunto: se interpretan las condiciones que el cliente ha
+// escrito en el formulario y se le CONSTRUYE una propuesta. Si con lo que ha
+// contado no da para construir nada, se escala al flujo manual con el motivo
+// concreto, que es lo que Diego necesita leer para contestarle a mano.
+async function runProposalAudit(lead) {
+  const t0 = Date.now();
+  const cond = await auditAI.extractConditions(lead);
+  if (!cond) throw Object.assign(new Error('sin condiciones'), { manualReason: 'Sin archivo y sin texto suficiente para interpretar nada.' });
+
+  if (cond.confidence < auditAI.MIN_CONFIDENCE) {
+    throw Object.assign(new Error('condiciones poco claras'), {
+      manualReason: `Sin archivo. Lectura del formulario poco fiable (confianza ${cond.confidence.toFixed(2)}). Falta: ${(cond.missing || []).join(', ') || 'no especificado'}.`
+    });
+  }
+
+  const gen = generateRoster({
+    team_size: cond.team_size,
+    people: cond.people,
+    shifts: cond.shifts,
+    min_staffing: cond.min_staffing,
+    days: 14
+  });
+  if (!gen.ok) {
+    throw Object.assign(new Error('no generable'), {
+      manualReason: `Sin archivo. No se ha podido construir una propuesta: ${gen.reason}.` +
+        (gen.shortfall ? ` Faltarían ${gen.shortfall} persona(s).` : '') +
+        ` Lo que dijo: ${(cond.missing || []).length ? 'falta ' + cond.missing.join(', ') : 'equipo=' + (cond.team_size || '?') + ', turnos=' + (cond.shifts || []).length}.`
+    });
+  }
+
+  const metrics = analyzeSchedule(gen.schedule, { sector: lead.sector, expectLeaders: lead.has_leaders });
+  const summary = await auditAI.writeSummary({
+    metrics, lead, mode: 'proposal', assumptions: gen.assumptions,
+    extractionNotes: (cond.notes || []).concat(cond.min_staffing_notes ? [`Interpretación de necesidades: ${cond.min_staffing_notes}`] : [])
+  });
+  if (!summary) throw Object.assign(new Error('resumen no disponible'), { manualReason: 'Sin archivo. La propuesta se generó pero el resumen IA no.' });
+
+  const generatedAt = new Intl.DateTimeFormat('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: BOOKING_TIMEZONE }).format(new Date()) + ' (hora de Madrid)';
+  const pdfBuffer = await buildAuditPdf({
+    metrics, summary, lead, generatedAt, schedule: gen.schedule, fix: null,
+    mode: 'proposal', assumptions: gen.assumptions
+  });
+  const seconds = Math.round((Date.now() - t0) / 1000);
+  const esc = bookingLib.escHtml;
+  const people = gen.schedule.workers.length;
+
+  await sendMail({
+    from: `"Shiftia" <${GMAIL_USER}>`,
+    replyTo: NOTIFY_EMAIL,
+    to: lead.email,
+    subject: 'No nos mandaste cuadrante, así que te hemos hecho uno · Shiftia',
+    attachments: [{ filename: 'propuesta-cuadrante-shiftia.pdf', content: pdfBuffer }],
+    html: emailTemplate({
+      preheader: `Propuesta para ${people} personas · ${metrics.score}/100 · cero descansos por debajo del mínimo`,
+      headline: `Hola ${esc(lead.cleanName.split(' ')[0])}, te hemos montado un cuadrante`,
+      body: `
+        <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.65;font-size:15px;">No adjuntaste ningún cuadrante, así que en lugar de pedírtelo y esperar hemos hecho algo mejor: construir uno con lo que nos contaste. Lo tienes en el PDF adjunto.</p>
+        <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.65;font-size:15px;">Son <strong>${people} personas</strong> y <strong>14 días</strong> de rotación completa. Cubre cada día exactamente la gente que nos dijiste que necesitas, nadie encadena más de 6 días seguidos y no hay ningún descanso por debajo del mínimo legal. La segunda página lleva la lista de lo que hemos dado por supuesto: corrígenos cualquier cosa y lo rehacemos.</p>
+        <p style="margin:0 0 16px;color:#1a1a1a;line-height:1.65;font-size:15px;">Si nos mandas tu cuadrante real respondiendo a este correo, te devolvemos el diagnóstico de verdad: qué incumple, quién carga de más y qué cambiar exactamente.</p>
+        <p style="margin:20px 0 0;"><a href="${APP_URL}/#contact" style="display:inline-block;background:#0e0f0f;color:#faf9f6;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;">Verlo con mis datos reales</a></p>
+        <p style="margin:22px 0 0;color:#9a958c;font-size:12px;line-height:1.6;">La propuesta la ha construido un motor de reglas verificado a partir de tu descripción; la IA solo ha interpretado tu texto. Es orientativa y no constituye asesoramiento legal.</p>
+      `
+    })
+  });
+
+  sendMail({
+    from: `"Shiftia Auditoría" <${GMAIL_USER}>`,
+    to: NOTIFY_EMAIL,
+    resendFrom: INTERNAL_RESEND_FROM,
+    replyTo: lead.email,
+    subject: `[Auditoría AUTO · propuesta sin archivo] ${esc(lead.cleanName)} · ${people} personas`,
+    attachments: [{ filename: 'propuesta-cuadrante-shiftia.pdf', content: pdfBuffer }],
+    html: emailTemplate({
+      preheader: `Propuesta generada sin cuadrante en ${seconds}s`,
+      headline: 'Propuesta enviada (no adjuntó cuadrante)',
+      body: `
+        <p style="margin:0 0 14px;color:#1a1a1a;font-size:15px;line-height:1.6;">${esc(lead.cleanName)} &lt;${esc(lead.email)}&gt; no adjuntó cuadrante. Se le ha construido una propuesta de ${people} personas con lo que escribió y se le ha enviado el PDF.</p>
+        <p style="margin:0 0 14px;color:#4a4a47;font-size:13px;line-height:1.6;">Puntuación de la propuesta: ${metrics.score}/100 · generada en ${seconds}s.<br>Condiciones interpretadas (confianza ${cond.confidence.toFixed(2)}): equipo=${cond.team_size || '?'}, turnos=${(cond.shifts || []).map(x => x.code + ' ' + x.start + '-' + x.end).join(', ') || 'por defecto'}, mínimos=${JSON.stringify(cond.min_staffing || {})}.</p>
+        ${(cond.missing || []).length ? `<p style="margin:0 0 14px;color:#8a6220;font-size:13px;line-height:1.6;">Datos que le faltan y convendría pedirle: ${esc((cond.missing || []).join(', '))}.</p>` : ''}
+        <p style="margin:0;color:#9a958c;font-size:12px;">Responde a este correo para hablar con el cliente (reply-to = cliente).</p>
+        ${nurtureStopFooter(lead.email)}
+      `
+    })
+  }).catch(err => console.error('Copia interna de propuesta falló:', err && err.message));
+
+  console.log(`Auditoría PROPUESTA OK · ${lead.cleanName} · ${people} personas · ${seconds}s`);
+}
+
 app.post('/api/audit-request', contactLimiter, (req, res) => {
   auditUpload.single('file')(req, res, async (upErr) => {
     try {
@@ -1899,20 +1988,37 @@ app.post('/api/audit-request', contactLimiter, (req, res) => {
             [cleanMessage, cleanStaffing ? `[necesidades: ${cleanStaffing}]` : '', hasLeaders === null ? '' : `[encargados: ${hasLeaders ? 'sí' : 'no'}]`].filter(Boolean).join(' ') || null]
         ).then(r => r.rows[0] && r.rows[0].id).catch(err => { console.error('tool_leads (auditoría) insert falló:', err.message); return null; });
       }
-      res.json({ ok: true, auto: auditAI.isEnabled() && !!req.file });
+      // Se responde antes de trabajar: el análisis va en segundo plano. El
+      // modo le dice a la página qué mensaje enseñar para no prometer de más.
+      const cleanStaffingPre = cap(staffing_needs, 600).trim();
+      const cleanMessagePre = cap(message, 1500).trim();
+      const mode = !auditAI.isEnabled() ? 'manual'
+        : req.file ? 'auto'
+          : (cleanStaffingPre || cleanMessagePre || cleanWorkers) ? 'proposal' : 'manual';
+      res.json({ ok: true, auto: mode === 'auto', mode });
 
       const lead = { cleanName, email, sector: cleanSector, workers: cleanWorkers, message: cleanMessage, staffing_needs: cleanStaffing, has_leaders: hasLeaders, leadIdPromise };
       const manualCtx = [cleanMessage, cleanStaffing ? `Necesidades de personal descritas: ${cleanStaffing}` : ''].filter(Boolean).join('\n\n');
       const manualArgs = { cleanName, email, cleanSector, cleanWorkers, cleanMessage: manualCtx, file: req.file };
 
-      // Camino inteligente: solo con API key configurada y archivo presente.
-      if (auditAI.isEnabled() && req.file) {
+      // Tres caminos, en este orden:
+      //   1. Con archivo legible → diagnóstico + cuadrante corregido.
+      //   2. Sin archivo pero con descripción → propuesta construida desde cero.
+      //   3. Nada aprovechable → aviso a info@shiftia.es con el motivo exacto.
+      if (!auditAI.isEnabled()) {
+        sendManualAuditEmails({ ...manualArgs, statusNote: 'Análisis automático desactivado (falta ANTHROPIC_API_KEY).' });
+      } else if (req.file) {
         runAutoAudit(lead, req.file).catch(err => {
           console.error('Auditoría auto falló → flujo manual:', err && err.message);
           sendManualAuditEmails({ ...manualArgs, statusNote: err && err.manualReason ? err.manualReason : `Análisis automático falló (${err && err.message}).` });
         });
+      } else if (cleanStaffing || cleanMessage || cleanWorkers) {
+        runProposalAudit(lead).catch(err => {
+          console.error('Propuesta sin archivo falló → flujo manual:', err && err.message);
+          sendManualAuditEmails({ ...manualArgs, statusNote: err && err.manualReason ? err.manualReason : `No se pudo construir la propuesta (${err && err.message}).` });
+        });
       } else {
-        sendManualAuditEmails({ ...manualArgs, statusNote: auditAI.isEnabled() ? 'Sin archivo adjunto.' : 'Análisis automático desactivado (falta ANTHROPIC_API_KEY).' });
+        sendManualAuditEmails({ ...manualArgs, statusNote: 'Sin archivo y sin nada escrito en el formulario: no hay con qué construir nada.' });
       }
     } catch (err) {
       console.error('audit-request error:', err.message);

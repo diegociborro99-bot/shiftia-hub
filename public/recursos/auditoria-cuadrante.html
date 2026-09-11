@@ -300,7 +300,12 @@ footer a:hover{color:var(--accent)}
         if (!res.ok) throw new Error(res.j.error || 'No se pudo enviar');
         form.reset();
         dzText.innerHTML = DZ_DEFAULT;
-        showMsg('ok', '¡Recibido! Si tu cuadrante se puede leer automáticamente, el diagnóstico te llegará al email en unos minutos; si no, lo revisa el equipo y lo tienes en 24-48 h. Revisa también la carpeta de spam.');
+        var MSG = {
+          auto: '¡Recibido! Si tu cuadrante se puede leer automáticamente, el diagnóstico te llegará al email en unos minutos, y con él una propuesta corregida. Si no, lo revisa el equipo y lo tienes en 24-48 h.',
+          proposal: '¡Recibido! No has adjuntado cuadrante, así que vamos a construirte uno con lo que nos has contado y te llegará al email en unos minutos. Si nos mandas el tuyo respondiendo a ese correo, te devolvemos el diagnóstico completo.',
+          manual: '¡Recibido! Lo revisa el equipo y tienes el diagnóstico en 24-48 h laborables.'
+        };
+        showMsg('ok', (MSG[res.j.mode] || MSG.manual) + ' Revisa también la carpeta de spam.');
         try { if (window.posthog) posthog.capture('audit_request_submitted', { has_file: !!fi.files.length }); } catch (err) {}
       })
       .catch(function (err) { showMsg('err', err.message + '. Si persiste, escríbenos a info@shiftia.es.'); })
