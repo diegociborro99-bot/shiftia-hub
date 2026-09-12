@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { font-size: 70px; }
+  .sub { font-size: 26px; color: var(--ink); margin-top: 20px; }
+  .sub b { font-weight: 600; }
+
+  .tl { margin-top: 42px; }
+  .trow { display: grid; grid-template-columns: 1fr 300px; align-items: center; gap: 26px; }
+  .trow + .trow { margin-top: 16px; }
+
+  .bar {
+    height: 78px; border-radius: 15px; display: flex; align-items: center;
+    padding-left: 26px; font-family: var(--mono); font-size: 29px; font-weight: 600;
+  }
+  .bar.regla { width: 100%;   background: rgba(47,163,147,.16); color: var(--teal); border: 2px solid rgba(15,122,109,.45); }
+  .bar.caso  { width: 83.33%; background: var(--red-soft);      color: var(--red);  border: 2px solid rgba(180,70,47,.5); }
+  .bar.suelo { width: 58.33%; background: rgba(47,163,147,.07); color: var(--teal); border: 2px dashed rgba(15,122,109,.42); }
+
+  .txt b { display: block; font-size: 20px; font-weight: 600; letter-spacing: -.012em; line-height: 1.25; }
+  .txt span { display: block; font-family: var(--mono); font-size: 14px; color: var(--ink3); margin-top: 4px; line-height: 1.35; }
+
+  .verdict {
+    margin-top: 30px; padding: 24px 28px; border-radius: 18px;
+    background: #fff; border: 1px solid var(--line);
+    font-size: 21px; line-height: 1.45; color: var(--ink);
+  }
+  .verdict b { font-weight: 600; }
+  .verdict em { font-style: normal; color: var(--teal); font-weight: 600; }
+
+  .matiz {
+    margin-top: 14px; font-size: 16px; line-height: 1.5; color: var(--ink3);
+  }
+</style>
+
+<div class="card">
+  <p class="eyebrow">Descanso entre turnos · España</p>
+  <h1>Sales a las 22:00.<br>Entras a las <em>8:00</em>.</h1>
+  <p class="sub">Son diez horas. <b>Y la respuesta correcta no es «sí» ni «no».</b></p>
+
+  <div class="tl">
+    <div class="trow">
+      <span class="bar regla">12 h</span>
+      <span class="txt"><b>La regla general</b><span>Art. 34.3 del Estatuto<br>de los Trabajadores</span></span>
+    </div>
+    <div class="trow">
+      <span class="bar caso">10 h</span>
+      <span class="txt"><b>Tu caso</b><span>Tarde 15-22 → mañana 8-15</span></span>
+    </div>
+    <div class="trow">
+      <span class="bar suelo">7 h</span>
+      <span class="txt"><b>El suelo, solo el día<br>que cambias de turno</b><span>Art. 19.2 del RD 1561/1995,<br>compensando después</span></span>
+    </div>
+  </div>
+
+  <p class="verdict">
+    Diez horas <b>puede ser legal o no serlo</b>. Depende de si ese día cambiabas de turno y de si te devuelven la diferencia en los días inmediatamente siguientes. <em>Un doblete para tapar una baja no entra en la excepción.</em>
+  </p>
+  <p class="matiz">En sanidad pública manda el Estatuto Marco (Ley 55/2003). Y tu convenio puede mejorar la ley, nunca empeorarla.</p>
+
+  <div class="spacer"></div>
+  <div class="foot">
+    <span class="brand">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span>
+      <b>Shiftia</b>
+    </span>
+    <span class="url">shiftia.es/recursos/turnos-rotativos-convenio-2026</span>
+  </div>
+</div>

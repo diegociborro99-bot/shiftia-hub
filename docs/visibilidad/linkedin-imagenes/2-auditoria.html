@@ -1,0 +1,184 @@
+<link rel="stylesheet" href="base.css">
+<style>
+  .grid-wrap {
+    margin-top: 40px; padding: 26px 28px 24px;
+    background: #fff; border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(15,15,15,.04), 0 22px 52px -30px rgba(15,15,15,.22);
+  }
+  .glabel { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 15px; }
+  .glabel b {
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--ink3);
+  }
+  .legend { display: flex; gap: 15px; }
+  .legend span {
+    font-family: var(--mono); font-size: 13px; color: var(--ink3);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .legend i { width: 13px; height: 13px; border-radius: 4px; display: inline-block; }
+
+  table { border-collapse: separate; border-spacing: 4px; width: 100%; table-layout: fixed; }
+  col.name { width: 124px; }
+  th.d { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink3); padding-bottom: 4px; }
+  th.p { text-align: left; font-size: 14px; font-weight: 500; color: var(--ink2); padding-right: 10px; white-space: nowrap; }
+  td.c { padding: 0; }
+  .pill { height: 40px; border-radius: 8px; display: grid; place-items: center; font-family: var(--mono); font-size: 14px; font-weight: 600; }
+  .M { background: #dcefe8; color: #1a6b5a; }
+  .T { background: #dfe9f6; color: #1a5a96; }
+  .N { background: #e7e2f6; color: #4a3a8a; }
+  .L { background: #f1f0ec; color: #a3a19a; }
+  .bad { box-shadow: 0 0 0 2.5px var(--red); }
+
+  .covrow { display: flex; align-items: center; gap: 10px; margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .covlab {
+    flex: none; width: 124px; font-family: var(--mono); font-size: 11px;
+    letter-spacing: .09em; text-transform: uppercase; color: var(--teal);
+    display: flex; align-items: center; gap: 6px; line-height: 1.25;
+  }
+  .covlab svg { width: 13px; height: 13px; flex: none; }
+  .cov { flex: 1; display: grid; grid-template-columns: repeat(14, 1fr); gap: 3px; }
+  .cov span { font-family: var(--mono); font-size: 13px; color: var(--ink2); text-align: center; }
+
+  .finds { margin-top: 26px; display: flex; flex-direction: column; gap: 15px; }
+  .find { display: flex; align-items: flex-start; gap: 14px; font-size: 21px; line-height: 1.36; }
+  .find i {
+    flex: none; width: 25px; height: 25px; border-radius: 50%;
+    background: var(--red-soft); color: var(--red); display: grid; place-items: center; margin-top: 2px;
+  }
+  .find i svg { width: 14px; height: 14px; }
+  .find b { font-weight: 600; }
+  .find span { color: var(--ink2); }
+
+  .gives { display: flex; gap: 12px; margin-top: 24px; }
+  .give {
+    flex: 1; padding: 20px 20px; border-radius: 14px;
+    background: var(--teal-soft); border: 1px solid rgba(47,163,147,.2);
+  }
+  .give b { display: block; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+  .give span { display: block; font-size: 16px; color: var(--ink2); margin-top: 3px; line-height: 1.35; }
+</style>
+
+<div class="card">
+  <p class="eyebrow">Auditoría gratuita de cuadrante</p>
+  <h1>Sube tu cuadrante.<br>Te decimos <em>qué falla</em>.</h1>
+
+  <div class="grid-wrap">
+    <div class="glabel">
+      <b>Ejemplo con datos de demostración</b>
+      <span class="legend">
+        <span><i class="M"></i>Mañana</span>
+        <span><i class="T"></i>Tarde</span>
+        <span><i class="N"></i>Noche</span>
+        <span><i class="L"></i>Libre</span>
+      </span>
+    </div>
+    <table id="t"><colgroup><col class="name"><col span="14"></colgroup></table>
+    <div class="covrow">
+      <span class="covlab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg>
+        Personas<br>por día
+      </span>
+      <span class="cov" id="cov"></span>
+    </div>
+  </div>
+
+  <div class="finds" id="finds"></div>
+
+  <div class="gives">
+    <div class="give"><b>Informe</b><span>Cada incumplimiento, con su motivo</span></div>
+    <div class="give"><b>Cuadrante corregido</b><span>Sin tocar la cobertura diaria</span></div>
+    <div class="give"><b>Gratis</b><span>Sin registro y sin cambiar de software</span></div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="foot">
+    <span class="brand">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span>
+      <b>Shiftia</b>
+    </span>
+    <span class="url">shiftia.es/recursos/auditoria-cuadrante</span>
+  </div>
+</div>
+
+<script>
+// Cuadrante de ejemplo, datos inventados. Los tres hallazgos de abajo NO se
+// escriben a mano: se calculan desde esta parrilla, así que la imagen no
+// puede afirmar algo que sus propios datos contradigan.
+const DIAS = ['L','M','X','J','V','S','D','L','M','X','J','V','S','D'];
+const NOMBRES = ['Persona 1','Persona 2','Persona 3','Persona 4','Persona 5','Persona 6','Persona 7','Persona 8'];
+const TURNOS = [
+  'MMTMNLLMMTTNLL',
+  'TTMLLMMTTMLLMM',
+  'NLLMMTTNLLMMTT',
+  'LMMTTNLLMMTTNL',
+  'MMMTTTNNNLLMTT',
+  'NNLNNLNNLMMLNN',
+  'LLMMTTNLLMMTTN',
+  'TNLLMMTTNLLMMT',
+];
+
+// Horarios: M 08-15, T 15-22, N 22-08. El salto T → M deja 10 h de descanso,
+// por debajo de las 12 h del art. 34.3 del Estatuto de los Trabajadores.
+const FIN = { M: 15, T: 22, N: 32 };     // 32 = 08:00 del día siguiente
+const INI = { M: 8, T: 15, N: 22 };
+
+const filas = TURNOS.map((t, i) => ({ n: NOMBRES[i], t, bad: [] }));
+const hallazgos = [];
+
+// 1. Descansos por debajo de 12 h — se marcan todos
+const cortos = [];
+filas.forEach((f) => {
+  for (let d = 0; d < f.t.length - 1; d++) {
+    const a = f.t[d], b = f.t[d + 1];
+    if (a === 'L' || b === 'L') continue;
+    const horas = (24 + INI[b]) - FIN[a];
+    if (horas < 12) { cortos.push({ f, d, horas, a, b }); f.bad.push(d, d + 1); }
+  }
+});
+if (cortos.length) {
+  const NOM = { M: 'mañana', T: 'tarde', N: 'noche' };
+  const h = Math.min(...cortos.map((c) => c.horas));
+  const c0 = cortos[0];
+  hallazgos.push([cortos.length + ' descansos por debajo de 12 h',
+    'sale de ' + NOM[c0.a] + ' y entra de ' + NOM[c0.b] + ' al día siguiente: quedan ' + h + ' h. Art. 34.3 ET.']);
+}
+
+// 2. Racha más larga sin día libre
+let racha = { len: 0 };
+filas.forEach((f) => {
+  let ini = 0, len = 0;
+  for (let d = 0; d <= f.t.length; d++) {
+    if (f.t[d] && f.t[d] !== 'L') { if (len === 0) ini = d; len++; }
+    else { if (len > racha.len) racha = { f, ini, len }; len = 0; }
+  }
+});
+if (racha.len >= 7) {
+  for (let d = racha.ini; d < racha.ini + racha.len; d++) racha.f.bad.push(d);
+  hallazgos.push(['Racha de ' + racha.len + ' días seguidos', 'sin ningún día libre por medio.']);
+}
+
+// 3. Reparto de noches
+const noches = filas.map((f) => [...f.t].filter((c) => c === 'N').length);
+const max = Math.max(...noches), min = Math.min(...noches);
+if (max - min >= 3) {
+  hallazgos.push(['Noches mal repartidas',
+    'una persona acumula ' + max + ' y otra ' + (min === 0 ? 'ninguna' : 'solo ' + min) + ' en las mismas dos semanas.']);
+}
+
+// Pintar
+document.getElementById('t').innerHTML =
+  '<tr><th class="p"></th>' + DIAS.map((d) => '<th class="d">' + d + '</th>').join('') + '</tr>' +
+  filas.map((f) => '<tr><th class="p">' + f.n + '</th>' + [...f.t].map((c, i) =>
+    '<td class="c"><div class="pill ' + c + (f.bad.includes(i) ? ' bad' : '') + '">' + c + '</div></td>').join('') + '</tr>').join('');
+
+const cov = DIAS.map((_, i) => filas.filter((f) => f.t[i] !== 'L').length);
+document.getElementById('cov').innerHTML = cov.map((c) => '<span>' + c + '</span>').join('');
+
+document.getElementById('finds').innerHTML = hallazgos.map(([t, d]) =>
+  '<div class="find"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">' +
+  '<path d="M12 8v5M12 16.5v.01"/><circle cx="12" cy="12" r="9"/></svg></i>' +
+  '<div><b>' + t + '</b> <span>— ' + d + '</span></div></div>').join('');
+
+// Se imprime para poder comprobar desde el renderizador que cuadra
+window.__diag = { hallazgos, cobertura: cov, noches };
+</script>

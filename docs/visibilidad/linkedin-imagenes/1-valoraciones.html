@@ -1,0 +1,95 @@
+<link rel="stylesheet" href="base.css">
+<style>
+  .matrix { margin-top: 44px; }
+  .mrow { display: grid; grid-template-columns: 330px repeat(3, 1fr); align-items: center; }
+
+  .mhead { padding-bottom: 20px; border-bottom: 1.5px solid var(--ink); }
+  .mhead .sector { text-align: center; padding: 0 8px; }
+  .mhead .sector .ic {
+    width: 40px; height: 40px; margin: 0 auto 11px; border-radius: 11px;
+    background: var(--teal-soft); display: grid; place-items: center;
+  }
+  .mhead .sector .ic svg { width: 22px; height: 22px; color: var(--teal); }
+  .mhead .sector b {
+    display: block; font-size: 20px; font-weight: 600; letter-spacing: -.01em;
+  }
+  .mhead .sector span {
+    display: block; font-family: var(--mono); font-size: 14px;
+    color: var(--ink3); margin-top: 4px; letter-spacing: .02em;
+  }
+
+  .mbody .mrow { border-bottom: 1px solid var(--line); }
+  .mbody .mrow:last-child { border-bottom: 0; }
+  .tema {
+    font-size: 22px; font-weight: 500; color: var(--ink);
+    padding: 25px 20px 25px 0; letter-spacing: -.012em;
+  }
+  .tick { display: grid; place-items: center; }
+  .tick i {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--teal); display: grid; place-items: center;
+  }
+  .tick i svg { width: 19px; height: 19px; color: #fff; }
+
+  .quote {
+    margin-top: 40px; padding: 28px 34px;
+    background: var(--teal-soft); border-radius: 18px;
+    border: 1px solid rgba(47, 163, 147, .22);
+  }
+  .quote p {
+    margin: 0; font-family: var(--serif); font-weight: 400;
+    font-size: 33px; line-height: 1.26; letter-spacing: -.014em;
+  }
+  .quote p i { font-style: italic; color: var(--teal); }
+  .quote cite {
+    display: block; margin-top: 13px; font-style: normal;
+    font-family: var(--mono); font-size: 15px; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--teal);
+  }
+</style>
+
+<div class="card">
+  <p class="eyebrow">Tres valoraciones reales</p>
+  <h1>No se conocen entre ellos.<br>Nos contaron <em>lo mismo</em>.</h1>
+
+  <div class="matrix">
+    <div class="mrow mhead">
+      <div></div>
+      <div class="sector">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 20V11l5 3V11l5 3V7l4 2v11"/></svg></span>
+        <b>Industria</b><span>20 operadores</span>
+      </div>
+      <div class="sector">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-5 8 5v13"/><path d="M12 9v6M9 12h6"/></svg></span>
+        <b>Hospital</b><span>32 profesionales</span>
+      </div>
+      <div class="sector">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v8a3 3 0 0 0 6 0V3M9 11v10"/><path d="M17 3c-1.5 2-2 4-2 6h4c0-2-.5-4-2-6zM17 9v12"/></svg></span>
+        <b>Hostelería</b><span>18 trabajadores</span>
+      </div>
+    </div>
+
+    <div class="mbody">
+      <div class="mrow"><div class="tema">Cuando falta alguien</div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div></div>
+      <div class="mrow"><div class="tema">Cambios de turno</div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div></div>
+      <div class="mrow"><div class="tema">Noches, festivos y nóminas</div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div></div>
+      <div class="mrow"><div class="tema">Reparto equilibrado</div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div></div>
+      <div class="mrow"><div class="tema">Vacaciones y permisos</div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div><div class="tick"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 7"/></svg></i></div></div>
+    </div>
+  </div>
+
+  <figure class="quote">
+    <p>«Con un grupo de 20 operadores eso podía costar fácilmente una hora. <i>Ahora se tarda apenas unos segundos.</i>»</p>
+    <cite>Responsable de planificación · Industria</cite>
+  </figure>
+
+  <div class="spacer"></div>
+  <p class="note">Extractos literales de tres valoraciones enviadas por escrito. Publicadas sin identificar a la persona, la empresa ni el centro.</p>
+  <div class="foot">
+    <span class="brand">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span>
+      <b>Shiftia</b>
+    </span>
+    <span class="url">shiftia.es</span>
+  </div>
+</div>
