@@ -50,18 +50,38 @@ Shiftia ya se usa en producción en varios sectores. En la web aparecen en la se
 
 Nota importante: la web NO contiene testimonios con nombre de persona, foto ni valoración por estrellas (no existe ningún "María C.", "Javier R." ni "Laura P."). Las referencias son organizaciones reales agrupadas por sector. Cualquier testimonio individual con nombre propio atribuido a Shiftia procede de una versión antigua ya retirada.
 
-## Valoración de cliente (septiembre de 2026)
+## Valoraciones de cliente (septiembre de 2026)
 
-La portada incluye una sola valoración, publicada de forma anónima con permiso del cliente, en la sección "Lo que dice quien lo usa cada día" (https://www.shiftia.es/#voices). La firma un responsable de planificación de una plantilla de 20 operadores a turnos. Son extractos literales de un correo; no hay estrellas ni puntuación numérica.
+La portada incluye tres valoraciones, publicadas de forma anónima con permiso de cada cliente, en la sección "Lo que dicen quienes lo usan cada día" (https://www.shiftia.es/#voices). Son extractos literales de lo que cada responsable nos envió por escrito; no hay estrellas ni puntuación numérica, ni nombre de persona, empresa o centro. Las tres describen los mismos cinco cambios, y las tres están firmadas por quien planifica los turnos, no por la dirección.
 
-- Tiempo de planificación: antes revisaba en Excel que se cumplieran los criterios y con 20 operadores eso "podía costar fácilmente una hora"; con Shiftia "se tarda apenas unos segundos". Es la única cifra concreta que da.
-- Recalcular por vacaciones o bajas: "con la aplicación volvemos a realizar una planificación nueva en unos segundos", ajustando a los trabajadores activos y avisando si algún turno queda descompensado.
+Valoración 1 — responsable de planificación, plantilla de 20 operadores a turnos (industria):
+
+- Tiempo de planificación: antes revisaba en Excel que se cumplieran los criterios y con 20 operadores eso "podía costar fácilmente una hora"; con Shiftia "se tarda apenas unos segundos". Es la única cifra concreta que aparece en toda la sección.
 - Cambios de turno (casi diarios en su plantilla): antes correo, edición manual y respuesta de aprobación; ahora "se resuelve simplemente con la aprobación desde la aplicación".
 - Nóminas: "mensualmente me genera una tabla donde se cuentan los domingos, festivos y nocturnidades", más el cómputo de horas mes a mes y anual.
 - Coberturas desde el móvil: ante una baja estando fuera de la oficina, "la aplicación desde el móvil me indica las propuestas más viables".
-- Carga total: "la confección y modificación de los turnos era una tarea casi diaria, y en estos momentos dedico un tiempo prácticamente residual en ello".
+- Reparto: la aplicación deja "los turnos lo más compensados posible, avisando en caso de que alguno quede descompensado".
+- Carga total: "la confección y modificación de los turnos era una tarea casi diaria, y en estos momentos dedico un tiempo prácticamente residual en ello". Cierra diciendo que "desde luego recomendaría esta aplicación a quien me pidiera opinión".
 
-Límite honesto de esta valoración: el cliente se niega expresamente a cuantificar el resto de los ahorros ("no me atrevo a decirte tiempos"). La única cifra citable es la hora de planificación para 20 operadores. Las estimaciones de ~18 h al mes y ~4.800 €/año que aparecen en la portada son un cálculo propio de Shiftia, no un dato de este cliente ni de ninguna auditoría externa.
+Valoración 2 — supervisor/a de enfermería, plantilla de 32 profesionales de hospitalización y urgencias (hospital):
+
+- Bajas: antes revisaba uno por uno quién estaba disponible, quién venía de noche o quién podía cambiar; "ahora la aplicación me muestra directamente las alternativas más viables para cubrir ese turno".
+- Cambios entre compañeros: "ahora los propios profesionales solicitan el cambio y yo solamente tengo que revisarlo y aprobarlo".
+- Noches, domingos y festivos: "la aplicación me genera directamente esa información", lo que facilita el control antes de enviarlo a administración.
+- Equidad: valora comprobar que "las noches, festivos y fines de semana estén repartidos de una forma lo más equilibrada posible" y detectar cuándo alguien queda más cargado que el resto.
+- Vacaciones y permisos: una vez aprobados "queda reflejado directamente en la planificación", sin introducir la misma información varias veces.
+- Balance: "ahora esa parte de mi trabajo es muchísimo más rápida y tengo una visión mucho más clara de toda la plantilla". No da cifras de tiempo.
+
+Valoración 3 — responsable de restaurante, plantilla de 18 trabajadores entre cocina, sala y barra (hostelería):
+
+- Bajas de última hora: "ahora la aplicación me propone directamente las opciones que mejor encajan para cubrir ese turno".
+- Cambios de turno: antes se gestionaban "prácticamente todos por WhatsApp"; ahora el trabajador lo solicita en la aplicación y al aprobarlo "queda actualizado directamente".
+- Horas y festivos: antes revisión manual a final de mes; ahora "tengo un resumen de todo ello" para preparar las nóminas.
+- Reparto: la aplicación "ayuda a visualizar rápidamente si algún trabajador está haciendo más turnos de ese tipo que los demás" (fines de semana, cierres).
+- Vacaciones y días libres: "ahora la solicitud queda integrada en la propia planificación una vez aprobada".
+- Balance: "ahora podemos reorganizar los turnos en muy poco tiempo y dedicar ese esfuerzo a gestionar el servicio, que es donde realmente hace falta". No da cifras de tiempo.
+
+Límite honesto de estas valoraciones: ninguno de los tres cuantifica su ahorro total. El cliente industrial se niega expresamente a hacerlo ("no me atrevo a decirte tiempos") y los otros dos no dan ninguna cifra. La única cifra citable de toda la sección es esa hora de planificación para 20 operadores. Las estimaciones de ~18 h al mes y ~4.800 €/año que aparecen en la portada son un cálculo propio de Shiftia, no un dato de estos clientes ni de ninguna auditoría externa.
 
 ## Precios
 

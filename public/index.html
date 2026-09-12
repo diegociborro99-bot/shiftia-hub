@@ -757,85 +757,185 @@
 @media (max-width: 880px){.custom-hero{grid-template-columns:1fr;gap:28px;margin-top:32px;}.custom-copy h3{font-size:1.4rem;}.modules-grid{grid-template-columns:repeat(3,1fr);gap:8px;}.module-chip{font-size:0.66rem;padding:11px 6px;}}
 </style>
 
-<!-- VOCES: una valoración real de cliente, anónima y literal -->
+<!-- VOCES: tres valoraciones reales de cliente, anónimas y literales -->
 <style>
-.voices-section{padding:var(--section-pad) 0;background:linear-gradient(180deg,var(--bg) 0%,#f3f8f7 55%,var(--bg) 100%);position:relative;overflow:hidden;}
-.voices-wrap{max-width:1060px;margin:0 auto;padding:0 20px;}
-.voice-lead{position:relative;margin:40px auto 0;max-width:860px;background:var(--bg-card);border:1px solid var(--border);border-radius:24px;padding:44px 44px 34px;box-shadow:0 1px 2px rgba(15,15,15,.04),0 22px 60px -24px rgba(15,15,15,.18);}
-.voice-mark{position:absolute;top:26px;left:34px;width:34px;height:34px;color:rgba(47,163,147,.24);}
-.voice-mark svg{width:100%;height:100%;}
-.voice-big{font-family:var(--ds-font-display,'Instrument Serif',Georgia,serif);font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.28;letter-spacing:-.015em;color:var(--text1);margin:12px 0 0;text-wrap:pretty;}
-.voice-big b{font-weight:400;color:#0a5950;font-style:italic;}
-.voice-who{display:flex;align-items:center;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
-.voice-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2fa393,#0f7a6d);display:grid;place-items:center;flex:none;}
-.voice-avatar svg{width:19px;height:19px;color:#fff;}
-.voice-who-t b{display:block;font-size:.9rem;font-weight:700;color:var(--text1);letter-spacing:-.01em;}
-.voice-who-t span{display:block;font-size:.78rem;color:var(--text3);margin-top:2px;}
-.voice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:860px;margin:16px auto 0;}
-.voice-card{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:22px 24px;transition:transform .3s cubic-bezier(.16,1,.3,1),border-color .3s,box-shadow .3s;}
-.voice-card:hover{transform:translateY(-3px);border-color:rgba(47,163,147,.36);box-shadow:0 14px 32px rgba(15,122,109,.09);}
-.voice-tag{display:inline-block;font-family:var(--ds-font-mono,ui-monospace,Menlo,monospace);font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#15847d;background:rgba(47,163,147,.11);border-radius:999px;padding:4px 11px;margin-bottom:12px;}
-.voice-card p{margin:0;font-size:.93rem;line-height:1.6;color:var(--text2);}
-.voice-card p b{color:var(--text1);font-weight:600;}
-.voice-close{max-width:860px;margin:18px auto 0;padding:20px 24px;border-radius:18px;background:rgba(47,163,147,.08);border:1px solid rgba(47,163,147,.2);font-size:1rem;line-height:1.6;color:var(--text1);}
-.voice-close b{font-weight:700;}
-.voice-note{max-width:860px;margin:16px auto 0;font-size:.74rem;color:var(--text3);line-height:1.6;text-align:center;}
-@media (max-width:820px){
-  .voice-lead{padding:34px 24px 26px;border-radius:20px;}
-  .voice-mark{top:18px;left:20px;width:26px;height:26px;}
-  .voice-grid{grid-template-columns:1fr;}
-  .voice-card{padding:20px;}
+.voices-section{padding:var(--section-pad) 0;background:linear-gradient(180deg,var(--bg) 0%,#f2f8f7 48%,var(--bg) 100%);position:relative;overflow:hidden;}
+.voices-wrap{max-width:1200px;margin:0 auto;padding:0 20px;}
+.voices-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px;}
+.voice-col{display:flex;flex-direction:column;position:relative;margin:0;background:var(--bg-card);border:1px solid var(--border);border-radius:22px;padding:26px 24px 24px;box-shadow:0 1px 2px rgba(15,15,15,.04),0 20px 50px -28px rgba(15,15,15,.18);transition:transform .35s cubic-bezier(.16,1,.3,1),border-color .35s,box-shadow .35s;}
+.voice-col:hover{transform:translateY(-3px);border-color:rgba(47,163,147,.34);box-shadow:0 24px 52px -26px rgba(15,122,109,.26);}
+.voice-head{padding-bottom:16px;border-bottom:1px solid var(--border);}
+.voice-sector{display:inline-flex;align-items:center;gap:6px;font-family:var(--ds-font-mono,ui-monospace,Menlo,monospace);font-size:.6rem;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:#0f6f66;background:rgba(47,163,147,.12);border-radius:999px;padding:5px 12px 5px 9px;margin-bottom:12px;}
+.voice-sector svg{width:13px;height:13px;flex:none;}
+.voice-head b{display:block;font-size:1rem;font-weight:700;color:var(--text1);letter-spacing:-.012em;line-height:1.3;}
+.voice-team{display:block;font-size:.78rem;color:var(--text3);margin-top:4px;line-height:1.45;}
+.voice-lead{margin:18px 0 4px;font-family:var(--ds-font-display,'Instrument Serif',Georgia,serif);font-size:1.24rem;line-height:1.33;letter-spacing:-.012em;color:var(--text1);text-wrap:pretty;}
+.voice-lead b{font-weight:400;font-style:italic;color:#0a5950;}
+.voice-item{padding-top:16px;margin-top:16px;border-top:1px dashed var(--border);}
+.voice-tag{display:block;font-family:var(--ds-font-mono,ui-monospace,Menlo,monospace);font-size:.59rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+.voice-item p{margin:0;font-size:.855rem;line-height:1.6;color:var(--text2);}
+.voice-item p b{color:var(--text1);font-weight:600;}
+.voice-chk,.voice-more{display:none;}
+.voice-close{max-width:820px;margin:22px auto 0;padding:26px 30px;border-radius:20px;background:rgba(47,163,147,.09);border:1px solid rgba(47,163,147,.22);}
+.voice-close blockquote{margin:0;}
+.voice-close p{margin:0;font-size:1.02rem;line-height:1.6;color:var(--text1);text-wrap:pretty;}
+.voice-close p b{font-weight:700;}
+.voice-close cite{display:block;margin-top:14px;font-style:normal;font-size:.76rem;color:#0f6f66;font-weight:600;letter-spacing:.01em;}
+.voice-note{max-width:820px;margin:16px auto 0;font-size:.74rem;color:var(--text3);line-height:1.65;text-align:center;}
+@supports (grid-template-rows:subgrid){
+  .voices-trio{grid-template-rows:auto auto repeat(5,auto);}
+  .voice-col{display:grid;grid-row:span 7;grid-template-rows:subgrid;align-content:start;}
+}
+@media (max-width:1040px){
+  /* En pantallas estrechas cada tarjeta se pliega: se ve el titular de cada
+     valoración y los cinco extractos se despliegan sin JavaScript. */
+  .voices-trio{display:flex;flex-direction:column;gap:14px;}
+  .voice-col{display:flex;}
+  .voice-col:hover{transform:none;}
+  .voice-chk{display:block;position:absolute;width:1px;height:1px;margin:0;opacity:0;clip-path:inset(50%);}
+  .voice-more{display:flex;align-items:center;gap:10px;margin-top:18px;padding:11px 18px;border:1px solid rgba(47,163,147,.3);border-radius:999px;background:rgba(47,163,147,.07);color:#0f6f66;font-size:.82rem;font-weight:600;cursor:pointer;-webkit-user-select:none;user-select:none;align-self:flex-start;}
+  .voice-more svg{width:14px;height:14px;transition:transform .25s ease;}
+  .voice-more .l-close{display:none;}
+  .voice-chk:checked ~ .voice-more .l-open{display:none;}
+  .voice-chk:checked ~ .voice-more .l-close{display:inline;}
+  .voice-chk:checked ~ .voice-more svg{transform:rotate(180deg);}
+  .voice-chk:focus-visible ~ .voice-more{outline:2px solid #0f7a6d;outline-offset:2px;}
+  .voice-item{display:none;}
+  .voice-chk:checked ~ .voice-item{display:block;}
+}
+@media (max-width:620px){
+  .voice-col{padding:24px 20px;border-radius:18px;}
+  .voice-lead{font-size:1.14rem;}
+  .voice-close{padding:22px 20px;border-radius:18px;}
+  .voice-close p{font-size:.95rem;}
 }
 </style>
 
 <section class="voices-section" id="voices" aria-labelledby="voicesTitle">
   <div class="container centered">
-    <div class="section-eyebrow reveal" data-i18n="voi_eyebrow">Una valoración real</div>
-    <h2 class="section-h2 reveal" id="voicesTitle" data-i18n-html="voi_title">Lo que dice quien lo usa <em>cada día</em></h2>
-    <p class="section-p reveal" data-i18n="voi_desc">Le pedimos a un cliente que nos contase, sin adornos, cuánto tiempo le ahorra. Esto es lo que respondió por correo.</p>
+    <div class="section-eyebrow reveal" data-i18n="voi_eyebrow">Tres valoraciones reales</div>
+    <h2 class="section-h2 reveal" id="voicesTitle" data-i18n-html="voi_title">Lo que dicen quienes lo usan <em>cada día</em></h2>
+    <p class="section-p reveal" data-i18n="voi_desc">Una plantilla industrial, un hospital y un restaurante. Tres responsables que no se conocen, contándonos por escrito los mismos cinco cambios.</p>
   </div>
   <div class="voices-wrap">
-    <figure class="voice-lead reveal">
-      <span class="voice-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 6C6.5 7.6 4.8 10.2 4.8 13.6c0 2.7 1.6 4.4 3.8 4.4 2 0 3.5-1.4 3.5-3.4 0-1.9-1.3-3.3-3.1-3.3-.3 0-.7 0-.9.1.4-1.6 1.8-3 3.6-4L9.5 6zm9 0c-3 1.6-4.7 4.2-4.7 7.6 0 2.7 1.6 4.4 3.8 4.4 2 0 3.5-1.4 3.5-3.4 0-1.9-1.3-3.3-3.1-3.3-.3 0-.7 0-.9.1.4-1.6 1.8-3 3.6-4L18.5 6z"/></svg></span>
-      <blockquote class="voice-big" data-i18n-html="voi_big">Revisaba en Excel que se cumplieran los criterios, y con un grupo de 20 operadores eso podía costar fácilmente una hora. <b>Ahora se tarda apenas unos segundos.</b></blockquote>
-      <figcaption class="voice-who">
-        <span class="voice-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-        <span class="voice-who-t">
-          <b data-i18n="voi_who">Responsable de planificación</b>
-          <span data-i18n="voi_role">Plantilla de 20 operadores a turnos · septiembre de 2026</span>
-        </span>
-      </figcaption>
-    </figure>
-
-    <div class="voice-grid">
-      <div class="voice-card reveal">
-        <span class="voice-tag" data-i18n="voi_t1">Cuando cambia la plantilla</span>
-        <p data-i18n-html="voi_q1">«Cuando algún trabajador se marcha de vacaciones hay que compensar los turnos, lo que supone modificar los de los demás y la secuencia ya no vale. <b>Con la aplicación volvemos a realizar una planificación nueva en unos segundos.</b>»</p>
-      </div>
-      <div class="voice-card reveal">
-        <span class="voice-tag" data-i18n="voi_t2">Cambios de turno</span>
-        <p data-i18n-html="voi_q2">«Lo que antes era recibir un correo con el cambio, ir a la plantilla a modificarlos y responder al correo con la aprobación, <b>ahora se resuelve simplemente con la aprobación desde la aplicación.</b>»</p>
-      </div>
-      <div class="voice-card reveal">
-        <span class="voice-tag" data-i18n="voi_t3">Para las nóminas</span>
-        <p data-i18n-html="voi_q3">«Mensualmente me genera <b>una tabla donde se cuentan los domingos, festivos y nocturnidades</b>, importante para las nóminas de los trabajadores, además de calcular mes a mes y al final del año las horas trabajadas.»</p>
-      </div>
-      <div class="voice-card reveal">
-        <span class="voice-tag" data-i18n="voi_t4">Una baja fuera de la oficina</span>
-        <p data-i18n-html="voi_q4">«Estando fuera de la oficina, si tengo alguna baja, <b>la aplicación desde el móvil me indica las propuestas más viables</b>, además de tener en todo momento la información de los trabajadores de turno.»</p>
-      </div>
-      <div class="voice-card reveal">
-        <span class="voice-tag" data-i18n="voi_t5">Equidad y avisos</span>
-        <p data-i18n-html="voi_q5">«La aplicación es capaz de confeccionar rápidamente una plantilla ajustándose a los trabajadores que están activos y, lo más importante, <b>dejar los turnos lo más compensados posible, avisando en caso de que alguno quede descompensado.</b>»</p>
-      </div>
-      <div class="voice-card reveal">
-        <span class="voice-tag" data-i18n="voi_t6">Vacaciones y días libres</span>
-        <p data-i18n-html="voi_q6">«La solicitud de vacaciones o días libres, en vez de trasladarlo manualmente a una tabla, <b>con la aplicación se refleja directamente en la planilla</b> en caso de que sean aprobadas.»</p>
-      </div>
+    <div class="voices-trio">
+      <figure class="voice-col reveal">
+        <figcaption class="voice-head">
+          <span class="voice-sector">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M5 20V11l5 3V11l5 3V7l4 2v11"/></svg>
+            <span data-i18n="voi1_sector">Industria</span>
+          </span>
+          <b data-i18n="voi1_role">Responsable de planificación</b>
+          <span class="voice-team" data-i18n="voi1_team">Plantilla de 20 operadores a turnos</span>
+        </figcaption>
+        <blockquote class="voice-lead" data-i18n-html="voi1_lead">«Revisaba en Excel que se cumplieran los criterios, y con un grupo de 20 operadores eso podía costar fácilmente una hora. <b>Ahora se tarda apenas unos segundos.</b>»</blockquote>
+        <input type="checkbox" class="voice-chk" id="voiMore1">
+        <label class="voice-more" for="voiMore1">
+          <span class="l-open" data-i18n="voi_more">Ver los cinco cambios</span>
+          <span class="l-close" data-i18n="voi_less">Ocultar</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </label>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t1">Cuando falta alguien</span>
+          <p data-i18n-html="voi1_q1">«Estando fuera de la oficina, si tengo alguna baja, <b>la aplicación desde el móvil me indica las propuestas más viables</b>, además de tener en todo momento la información de los trabajadores de turno.»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t2">Cambios de turno</span>
+          <p data-i18n-html="voi1_q2">«Lo que antes era recibir un correo con el cambio, ir a la plantilla a modificarlos y responder al correo con la aprobación, <b>ahora se resuelve simplemente con la aprobación desde la aplicación.</b>»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t3">Noches, festivos y nóminas</span>
+          <p data-i18n-html="voi1_q3">«Mensualmente me genera <b>una tabla donde se cuentan los domingos, festivos y nocturnidades</b>, importante para las nóminas de los trabajadores, además de calcular mes a mes y al final del año las horas trabajadas.»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t4">Reparto equilibrado</span>
+          <p data-i18n-html="voi1_q4">«La aplicación es capaz de confeccionar rápidamente una plantilla ajustándose a los trabajadores que están activos y, lo más importante, <b>dejar los turnos lo más compensados posible, avisando en caso de que alguno quede descompensado.</b>»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t5">Vacaciones y permisos</span>
+          <p data-i18n-html="voi1_q5">«La solicitud de vacaciones o días libres, en vez de trasladarlo manualmente a una tabla, <b>con la aplicación se refleja directamente en la planilla</b> en caso de que sean aprobadas.»</p>
+        </div>
+      </figure>
+      <figure class="voice-col reveal">
+        <figcaption class="voice-head">
+          <span class="voice-sector">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13"/><path d="M12 9v6M9 12h6"/></svg>
+            <span data-i18n="voi2_sector">Hospital</span>
+          </span>
+          <b data-i18n="voi2_role">Supervisor/a de enfermería</b>
+          <span class="voice-team" data-i18n="voi2_team">Plantilla de 32 profesionales · hospitalización y urgencias</span>
+        </figcaption>
+        <blockquote class="voice-lead" data-i18n-html="voi2_lead">«Antes podía pasar bastante tiempo revisando cómo reorganizarlo sin perjudicar al resto. <b>Ahora esa parte de mi trabajo es muchísimo más rápida y tengo una visión mucho más clara de toda la plantilla.</b>»</blockquote>
+        <input type="checkbox" class="voice-chk" id="voiMore2">
+        <label class="voice-more" for="voiMore2">
+          <span class="l-open" data-i18n="voi_more">Ver los cinco cambios</span>
+          <span class="l-close" data-i18n="voi_less">Ocultar</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </label>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t1">Cuando falta alguien</span>
+          <p data-i18n-html="voi2_q1">«Antes, cuando alguien llamaba diciendo que no podía venir, empezaba a revisar uno por uno quién estaba disponible, quién venía de noche o quién podía hacer un cambio. <b>Ahora la aplicación me muestra directamente las alternativas más viables para cubrir ese turno.</b>»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t2">Cambios de turno</span>
+          <p data-i18n-html="voi2_q2">«Los cambios de turno eran mensajes, llamadas y después actualizar la planilla para que todo quedase correcto. <b>Ahora los propios profesionales solicitan el cambio y yo solamente tengo que revisarlo y aprobarlo.</b>»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t3">Noches, festivos y nóminas</span>
+          <p data-i18n-html="voi2_q3">«A final de mes necesito saber quién ha trabajado noches, domingos o festivos. <b>La aplicación me genera directamente esa información</b>, lo que nos facilita mucho el control antes de enviarlo a administración.»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t4">Reparto equilibrado</span>
+          <p data-i18n-html="voi2_q4">«Una de las cosas que más valoro es poder comprobar que <b>las noches, festivos y fines de semana estén repartidos de una forma lo más equilibrada posible</b> y detectar rápidamente cuándo algún profesional queda más cargado que el resto.»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t5">Vacaciones y permisos</span>
+          <p data-i18n-html="voi2_q5">«Antes tenía las solicitudes por un lado y la planificación por otro. <b>Ahora, cuando se aprueba un permiso o unas vacaciones, queda reflejado directamente en la planificación</b>, evitando tener que introducir la misma información varias veces.»</p>
+        </div>
+      </figure>
+      <figure class="voice-col reveal">
+        <figcaption class="voice-head">
+          <span class="voice-sector">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3v8a3 3 0 0 0 6 0V3M9 11v10"/><path d="M17 3c-1.5 2-2 4-2 6h4c0-2-.5-4-2-6zM17 9v12"/></svg>
+            <span data-i18n="voi3_sector">Hostelería</span>
+          </span>
+          <b data-i18n="voi3_role">Responsable de restaurante</b>
+          <span class="voice-team" data-i18n="voi3_team">Plantilla de 18 trabajadores · cocina, sala y barra</span>
+        </figcaption>
+        <blockquote class="voice-lead" data-i18n-html="voi3_lead">«Antes cada modificación implicaba volver a revisar buena parte del cuadrante. <b>Ahora podemos reorganizar los turnos en muy poco tiempo y dedicar ese esfuerzo a gestionar el servicio, que es donde realmente hace falta.</b>»</blockquote>
+        <input type="checkbox" class="voice-chk" id="voiMore3">
+        <label class="voice-more" for="voiMore3">
+          <span class="l-open" data-i18n="voi_more">Ver los cinco cambios</span>
+          <span class="l-close" data-i18n="voi_less">Ocultar</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </label>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t1">Cuando falta alguien</span>
+          <p data-i18n-html="voi3_q1">«En hostelería una baja de última hora te puede desmontar todo el servicio. Antes empezaba a llamar a gente y a comprobar quién podía venir. <b>Ahora la aplicación me propone directamente las opciones que mejor encajan para cubrir ese turno.</b>»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t2">Cambios de turno</span>
+          <p data-i18n-html="voi3_q2">«Antes los cambios se gestionaban prácticamente todos por WhatsApp y luego había que acordarse de modificarlos en el cuadrante. <b>Ahora el trabajador solicita el cambio desde la aplicación y, cuando lo apruebo, queda actualizado directamente.</b>»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t3">Noches, festivos y nóminas</span>
+          <p data-i18n-html="voi3_q3">«A final de mes necesitábamos revisar manualmente las horas, domingos y festivos de cada persona. <b>Ahora tengo un resumen de todo ello</b>, lo que hace mucho más sencillo preparar la información para las nóminas.»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t4">Reparto equilibrado</span>
+          <p data-i18n-html="voi3_q4">«Intentamos que fines de semana, cierres y determinados turnos no recaigan siempre en las mismas personas. <b>La aplicación ayuda a visualizar rápidamente si algún trabajador está haciendo más turnos de ese tipo que los demás.</b>»</p>
+        </div>
+        <div class="voice-item">
+          <span class="voice-tag" data-i18n="voi_t5">Vacaciones y permisos</span>
+          <p data-i18n-html="voi3_q5">«Antes recibía las peticiones de días libres y tenía que comprobar el cuadrante, anotarlas y después modificarlo. <b>Ahora la solicitud queda integrada en la propia planificación una vez aprobada.</b>»</p>
+        </div>
+      </figure>
     </div>
-
-    <p class="voice-close reveal" data-i18n-html="voi_close">«Al modificar estos turnos manualmente tienes que revisar día a día y operador a operador cómo encajar los cambios. La confección y modificación de los turnos era una tarea casi diaria, y en estos momentos <b>dedico un tiempo prácticamente residual</b> en ello. Por todo esto y por más funciones, desde luego recomendaría esta aplicación a quien me pidiera opinión.»</p>
-    <p class="voice-note reveal" data-i18n="voi_note">Extractos literales de la valoración que nos envió por correo. La publicamos sin nombre ni empresa. Él mismo evita dar cifras del resto de ahorros: «no me atrevo a decirte tiempos».</p>
+    <figure class="voice-close reveal">
+      <blockquote><p data-i18n-html="voi_close">«La confección y modificación de los turnos era una tarea casi diaria, y en estos momentos <b>dedico un tiempo prácticamente residual</b> en ello. Por todo esto y por más funciones, <b>desde luego recomendaría esta aplicación a quien me pidiera opinión.</b>»</p></blockquote>
+      <figcaption><cite data-i18n="voi_close_who">Responsable de planificación · 20 operadores a turnos</cite></figcaption>
+    </figure>
+    <p class="voice-note reveal" data-i18n="voi_note">Extractos literales de tres valoraciones que nos enviaron por escrito en septiembre de 2026. Las tres se publican sin identificar a la persona, la empresa ni el centro. Ninguno de los tres cifra su ahorro total: el único dato concreto que aparece aquí es esa hora de planificación para 20 operadores.</p>
   </div>
 </section>
 
@@ -2171,26 +2271,46 @@ const translations = {
     cb_meta4: 'Sanidad · Asturias',
     cb_name5: 'Hospital Univ. Clínico San Cecilio',
     cb_meta5: 'Servicio de Urología · Granada',
-    voi_eyebrow: 'Una valoración real',
-    voi_title: 'Lo que dice quien lo usa <em>cada día</em>',
-    voi_desc: 'Le pedimos a un cliente que nos contase, sin adornos, cuánto tiempo le ahorra. Esto es lo que respondió por correo.',
-    voi_big: 'Revisaba en Excel que se cumplieran los criterios, y con un grupo de 20 operadores eso podía costar fácilmente una hora. <b>Ahora se tarda apenas unos segundos.</b>',
-    voi_who: 'Responsable de planificación',
-    voi_role: 'Plantilla de 20 operadores a turnos · septiembre de 2026',
-    voi_t1: 'Cuando cambia la plantilla',
-    voi_q1: '«Cuando algún trabajador se marcha de vacaciones hay que compensar los turnos, lo que supone modificar los de los demás y la secuencia ya no vale. <b>Con la aplicación volvemos a realizar una planificación nueva en unos segundos.</b>»',
+    voi_eyebrow: 'Tres valoraciones reales',
+    voi_title: 'Lo que dicen quienes lo usan <em>cada día</em>',
+    voi_desc: 'Una plantilla industrial, un hospital y un restaurante. Tres responsables que no se conocen, contándonos por escrito los mismos cinco cambios.',
+    voi_more: 'Ver los cinco cambios',
+    voi_less: 'Ocultar',
+    voi_t1: 'Cuando falta alguien',
     voi_t2: 'Cambios de turno',
-    voi_q2: '«Lo que antes era recibir un correo con el cambio, ir a la plantilla a modificarlos y responder al correo con la aprobación, <b>ahora se resuelve simplemente con la aprobación desde la aplicación.</b>»',
-    voi_t3: 'Para las nóminas',
-    voi_q3: '«Mensualmente me genera <b>una tabla donde se cuentan los domingos, festivos y nocturnidades</b>, importante para las nóminas de los trabajadores, además de calcular mes a mes y al final del año las horas trabajadas.»',
-    voi_t4: 'Una baja fuera de la oficina',
-    voi_q4: '«Estando fuera de la oficina, si tengo alguna baja, <b>la aplicación desde el móvil me indica las propuestas más viables</b>, además de tener en todo momento la información de los trabajadores de turno.»',
-    voi_t5: 'Equidad y avisos',
-    voi_q5: '«La aplicación es capaz de confeccionar rápidamente una plantilla ajustándose a los trabajadores que están activos y, lo más importante, <b>dejar los turnos lo más compensados posible, avisando en caso de que alguno quede descompensado.</b>»',
-    voi_t6: 'Vacaciones y días libres',
-    voi_q6: '«La solicitud de vacaciones o días libres, en vez de trasladarlo manualmente a una tabla, <b>con la aplicación se refleja directamente en la planilla</b> en caso de que sean aprobadas.»',
-    voi_close: '«Al modificar estos turnos manualmente tienes que revisar día a día y operador a operador cómo encajar los cambios. La confección y modificación de los turnos era una tarea casi diaria, y en estos momentos <b>dedico un tiempo prácticamente residual</b> en ello. Por todo esto y por más funciones, desde luego recomendaría esta aplicación a quien me pidiera opinión.»',
-    voi_note: 'Extractos literales de la valoración que nos envió por correo. La publicamos sin nombre ni empresa. Él mismo evita dar cifras del resto de ahorros: «no me atrevo a decirte tiempos».',
+    voi_t3: 'Noches, festivos y nóminas',
+    voi_t4: 'Reparto equilibrado',
+    voi_t5: 'Vacaciones y permisos',
+    voi1_sector: 'Industria',
+    voi1_role: 'Responsable de planificación',
+    voi1_team: 'Plantilla de 20 operadores a turnos',
+    voi1_lead: '«Revisaba en Excel que se cumplieran los criterios, y con un grupo de 20 operadores eso podía costar fácilmente una hora. <b>Ahora se tarda apenas unos segundos.</b>»',
+    voi1_q1: '«Estando fuera de la oficina, si tengo alguna baja, <b>la aplicación desde el móvil me indica las propuestas más viables</b>, además de tener en todo momento la información de los trabajadores de turno.»',
+    voi1_q2: '«Lo que antes era recibir un correo con el cambio, ir a la plantilla a modificarlos y responder al correo con la aprobación, <b>ahora se resuelve simplemente con la aprobación desde la aplicación.</b>»',
+    voi1_q3: '«Mensualmente me genera <b>una tabla donde se cuentan los domingos, festivos y nocturnidades</b>, importante para las nóminas de los trabajadores, además de calcular mes a mes y al final del año las horas trabajadas.»',
+    voi1_q4: '«La aplicación es capaz de confeccionar rápidamente una plantilla ajustándose a los trabajadores que están activos y, lo más importante, <b>dejar los turnos lo más compensados posible, avisando en caso de que alguno quede descompensado.</b>»',
+    voi1_q5: '«La solicitud de vacaciones o días libres, en vez de trasladarlo manualmente a una tabla, <b>con la aplicación se refleja directamente en la planilla</b> en caso de que sean aprobadas.»',
+    voi2_sector: 'Hospital',
+    voi2_role: 'Supervisor/a de enfermería',
+    voi2_team: 'Plantilla de 32 profesionales · hospitalización y urgencias',
+    voi2_lead: '«Antes podía pasar bastante tiempo revisando cómo reorganizarlo sin perjudicar al resto. <b>Ahora esa parte de mi trabajo es muchísimo más rápida y tengo una visión mucho más clara de toda la plantilla.</b>»',
+    voi2_q1: '«Antes, cuando alguien llamaba diciendo que no podía venir, empezaba a revisar uno por uno quién estaba disponible, quién venía de noche o quién podía hacer un cambio. <b>Ahora la aplicación me muestra directamente las alternativas más viables para cubrir ese turno.</b>»',
+    voi2_q2: '«Los cambios de turno eran mensajes, llamadas y después actualizar la planilla para que todo quedase correcto. <b>Ahora los propios profesionales solicitan el cambio y yo solamente tengo que revisarlo y aprobarlo.</b>»',
+    voi2_q3: '«A final de mes necesito saber quién ha trabajado noches, domingos o festivos. <b>La aplicación me genera directamente esa información</b>, lo que nos facilita mucho el control antes de enviarlo a administración.»',
+    voi2_q4: '«Una de las cosas que más valoro es poder comprobar que <b>las noches, festivos y fines de semana estén repartidos de una forma lo más equilibrada posible</b> y detectar rápidamente cuándo algún profesional queda más cargado que el resto.»',
+    voi2_q5: '«Antes tenía las solicitudes por un lado y la planificación por otro. <b>Ahora, cuando se aprueba un permiso o unas vacaciones, queda reflejado directamente en la planificación</b>, evitando tener que introducir la misma información varias veces.»',
+    voi3_sector: 'Hostelería',
+    voi3_role: 'Responsable de restaurante',
+    voi3_team: 'Plantilla de 18 trabajadores · cocina, sala y barra',
+    voi3_lead: '«Antes cada modificación implicaba volver a revisar buena parte del cuadrante. <b>Ahora podemos reorganizar los turnos en muy poco tiempo y dedicar ese esfuerzo a gestionar el servicio, que es donde realmente hace falta.</b>»',
+    voi3_q1: '«En hostelería una baja de última hora te puede desmontar todo el servicio. Antes empezaba a llamar a gente y a comprobar quién podía venir. <b>Ahora la aplicación me propone directamente las opciones que mejor encajan para cubrir ese turno.</b>»',
+    voi3_q2: '«Antes los cambios se gestionaban prácticamente todos por WhatsApp y luego había que acordarse de modificarlos en el cuadrante. <b>Ahora el trabajador solicita el cambio desde la aplicación y, cuando lo apruebo, queda actualizado directamente.</b>»',
+    voi3_q3: '«A final de mes necesitábamos revisar manualmente las horas, domingos y festivos de cada persona. <b>Ahora tengo un resumen de todo ello</b>, lo que hace mucho más sencillo preparar la información para las nóminas.»',
+    voi3_q4: '«Intentamos que fines de semana, cierres y determinados turnos no recaigan siempre en las mismas personas. <b>La aplicación ayuda a visualizar rápidamente si algún trabajador está haciendo más turnos de ese tipo que los demás.</b>»',
+    voi3_q5: '«Antes recibía las peticiones de días libres y tenía que comprobar el cuadrante, anotarlas y después modificarlo. <b>Ahora la solicitud queda integrada en la propia planificación una vez aprobada.</b>»',
+    voi_close: '«La confección y modificación de los turnos era una tarea casi diaria, y en estos momentos <b>dedico un tiempo prácticamente residual</b> en ello. Por todo esto y por más funciones, <b>desde luego recomendaría esta aplicación a quien me pidiera opinión.</b>»',
+    voi_close_who: 'Responsable de planificación · 20 operadores a turnos',
+    voi_note: 'Extractos literales de tres valoraciones que nos enviaron por escrito en septiembre de 2026. Las tres se publican sin identificar a la persona, la empresa ni el centro. Ninguno de los tres cifra su ahorro total: el único dato concreto que aparece aquí es esa hora de planificación para 20 operadores.',
     audit_eyebrow: 'Auditoría gratuita',
     audit_title: '¿Tu cuadrante actual aguantaría <em>una auditoría</em>?',
     audit_desc: 'Sube tu planilla (PDF, foto o CSV) y te devolvemos un diagnóstico con números verificables: equidad de noches, descansos incumplidos con fechas y puntos de riesgo. Gratis, sin registro y en minutos.',
@@ -2436,26 +2556,46 @@ const translations = {
     cb_meta4: 'Healthcare · Asturias',
     cb_name5: 'San Cecilio University Hospital',
     cb_meta5: 'Urology Department · Granada',
-    voi_eyebrow: 'A real review',
-    voi_title: 'What someone who uses it <em>every day</em> says',
-    voi_desc: 'We asked a customer to tell us plainly how much time Shiftia saves him. This is what he wrote back.',
-    voi_big: 'I used to check in Excel that the criteria were met, and with a group of 20 operators that could easily take an hour. <b>Now it takes just seconds.</b>',
-    voi_who: 'Scheduling manager',
-    voi_role: 'Team of 20 shift operators · September 2026',
-    voi_t1: 'When the team changes',
-    voi_q1: '“When someone goes on holiday you have to compensate the shifts, which means changing everyone else’s and the sequence no longer works. <b>With the app we build a whole new plan in seconds.</b>”',
+    voi_eyebrow: 'Three real reviews',
+    voi_title: 'What the people using it <em>every day</em> say',
+    voi_desc: 'An industrial team, a hospital and a restaurant. Three managers who have never met, writing to us about the same five changes.',
+    voi_more: 'See the five changes',
+    voi_less: 'Hide',
+    voi_t1: 'When someone is off',
     voi_t2: 'Shift swaps',
-    voi_q2: '“What used to be an email with the swap, then editing the roster, then replying to approve it, <b>is now settled with a single approval inside the app.</b>”',
-    voi_t3: 'For payroll',
-    voi_q3: '“Every month it gives me <b>a table counting Sundays, public holidays and night shifts</b>, which matters for payroll, and it also adds up hours worked month by month and across the year.”',
-    voi_t4: 'An absence while out of the office',
-    voi_q4: '“If someone calls in sick while I am out of the office, <b>the app shows me the most workable replacements right on my phone</b>, and I can always see who is on shift.”',
-    voi_t5: 'Fairness and alerts',
-    voi_q5: '“The app can quickly build a roster around whoever is actually available and, most importantly, <b>keep the shifts as evenly balanced as possible, warning me when one of them is out of balance.</b>”',
-    voi_t6: 'Holidays and days off',
-    voi_q6: '“Holiday and day-off requests, instead of being copied by hand into a table, <b>show up directly in the roster</b> once they are approved.”',
-    voi_close: '“Changing these shifts by hand means going through them day by day and operator by operator to see how they fit. Building and changing shifts used to be an almost daily task, and now <b>I spend next to no time on it</b>. For all this and more, I would certainly recommend this app to anyone who asked me.”',
-    voi_note: 'Verbatim excerpts from the review he emailed us, translated from Spanish. Published without his name or company. He declines to put figures on the rest of the savings: “I wouldn’t dare give you times.”',
+    voi_t3: 'Nights, holidays and payroll',
+    voi_t4: 'Even distribution',
+    voi_t5: 'Holidays and leave',
+    voi1_sector: 'Industry',
+    voi1_role: 'Scheduling manager',
+    voi1_team: 'A team of 20 shift operators',
+    voi1_lead: '«I used to check in Excel that the criteria were met, and with a group of 20 operators that could easily take an hour. <b>Now it takes barely a few seconds.</b>»',
+    voi1_q1: '«When I am out of the office and someone is off sick, <b>the app shows me the most workable options on my phone</b>, and I always have the information on who is on shift.»',
+    voi1_q2: '«What used to be an email with the swap, going into the roster to change it and replying to approve it <b>is now resolved simply by approving it in the app.</b>»',
+    voi1_q3: '«Every month it produces <b>a table counting Sundays, public holidays and night shifts</b>, which matters for payroll, as well as the hours worked month by month and across the year.»',
+    voi1_q4: '«The app can build a roster quickly around whoever is active and, most importantly, <b>keep the shifts as balanced as possible, warning me when someone ends up carrying more.</b>»',
+    voi1_q5: '«Holiday and day-off requests, instead of being copied by hand into a table, <b>go straight into the roster with the app</b> once they are approved.»',
+    voi2_sector: 'Hospital',
+    voi2_role: 'Nursing supervisor',
+    voi2_team: 'A team of 32 staff · inpatient wards and A&E',
+    voi2_lead: '«I used to spend a good while working out how to reorganise things without penalising everyone else. <b>Now that part of my job is far quicker and I have a much clearer view of the whole team.</b>»',
+    voi2_q1: '«When someone called in to say they could not come, I would go through the team one by one: who was free, who was coming off nights, who could swap. <b>Now the app shows me the most workable options for covering that shift straight away.</b>»',
+    voi2_q2: '«Shift swaps meant messages, phone calls and then updating the roster so everything matched. <b>Now the staff request the swap themselves and I only have to review and approve it.</b>»',
+    voi2_q3: '«At the end of the month I need to know who has worked nights, Sundays or public holidays. <b>The app produces that information directly</b>, which makes the checks much easier before we send it to admin.»',
+    voi2_q4: '«One of the things I value most is being able to check that <b>nights, public holidays and weekends are shared out as evenly as possible</b>, and to spot quickly when someone is carrying more than the rest.»',
+    voi2_q5: '«I used to have the requests on one side and the planning on the other. <b>Now, when leave or holiday is approved, it appears directly in the plan</b>, so the same information does not have to be entered several times.»',
+    voi3_sector: 'Hospitality',
+    voi3_role: 'Restaurant manager',
+    voi3_team: 'A team of 18 staff · kitchen, floor and bar',
+    voi3_lead: '«Every change used to mean going back over a good part of the roster. <b>Now we can reorganise the shifts very quickly and put that effort into running the service, which is where it is really needed.</b>»',
+    voi3_q1: '«In hospitality a last-minute absence can bring down the whole service. I used to start phoning people and checking who could come in. <b>Now the app suggests the options that fit best for covering that shift.</b>»',
+    voi3_q2: '«Almost all the swaps used to go through WhatsApp, and then you had to remember to change them on the roster. <b>Now the employee requests the swap in the app and, once I approve it, the roster updates on its own.</b>»',
+    voi3_q3: '«At the end of the month we had to go through the hours, Sundays and public holidays for each person by hand. <b>Now I have a summary of all of it</b>, which makes preparing the payroll information much simpler.»',
+    voi3_q4: '«We try to keep weekends, closing shifts and certain rotas from always falling on the same people. <b>The app makes it easy to see at a glance whether someone is doing more of those shifts than the others.</b>»',
+    voi3_q5: '«I used to get the day-off requests, check the roster, note them down and then change it. <b>Now the request is built into the plan itself once it is approved.</b>»',
+    voi_close: '«Building and changing the shifts used to be an almost daily task, and now <b>I spend next to no time on it</b>. For all this and for other features, <b>I would certainly recommend this app to anyone who asked me.</b>»',
+    voi_close_who: 'Scheduling manager · 20 shift operators',
+    voi_note: 'Verbatim excerpts, translated from Spanish, of three reviews sent to us in writing in September 2026. All three are published without identifying the person, the company or the workplace. None of them puts a figure on their total saving: the only hard number here is that one hour of planning for 20 operators.',
     audit_eyebrow: 'Free audit',
     audit_title: 'Would your current rota survive <em>an audit</em>?',
     audit_desc: 'Upload your rota (PDF, photo or CSV) and get a diagnosis with verifiable numbers: night-shift fairness, rest violations with dates, and risk points. Free, no sign-up, in minutes.',
@@ -2673,26 +2813,46 @@ const translations = {
     cb_meta4: 'Gesundheitswesen · Asturien',
     cb_name5: 'Universitätsklinikum San Cecilio',
     cb_meta5: 'Urologische Abteilung · Granada',
-    voi_eyebrow: 'Eine echte Bewertung',
-    voi_title: 'Was jemand sagt, der es <em>täglich</em> nutzt',
-    voi_desc: 'Wir haben einen Kunden gebeten, uns ohne Umschweife zu sagen, wie viel Zeit ihm Shiftia spart. Das hat er per E-Mail geantwortet.',
-    voi_big: 'Ich habe in Excel geprüft, ob die Kriterien erfüllt waren, und bei einer Gruppe von 20 Mitarbeitenden konnte das leicht eine Stunde dauern. <b>Jetzt dauert es nur Sekunden.</b>',
-    voi_who: 'Verantwortlicher für die Dienstplanung',
-    voi_role: 'Team mit 20 Schichtmitarbeitenden · September 2026',
-    voi_t1: 'Wenn sich das Team ändert',
-    voi_q1: '„Wenn jemand in den Urlaub geht, müssen die Schichten ausgeglichen werden, also ändern sich die der anderen und die Sequenz passt nicht mehr. <b>Mit der App erstellen wir in Sekunden eine komplett neue Planung.</b>“',
+    voi_eyebrow: 'Drei echte Bewertungen',
+    voi_title: 'Was die Menschen sagen, die es <em>täglich</em> nutzen',
+    voi_desc: 'Ein Industrieteam, ein Krankenhaus und ein Restaurant. Drei Verantwortliche, die sich nicht kennen, schildern uns schriftlich dieselben fünf Veränderungen.',
+    voi_more: 'Die fünf Veränderungen ansehen',
+    voi_less: 'Ausblenden',
+    voi_t1: 'Wenn jemand ausfällt',
     voi_t2: 'Schichttausch',
-    voi_q2: '„Früher kam eine E-Mail mit dem Tausch, dann musste ich den Plan ändern und die Freigabe per E-Mail zurückschicken. <b>Heute erledigt sich das mit einer einzigen Freigabe in der App.</b>“',
-    voi_t3: 'Für die Lohnabrechnung',
-    voi_q3: '„Monatlich erstellt sie mir <b>eine Tabelle mit Sonntagen, Feiertagen und Nachtschichten</b>, wichtig für die Lohnabrechnung, und rechnet die geleisteten Stunden Monat für Monat und übers Jahr zusammen.“',
-    voi_t4: 'Ein Ausfall außerhalb des Büros',
-    voi_q4: '„Wenn sich jemand krankmeldet, während ich unterwegs bin, <b>zeigt mir die App auf dem Handy die praktikabelsten Vorschläge</b>, und ich sehe jederzeit, wer im Dienst ist.“',
-    voi_t5: 'Ausgewogenheit und Hinweise',
-    voi_q5: '„Die App erstellt schnell einen Dienstplan für genau die Mitarbeitenden, die verfügbar sind, und vor allem <b>verteilt sie die Schichten so gleichmäßig wie möglich und warnt, wenn eine aus dem Gleichgewicht gerät.</b>“',
-    voi_t6: 'Urlaub und freie Tage',
-    voi_q6: '„Urlaubs- und Freizeitanträge müssen nicht mehr von Hand in eine Tabelle übertragen werden: <b>sie erscheinen nach der Genehmigung direkt im Dienstplan.</b>“',
-    voi_close: '„Diese Schichten von Hand zu ändern bedeutet, Tag für Tag und Mitarbeiter für Mitarbeiter zu prüfen, wie die Änderungen passen. Dienstpläne zu erstellen und zu ändern war fast eine tägliche Aufgabe, und jetzt <b>brauche ich dafür praktisch keine Zeit mehr</b>. Dafür und für vieles mehr würde ich diese Anwendung jedem empfehlen, der mich fragt.“',
-    voi_note: 'Wörtliche Auszüge aus der Bewertung, die er uns per E-Mail geschickt hat, aus dem Spanischen übersetzt. Veröffentlicht ohne Namen und Unternehmen. Für die übrigen Einsparungen nennt er bewusst keine Zahlen: „Ich traue mich nicht, Zeiten zu nennen.“',
+    voi_t3: 'Nächte, Feiertage, Abrechnung',
+    voi_t4: 'Ausgewogene Verteilung',
+    voi_t5: 'Urlaub und Freistellungen',
+    voi1_sector: 'Industrie',
+    voi1_role: 'Verantwortlicher für die Dienstplanung',
+    voi1_team: 'Team von 20 Schichtmitarbeitenden',
+    voi1_lead: '«Ich habe in Excel geprüft, ob die Kriterien erfüllt waren, und bei einer Gruppe von 20 Mitarbeitenden konnte das leicht eine Stunde dauern. <b>Heute dauert es nur wenige Sekunden.</b>»',
+    voi1_q1: '«Wenn ich unterwegs bin und jemand ausfällt, <b>zeigt mir die App auf dem Handy die praktikabelsten Vorschläge</b>, und ich habe jederzeit die Information, wer im Dienst ist.»',
+    voi1_q2: '«Was früher eine E-Mail mit dem Tausch war, dann das Ändern im Dienstplan und eine Antwortmail mit der Freigabe, <b>erledigt sich heute einfach mit der Freigabe in der App.</b>»',
+    voi1_q3: '«Monatlich erstellt sie mir <b>eine Tabelle mit Sonntagen, Feiertagen und Nachtstunden</b>, wichtig für die Lohnabrechnung, dazu die geleisteten Stunden Monat für Monat und am Jahresende.»',
+    voi1_q4: '«Die App kann schnell einen Plan erstellen, der sich an den verfügbaren Mitarbeitenden orientiert, und vor allem <b>die Schichten so ausgewogen wie möglich halten und warnen, wenn jemand ungleich belastet wird.</b>»',
+    voi1_q5: '«Urlaubs- und Freizeitanträge müssen nicht mehr von Hand in eine Tabelle übertragen werden: <b>mit der App erscheinen sie nach der Genehmigung direkt im Dienstplan.</b>»',
+    voi2_sector: 'Krankenhaus',
+    voi2_role: 'Pflegedienstleitung',
+    voi2_team: 'Team von 32 Beschäftigten · Station und Notaufnahme',
+    voi2_lead: '«Früher brauchte ich einiges an Zeit, um zu prüfen, wie sich das umorganisieren lässt, ohne den Rest zu belasten. <b>Heute geht dieser Teil meiner Arbeit viel schneller und ich habe einen viel klareren Blick auf das gesamte Team.</b>»',
+    voi2_q1: '«Wenn sich jemand abmeldete, ging ich das Team einzeln durch: wer verfügbar war, wer aus der Nacht kam, wer tauschen konnte. <b>Heute zeigt mir die App sofort die praktikabelsten Alternativen, um diese Schicht abzudecken.</b>»',
+    voi2_q2: '«Schichttausch bedeutete Nachrichten, Anrufe und danach den Plan aktualisieren, damit alles stimmte. <b>Heute beantragen die Beschäftigten den Tausch selbst und ich muss ihn nur prüfen und freigeben.</b>»',
+    voi2_q3: '«Am Monatsende muss ich wissen, wer Nächte, Sonntage oder Feiertage gearbeitet hat. <b>Die App erstellt diese Information direkt</b>, was uns die Kontrolle vor der Weitergabe an die Verwaltung sehr erleichtert.»',
+    voi2_q4: '«Was ich am meisten schätze, ist prüfen zu können, dass <b>Nächte, Feiertage und Wochenenden so gleichmäßig wie möglich verteilt sind</b>, und schnell zu erkennen, wenn jemand stärker belastet ist als die anderen.»',
+    voi2_q5: '«Früher hatte ich die Anträge auf der einen und die Planung auf der anderen Seite. <b>Heute erscheint eine genehmigte Freistellung oder ein Urlaub direkt in der Planung</b>, sodass dieselbe Information nicht mehrfach eingegeben werden muss.»',
+    voi3_sector: 'Gastronomie',
+    voi3_role: 'Restaurantleitung',
+    voi3_team: 'Team von 18 Beschäftigten · Küche, Service und Bar',
+    voi3_lead: '«Früher bedeutete jede Änderung, einen großen Teil des Plans noch einmal durchzugehen. <b>Heute können wir die Schichten sehr schnell umstellen und diese Zeit in den Service stecken, wo sie wirklich gebraucht wird.</b>»',
+    voi3_q1: '«In der Gastronomie kann ein kurzfristiger Ausfall den ganzen Service kippen. Früher fing ich an herumzutelefonieren und zu prüfen, wer kommen konnte. <b>Heute schlägt mir die App direkt die Optionen vor, die am besten passen.</b>»',
+    voi3_q2: '«Früher lief fast alles über WhatsApp, und danach musste man daran denken, den Plan zu ändern. <b>Heute beantragt die Person den Tausch in der App und nach meiner Freigabe ist er direkt aktualisiert.</b>»',
+    voi3_q3: '«Am Monatsende mussten wir Stunden, Sonntage und Feiertage jeder Person von Hand durchgehen. <b>Heute habe ich eine Übersicht über alles</b>, was die Vorbereitung der Lohndaten deutlich einfacher macht.»',
+    voi3_q4: '«Wir versuchen, dass Wochenenden, Spätdienste und bestimmte Schichten nicht immer dieselben treffen. <b>Die App macht auf einen Blick sichtbar, ob jemand mehr davon übernimmt als die anderen.</b>»',
+    voi3_q5: '«Früher bekam ich die Anträge auf freie Tage, musste den Plan prüfen, sie notieren und ihn dann ändern. <b>Heute ist der Antrag nach der Genehmigung direkt in der Planung enthalten.</b>»',
+    voi_close: '«Das Erstellen und Ändern der Schichten war fast eine tägliche Aufgabe, heute <b>brauche ich dafür praktisch keine Zeit mehr</b>. Deshalb und wegen weiterer Funktionen <b>würde ich diese Anwendung jedem empfehlen, der mich um meine Meinung fragt.</b>»',
+    voi_close_who: 'Verantwortlicher für die Dienstplanung · 20 Schichtmitarbeitende',
+    voi_note: 'Wörtliche Auszüge, aus dem Spanischen übersetzt, aus drei Bewertungen, die uns im September 2026 schriftlich zugingen. Alle drei werden ohne Nennung der Person, des Unternehmens oder der Einrichtung veröffentlicht. Keiner beziffert seine Gesamtersparnis: die einzige konkrete Zahl hier ist diese eine Stunde Planung für 20 Mitarbeitende.',
     audit_eyebrow: 'Kostenloses Audit',
     audit_title: 'Würde Ihr Dienstplan <em>ein Audit</em> bestehen?',
     audit_desc: 'Laden Sie Ihren Dienstplan hoch (PDF, Foto oder CSV) und erhalten Sie eine Diagnose mit überprüfbaren Zahlen: Nachtdienst-Fairness, Ruhezeitverstöße mit Daten und Risikopunkte. Kostenlos, ohne Registrierung, in Minuten.',
@@ -2910,26 +3070,46 @@ const translations = {
     cb_meta4: 'Santé · Asturies',
     cb_name5: 'Hôpital universitaire San Cecilio',
     cb_meta5: 'Service d’urologie · Grenade',
-    voi_eyebrow: 'Un avis réel',
-    voi_title: 'Ce que dit celui qui l’utilise <em>tous les jours</em>',
-    voi_desc: 'Nous avons demandé à un client de nous dire sans détour combien de temps Shiftia lui fait gagner. Voici sa réponse par e-mail.',
-    voi_big: 'Je vérifiais dans Excel que les critères étaient respectés, et avec un groupe de 20 opérateurs cela pouvait facilement prendre une heure. <b>Aujourd’hui cela prend à peine quelques secondes.</b>',
-    voi_who: 'Responsable de la planification',
-    voi_role: 'Équipe de 20 opérateurs postés · septembre 2026',
-    voi_t1: 'Quand l’effectif change',
-    voi_q1: '« Quand quelqu’un part en congés, il faut compenser les postes, donc modifier ceux des autres, et la séquence ne tient plus. <b>Avec l’application, nous refaisons une planification complète en quelques secondes.</b> »',
+    voi_eyebrow: 'Trois avis réels',
+    voi_title: 'Ce que disent ceux qui l’utilisent <em>tous les jours</em>',
+    voi_desc: 'Une équipe industrielle, un hôpital et un restaurant. Trois responsables qui ne se connaissent pas, nous décrivant par écrit les cinq mêmes changements.',
+    voi_more: 'Voir les cinq changements',
+    voi_less: 'Masquer',
+    voi_t1: 'Quand quelqu’un manque',
     voi_t2: 'Échanges de postes',
-    voi_q2: '« Avant, c’était un e-mail annonçant l’échange, puis modifier le planning, puis répondre pour valider. <b>Aujourd’hui tout se règle avec une simple validation dans l’application.</b> »',
-    voi_t3: 'Pour la paie',
-    voi_q3: '« Chaque mois, elle me génère <b>un tableau comptant les dimanches, les jours fériés et les nuits</b>, important pour la paie, et elle calcule les heures travaillées mois par mois et sur l’année. »',
-    voi_t4: 'Une absence hors du bureau',
-    voi_q4: '« Si quelqu’un est absent alors que je ne suis pas au bureau, <b>l’application me montre sur mon téléphone les propositions les plus viables</b>, et je vois à tout moment qui est de service. »',
-    voi_t5: 'Équité et alertes',
-    voi_q5: '« L’application sait construire rapidement un planning en s’adaptant aux personnes réellement disponibles et, surtout, <b>répartir les postes le plus équitablement possible en prévenant lorsque l’un d’eux est déséquilibré.</b> »',
-    voi_t6: 'Congés et jours de repos',
-    voi_q6: '« Les demandes de congés ou de jours de repos, au lieu d’être recopiées à la main dans un tableau, <b>apparaissent directement dans le planning</b> une fois validées. »',
-    voi_close: '« Modifier ces postes à la main oblige à vérifier jour après jour et opérateur après opérateur comment les changements s’imbriquent. Établir et modifier les plannings était une tâche presque quotidienne, et aujourd’hui <b>je n’y consacre pratiquement plus de temps</b>. Pour tout cela et pour bien d’autres fonctions, je recommanderais sans hésiter cette application à qui me demanderait mon avis. »',
-    voi_note: 'Extraits littéraux de l’avis qu’il nous a envoyé par e-mail, traduits de l’espagnol. Publié sans nom ni entreprise. Il refuse lui-même de chiffrer le reste des gains : « je n’ose pas vous donner de durées ».',
+    voi_t3: 'Nuits, fériés et paie',
+    voi_t4: 'Répartition équilibrée',
+    voi_t5: 'Congés et absences',
+    voi1_sector: 'Industrie',
+    voi1_role: 'Responsable de la planification',
+    voi1_team: 'Équipe de 20 opérateurs postés',
+    voi1_lead: '«Je vérifiais dans Excel que les critères étaient respectés, et avec un groupe de 20 opérateurs cela pouvait facilement prendre une heure. <b>Aujourd’hui cela prend à peine quelques secondes.</b>»',
+    voi1_q1: '«Quand je suis hors du bureau et que quelqu’un est absent, <b>l’application m’indique depuis le téléphone les propositions les plus viables</b>, et j’ai à tout moment l’information sur qui est en poste.»',
+    voi1_q2: '«Ce qui était avant un e-mail avec l’échange, la modification dans le planning puis une réponse pour la validation <b>se règle aujourd’hui simplement par la validation dans l’application.</b>»',
+    voi1_q3: '«Chaque mois, elle me génère <b>un tableau comptant les dimanches, les jours fériés et les heures de nuit</b>, important pour la paie, en plus des heures travaillées mois par mois et en fin d’année.»',
+    voi1_q4: '«L’application sait construire rapidement un planning adapté aux personnes disponibles et, surtout, <b>garder les postes aussi équilibrés que possible, en alertant si quelqu’un se retrouve déséquilibré.</b>»',
+    voi1_q5: '«Les demandes de congés ou de jours libres, au lieu d’être reportées à la main dans un tableau, <b>apparaissent directement dans le planning avec l’application</b> une fois approuvées.»',
+    voi2_sector: 'Hôpital',
+    voi2_role: 'Cadre de santé',
+    voi2_team: 'Équipe de 32 professionnels · hospitalisation et urgences',
+    voi2_lead: '«Avant, je passais pas mal de temps à chercher comment réorganiser sans pénaliser les autres. <b>Aujourd’hui cette partie de mon travail est beaucoup plus rapide et j’ai une vision bien plus claire de toute l’équipe.</b>»',
+    voi2_q1: '«Quand quelqu’un appelait pour dire qu’il ne pouvait pas venir, je passais l’équipe en revue une par une : qui était disponible, qui sortait de nuit, qui pouvait échanger. <b>Aujourd’hui l’application me montre directement les alternatives les plus viables pour couvrir ce poste.</b>»',
+    voi2_q2: '«Les échanges de postes, c’étaient des messages, des appels, puis la mise à jour du planning pour que tout soit correct. <b>Aujourd’hui les professionnels demandent l’échange eux-mêmes et je n’ai plus qu’à le vérifier et le valider.</b>»',
+    voi2_q3: '«En fin de mois, j’ai besoin de savoir qui a travaillé de nuit, le dimanche ou les jours fériés. <b>L’application génère directement cette information</b>, ce qui facilite beaucoup le contrôle avant l’envoi à l’administration.»',
+    voi2_q4: '«Ce que j’apprécie le plus, c’est de pouvoir vérifier que <b>les nuits, les jours fériés et les week-ends sont répartis de la façon la plus équilibrée possible</b> et de repérer vite quand quelqu’un est plus chargé que les autres.»',
+    voi2_q5: '«Avant, j’avais les demandes d’un côté et la planification de l’autre. <b>Aujourd’hui, quand un congé ou une absence est validé, cela apparaît directement dans la planification</b>, ce qui évite de saisir plusieurs fois la même information.»',
+    voi3_sector: 'Restauration',
+    voi3_role: 'Responsable de restaurant',
+    voi3_team: 'Équipe de 18 salariés · cuisine, salle et bar',
+    voi3_lead: '«Avant, chaque modification impliquait de reprendre une bonne partie du planning. <b>Aujourd’hui nous réorganisons les postes très vite et nous consacrons cet effort au service, là où il est vraiment nécessaire.</b>»',
+    voi3_q1: '«En restauration, une absence de dernière minute peut démonter tout le service. Avant, je commençais à appeler et à vérifier qui pouvait venir. <b>Aujourd’hui l’application me propose directement les options qui conviennent le mieux.</b>»',
+    voi3_q2: '«Avant, presque tous les échanges passaient par WhatsApp, et ensuite il fallait penser à les modifier dans le planning. <b>Aujourd’hui le salarié fait la demande dans l’application et, une fois validée, tout est mis à jour.</b>»',
+    voi3_q3: '«En fin de mois, nous devions reprendre à la main les heures, les dimanches et les jours fériés de chacun. <b>Aujourd’hui j’ai un récapitulatif de tout cela</b>, ce qui simplifie beaucoup la préparation des éléments de paie.»',
+    voi3_q4: '«Nous essayons que les week-ends, les fermetures et certains postes ne retombent pas toujours sur les mêmes. <b>L’application permet de voir tout de suite si quelqu’un en fait davantage que les autres.</b>»',
+    voi3_q5: '«Avant, je recevais les demandes de jours libres, je vérifiais le planning, je les notais puis je le modifiais. <b>Aujourd’hui la demande est intégrée à la planification elle-même une fois approuvée.</b>»',
+    voi_close: '«Établir et modifier les postes était une tâche presque quotidienne, et aujourd’hui <b>je n’y consacre pratiquement plus de temps</b>. Pour tout cela et pour d’autres fonctions, <b>je recommanderais sans hésiter cette application à qui me demanderait mon avis.</b>»',
+    voi_close_who: 'Responsable de la planification · 20 opérateurs postés',
+    voi_note: 'Extraits littéraux, traduits de l’espagnol, de trois avis qui nous ont été envoyés par écrit en septembre 2026. Les trois sont publiés sans identifier la personne, l’entreprise ni l’établissement. Aucun ne chiffre son gain total : le seul chiffre concret ici est cette heure de planification pour 20 opérateurs.',
     audit_eyebrow: 'Audit gratuit',
     audit_title: 'Votre planning actuel survivrait-il à <em>un audit</em> ?',
     audit_desc: 'Envoyez votre planning (PDF, photo ou CSV) et recevez un diagnostic avec des chiffres vérifiables : équité des nuits, repos non respectés avec dates et points de risque. Gratuit, sans inscription, en quelques minutes.',
