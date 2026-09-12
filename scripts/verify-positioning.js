@@ -88,6 +88,28 @@ check('meta description menciona ausencias/vacaciones/rotaciones', /ausencias/i.
 console.log('E · Lenguaje de coberturas desambiguado');
 check('el motor de coberturas se califica como interno/de plantilla propia', /(coberturas internas|cobertura interna|sustituciones (internas|de tu (propia )?plantilla))/i.test(html));
 
+console.log('F · H1 legible para quien no ejecuta JavaScript');
+// El titular rota entre cuatro palabras. Si las cuatro viven en el HTML
+// servido, un rastreador las extrae pegadas y el H1 queda ilegible:
+// "…planillas, simplificadaautomatizadainteligentesin esfuerzo".
+// Solo la primera debe estar en el HTML; buildHeroWords() añade el resto.
+const h1Raw = (html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1] || '';
+const h1Text = h1Raw.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+check('el H1 existe', h1Text.length > 0);
+check('el H1 solo trae una palabra rotatoria (' + (h1Raw.match(/class="rw-word/g) || []).length + ')',
+  (h1Raw.match(/class="rw-word/g) || []).length === 1);
+// Las palabras rotatorias se traducen: si no, el titular sale medio en
+// español en inglés, alemán y francés.
+const heroWords = [...html.matchAll(/^    hero_words: '([^']+)'/gm)].map(m => m[1]);
+const restoEs = (heroWords[0] || '').split('|').slice(1).map(w => w.trim()).filter(Boolean);
+check('el H1 extraído solo trae la primera palabra: "' + h1Text + '"',
+  restoEs.length > 0 && !restoEs.some(w => h1Text.includes(w)));
+check('hero_words definido en los 4 idiomas (' + heroWords.length + ')', heroWords.length === 4);
+check('las 4 listas tienen el mismo número de palabras',
+  heroWords.length === 4 && new Set(heroWords.map(w => w.split('|').length)).size === 1);
+check('ningún idioma repite la lista española',
+  heroWords.length === 4 && new Set(heroWords).size === 4);
+
 console.log('');
 if (failures > 0) {
   console.error('FALLOS: ' + failures);

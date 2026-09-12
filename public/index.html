@@ -382,7 +382,10 @@
   <div class="hero-inner">
     <div class="hero-text">
       <div class="hero-label"><span class="hero-label-dot" aria-hidden="true"></span> <span data-i18n="hero_badge">Shiftia v8.0.1 · LIVE</span></div>
-      <h1><span data-i18n="hero_title_1">Planificación de turnos y planillas,</span> <span class="rotating-words"><span class="rw-word active">simplificada</span><span class="rw-word" aria-hidden="true">automatizada</span><span class="rw-word" aria-hidden="true">inteligente</span><span class="rw-word" aria-hidden="true">sin esfuerzo</span></span></h1>
+      <!-- Solo la primera palabra vive en el HTML. Las demás las añade
+           buildHeroWords() al cargar, para que un rastreador que no ejecuta
+           JavaScript lea un titular legible y no las cuatro pegadas. -->
+      <h1><span data-i18n="hero_title_1">Planificación de turnos y planillas,</span> <span class="rotating-words" id="heroRotator"><span class="rw-word active">simplificada</span></span></h1>
       <p class="hero-stat" data-i18n-html="hero_stat">Ahorra <strong>~18&nbsp;h al mes</strong> planificando turnos —y unos <strong>4.800&nbsp;€/año</strong> en un equipo típico.</p>
       <p class="hero-desc" data-i18n="hero_desc">Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.</p>
       <div class="hero-actions">
@@ -2397,6 +2400,7 @@ const translations = {
     hero_cta_signup: 'Ver planes', hero_cta_signup_label: 'Ver planes', hero_cta_audit: 'Audita gratis tu cuadrante',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Planificación de turnos y planillas,',
+    hero_words: 'simplificada|automatizada|inteligente|sin esfuerzo',
     hero_title_2: 'simplificada',
     hero_desc: 'Shiftia automatiza turnos, gestiona ausencias con IA y garantiza la equidad de tu equipo. Para hospitales, clínicas, residencias, fábricas y cualquier negocio con planillas. Menos Excel, más control.',
     hero_stat: 'Ahorra <strong>~18&nbsp;h al mes</strong> planificando turnos —y unos <strong>4.800&nbsp;€/año</strong> en un equipo típico.',
@@ -2681,6 +2685,7 @@ const translations = {
     nav_contact: 'Contact', nav_cta: 'Request a call',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Shift scheduling and rosters,',
+    hero_words: 'simplified|automated|intelligent|effortless',
     hero_title_2: 'simplified',
     hero_desc: 'Shiftia automates shift planning, manages absences with AI, and ensures team equity. For hospitals, clinics, care homes, factories, and any business with rosters. Less Excel, more control.',
     hero_stat: 'Save <strong>~18&nbsp;h a month</strong> on shift planning —and around <strong>€4,800/year</strong> for a typical team.',
@@ -2938,6 +2943,7 @@ const translations = {
     nav_contact: 'Kontakt', nav_cta: 'Anruf anfragen',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Schichtplanung und Dienstplane,',
+    hero_words: 'vereinfacht|automatisiert|intelligent|mühelos',
     hero_title_2: 'vereinfacht',
     hero_desc: 'Shiftia automatisiert Schichten, verwaltet Abwesenheiten mit KI und garantiert die Fairness Ihres Teams. Fur Krankenhäuser, Kliniken, Pflegeheime, Fabriken und jedes Unternehmen mit Dienstplanen.',
     hero_stat: 'Sparen Sie <strong>~18&nbsp;Std./Monat</strong> bei der Dienstplanung —und rund <strong>4.800&nbsp;€/Jahr</strong> bei einem typischen Team.',
@@ -3195,6 +3201,7 @@ const translations = {
     nav_contact: 'Contact', nav_cta: 'Demander un appel',
     hero_badge: 'Shiftia v8.0.1 · LIVE',
     hero_title_1: 'Planification des equipes et des plannings,',
+    hero_words: 'simplifiée|automatisée|intelligente|sans effort',
     hero_title_2: 'simplifiee',
     hero_desc: 'Shiftia automatise les plannings, gere les absences avec l\'IA et garantit l\'equite de votre equipe. Pour hopitaux, cliniques, EHPAD, usines et toute entreprise avec des plannings.',
     hero_stat: 'Économisez <strong>~18&nbsp;h par mois</strong> de planification —et environ <strong>4 800&nbsp;€/an</strong> pour une équipe type.',
@@ -3355,6 +3362,7 @@ function setLang(lang) {
   document.querySelectorAll('.lang-option').forEach(opt => {
     opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
   });
+  if (window.__heroWords) { try { window.__heroWords(); } catch(e){} }
   if (window.__roiRecalc) { try { window.__roiRecalc(); } catch(e){} }
   if (window.__calcRecalc) { try { window.__calcRecalc(); } catch(e){} }
   try { localStorage.setItem('shiftia-lang', lang); } catch(e){}
@@ -4072,6 +4080,36 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   }
 
   // ─── 9) Upgrade rotator with typewriter "leaving" state ──
+  // El H1 solo lleva la primera palabra en el HTML servido; aquí se añaden
+  // las demás en el idioma activo. Sin esto un rastreador leía las cuatro
+  // pegadas ("simplificadaautomatizadainteligentesin esfuerzo") y en los
+  // otros idiomas el titular quedaba medio en español.
+  function buildHeroWords(){
+    try {
+      const box = document.getElementById('heroRotator');
+      if (!box) return;
+      const dict = (typeof translations !== 'undefined' && translations[currentLang]) || null;
+      const raw = dict && dict.hero_words;
+      const words = String(raw || '').split('|').map(w => w.trim()).filter(Boolean);
+      const first = box.querySelector('.rw-word');
+      if (!first || words.length < 2) return;
+      box.querySelectorAll('.rw-word').forEach((w, i) => { if (i > 0) w.remove(); });
+      first.textContent = words[0];
+      first.classList.add('active');
+      first.classList.remove('is-leaving');
+      box.style.minWidth = '';
+      for (let i = 1; i < words.length; i++) {
+        const s = document.createElement('span');
+        s.className = 'rw-word';
+        s.setAttribute('aria-hidden', 'true'); // el H1 se anuncia con una sola palabra
+        s.textContent = words[i];
+        box.appendChild(s);
+      }
+    } catch(e){}
+  }
+  // setLang() la llama al cambiar de idioma para rehacer la lista traducida.
+  window.__heroWords = function(){ buildHeroWords(); upgradeRotator(); };
+
   function upgradeRotator(){
     try {
       const words = document.querySelectorAll('.rotating-words .rw-word');
@@ -4138,6 +4176,7 @@ document.querySelectorAll('.step-flow, .flow-pipe').forEach(el => stepObserver.o
   function boot(){
     initTilt();
     initHeroParallax();
+    buildHeroWords();
     upgradeRotator();
     initFormModules();
   }
