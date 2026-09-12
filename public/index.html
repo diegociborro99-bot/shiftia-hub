@@ -757,6 +757,80 @@
 @media (max-width: 880px){.custom-hero{grid-template-columns:1fr;gap:28px;margin-top:32px;}.custom-copy h3{font-size:1.4rem;}.modules-grid{grid-template-columns:repeat(3,1fr);gap:8px;}.module-chip{font-size:0.66rem;padding:11px 6px;}}
 </style>
 
+<!-- VOCES: una valoración real de cliente, anónima y literal -->
+<style>
+.voices-section{padding:var(--section-pad) 0;background:linear-gradient(180deg,var(--bg) 0%,#f3f8f7 55%,var(--bg) 100%);position:relative;overflow:hidden;}
+.voices-wrap{max-width:1060px;margin:0 auto;padding:0 20px;}
+.voice-lead{position:relative;margin:40px auto 0;max-width:860px;background:var(--bg-card);border:1px solid var(--border);border-radius:24px;padding:44px 44px 34px;box-shadow:0 1px 2px rgba(15,15,15,.04),0 22px 60px -24px rgba(15,15,15,.18);}
+.voice-mark{position:absolute;top:26px;left:34px;width:34px;height:34px;color:rgba(47,163,147,.24);}
+.voice-mark svg{width:100%;height:100%;}
+.voice-big{font-family:var(--ds-font-display,'Instrument Serif',Georgia,serif);font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.28;letter-spacing:-.015em;color:var(--text1);margin:12px 0 0;text-wrap:pretty;}
+.voice-big b{font-weight:400;color:#0a5950;font-style:italic;}
+.voice-who{display:flex;align-items:center;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+.voice-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2fa393,#0f7a6d);display:grid;place-items:center;flex:none;}
+.voice-avatar svg{width:19px;height:19px;color:#fff;}
+.voice-who-t b{display:block;font-size:.9rem;font-weight:700;color:var(--text1);letter-spacing:-.01em;}
+.voice-who-t span{display:block;font-size:.78rem;color:var(--text3);margin-top:2px;}
+.voice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:860px;margin:16px auto 0;}
+.voice-card{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;padding:22px 24px;transition:transform .3s cubic-bezier(.16,1,.3,1),border-color .3s,box-shadow .3s;}
+.voice-card:hover{transform:translateY(-3px);border-color:rgba(47,163,147,.36);box-shadow:0 14px 32px rgba(15,122,109,.09);}
+.voice-tag{display:inline-block;font-family:var(--ds-font-mono,ui-monospace,Menlo,monospace);font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#15847d;background:rgba(47,163,147,.11);border-radius:999px;padding:4px 11px;margin-bottom:12px;}
+.voice-card p{margin:0;font-size:.93rem;line-height:1.6;color:var(--text2);}
+.voice-card p b{color:var(--text1);font-weight:600;}
+.voice-close{max-width:860px;margin:18px auto 0;padding:20px 24px;border-radius:18px;background:rgba(47,163,147,.08);border:1px solid rgba(47,163,147,.2);font-size:1rem;line-height:1.6;color:var(--text1);}
+.voice-close b{font-weight:700;}
+.voice-note{max-width:860px;margin:16px auto 0;font-size:.74rem;color:var(--text3);line-height:1.6;text-align:center;}
+@media (max-width:820px){
+  .voice-lead{padding:34px 24px 26px;border-radius:20px;}
+  .voice-mark{top:18px;left:20px;width:26px;height:26px;}
+  .voice-grid{grid-template-columns:1fr;}
+  .voice-card{padding:20px;}
+}
+</style>
+
+<section class="voices-section" id="voices" aria-labelledby="voicesTitle">
+  <div class="container centered">
+    <div class="section-eyebrow reveal" data-i18n="voi_eyebrow">Una valoración real</div>
+    <h2 class="section-h2 reveal" id="voicesTitle" data-i18n-html="voi_title">Lo que dice quien lo usa <em>cada día</em></h2>
+    <p class="section-p reveal" data-i18n="voi_desc">Le pedimos a un cliente que nos contase, sin adornos, cuánto tiempo le ahorra. Esto es lo que respondió por correo.</p>
+  </div>
+  <div class="voices-wrap">
+    <figure class="voice-lead reveal">
+      <span class="voice-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 6C6.5 7.6 4.8 10.2 4.8 13.6c0 2.7 1.6 4.4 3.8 4.4 2 0 3.5-1.4 3.5-3.4 0-1.9-1.3-3.3-3.1-3.3-.3 0-.7 0-.9.1.4-1.6 1.8-3 3.6-4L9.5 6zm9 0c-3 1.6-4.7 4.2-4.7 7.6 0 2.7 1.6 4.4 3.8 4.4 2 0 3.5-1.4 3.5-3.4 0-1.9-1.3-3.3-3.1-3.3-.3 0-.7 0-.9.1.4-1.6 1.8-3 3.6-4L18.5 6z"/></svg></span>
+      <blockquote class="voice-big" data-i18n-html="voi_big">Revisaba en Excel que se cumplieran los criterios, y con un grupo de 20 operadores eso podía costar fácilmente una hora. <b>Ahora se tarda apenas unos segundos.</b></blockquote>
+      <figcaption class="voice-who">
+        <span class="voice-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <span class="voice-who-t">
+          <b data-i18n="voi_who">Responsable de planificación</b>
+          <span data-i18n="voi_role">Plantilla de 20 operadores a turnos · septiembre de 2026</span>
+        </span>
+      </figcaption>
+    </figure>
+
+    <div class="voice-grid">
+      <div class="voice-card reveal">
+        <span class="voice-tag" data-i18n="voi_t1">Cuando cambia la plantilla</span>
+        <p data-i18n-html="voi_q1">«Cuando algún trabajador se marcha de vacaciones hay que compensar los turnos, lo que supone modificar los de los demás y la secuencia ya no vale. <b>Con la aplicación volvemos a realizar una planificación nueva en unos segundos.</b>»</p>
+      </div>
+      <div class="voice-card reveal">
+        <span class="voice-tag" data-i18n="voi_t2">Cambios de turno</span>
+        <p data-i18n-html="voi_q2">«Lo que antes era recibir un correo con el cambio, ir a la plantilla a modificarlos y responder al correo con la aprobación, <b>ahora se resuelve simplemente con la aprobación desde la aplicación.</b>»</p>
+      </div>
+      <div class="voice-card reveal">
+        <span class="voice-tag" data-i18n="voi_t3">Para las nóminas</span>
+        <p data-i18n-html="voi_q3">«Mensualmente me genera <b>una tabla donde se cuentan los domingos, festivos y nocturnidades</b>, importante para las nóminas de los trabajadores, además de calcular mes a mes y al final del año las horas trabajadas.»</p>
+      </div>
+      <div class="voice-card reveal">
+        <span class="voice-tag" data-i18n="voi_t4">Una baja fuera de la oficina</span>
+        <p data-i18n-html="voi_q4">«Estando fuera de la oficina, si tengo alguna baja, <b>la aplicación desde el móvil me indica las propuestas más viables</b>, además de tener en todo momento la información de los trabajadores de turno.»</p>
+      </div>
+    </div>
+
+    <p class="voice-close reveal" data-i18n-html="voi_close">«La confección y modificación de los turnos era una tarea casi diaria, y en estos momentos <b>dedico un tiempo prácticamente residual</b> en ello. Por todo esto y por más funciones, desde luego recomendaría esta aplicación a quien me pidiera opinión.»</p>
+    <p class="voice-note reveal" data-i18n="voi_note">Extractos literales de la valoración que nos envió por correo. La publicamos sin nombre ni empresa. Él mismo evita dar cifras del resto de ahorros: «no me atrevo a decirte tiempos».</p>
+  </div>
+</section>
+
 <section class="dual-section" id="profiles">
   <div class="container centered">
     <div class="section-eyebrow reveal" data-i18n="dual_eyebrow">Perfiles</div>
@@ -2089,6 +2163,22 @@ const translations = {
     cb_meta4: 'Sanidad · Asturias',
     cb_name5: 'Hospital Univ. Clínico San Cecilio',
     cb_meta5: 'Servicio de Urología · Granada',
+    voi_eyebrow: 'Una valoración real',
+    voi_title: 'Lo que dice quien lo usa <em>cada día</em>',
+    voi_desc: 'Le pedimos a un cliente que nos contase, sin adornos, cuánto tiempo le ahorra. Esto es lo que respondió por correo.',
+    voi_big: 'Revisaba en Excel que se cumplieran los criterios, y con un grupo de 20 operadores eso podía costar fácilmente una hora. <b>Ahora se tarda apenas unos segundos.</b>',
+    voi_who: 'Responsable de planificación',
+    voi_role: 'Plantilla de 20 operadores a turnos · septiembre de 2026',
+    voi_t1: 'Cuando cambia la plantilla',
+    voi_q1: '«Cuando algún trabajador se marcha de vacaciones hay que compensar los turnos, lo que supone modificar los de los demás y la secuencia ya no vale. <b>Con la aplicación volvemos a realizar una planificación nueva en unos segundos.</b>»',
+    voi_t2: 'Cambios de turno',
+    voi_q2: '«Lo que antes era recibir un correo con el cambio, ir a la plantilla a modificarlos y responder al correo con la aprobación, <b>ahora se resuelve simplemente con la aprobación desde la aplicación.</b>»',
+    voi_t3: 'Para las nóminas',
+    voi_q3: '«Mensualmente me genera <b>una tabla donde se cuentan los domingos, festivos y nocturnidades</b>, importante para las nóminas de los trabajadores, además de calcular mes a mes y al final del año las horas trabajadas.»',
+    voi_t4: 'Una baja fuera de la oficina',
+    voi_q4: '«Estando fuera de la oficina, si tengo alguna baja, <b>la aplicación desde el móvil me indica las propuestas más viables</b>, además de tener en todo momento la información de los trabajadores de turno.»',
+    voi_close: '«La confección y modificación de los turnos era una tarea casi diaria, y en estos momentos <b>dedico un tiempo prácticamente residual</b> en ello. Por todo esto y por más funciones, desde luego recomendaría esta aplicación a quien me pidiera opinión.»',
+    voi_note: 'Extractos literales de la valoración que nos envió por correo. La publicamos sin nombre ni empresa. Él mismo evita dar cifras del resto de ahorros: «no me atrevo a decirte tiempos».',
     audit_eyebrow: 'Auditoría gratuita',
     audit_title: '¿Tu cuadrante actual aguantaría <em>una auditoría</em>?',
     audit_desc: 'Sube tu planilla (PDF, foto o CSV) y te devolvemos un diagnóstico con números verificables: equidad de noches, descansos incumplidos con fechas y puntos de riesgo. Gratis, sin registro y en minutos.',
@@ -2334,6 +2424,22 @@ const translations = {
     cb_meta4: 'Healthcare · Asturias',
     cb_name5: 'San Cecilio University Hospital',
     cb_meta5: 'Urology Department · Granada',
+    voi_eyebrow: 'A real review',
+    voi_title: 'What someone who uses it <em>every day</em> says',
+    voi_desc: 'We asked a customer to tell us plainly how much time Shiftia saves him. This is what he wrote back.',
+    voi_big: 'I used to check in Excel that the criteria were met, and with a group of 20 operators that could easily take an hour. <b>Now it takes just seconds.</b>',
+    voi_who: 'Scheduling manager',
+    voi_role: 'Team of 20 shift operators · September 2026',
+    voi_t1: 'When the team changes',
+    voi_q1: '“When someone goes on holiday you have to compensate the shifts, which means changing everyone else’s and the sequence no longer works. <b>With the app we build a whole new plan in seconds.</b>”',
+    voi_t2: 'Shift swaps',
+    voi_q2: '“What used to be an email with the swap, then editing the roster, then replying to approve it, <b>is now settled with a single approval inside the app.</b>”',
+    voi_t3: 'For payroll',
+    voi_q3: '“Every month it gives me <b>a table counting Sundays, public holidays and night shifts</b>, which matters for payroll, and it also adds up hours worked month by month and across the year.”',
+    voi_t4: 'An absence while out of the office',
+    voi_q4: '“If someone calls in sick while I am out of the office, <b>the app shows me the most workable replacements right on my phone</b>, and I can always see who is on shift.”',
+    voi_close: '“Building and changing shifts used to be an almost daily task, and now <b>I spend next to no time on it</b>. For all this and more, I would certainly recommend this app to anyone who asked me.”',
+    voi_note: 'Verbatim excerpts from the review he emailed us, translated from Spanish. Published without his name or company. He declines to put figures on the rest of the savings: “I wouldn’t dare give you times.”',
     audit_eyebrow: 'Free audit',
     audit_title: 'Would your current rota survive <em>an audit</em>?',
     audit_desc: 'Upload your rota (PDF, photo or CSV) and get a diagnosis with verifiable numbers: night-shift fairness, rest violations with dates, and risk points. Free, no sign-up, in minutes.',
@@ -2551,6 +2657,22 @@ const translations = {
     cb_meta4: 'Gesundheitswesen · Asturien',
     cb_name5: 'Universitätsklinikum San Cecilio',
     cb_meta5: 'Urologische Abteilung · Granada',
+    voi_eyebrow: 'Eine echte Bewertung',
+    voi_title: 'Was jemand sagt, der es <em>täglich</em> nutzt',
+    voi_desc: 'Wir haben einen Kunden gebeten, uns ohne Umschweife zu sagen, wie viel Zeit ihm Shiftia spart. Das hat er per E-Mail geantwortet.',
+    voi_big: 'Ich habe in Excel geprüft, ob die Kriterien erfüllt waren, und bei einer Gruppe von 20 Mitarbeitenden konnte das leicht eine Stunde dauern. <b>Jetzt dauert es nur Sekunden.</b>',
+    voi_who: 'Verantwortlicher für die Dienstplanung',
+    voi_role: 'Team mit 20 Schichtmitarbeitenden · September 2026',
+    voi_t1: 'Wenn sich das Team ändert',
+    voi_q1: '„Wenn jemand in den Urlaub geht, müssen die Schichten ausgeglichen werden, also ändern sich die der anderen und die Sequenz passt nicht mehr. <b>Mit der App erstellen wir in Sekunden eine komplett neue Planung.</b>“',
+    voi_t2: 'Schichttausch',
+    voi_q2: '„Früher kam eine E-Mail mit dem Tausch, dann musste ich den Plan ändern und die Freigabe per E-Mail zurückschicken. <b>Heute erledigt sich das mit einer einzigen Freigabe in der App.</b>“',
+    voi_t3: 'Für die Lohnabrechnung',
+    voi_q3: '„Monatlich erstellt sie mir <b>eine Tabelle mit Sonntagen, Feiertagen und Nachtschichten</b>, wichtig für die Lohnabrechnung, und rechnet die geleisteten Stunden Monat für Monat und übers Jahr zusammen.“',
+    voi_t4: 'Ein Ausfall außerhalb des Büros',
+    voi_q4: '„Wenn sich jemand krankmeldet, während ich unterwegs bin, <b>zeigt mir die App auf dem Handy die praktikabelsten Vorschläge</b>, und ich sehe jederzeit, wer im Dienst ist.“',
+    voi_close: '„Dienstpläne zu erstellen und zu ändern war fast eine tägliche Aufgabe, und jetzt <b>brauche ich dafür praktisch keine Zeit mehr</b>. Dafür und für vieles mehr würde ich diese Anwendung jedem empfehlen, der mich fragt.“',
+    voi_note: 'Wörtliche Auszüge aus der Bewertung, die er uns per E-Mail geschickt hat, aus dem Spanischen übersetzt. Veröffentlicht ohne Namen und Unternehmen. Für die übrigen Einsparungen nennt er bewusst keine Zahlen: „Ich traue mich nicht, Zeiten zu nennen.“',
     audit_eyebrow: 'Kostenloses Audit',
     audit_title: 'Würde Ihr Dienstplan <em>ein Audit</em> bestehen?',
     audit_desc: 'Laden Sie Ihren Dienstplan hoch (PDF, Foto oder CSV) und erhalten Sie eine Diagnose mit überprüfbaren Zahlen: Nachtdienst-Fairness, Ruhezeitverstöße mit Daten und Risikopunkte. Kostenlos, ohne Registrierung, in Minuten.',
@@ -2768,6 +2890,22 @@ const translations = {
     cb_meta4: 'Santé · Asturies',
     cb_name5: 'Hôpital universitaire San Cecilio',
     cb_meta5: 'Service d’urologie · Grenade',
+    voi_eyebrow: 'Un avis réel',
+    voi_title: 'Ce que dit celui qui l’utilise <em>tous les jours</em>',
+    voi_desc: 'Nous avons demandé à un client de nous dire sans détour combien de temps Shiftia lui fait gagner. Voici sa réponse par e-mail.',
+    voi_big: 'Je vérifiais dans Excel que les critères étaient respectés, et avec un groupe de 20 opérateurs cela pouvait facilement prendre une heure. <b>Aujourd’hui cela prend à peine quelques secondes.</b>',
+    voi_who: 'Responsable de la planification',
+    voi_role: 'Équipe de 20 opérateurs postés · septembre 2026',
+    voi_t1: 'Quand l’effectif change',
+    voi_q1: '« Quand quelqu’un part en congés, il faut compenser les postes, donc modifier ceux des autres, et la séquence ne tient plus. <b>Avec l’application, nous refaisons une planification complète en quelques secondes.</b> »',
+    voi_t2: 'Échanges de postes',
+    voi_q2: '« Avant, c’était un e-mail annonçant l’échange, puis modifier le planning, puis répondre pour valider. <b>Aujourd’hui tout se règle avec une simple validation dans l’application.</b> »',
+    voi_t3: 'Pour la paie',
+    voi_q3: '« Chaque mois, elle me génère <b>un tableau comptant les dimanches, les jours fériés et les nuits</b>, important pour la paie, et elle calcule les heures travaillées mois par mois et sur l’année. »',
+    voi_t4: 'Une absence hors du bureau',
+    voi_q4: '« Si quelqu’un est absent alors que je ne suis pas au bureau, <b>l’application me montre sur mon téléphone les propositions les plus viables</b>, et je vois à tout moment qui est de service. »',
+    voi_close: '« Établir et modifier les plannings était une tâche presque quotidienne, et aujourd’hui <b>je n’y consacre pratiquement plus de temps</b>. Pour tout cela et pour bien d’autres fonctions, je recommanderais sans hésiter cette application à qui me demanderait mon avis. »',
+    voi_note: 'Extraits littéraux de l’avis qu’il nous a envoyé par e-mail, traduits de l’espagnol. Publié sans nom ni entreprise. Il refuse lui-même de chiffrer le reste des gains : « je n’ose pas vous donner de durées ».',
     audit_eyebrow: 'Audit gratuit',
     audit_title: 'Votre planning actuel survivrait-il à <em>un audit</em> ?',
     audit_desc: 'Envoyez votre planning (PDF, photo ou CSV) et recevez un diagnostic avec des chiffres vérifiables : équité des nuits, repos non respectés avec dates et points de risque. Gratuit, sans inscription, en quelques minutes.',

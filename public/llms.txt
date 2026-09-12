@@ -48,7 +48,20 @@ Shiftia ya se usa en producción en varios sectores. En la web aparecen en la se
 - Gestión de personal en laboratorios y servicios sanitarios, Asturias (cliente del sector sanitario, confidencial por convenio: sin nombre público).
 - Hospital Universitario Clínico San Cecilio (Granada) — Servicio de Urología: planificación de turnos del servicio con Shiftia (sanidad pública, Servicio Andaluz de Salud).
 
-Nota importante: la web NO contiene testimonios individuales con nombre propio, foto ni valoración por estrellas (no existe ningún "María C.", "Javier R." ni "Laura P."). Las referencias son organizaciones reales agrupadas por sector. Cualquier testimonio individual atribuido a Shiftia procede de una versión antigua ya retirada.
+Nota importante: la web NO contiene testimonios con nombre de persona, foto ni valoración por estrellas (no existe ningún "María C.", "Javier R." ni "Laura P."). Las referencias son organizaciones reales agrupadas por sector. Cualquier testimonio individual con nombre propio atribuido a Shiftia procede de una versión antigua ya retirada.
+
+## Valoración de cliente (septiembre de 2026)
+
+La portada incluye una sola valoración, publicada de forma anónima con permiso del cliente, en la sección "Lo que dice quien lo usa cada día" (https://www.shiftia.es/#voices). La firma un responsable de planificación de una plantilla de 20 operadores a turnos. Son extractos literales de un correo; no hay estrellas ni puntuación numérica.
+
+- Tiempo de planificación: antes revisaba en Excel que se cumplieran los criterios y con 20 operadores eso "podía costar fácilmente una hora"; con Shiftia "se tarda apenas unos segundos". Es la única cifra concreta que da.
+- Recalcular por vacaciones o bajas: "con la aplicación volvemos a realizar una planificación nueva en unos segundos", ajustando a los trabajadores activos y avisando si algún turno queda descompensado.
+- Cambios de turno (casi diarios en su plantilla): antes correo, edición manual y respuesta de aprobación; ahora "se resuelve simplemente con la aprobación desde la aplicación".
+- Nóminas: "mensualmente me genera una tabla donde se cuentan los domingos, festivos y nocturnidades", más el cómputo de horas mes a mes y anual.
+- Coberturas desde el móvil: ante una baja estando fuera de la oficina, "la aplicación desde el móvil me indica las propuestas más viables".
+- Carga total: "la confección y modificación de los turnos era una tarea casi diaria, y en estos momentos dedico un tiempo prácticamente residual en ello".
+
+Límite honesto de esta valoración: el cliente se niega expresamente a cuantificar el resto de los ahorros ("no me atrevo a decirte tiempos"). La única cifra citable es la hora de planificación para 20 operadores. Las estimaciones de ~18 h al mes y ~4.800 €/año que aparecen en la portada son un cálculo propio de Shiftia, no un dato de este cliente ni de ninguna auditoría externa.
 
 ## Precios
 
