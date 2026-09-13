@@ -94,13 +94,17 @@
         .err-foot a { color: var(--ds-text-muted); text-decoration: none; transition: color 200ms; }
         .err-foot a:hover { color: var(--ds-text); }
         .err-foot .sep { margin: 0 8px; opacity: 0.5; }
-    </style>
+    
+.sx-brandmark { width: 30px; height: 30px; flex: none; margin-right: 9px; }
+.err-brand { display: inline-flex; align-items: center; text-decoration: none; font-family: var(--ds-font-display, Georgia, serif); font-size: 1.5rem; color: var(--ds-text, #0e0f0f); margin-bottom: 18px; }
+</style>
 </head>
 <body>
     <a href="#main" class="ds-skip">Saltar al contenido</a>
     <main id="main" class="err-shell">
         <div class="err-card">
-            <p class="err-eyebrow">Error 500</p>
+            <a href="/" class="err-brand" aria-label="Shiftia, ir a la portada"><svg class="sx-brandmark" viewBox="0 0 40 40" fill="none" aria-hidden="true"><defs><linearGradient id="sxBM" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sxBM)" stroke-width="3" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sxBM)" stroke-width="3" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sxBM)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Shiftia</span></a>
+        <p class="err-eyebrow">Error 500</p>
             <span class="status-pill"><span class="dot"></span>Incidencia detectada</span>
             <h1 class="err-code">5<em>0</em>0</h1>
             <h2 class="err-title">Algo ha fallado por nuestra parte.</h2>
