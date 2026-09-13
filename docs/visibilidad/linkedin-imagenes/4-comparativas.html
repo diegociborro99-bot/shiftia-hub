@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="base.css">
+<style>
+  h1 { font-size: 72px; }
+  .sub { font-size: 23px; color: var(--ink2); margin-top: 20px; max-width: 940px; }
+
+  .rank { margin-top: 38px; display: flex; flex-direction: column; gap: 7px; }
+  .r {
+    display: grid; grid-template-columns: 58px 1fr auto; align-items: center;
+    gap: 20px; padding: 15px 22px; border-radius: 13px; background: #fff;
+    border: 1px solid var(--line);
+  }
+  .r .n {
+    font-family: var(--mono); font-size: 21px; font-weight: 600;
+    color: var(--ink3); text-align: center;
+  }
+  .r .nm { font-size: 23px; font-weight: 500; color: var(--ink2); letter-spacing: -.012em; }
+
+  .r.us {
+    background: var(--teal); border-color: var(--teal);
+    box-shadow: 0 10px 28px -12px rgba(15,122,109,.45);
+  }
+  .r.us .n { color: rgba(255,255,255,.72); }
+  .r.us .nm { color: #fff; font-weight: 600; font-size: 25px; }
+  .r.us .tag {
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.85);
+  }
+
+  .lists { display: flex; gap: 12px; margin-top: 26px; }
+  .l {
+    flex: 1; padding: 22px 24px; border-radius: 16px;
+    background: var(--teal-soft); border: 1px solid rgba(47,163,147,.22);
+  }
+  .l .big {
+    font-family: var(--serif); font-size: 46px; line-height: 1;
+    color: var(--teal); display: block;
+  }
+  .l b { display: block; font-size: 18px; font-weight: 600; margin-top: 8px; letter-spacing: -.01em; }
+  .l span { display: block; font-size: 16px; color: var(--ink2); margin-top: 3px; }
+</style>
+
+<div class="card">
+  <p class="eyebrow">Comparativas publicadas en shiftia.es</p>
+  <h1>En nuestra web salimos <em>los cuartos</em>.</h1>
+  <p class="sub">De siete. Y lo escribimos nosotros, en nuestro propio dominio.</p>
+
+  <div class="rank">
+    <div class="r"><span class="n">1</span><span class="nm">Skello</span><span></span></div>
+    <div class="r"><span class="n">2</span><span class="nm">Sesame HR</span><span></span></div>
+    <div class="r"><span class="n">3</span><span class="nm">Factorial</span><span></span></div>
+    <div class="r us"><span class="n">4</span><span class="nm">Shiftia</span><span class="tag">Nosotros</span></div>
+    <div class="r"><span class="n">5</span><span class="nm">Cuadly</span><span></span></div>
+    <div class="r"><span class="n">6</span><span class="nm">Bizneo HR</span><span></span></div>
+    <div class="r"><span class="n">7</span><span class="nm">aTurnos</span><span></span></div>
+  </div>
+
+  <div class="lists">
+    <div class="l">
+      <span class="big">6</span>
+      <b>motivos para elegir aTurnos</b>
+      <span>Publicados en nuestra comparativa</span>
+    </div>
+    <div class="l">
+      <span class="big">5</span>
+      <b>motivos para elegir Sesame HR</b>
+      <span>Publicados en nuestra comparativa</span>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="foot">
+    <span class="brand">
+      <svg class="mark" viewBox="0 0 40 40" fill="none" role="img" aria-label="Shiftia"><defs><linearGradient id="sG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke="url(#sG)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke="url(#sG)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8l4-4 2 5" stroke="url(#sG)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <b>Shiftia</b>
+    </span>
+    <span class="url">shiftia.es/mejores-software-turnos-espana</span>
+  </div>
+</div>

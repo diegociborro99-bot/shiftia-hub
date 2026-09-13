@@ -1,4 +1,4 @@
-# Tres posts de LinkedIn listos para programar
+# Cuatro posts de LinkedIn listos para programar
 
 Generados el 12 de septiembre de 2026. Cada uno pasó por dos redactores
 independientes, un jurado que eligió e injertó, y un auditor adversarial que
@@ -204,6 +204,66 @@ El cuadrante se usa solo para ese análisis y se elimina al terminar. El diagnó
 - **[importante]** El cuerpo dice «el artículo 34.3 del Estatuto» y cierra con «Esto es el suelo del Estatuto. Tu convenio puede mejorarlo». Los hashtags apuntan a enfermería y sanidad, que es el gremio de Diego (enfermero en activo en la sanidad pública asturiana), donde el ET no es la norma de referencia: al personal estatutario le rige el Estatuto Marco (Ley 55/2003), y su regulación no viene de un «convenio» sin
 - **[menor]** El art. 2 del RD 1561/1995 dice «salvo que finalice la relación laboral», no «que acabe el contrato». No es lo mismo y es el tipo de imprecisión que un delegado señala.
 - **[menor]** El propio comentario dice dos párrafos después que el sector determina el régimen de descansos aplicado, y así es en el código: lib/audit.js fija min_rest 12 con carácter general pero reduced_floor 10 en hostelería (línea 53, RD 1561/1995). Presentar el listado como «por debajo de 12 horas» sin más contradice esa frase para parte de los lectores.
+
+---
+
+# En nuestra web salimos los cuartos
+
+- **Tipo:** Personal / valores
+- **Imagen:** `linkedin-imagenes/4-comparativas.png`
+- **Fecha sugerida:** Martes 6 de octubre de 2026, 8:30
+- **Enlace (va en el primer comentario):** https://www.shiftia.es/mejores-software-turnos-espana
+- **Longitud del cuerpo:** 1296 caracteres
+
+## Cuerpo del post
+
+```text
+En nuestra web puedes leer cuándo no deberías contratarnos.
+
+No es una forma de hablar. En la comparativa con aTurnos hay una lista de seis motivos para elegirlos a ellos. En la de Sesame HR, cinco.
+
+Y en nuestro artículo sobre los mejores software de turnos en España salimos los cuartos de siete. Por delante van Skello, Sesame HR y Factorial.
+
+Lo escribimos nosotros. En nuestro dominio.
+
+Me han dicho que eso es tirarse piedras al tejado. Lo veo al revés.
+
+Si tienes cientos de empleados en varios países, si necesitas fichaje con biometría y terminales, si tu nómina está en SAP y exiges integración: no somos tu herramienta. Y si me lo callo, lo vas a descubrir igual. Solo que en el mes tres, con el equipo dentro y la sensación de que te vendí humo.
+
+Prefiero perder esa venta hoy que ese cliente en marzo.
+
+Sigo de enfermero en la pública, y cuando trabajas a turnos aprendes a oler al que promete que su software lo resuelve todo. No lo resuelve todo. Resuelve una cosa.
+
+Lo nuestro es el cuadrante 24/7: rotaciones de mañana, tarde y noche, festivos, salientes y libranzas. Eso lo hacemos bien. Lo demás lo hace mejor otro, y lo decimos.
+
+¿Cuántas veces has contratado algo que en la demo lo hacía todo?
+
+Enlace en comentarios.
+
+#turnos #cuadrantes #gestiondepersonas #enfermeria #RRHH
+```
+
+## Primer comentario
+
+```text
+Las tres cosas, por si quieres comprobarlas:
+
+El artículo donde salimos los cuartos: https://www.shiftia.es/mejores-software-turnos-espana
+La comparativa con aTurnos: https://www.shiftia.es/shiftia-vs-aturnos
+La comparativa con Sesame HR: https://www.shiftia.es/shiftia-vs-sesame-hr
+
+Los motivos para elegir a otro no son de relleno: cientos de empleados en varios países, fichaje con biometría y terminales, integración con SAP o a3innuva, un pliego que exige ISO 27001. Si ese es tu caso, te va a servir más otro.
+
+Si lo que te quita el sueño es el cuadrante 24/7, entonces sí: hablamos.
+```
+
+## Datos verificados antes de escribirlo
+
+- El ItemList de `public/mejores-software-turnos-espana.html` ordena: 1 Skello, 2 Sesame HR, 3 Factorial, **4 Shiftia**, 5 Cuadly, 6 Bizneo HR, 7 aTurnos.
+- `public/shiftia-vs-aturnos.html` tiene una lista "Elige aTurnos si…" con **6** motivos.
+- `public/shiftia-vs-sesame-hr.html` tiene una lista "Elige Sesame HR si…" con **5** motivos.
+- Los ejemplos citados en el post (cientos de empleados y varios países, biometría y terminales, SAP, a3innuva, ISO 27001) salen literalmente de esas dos listas.
+- No se afirma nada sobre los años ni la unidad en que Diego ha hecho cuadrantes, porque eso sigue pendiente de confirmar en el kit general.
 
 ---
 
