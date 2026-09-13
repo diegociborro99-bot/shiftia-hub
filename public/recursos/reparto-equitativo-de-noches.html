@@ -195,6 +195,11 @@ footer a:hover{color:var(--accent)}
   table{font-size:0.86rem}
   th,td{padding:10px 12px}
 }
+
+/* Cuatro tarjetas: 2 o 4 columnas, nunca 3. Con tres queda una sola abajo
+   y dos huecos, que es lo que pasaba entre 560 y 760 px. */
+#nStats { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 760px) { #nStats { grid-template-columns: repeat(4, 1fr); } }
 </style>
 <link rel="stylesheet" href="/comercial.css?v=2">
 </head>

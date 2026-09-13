@@ -217,6 +217,12 @@ footer a:hover{color:var(--accent)}
   table{font-size:0.86rem}
   th,td{padding:10px 12px}
 }
+
+/* Las seis tarjetas de resultado necesitan 2 o 3 columnas, nunca 4: con
+   cuatro queda una fila coja. La regla general .tool-stats se queda como
+   está porque la otra calculadora genera cuatro y con ella sí cuadra. */
+#rStats { grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 760px) { #rStats { grid-template-columns: repeat(3, 1fr); } }
 </style>
 <link rel="stylesheet" href="/comercial.css?v=2">
 </head>
