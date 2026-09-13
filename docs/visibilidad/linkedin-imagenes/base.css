@@ -75,12 +75,7 @@ h1 em { font-style: italic; color: var(--teal); }
   padding-top: 26px; border-top: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand .logo {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--teal2), var(--teal));
-  display: grid; place-items: center;
-}
-.brand .logo svg { width: 19px; height: 19px; color: #fff; }
+.brand .mark { width: 40px; height: 40px; flex: none; }
 .brand b {
   font-family: var(--serif); font-weight: 400;
   font-size: 30px; letter-spacing: -.01em;
