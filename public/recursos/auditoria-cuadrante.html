@@ -125,6 +125,19 @@ footer a:hover{color:var(--accent)}
   .faq-mini h2{font-size:1.5rem}
   footer{margin-top:40px}
 }
+
+.muestra{margin:56px 0 0;text-align:center}
+.muestra-eyebrow{font-family:var(--ds-font-mono,ui-monospace,monospace);font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ds-accent,#0f7a6d);margin:0 0 12px}
+.muestra h2{font-family:var(--ds-font-display,Georgia,serif);font-weight:400;font-size:clamp(1.6rem,3.4vw,2.25rem);line-height:1.15;letter-spacing:-.02em;margin:0}
+.muestra h2 em{font-style:italic;color:var(--ds-accent,#0f7a6d)}
+.muestra-sub{max-width:640px;margin:14px auto 30px;font-size:.95rem;line-height:1.6;color:var(--text2,#40453f)}
+.muestra-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:left}
+.muestra-grid figure{margin:0}
+.muestra-grid img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--border,#e4e2db);box-shadow:0 1px 2px rgba(15,15,15,.04),0 18px 44px -26px rgba(15,15,15,.3)}
+.muestra-grid figcaption{margin-top:12px;font-size:.85rem;line-height:1.5;color:var(--text2,#40453f)}
+.muestra-grid figcaption b{display:block;font-weight:600;color:var(--ds-text,#0e0f0f);margin-bottom:2px}
+.muestra-nota{max-width:720px;margin:26px auto 0;padding:16px 20px;border-radius:12px;background:var(--ds-accent-soft,#e9f5f2);border:1px solid rgba(47,163,147,.22);font-size:.9rem;line-height:1.6}
+@media (max-width:760px){.muestra{margin-top:40px}.muestra-grid{grid-template-columns:1fr;gap:24px}}
 </style>
 <link rel="stylesheet" href="/comercial.css?v=2">
 </head>
@@ -210,6 +223,25 @@ footer a:hover{color:var(--accent)}
       <div class="form-msg" id="auditMsg" role="status" aria-live="polite"></div>
     </form>
   </div>
+
+    <section class="muestra" aria-labelledby="muestraTit">
+      <p class="muestra-eyebrow">Esto es lo que recibes</p>
+      <h2 id="muestraTit">Un informe de cuatro páginas, <em>y el cuadrante corregido</em></h2>
+      <p class="muestra-sub">Muestra generada por el propio sistema con datos de demostración. El tuyo llega igual, con tus turnos y tus personas.</p>
+      <div class="muestra-grid">
+        <figure>
+          <img src="/muestra-informe-auditado.png" width="1400" height="990" loading="lazy" decoding="async"
+               alt="Página del informe con el cuadrante auditado: las celdas en conflicto aparecen marcadas y debajo se ve la cobertura de cada día.">
+          <figcaption><b>Tu cuadrante, auditado</b>Cada celda en conflicto marcada, con la cobertura de cada día debajo.</figcaption>
+        </figure>
+        <figure>
+          <img src="/muestra-informe-corregido.png" width="1400" height="990" loading="lazy" decoding="async"
+               alt="Página del informe con el cuadrante corregido: las celdas que cambian aparecen en verde y al lado se explica qué arregla cada cambio.">
+          <figcaption><b>Tu cuadrante, corregido</b>En verde lo que cambia, y al lado qué arregla cada cambio.</figcaption>
+        </figure>
+      </div>
+      <p class="muestra-nota">La corrección solo intercambia turnos del mismo día entre dos personas, así que <strong>la cobertura diaria no cambia</strong>. Y solo se adjunta si de verdad mejora el cuadrante.</p>
+    </section>
 
   <div class="faq-mini">
     <h2>Preguntas rápidas</h2>
