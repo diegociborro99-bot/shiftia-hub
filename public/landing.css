@@ -1241,10 +1241,67 @@ section { padding: 140px 48px; }
 /* Día cerrado por vacaciones/festivo/viaje: tachado, para distinguirlo de un
    fin de semana o de un día fuera del horizonte de reserva. */
 .cal-day.blocked { text-decoration: line-through; }
-/* Aviso bajo el calendario explicando los cierres del mes que se está viendo */
-.cal-note { margin: 0 0 16px; padding: 10px 12px; border-radius: 10px; background: rgba(15,122,109,0.06); border: 1px solid rgba(15,122,109,0.18); color: var(--text2); font-size: 0.8rem; line-height: 1.5; }
-.cal-note p + p { margin-top: 5px; }
-.cal-note b { font-weight: 600; color: var(--text1); }
+/* Aviso bajo el calendario explicando los cierres del mes que se está viendo.
+   Misma gramática visual que las tarjetas de /recursos: tarjeta blanca, borde
+   fino, píldora mono en verde y la fecha en Instrument Serif. El color de marca
+   se concentra en el raíl y en los iconos; el resto se mantiene sobrio. */
+.cal-note {
+  position: relative;
+  margin: 2px 0 16px;
+  padding: 16px 18px 16px 22px;
+  background: var(--ds-bg-elev, #fff);
+  border: 1px solid var(--ds-border, #e8e6df);
+  border-radius: 14px;
+  box-shadow: var(--ds-shadow-sm, 0 1px 2px rgba(15,15,15,.04)), 0 16px 34px -26px rgba(15,15,15,.3);
+  overflow: hidden;
+  animation: calNoteIn .34s cubic-bezier(.16, 1, .3, 1);
+}
+/* Raíl de marca en el canto izquierdo */
+.cal-note::before {
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: 0; width: 4px;
+  background: linear-gradient(180deg, #2fa393, #0f7a6d);
+}
+.cal-note-head {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--ds-font-mono, 'Geist Mono', monospace);
+  font-size: 0.63rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--ds-accent, #0f7a6d);
+  background: var(--ds-accent-soft, #e9f5f2);
+  padding: 4px 11px; border-radius: 999px;
+  margin-bottom: 13px;
+}
+.cal-note-head i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; display: block; }
+.cal-note-row { display: flex; gap: 12px; align-items: flex-start; }
+.cal-note-row + .cal-note-row {
+  margin-top: 13px; padding-top: 13px;
+  border-top: 1px solid var(--ds-border, #e8e6df);
+}
+.cal-note-ico {
+  flex: none; width: 32px; height: 32px; border-radius: 9px;
+  background: var(--ds-accent-soft, #e9f5f2); color: var(--ds-accent, #0f7a6d);
+  display: grid; place-items: center;
+}
+.cal-note-ico svg { width: 16px; height: 16px; }
+.cal-note-when {
+  font-family: var(--ds-font-display, 'Instrument Serif'), Georgia, 'Times New Roman', serif;
+  font-weight: 400; font-size: 1.15rem; line-height: 1.22;
+  letter-spacing: -0.01em; color: var(--ds-text, #0e0f0f);
+}
+.cal-note-why {
+  margin-top: 3px; font-size: 0.84rem; line-height: 1.45;
+  color: var(--ds-text-muted, #4a4a47); text-wrap: pretty;
+}
+@keyframes calNoteIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cal-note { animation: none; } }
+@media (max-width: 480px) {
+  .cal-note { padding: 14px 15px 14px 19px; }
+  .cal-note-when { font-size: 1.06rem; }
+  .cal-note-why { font-size: 0.81rem; }
+}
 
 /* Time slots */
 .time-slots-wrap { display: none; }
