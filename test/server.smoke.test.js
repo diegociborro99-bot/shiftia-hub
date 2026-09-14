@@ -64,6 +64,19 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
     assert.ok(!/<script(?![^>]*nonce=)[\s>]/.test(html), 'ningún <script> queda sin nonce');
     assert.ok(!/on(?:click|submit|error|input|load|change)="/.test(html), 'sin handlers inline en la landing');
 
+    // landing.css se sirve con max-age de 30 días: si el ?v= no cambia con el
+    // fichero, un cambio de CSS no le llega a nadie durante un mes y el HTML
+    // nuevo se dibuja con la hoja vieja. El servidor debe reescribirlo con el
+    // hash real del contenido, no dejar el número escrito a mano en el HTML.
+    const cssRefs = [...html.matchAll(/landing\.css\?v=([A-Za-z0-9._-]+)/g)].map(m => m[1]);
+    assert.ok(cssRefs.length > 0, 'la landing enlaza landing.css');
+    const hashReal = require('node:crypto').createHash('sha1')
+      .update(require('node:fs').readFileSync(path.resolve(__dirname, '..', 'public', 'landing.css')))
+      .digest('hex').slice(0, 10);
+    for (const v of cssRefs) {
+      assert.equal(v, hashReal, 'el ?v= de landing.css es el hash de su contenido');
+    }
+
     // Dos peticiones → dos nonces distintos (no debe ser estático).
     const again = await fetch(`${BASE}/`);
     const csp2 = again.headers.get('content-security-policy') || '';

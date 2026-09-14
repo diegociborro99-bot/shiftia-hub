@@ -305,8 +305,8 @@
 <link rel="stylesheet" href="/v36.css?v=363">
 <!-- Preload the main bundle so it starts fetching during HTML parse, not after -->
 <link rel="preload" as="script" href="/v36.min.js?v=382" fetchpriority="high">
-<link rel="preload" as="style" href="/landing.css?v=7">
-<link rel="stylesheet" href="/landing.css?v=7">
+<link rel="preload" as="style" href="/landing.css?v=8">
+<link rel="stylesheet" href="/landing.css?v=8">
 <link rel="stylesheet" href="/demo-app.css?v=1">
 </head>
 <body>
@@ -2052,7 +2052,10 @@ function renderCalNote() {
     icono.className = 'cal-note-ico';
     icono.setAttribute('aria-hidden', 'true');
     // Calendario tachado: el mismo trazo de 2px que el resto de iconos del sitio.
-    icono.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18M9.5 14.8l5 4.4M14.5 14.8l-5 4.4"/></svg>';
+    // Lleva width/height en el propio SVG y no solo en el CSS: si la hoja llega
+    // cacheada y sin estas reglas, un SVG sin medidas se dibuja a pantalla
+    // completa. El atributo es el suelo; el CSS solo afina.
+    icono.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18M9.5 14.8l5 4.4M14.5 14.8l-5 4.4"/></svg>';
 
     const texto = document.createElement('div');
     const cuando = document.createElement('div');
