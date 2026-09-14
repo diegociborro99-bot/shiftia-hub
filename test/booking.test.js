@@ -7,6 +7,7 @@ const assert = require('node:assert/strict');
 const {
   escHtml,
   generateDaySlots,
+  expandClosure,
   madridIsoFromLocal,
   prettyTimeMadrid,
   makeCancelToken,
@@ -33,6 +34,30 @@ test('generateDaySlots: paso de 60 minutos', () => {
   const slots = generateDaySlots({ ...CFG, slotMinutes: 60 });
   assert.deepEqual(slots.slice(0, 3), ['09:00', '10:00', '11:00']);
   assert.ok(!slots.includes('09:30'));
+});
+
+test('expandClosure: incluye los dos extremos', () => {
+  const dias = expandClosure({ from: '2026-10-17', to: '2026-10-27', reason: 'Viaje' });
+  assert.equal(dias.length, 11, '11 días naturales, del 17 al 27 inclusive');
+  assert.deepEqual(dias[0], ['2026-10-17', 'Viaje']);
+  assert.deepEqual(dias[dias.length - 1], ['2026-10-27', 'Viaje']);
+  assert.equal(new Set(dias.map(d => d[0])).size, 11, 'sin fechas repetidas');
+});
+
+test('expandClosure: el cambio de hora de octubre no parte el rango', () => {
+  // El 25-oct-2026 los relojes atrasan y ese día dura 25 h. Avanzar por
+  // milisegundos se saltaría un día o lo duplicaría; avanzar por fecha no.
+  const dias = expandClosure({ from: '2026-10-23', to: '2026-10-27', reason: 'x' }).map(d => d[0]);
+  assert.deepEqual(dias, ['2026-10-23', '2026-10-24', '2026-10-25', '2026-10-26', '2026-10-27']);
+});
+
+test('expandClosure: un solo día y rango invertido', () => {
+  assert.deepEqual(expandClosure({ from: '2026-05-04', to: '2026-05-04', reason: 'a' }),
+    [['2026-05-04', 'a']]);
+  assert.deepEqual(expandClosure({ from: '2026-05-10', to: '2026-05-04', reason: 'a' }), [],
+    'to anterior a from no genera días');
+  assert.deepEqual(expandClosure({ from: 'no-es-fecha', to: '2026-05-04', reason: 'a' }), [],
+    'una fecha inválida no cuelga el arranque');
 });
 
 test('madridIsoFromLocal: horario de invierno (CET, UTC+1)', () => {

@@ -1238,6 +1238,13 @@ section { padding: 140px 48px; }
 .cal-day.today:not(.selected) { border-color: var(--accent); color: var(--accent); font-weight: 700; }
 .cal-day.empty { cursor: default; background: transparent; }
 .cal-day.past { opacity: 0.25; cursor: not-allowed; }
+/* Día cerrado por vacaciones/festivo/viaje: tachado, para distinguirlo de un
+   fin de semana o de un día fuera del horizonte de reserva. */
+.cal-day.blocked { text-decoration: line-through; }
+/* Aviso bajo el calendario explicando los cierres del mes que se está viendo */
+.cal-note { margin: 0 0 16px; padding: 10px 12px; border-radius: 10px; background: rgba(15,122,109,0.06); border: 1px solid rgba(15,122,109,0.18); color: var(--text2); font-size: 0.8rem; line-height: 1.5; }
+.cal-note p + p { margin-top: 5px; }
+.cal-note b { font-weight: 600; color: var(--text1); }
 
 /* Time slots */
 .time-slots-wrap { display: none; }

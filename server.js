@@ -81,6 +81,21 @@ const BOOKING_LUNCH_BLOCK = (process.env.BOOKING_LUNCH_BLOCK || '14:00,14:30,15:
 const BOOKING_SLOT_MINUTES = Number(process.env.BOOKING_SLOT_MINUTES || 30); // 30 → :00 y :30; 60 → solo :00
 const BOOKING_HOUR_START = Number(process.env.BOOKING_HOUR_START || 9);
 const BOOKING_HOUR_END = Number(process.env.BOOKING_HOUR_END || 18);
+
+// ====== CIERRES DE AGENDA ======
+// Días sin agenda declarados en el repo (viajes, implantaciones, formación),
+// con fechas inclusive por los dos extremos. Se aplican en cada arranque, así
+// que esta lista es la fuente de verdad y sobrescribe el motivo que hubiera.
+// OJO: quitar una línea de aquí NO reabre el día — para eso está
+// DELETE /api/admin/blocked-dates/:date. Los fines de semana ya están cerrados
+// por la regla de lunes a viernes; incluirlos aquí solo los hace explícitos.
+const BOOKING_CLOSURES = [
+  { from: '2026-10-17', to: '2026-10-27', reason: 'Implementación presencial en el extranjero' }
+];
+
+// La expansión a días sueltos vive en ./lib/booking.js (ver test/booking.test.js).
+const expandClosure = bookingLib.expandClosure;
+
 // Independent secret for HMAC cancel tokens — never fall back to JWT_SECRET so a leak
 // of one doesn't compromise the other. In dev we generate an ephemeral secret.
 let BOOKING_CANCEL_SECRET = process.env.BOOKING_CANCEL_SECRET;
@@ -530,6 +545,26 @@ async function initializeDatabase() {
       }
     } catch (seedErr) {
       console.warn('Festivos seed skipped:', seedErr.message);
+    }
+
+    // Cierres de agenda declarados en BOOKING_CLOSURES. A diferencia del seed de
+    // festivos, este se aplica siempre (no solo con la tabla vacía) y mantiene
+    // el motivo en sync con el repo.
+    try {
+      let n = 0;
+      for (const cierre of BOOKING_CLOSURES) {
+        for (const [d, reason] of expandClosure(cierre)) {
+          await client.query(
+            `INSERT INTO blocked_dates (block_date, reason) VALUES ($1, $2)
+             ON CONFLICT (block_date) DO UPDATE SET reason = EXCLUDED.reason`,
+            [d, reason]
+          );
+          n++;
+        }
+      }
+      if (n) console.log(`Cierres de agenda aplicados: ${n} días`);
+    } catch (closureErr) {
+      console.warn('Cierres de agenda omitidos:', closureErr.message);
     }
 
     console.log('Database initialized: all tables, indexes and migrations applied');
@@ -2025,6 +2060,28 @@ app.post('/api/audit-request', contactLimiter, (req, res) => {
       if (!res.headersSent) res.status(500).json({ error: 'Error interno' });
     }
   });
+});
+
+// Días cerrados dentro del horizonte de reserva. Es público a propósito: es la
+// misma información que el visitante sacaría pinchando día a día, pero así el
+// calendario puede pintarlos en gris de entrada y decir por qué, en vez de
+// dejarle elegir un día que luego rebota.
+app.get('/api/booking/blocked-dates', apiLimiter, async (req, res) => {
+  if (!global.__shiftiaDbReady) return res.json({ blocked: [] });
+  try {
+    const r = await pool.query(
+      `SELECT to_char(block_date, 'YYYY-MM-DD') AS date, reason
+         FROM blocked_dates
+        WHERE block_date >= CURRENT_DATE
+          AND block_date <= CURRENT_DATE + $1::int
+        ORDER BY block_date ASC`,
+      [BOOKING_HORIZON_DAYS]
+    );
+    res.json({ blocked: r.rows });
+  } catch (err) {
+    if (!/does not exist/i.test(err.message)) console.error('blocked-dates error:', err.message);
+    res.json({ blocked: [] });
+  }
 });
 
 // GET slots — devuelve disponibilidad real de un día

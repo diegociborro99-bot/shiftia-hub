@@ -1552,6 +1552,7 @@
             </button>
           </div>
           <div class="cal-grid" id="calGrid" role="grid" aria-label="Calendario de citas"></div>
+          <div class="cal-note" id="calNote" role="status" style="display:none;"></div>
 
           <div class="time-slots-wrap" id="timeSlotsWrap">
             <div class="time-slots-label" id="timeSlotsLabel">Selecciona una hora:</div>
@@ -1974,14 +1975,77 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 // ===================== CALL SCHEDULER =====================
 let calYear, calMonth, selectedDate = null, selectedTime = null;
+// Días cerrados (festivos, vacaciones, viajes) → { 'YYYY-MM-DD': motivo }.
+// Se piden una sola vez al abrir el calendario para poder pintarlos en gris
+// antes de que nadie los pinche, en vez de dejar que elija un día que rebota.
+let blockedDates = {};
 
 function initCalendar() {
   const now = new Date();
   calYear = now.getFullYear();
   calMonth = now.getMonth();
   renderCalendar();
+  loadBlockedDates();
   document.getElementById('calPrev').addEventListener('click', () => { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); });
   document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); });
+}
+
+async function loadBlockedDates() {
+  try {
+    const resp = await fetch('/api/booking/blocked-dates');
+    const data = await resp.json();
+    const mapa = {};
+    (data.blocked || []).forEach(b => { if (b && b.date) mapa[b.date] = b.reason || ''; });
+    blockedDates = mapa;
+    renderCalendar();
+  } catch (e) { /* si falla, el servidor sigue rechazando el día al reservar */ }
+}
+
+// Resume en una frase los cierres que caen en el mes que se está viendo,
+// agrupando días consecutivos con el mismo motivo en un único rango.
+function renderCalNote() {
+  const note = document.getElementById('calNote');
+  if (!note) return;
+  const ahora = new Date();
+  const today = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+
+  const rangos = [];
+  Object.keys(blockedDates).filter(k => blockedDates[k]).sort().forEach(k => {
+    const [y, m, d] = k.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    if (date < today) return;
+    const ult = rangos[rangos.length - 1];
+    // Encadenar por fecha, no por milisegundos: el 25 de octubre dura 25 horas
+    // por el cambio de hora y una resta de tiempos partiría el rango en dos.
+    if (ult && ult.motivo === blockedDates[k]) {
+      const siguiente = new Date(ult.fin.getFullYear(), ult.fin.getMonth(), ult.fin.getDate() + 1);
+      if (dateKey(siguiente) === k) { ult.fin = date; return; }
+    }
+    rangos.push({ ini: date, fin: date, motivo: blockedDates[k] });
+  });
+
+  const delMes = rangos.filter(r =>
+    (r.ini.getFullYear() === calYear && r.ini.getMonth() === calMonth) ||
+    (r.fin.getFullYear() === calYear && r.fin.getMonth() === calMonth));
+
+  note.innerHTML = '';
+  if (!delMes.length) { note.style.display = 'none'; return; }
+
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const conMes = (d) => `${d.getDate()} de ${meses[d.getMonth()]}`;
+  delMes.slice(0, 2).forEach(r => {
+    const p = document.createElement('p');
+    const b = document.createElement('b');
+    b.textContent = r.ini.getTime() === r.fin.getTime()
+      ? `Sin agenda el ${conMes(r.ini)}`
+      : (r.ini.getMonth() === r.fin.getMonth()
+        ? `Sin agenda del ${r.ini.getDate()} al ${conMes(r.fin)}`
+        : `Sin agenda del ${conMes(r.ini)} al ${conMes(r.fin)}`);
+    p.appendChild(b);
+    p.appendChild(document.createTextNode(': ' + r.motivo));
+    note.appendChild(p);
+  });
+  note.style.display = 'block';
 }
 
 function renderCalendar() {
@@ -2031,14 +2095,24 @@ function renderCalendar() {
     const isTooFar = date > maxDate;
     const isToday = date.getTime() === today.getTime();
     const isSelected = selectedDate && date.getTime() === selectedDate.getTime();
+    const motivoCierre = blockedDates[dateKey(date)];
+    const isBlocked = motivoCierre !== undefined;
 
     const el = document.createElement('div');
     el.className = 'cal-day';
     el.textContent = d;
 
-    if (isWeekend || isPast || isTooFar) {
+    if (isWeekend || isPast || isTooFar || isBlocked) {
       el.classList.add('disabled');
       if (isPast) el.classList.add('past');
+      // Un sábado normal no está en blocked_dates, así que sigue viéndose como
+      // un fin de semana; si cae dentro de un cierre declarado, se tacha igual
+      // que el resto del rango para que el calendario y el aviso digan lo mismo.
+      if (isBlocked && !isPast) {
+        el.classList.add('blocked');
+        el.title = motivoCierre || 'Sin agenda ese día';
+        el.setAttribute('aria-label', `${d} — ${motivoCierre || 'sin agenda'}`);
+      }
     } else {
       if (isToday) el.classList.add('today');
       if (isSelected) el.classList.add('selected');
@@ -2047,6 +2121,8 @@ function renderCalendar() {
 
     grid.appendChild(el);
   }
+
+  renderCalNote();
 }
 
 function selectDate(date) {
@@ -2084,17 +2160,21 @@ async function showTimeSlots(date) {
   // Pedir disponibilidad real al servidor (que ya considera lead-time + bloqueos + reservados)
   let slots = [];
   let blocked = false;
+  let blockedReason = '';
   try {
     const resp = await fetch(`/api/booking/slots?date=${dateKey(date)}`);
     const data = await resp.json();
     slots = data.slots || [];
     blocked = !!data.blocked;
+    blockedReason = data.blockedReason || '';
   } catch (e) {}
 
   container.innerHTML = '';
 
   if (blocked) {
-    empty.textContent = 'Este día no está disponible. Prueba con otro día.';
+    empty.textContent = blockedReason
+      ? `Este día no está disponible — ${blockedReason}. Prueba con otro día.`
+      : 'Este día no está disponible. Prueba con otro día.';
     empty.style.display = 'block';
     return;
   }
