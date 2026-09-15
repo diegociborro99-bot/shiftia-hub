@@ -7,6 +7,7 @@ const assert = require('node:assert/strict');
 const {
   escHtml,
   generateDaySlots,
+  parseWindows,
   expandClosure,
   madridIsoFromLocal,
   prettyTimeMadrid,
@@ -34,6 +35,43 @@ test('generateDaySlots: paso de 60 minutos', () => {
   const slots = generateDaySlots({ ...CFG, slotMinutes: 60 });
   assert.deepEqual(slots.slice(0, 3), ['09:00', '10:00', '11:00']);
   assert.ok(!slots.includes('09:30'));
+});
+
+test('parseWindows: tramos válidos, ordenados, y basura descartada', () => {
+  assert.deepEqual(parseWindows('10:00-12:30,16:00-17:30'),
+    [{ start: 600, end: 750 }, { start: 960, end: 1050 }]);
+  assert.deepEqual(parseWindows('16:00-17:30, 10:00-12:30'),
+    [{ start: 600, end: 750 }, { start: 960, end: 1050 }], 'se ordenan por hora de inicio');
+  assert.deepEqual(parseWindows(''), [], 'vacío = sin ventanas');
+  assert.deepEqual(parseWindows('12:00-10:00'), [], 'fin antes que inicio');
+  assert.deepEqual(parseWindows('10:00'), [], 'sin guion');
+  assert.deepEqual(parseWindows('10:70-12:00'), [], 'minutos imposibles');
+  assert.deepEqual(parseWindows('10:00-12:00,basura'), [{ start: 600, end: 720 }],
+    'un tramo roto no se lleva por delante a los buenos');
+});
+
+test('generateDaySlots: las dos ventanas de atención reales', () => {
+  const slots = generateDaySlots({ ...CFG, windows: parseWindows('10:00-12:30,16:00-17:30') });
+  assert.deepEqual(slots, ['10:00', '10:30', '11:00', '11:30', '12:00', '16:00', '16:30', '17:00']);
+  assert.equal(slots.length, 8, '8 huecos al día, no 15');
+  assert.ok(!slots.includes('12:30'), 'el fin de ventana es exclusivo: la de 12:00 acaba a las 12:30');
+  assert.ok(!slots.includes('09:00'), 'fuera de ventana por abajo');
+  assert.ok(!slots.includes('13:00'), 'el hueco entre ventanas no se ofrece');
+  assert.ok(!slots.includes('17:30'), 'fuera de ventana por arriba');
+});
+
+test('generateDaySlots: sin ventanas se comporta como antes', () => {
+  assert.deepEqual(generateDaySlots({ ...CFG, windows: [] }), generateDaySlots(CFG));
+  assert.equal(generateDaySlots({ ...CFG, windows: [] }).length, 15);
+});
+
+test('generateDaySlots: las ventanas se alinean al paso y no se solapan', () => {
+  // Una ventana que empieza a y cuarto no debe sacar el día de la retícula.
+  assert.deepEqual(generateDaySlots({ ...CFG, windows: parseWindows('10:15-11:30') }),
+    ['10:30', '11:00']);
+  // Tramos solapados no duplican horas.
+  assert.deepEqual(generateDaySlots({ ...CFG, windows: parseWindows('10:00-11:00,10:30-11:30') }),
+    ['10:00', '10:30', '11:00']);
 });
 
 test('expandClosure: incluye los dos extremos', () => {

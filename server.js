@@ -81,6 +81,16 @@ const BOOKING_LUNCH_BLOCK = (process.env.BOOKING_LUNCH_BLOCK || '14:00,14:30,15:
 const BOOKING_SLOT_MINUTES = Number(process.env.BOOKING_SLOT_MINUTES || 30); // 30 → :00 y :30; 60 → solo :00
 const BOOKING_HOUR_START = Number(process.env.BOOKING_HOUR_START || 9);
 const BOOKING_HOUR_END = Number(process.env.BOOKING_HOUR_END || 18);
+// Ventanas reales de atención. Ofrecer 9:00–18:00 entero eran 15 huecos al día
+// (75 a la semana) para una agenda de una sola persona que además viaja a
+// implantaciones: ni es cierto ni deja mañana libre. Con dos tramos quedan 8 al
+// día, que sí se pueden atender. Vacío = rango continuo hourStart→hourEnd.
+const BOOKING_WINDOWS = bookingLib.parseWindows(
+  process.env.BOOKING_WINDOWS === undefined ? '10:00-12:30,16:00-17:30' : process.env.BOOKING_WINDOWS
+);
+// Por debajo de este número de huecos libres en 7 días, la web lo dice. El
+// aviso solo aparece cuando es verdad: si hay agenda de sobra, no se enseña.
+const BOOKING_LOW_STOCK = Number(process.env.BOOKING_LOW_STOCK || 6);
 
 // ====== CIERRES DE AGENDA ======
 // Días sin agenda declarados en el repo (viajes, implantaciones, formación),
@@ -1556,8 +1566,26 @@ const generateDaySlots = () => bookingLib.generateDaySlots({
   hourStart: BOOKING_HOUR_START,
   hourEnd: BOOKING_HOUR_END,
   slotMinutes: BOOKING_SLOT_MINUTES,
-  lunchBlock: BOOKING_LUNCH_BLOCK
+  lunchBlock: BOOKING_LUNCH_BLOCK,
+  windows: BOOKING_WINDOWS
 });
+// "10:00–12:30 y 16:00–17:30", para los mensajes de error de la reserva.
+const describeWindows = () => {
+  const hhmm = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+  if (!BOOKING_WINDOWS.length) return `${BOOKING_HOUR_START}:00–${BOOKING_HOUR_END}:00`;
+  return BOOKING_WINDOWS.map((w) => `${hhmm(w.start)}–${hhmm(w.end)}`).join(' y ');
+};
+// Fecha YYYY-MM-DD de un instante, en el muro horario de Madrid. 'en-CA' da
+// justo ese formato sin tener que recomponer partes a mano.
+const madridDateKey = (d) => new Intl.DateTimeFormat('en-CA', {
+  timeZone: BOOKING_TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit'
+}).format(d);
+const esFinDeSemana = (dateStr) => {
+  const dow = new Intl.DateTimeFormat('en-US', {
+    timeZone: BOOKING_TIMEZONE, weekday: 'short'
+  }).format(bookingLib.madridIsoFromLocal(dateStr, '12:00', BOOKING_TIMEZONE));
+  return dow === 'Sat' || dow === 'Sun';
+};
 const madridIsoFromLocal = (dateStr, timeStr) => bookingLib.madridIsoFromLocal(dateStr, timeStr, BOOKING_TIMEZONE);
 const prettyDateMadrid = (d) => bookingLib.prettyDateMadrid(d, BOOKING_TIMEZONE);
 const prettyTimeMadrid = (d) => bookingLib.prettyTimeMadrid(d, BOOKING_TIMEZONE);
@@ -2083,6 +2111,94 @@ app.post('/api/audit-request', contactLimiter, (req, res) => {
   });
 });
 
+// Resumen de disponibilidad: el primer hueco libre de verdad y cuántos quedan
+// en los próximos 7 días. Todo sale de las reservas y los cierres reales — si
+// la agenda está vacía, el aviso de escasez sencillamente no se manda, porque
+// inventarlo sería mentirle al visitante sobre algo que puede comprobar.
+app.get('/api/booking/availability', apiLimiter, async (req, res) => {
+  try {
+    const horas = generateDaySlots();
+    const ahora = new Date();
+    const DIAS = Math.max(8, Math.min(BOOKING_HORIZON_DAYS, 28));
+
+    // Se avanza por fecha (mediodía UTC), no sumando 24 h: el día del cambio
+    // de hora dura 23 o 25, y sumando milisegundos se repite o se salta uno.
+    const hoyKey = madridDateKey(ahora);
+    const dias = [];
+    const cursor = new Date(hoyKey + 'T12:00:00Z');
+    for (let i = 0; i < DIAS; i++) {
+      dias.push(cursor.toISOString().slice(0, 10));
+      cursor.setUTCDate(cursor.getUTCDate() + 1);
+    }
+
+    let ocupadas = new Set();
+    let cerradas = new Set();
+    if (global.__shiftiaDbReady) {
+      const desde = dias[0], hasta = dias[dias.length - 1];
+      try {
+        const r = await pool.query(
+          `SELECT to_char(booking_at AT TIME ZONE $3, 'YYYY-MM-DD HH24:MI') AS k
+             FROM bookings
+            WHERE status != 'cancelled' AND booking_at IS NOT NULL
+              AND (booking_at AT TIME ZONE $3)::date BETWEEN $1::date AND $2::date`,
+          [desde, hasta, BOOKING_TIMEZONE]
+        );
+        ocupadas = new Set(r.rows.map((x) => x.k));
+      } catch (e) {
+        if (!/does not exist/i.test(e.message)) console.error('availability bookings:', e.message);
+      }
+      try {
+        const b = await pool.query(
+          `SELECT to_char(block_date, 'YYYY-MM-DD') AS d FROM blocked_dates
+            WHERE block_date BETWEEN $1::date AND $2::date`,
+          [desde, hasta]
+        );
+        cerradas = new Set(b.rows.map((x) => x.d));
+      } catch (_) {}
+    }
+
+    let proximo = null;
+    let libres7 = 0;
+    dias.forEach((dia, i) => {
+      if (cerradas.has(dia) || esFinDeSemana(dia)) return;
+      for (const t of horas) {
+        if (ocupadas.has(dia + ' ' + t)) continue;
+        const instante = madridIsoFromLocal(dia, t);
+        if (instante.getTime() - ahora.getTime() < BOOKING_MIN_LEAD_HOURS * 3600 * 1000) continue;
+        if (!proximo) proximo = { date: dia, time: t };
+        if (i < 7) libres7++;
+      }
+    });
+
+    let etiqueta = null;
+    if (proximo) {
+      const manana = new Date(hoyKey + 'T12:00:00Z');
+      manana.setUTCDate(manana.getUTCDate() + 1);
+      const mananaKey = manana.toISOString().slice(0, 10);
+      if (proximo.date === hoyKey) etiqueta = 'hoy';
+      else if (proximo.date === mananaKey) etiqueta = 'mañana';
+      else {
+        const p = madridIsoFromLocal(proximo.date, '12:00');
+        const dia = new Intl.DateTimeFormat('es-ES', { timeZone: BOOKING_TIMEZONE, weekday: 'long' }).format(p);
+        const num = new Intl.DateTimeFormat('es-ES', { timeZone: BOOKING_TIMEZONE, day: 'numeric' }).format(p);
+        etiqueta = `el ${dia} ${num}`;
+      }
+    }
+
+    res.json({
+      next: proximo ? { ...proximo, etiqueta } : null,
+      libres7,
+      // Solo se marca escasez cuando de verdad quedan pocos huecos.
+      escasez: libres7 > 0 && libres7 <= BOOKING_LOW_STOCK,
+      horario: describeWindows(),
+      timezone: BOOKING_TIMEZONE
+    });
+  } catch (err) {
+    console.error('booking/availability error:', err.message);
+    res.json({ next: null, libres7: 0, escasez: false });
+  }
+});
+
 // Días cerrados dentro del horizonte de reserva. Es público a propósito: es la
 // misma información que el visitante sacaría pinchando día a día, pero así el
 // calendario puede pintarlos en gris de entrada y decir por qué, en vez de
@@ -2217,15 +2333,12 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({ error: 'Formato de fecha no válido' });
     }
-    if (!/^\d{2}:(00|30)$/.test(time)) {
-      return res.status(400).json({ error: 'Hora inválida (sólo en :00 o :30)' });
-    }
-    const [hh, mm] = time.split(':').map(Number);
-    if (hh < BOOKING_HOUR_START || hh >= BOOKING_HOUR_END) {
-      return res.status(400).json({ error: `Horario disponible: ${BOOKING_HOUR_START}:00–${BOOKING_HOUR_END}:00 (Europe/Madrid)` });
-    }
-    if (BOOKING_LUNCH_BLOCK.includes(time)) {
-      return res.status(400).json({ error: 'Esa franja está bloqueada (pausa de comida)' });
+    // Se valida contra la misma lista que se le ofrece al visitante, en vez de
+    // repetir aquí el horario: si divergen, el calendario enseña huecos que el
+    // POST rechaza (o al revés, acepta horas que nunca se ofrecieron).
+    const horasDelDia = generateDaySlots();
+    if (!horasDelDia.includes(time)) {
+      return res.status(400).json({ error: `Esa hora no se atiende. Horario: ${describeWindows()} (Europe/Madrid)` });
     }
 
     // Fin de semana — usamos getDay() en UTC sobre el instante Madrid 12:00

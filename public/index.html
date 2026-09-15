@@ -1542,6 +1542,16 @@
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2fa393" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             Agenda tu llamada <span style="font-weight:400;color:#94a3b8;font-size:0.85em;">— horario de Madrid</span>
           </label>
+          <button type="button" class="next-slot" id="nextSlot" style="display:none;">
+            <span class="ns-dot" aria-hidden="true"></span>
+            <span class="ns-txt">
+              <span class="ns-lab">Próximo hueco</span>
+              <span class="ns-val" id="nextSlotVal"></span>
+            </span>
+            <span class="ns-chip" id="nextSlotChip" style="display:none;"></span>
+            <svg class="ns-go" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
+          </button>
+
           <div class="cal-nav">
             <button type="button" class="cal-nav-btn" id="calPrev" aria-label="Mes anterior">
               <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1979,6 +1989,8 @@ let calYear, calMonth, selectedDate = null, selectedTime = null;
 // Se piden una sola vez al abrir el calendario para poder pintarlos en gris
 // antes de que nadie los pinche, en vez de dejar que elija un día que rebota.
 let blockedDates = {};
+// Primer hueco libre de verdad, tal y como lo calcula el servidor.
+let proximoHueco = null;
 
 function initCalendar() {
   const now = new Date();
@@ -1986,8 +1998,50 @@ function initCalendar() {
   calMonth = now.getMonth();
   renderCalendar();
   loadBlockedDates();
+  loadAvailability();
+  document.getElementById('nextSlot').addEventListener('click', irAlProximoHueco);
   document.getElementById('calPrev').addEventListener('click', () => { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); });
   document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); });
+}
+
+// El botón solo aparece si hay un hueco real; el chip de escasez, solo si de
+// verdad quedan pocos. Si la llamada falla, no se enseña nada: es preferible
+// no decir nada a decir un número inventado que el calendario desmiente.
+async function loadAvailability() {
+  const btn = document.getElementById('nextSlot');
+  const chip = document.getElementById('nextSlotChip');
+  try {
+    const resp = await fetch('/api/booking/availability');
+    const data = await resp.json();
+    if (!data || !data.next) { proximoHueco = null; btn.style.display = 'none'; return; }
+    proximoHueco = data.next;
+    document.getElementById('nextSlotVal').textContent = `${data.next.etiqueta} a las ${data.next.time}`;
+    btn.setAttribute('aria-label', `Reservar el próximo hueco: ${data.next.etiqueta} a las ${data.next.time}`);
+    if (data.escasez) {
+      chip.textContent = data.libres7 === 1 ? 'Queda 1 en 7 días' : `Quedan ${data.libres7} en 7 días`;
+      chip.style.display = '';
+    } else {
+      chip.style.display = 'none';
+    }
+    btn.style.display = 'flex';
+  } catch (e) {
+    proximoHueco = null;
+    btn.style.display = 'none';
+  }
+}
+
+// Lleva el calendario a ese día y deja la hora ya elegida: un toque en vez de
+// buscar mes, día y hueco a mano.
+async function irAlProximoHueco() {
+  if (!proximoHueco) return;
+  const [y, m, d] = proximoHueco.date.split('-').map(Number);
+  calYear = y;
+  calMonth = m - 1;
+  await selectDate(new Date(y, m - 1, d));
+  const hueco = [...document.querySelectorAll('#timeSlots .time-slot')]
+    .find(s => s.textContent === proximoHueco.time && !s.classList.contains('disabled'));
+  if (hueco) selectTime(proximoHueco.time, hueco);
+  document.getElementById('timeSlotsWrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 async function loadBlockedDates() {
@@ -2168,8 +2222,10 @@ function selectDate(date) {
   document.getElementById('cf-date').value = dateKey(date);
   document.getElementById('cf-time').value = '';
   renderCalendar();
-  showTimeSlots(date);
   updateDatetimeDisplay();
+  // Devuelve la promesa para que irAlProximoHueco pueda esperar a que estén
+  // pintados los huecos antes de marcar la hora.
+  return showTimeSlots(date);
 }
 
 // Construye un YYYY-MM-DD a partir de componentes locales (no ISO/UTC)

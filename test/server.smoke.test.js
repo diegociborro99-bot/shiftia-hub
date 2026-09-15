@@ -64,6 +64,28 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
     assert.ok(!/<script(?![^>]*nonce=)[\s>]/.test(html), 'ningún <script> queda sin nonce');
     assert.ok(!/on(?:click|submit|error|input|load|change)="/.test(html), 'sin handlers inline en la landing');
 
+    // Las ventanas de atención, de punta a punta: lo que el calendario ofrece
+    // tiene que ser exactamente lo que el POST acepta. Se mira un día lejano
+    // para que el lead-time mínimo no tenga nada que ver.
+    const lejos = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+    const dia = await (await fetch(`${BASE}/api/booking/slots?date=${lejos}`)).json();
+    assert.deepEqual(
+      dia.slots.map((s) => s.time),
+      ['10:00', '10:30', '11:00', '11:30', '12:00', '16:00', '16:30', '17:00'],
+      'la agenda ofrece las dos ventanas de atención: 8 huecos, no la jornada entera'
+    );
+
+    // Resumen de disponibilidad: sin DB no puede saber qué está reservado, pero
+    // debe responder con la forma correcta y sin inventarse escasez.
+    const disp = await (await fetch(`${BASE}/api/booking/availability`)).json();
+    assert.ok(Object.prototype.hasOwnProperty.call(disp, 'next'), 'availability trae next');
+    assert.equal(typeof disp.libres7, 'number', 'availability cuenta huecos');
+    assert.equal(disp.escasez, false, 'con la agenda vacía no se anuncia escasez');
+    if (disp.next) {
+      assert.ok(dia.slots.some((s) => s.time === disp.next.time),
+        'el próximo hueco es una hora que de verdad se ofrece');
+    }
+
     // landing.css se sirve con max-age de 30 días: si el ?v= no cambia con el
     // fichero, un cambio de CSS no le llega a nadie durante un mes y el HTML
     // nuevo se dibuja con la hoja vieja. El servidor debe reescribirlo con el
