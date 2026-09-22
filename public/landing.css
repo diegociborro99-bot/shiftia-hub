@@ -111,6 +111,23 @@ a { text-decoration: none; color: inherit; }
   text-decoration: none; white-space: nowrap;
 }
 .client-band-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* Los seis clientes caben en una sola fila a partir de 1300px. Por debajo, el
+   flex dejaba a uno solo centrado en la última fila (5+1), que se lee como un
+   descuadre y no como una decisión. Se fija rejilla de 3 columnas: con seis
+   nombres siempre sale 3+3, y con nueve saldría 3+3+3. Los repartos que no
+   dejan filas cojas son los divisores del número de clientes —6, 3 y 2—, así
+   que al añadir el séptimo hay que volver a mirar esto. */
+@media (min-width: 769px) and (max-width: 1299px) {
+  .client-band-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px 28px;
+    justify-items: start;
+    /* El align-items:center de la fila flex se hereda en la rejilla: si un
+       nombre ocupa dos líneas, descoloca verticalmente a sus vecinos. */
+    align-items: start;
+  }
+}
 @media (max-width: 768px) {
   /* En móvil la fila tipográfica quedaba como texto suelto y desalineado:
      pasa a rejilla 2×2 de mini-tarjetas con anclaje visual. */
@@ -119,6 +136,9 @@ a { text-decoration: none; color: inherit; }
   .client-band-label { text-align: center; }
   .client-band-row {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    /* Sin esto, el align-items:center de la fila flex deja las dos tarjetas de
+       cada fila con alturas distintas y la rejilla se ve descuadrada. */
+    align-items: stretch;
   }
   .client-band-item {
     background: var(--bg-card, #fff);

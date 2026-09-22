@@ -40,11 +40,12 @@ Capacidades principales:
 
 ## Clientes y casos reales
 
-Shiftia ya se usa en producción en varios sectores. En la web aparecen en la sección "Confiado por profesionales de:" (https://www.shiftia.es):
+Shiftia ya se usa en producción en varios sectores. En la web aparecen en la banda "Confían en Shiftia", bajo la portada (https://www.shiftia.es):
 
 - SPAR Supermercados — retail / supermercados, Gran Canaria.
 - NONWATIO — gestión de cámaras de frío, Valencia.
 - La Otra Abacería — hostelería, León.
+- Grupo Pasarela — grupo hostelero de 4 locales, Elche (Alicante).
 - Gestión de personal en laboratorios y servicios sanitarios, Asturias (cliente del sector sanitario, confidencial por convenio: sin nombre público).
 - Hospital Universitario Clínico San Cecilio (Granada) — Servicio de Urología: planificación de turnos del servicio con Shiftia (sanidad pública, Servicio Andaluz de Salud).
 
