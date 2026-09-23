@@ -176,6 +176,9 @@ const PRETTY_HTML_ROUTES = {
   '/software-turnos-residencias':     'software-turnos-residencias.html',
   '/cuadrantes-enfermeria-clinicas':  'cuadrantes-enfermeria-clinicas.html',
   '/turnos-hosteleria':               'turnos-hosteleria.html',
+  '/software-cuadrantes-residencias': 'software-cuadrantes-residencias.html',
+  '/software-turnos-24-horas':        'software-turnos-24-horas.html',
+  '/software-turnos-call-center':     'software-turnos-call-center.html',
   // Páginas de intención comercial: comparativas (lo que citan los LLM)
   '/shiftia-vs-aturnos':              'shiftia-vs-aturnos.html',
   '/shiftia-vs-sesame-hr':            'shiftia-vs-sesame-hr.html',
@@ -283,6 +286,12 @@ app.use(compression());
 // Security headers (lightweight helmet alternative — no extra dependency)
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
+  // /api no es contenido público. robots.txt ya hace Disallow, y este header
+  // pide noindex aunque un rastreador llegue por un enlace. No cambia el cuerpo
+  // ni el código de estado: la app sigue consumiendo el JSON igual.
+  if (req.path === '/api' || req.path.startsWith('/api/')) {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  }
   // Clickjacking protection lives in CSP frame-ancestors below; modern browsers
   // ignore X-Frame-Options when both are present, so we drop the duplicate header.
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -2796,6 +2805,9 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: '/software-turnos-residencias',               priority: '0.9', changefreq: 'monthly' },
     { loc: '/cuadrantes-enfermeria-clinicas',            priority: '0.9', changefreq: 'monthly' },
     { loc: '/turnos-hosteleria',                         priority: '0.9', changefreq: 'monthly' },
+    { loc: '/software-cuadrantes-residencias',           priority: '0.9', changefreq: 'monthly' },
+    { loc: '/software-turnos-24-horas',                  priority: '0.9', changefreq: 'monthly' },
+    { loc: '/software-turnos-call-center',               priority: '0.9', changefreq: 'monthly' },
     { loc: '/shiftia-vs-aturnos',                        priority: '0.8', changefreq: 'monthly' },
     { loc: '/shiftia-vs-sesame-hr',                      priority: '0.8', changefreq: 'monthly' },
     { loc: '/mejores-software-turnos-espana',            priority: '0.9', changefreq: 'monthly' },

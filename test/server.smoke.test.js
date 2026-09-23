@@ -119,6 +119,10 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
 
     const notFound = await fetch(`${BASE}/api/no-existe`);
     assert.equal(notFound.status, 404, 'las rutas /api desconocidas devuelven 404');
+    assert.match(notFound.headers.get('x-robots-tag') || '', /noindex/i, '/api desconocida envía noindex');
+    const healthRes = await fetch(`${BASE}/api/health`);
+    assert.match(healthRes.headers.get('x-robots-tag') || '', /noindex/i, '/api/health envía noindex');
+    assert.equal((await healthRes.json()).status, 'ok', 'el noindex no cambia el JSON de /api/health');
 
     // Páginas de intención comercial y guías nuevas: 200, canonical y FAQ en JSON-LD.
     const commercial = [
@@ -141,11 +145,44 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
       assert.equal(dup.headers.get('location'), route, `${route}.html apunta a la canónica`);
     }
 
+    // Landings Gale (copy aprobado): título, H1 y canonical exactos, sin FAQ inventada.
+    const galeLandings = [
+      {
+        route: '/software-cuadrantes-residencias',
+        title: 'Software de cuadrantes para residencias | Shiftia',
+        h1: 'Software de cuadrantes para residencias y dependencia',
+      },
+      {
+        route: '/software-turnos-24-horas',
+        title: 'Software de turnos 24h para facility y seguridad | Shiftia',
+        h1: 'Planificación de turnos 24 horas para operaciones continuas',
+      },
+      {
+        route: '/software-turnos-call-center',
+        title: 'Software de turnos para call center | Shiftia',
+        h1: 'Software de turnos y planillas para contact center',
+      },
+    ];
+    for (const page of galeLandings) {
+      const r = await fetch(`${BASE}${page.route}`);
+      assert.equal(r.status, 200, `${page.route} responde 200`);
+      const body = await r.text();
+      assert.ok(body.includes(`<title>${page.title}</title>`), `${page.route} title`);
+      assert.ok(body.includes(`<h1>${page.h1}</h1>`), `${page.route} H1`);
+      assert.ok(body.includes(`<link rel="canonical" href="https://www.shiftia.es${page.route}">`), `${page.route} canonical`);
+      assert.ok(body.includes('href="/#contact"'), `${page.route} enlaza al contacto`);
+      assert.ok(body.includes('href="/demo"'), `${page.route} enlaza a la demo`);
+      const dup = await fetch(`${BASE}${page.route}.html`, { redirect: 'manual' });
+      assert.equal(dup.status, 301, `${page.route}.html redirige 301`);
+      assert.equal(dup.headers.get('location'), page.route, `${page.route}.html apunta a la canónica`);
+    }
+
     // El sitemap incluye las páginas nuevas.
     const sitemap = await (await fetch(`${BASE}/sitemap.xml`)).text();
-    for (const route of [...commercial, ...guides]) {
+    for (const route of [...commercial, ...guides, ...galeLandings.map((p) => p.route)]) {
       assert.ok(sitemap.includes(`<loc>https://www.shiftia.es${route}</loc>`), `sitemap incluye ${route}`);
     }
+    assert.ok(!sitemap.includes('/api/'), 'el sitemap no lista /api');
   } catch (err) {
     err.message += '\n--- logs del servidor ---\n' + logs.slice(-2000);
     throw err;

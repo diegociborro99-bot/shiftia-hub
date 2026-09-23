@@ -40,7 +40,7 @@ const SKIP = new Set(['/login', '/dashboard', '/docs', '/demo']);
 const knownPaths = new Set([...Object.keys(routes), '/status', '/forgot-password', '/reset-password', '/privacidad', '/terminos', '/cookies', '/sobre-nosotros', '/sitemap.xml', '/llms.txt']);
 
 // Páginas nuevas (sept. 2026): metas estrictas. Las anteriores solo avisan.
-const STRICT_META = new Set([...COMMERCIAL, '/recursos/turnos-rotativos-convenio-2026', '/recursos/registro-horario-residencias', '/recursos/reparto-equitativo-de-noches']);
+const STRICT_META = new Set([...COMMERCIAL, '/recursos/turnos-rotativos-convenio-2026', '/recursos/registro-horario-residencias', '/recursos/reparto-equitativo-de-noches', '/software-cuadrantes-residencias', '/software-turnos-24-horas', '/software-turnos-call-center']);
 
 let failures = 0;
 let warnings = 0;
