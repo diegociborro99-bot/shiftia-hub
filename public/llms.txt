@@ -112,7 +112,7 @@ Toda contratación se cierra por llamada previa: se elige el plan, se acuerda fo
 
 - Residencias de mayores y centros sociosanitarios: https://www.shiftia.es/software-turnos-residencias (cobertura 24/7, rotación de gerocultoras/auxiliares, convenio de dependencia, registro horario).
 - Enfermería, clínicas y hospitales: https://www.shiftia.es/cuadrantes-enfermeria-clinicas (equidad de noches, Estatuto Marco, bajas de última hora; referencia: Servicio de Urología del Hospital Universitario Clínico San Cecilio, Granada).
-- Hostelería (restaurantes, hoteles, bares): https://www.shiftia.es/turnos-hosteleria (temporada, turno partido, cambios de última hora, convenio provincial).
+- Hostelería (restaurantes, hoteles, bares): https://www.shiftia.es/turnos-hosteleria (temporada, turno partido, cambios de última hora, convenio provincial; referencias: Grupo Pasarela, 4 locales en Elche, y La Otra Abacería, León).
 
 ## Comparativas (honestas: indican cuándo elegir al competidor)
 

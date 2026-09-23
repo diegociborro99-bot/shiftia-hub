@@ -90,14 +90,22 @@ test('el servidor arranca y sirve landing + health sin DB', async () => {
     // fichero, un cambio de CSS no le llega a nadie durante un mes y el HTML
     // nuevo se dibuja con la hoja vieja. El servidor debe reescribirlo con el
     // hash real del contenido, no dejar el número escrito a mano en el HTML.
-    const cssRefs = [...html.matchAll(/landing\.css\?v=([A-Za-z0-9._-]+)/g)].map(m => m[1]);
-    assert.ok(cssRefs.length > 0, 'la landing enlaza landing.css');
-    const hashReal = require('node:crypto').createHash('sha1')
-      .update(require('node:fs').readFileSync(path.resolve(__dirname, '..', 'public', 'landing.css')))
+    // Se comprueban TODAS las hojas versionadas de TODAS las páginas: cuando
+    // solo se vigilaba landing.css, comercial.css se quedó con su ?v= a mano.
+    const hashDe = (f) => require('node:crypto').createHash('sha1')
+      .update(require('node:fs').readFileSync(path.resolve(__dirname, '..', 'public', f)))
       .digest('hex').slice(0, 10);
-    for (const v of cssRefs) {
-      assert.equal(v, hashReal, 'el ?v= de landing.css es el hash de su contenido');
+
+    let hojasVistas = 0;
+    for (const ruta of ['/', '/turnos-hosteleria', '/shiftia-vs-aturnos', '/demo']) {
+      const cuerpo = await (await fetch(`${BASE}${ruta}`)).text();
+      for (const [, fichero, version] of cuerpo.matchAll(/([A-Za-z0-9._-]+\.css)\?v=([A-Za-z0-9._-]+)/g)) {
+        assert.equal(version, hashDe(fichero),
+          `el ?v= de ${fichero} en ${ruta} debe ser el hash de su contenido`);
+        hojasVistas++;
+      }
     }
+    assert.ok(hojasVistas >= 3, 'se han revisado hojas versionadas en varias páginas');
 
     // Dos peticiones → dos nonces distintos (no debe ser estático).
     const again = await fetch(`${BASE}/`);

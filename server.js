@@ -200,22 +200,33 @@ function buildCsp(nonce) {
     "base-uri 'self'; form-action 'self'; upgrade-insecure-requests";
 }
 
-// Versión de landing.css derivada de su propio contenido. El CSS se sirve con
-// max-age de 30 días, así que un cambio que no suba el ?v= deja a los visitantes
-// con la hoja vieja durante un mes: el HTML nuevo llega (max-age 300) y se
-// dibuja con CSS antiguo. Calcularlo aquí quita ese paso manual de en medio —
-// el ?v= que haya en el HTML es solo un respaldo para quien sirva el fichero
-// sin pasar por aquí. Se calcula al arrancar; cada despliegue reinicia.
-const CSS_VERSION = (() => {
+// Versión de cada hoja de estilos, derivada de su propio contenido. El CSS se
+// sirve con max-age de 30 días, así que un cambio que no suba el ?v= deja a los
+// visitantes con la hoja vieja durante un mes: el HTML nuevo llega (max-age 300)
+// y se dibuja con CSS antiguo. Calcularlo aquí quita ese paso manual de en
+// medio — el ?v= escrito en el HTML es solo un respaldo para quien sirva el
+// fichero sin pasar por aquí. Se calcula al arrancar; cada despliegue reinicia.
+const CSS_VERSIONS = (() => {
+  const out = {};
   try {
-    return crypto.createHash('sha1')
-      .update(fs.readFileSync(path.join(PUBLIC_DIR, 'landing.css')))
-      .digest('hex').slice(0, 10);
+    for (const f of fs.readdirSync(PUBLIC_DIR)) {
+      if (!f.endsWith('.css')) continue;
+      out[f] = crypto.createHash('sha1')
+        .update(fs.readFileSync(path.join(PUBLIC_DIR, f)))
+        .digest('hex').slice(0, 10);
+    }
   } catch (err) {
-    console.warn('No se pudo versionar landing.css:', err.message);
-    return String(Date.now());
+    console.warn('No se pudieron versionar las hojas de estilo:', err.message);
   }
+  return out;
 })();
+
+// Reescribe cualquier "algo.css?v=…" con el hash real de ese fichero. Una hoja
+// que no esté en public/ se deja como viene.
+const versionarCss = (html) => html.replace(
+  /([A-Za-z0-9._-]+\.css)\?v=[A-Za-z0-9._-]+/g,
+  (original, fichero) => (CSS_VERSIONS[fichero] ? fichero + '?v=' + CSS_VERSIONS[fichero] : original)
+);
 
 // Sirve un HTML de public/ transformado: snippets de terceros (si los hay) +
 // nonce por-respuesta en cada <script> + CSP con ese nonce + versión del CSS.
@@ -232,7 +243,7 @@ function sendPublicHtml(res, fileName, next) {
     }
     const nonce = crypto.randomBytes(16).toString('base64');
     out = out.replace(/<script(?=[\s>])/g, `<script nonce="${nonce}"`);
-    out = out.replace(/landing\.css\?v=[A-Za-z0-9._-]+/g, `landing.css?v=${CSS_VERSION}`);
+    out = versionarCss(out);
     res.setHeader('Content-Security-Policy', buildCsp(nonce));
     res.type('html');
     res.setHeader('Cache-Control', 'public, max-age=300');
@@ -305,8 +316,7 @@ app.get('/sw.js', (req, res, next) => {
       res.setHeader('Service-Worker-Allowed', '/');
       // Misma sustitución que en el HTML: si el SW precachea una URL de CSS
       // distinta a la que pide la página, se descarga una hoja que nadie usa.
-      res.send(js.split('__BUILD__').join(BUILD_ID)
-        .replace(/landing\.css\?v=[A-Za-z0-9._-]+/g, `landing.css?v=${CSS_VERSION}`));
+      res.send(versionarCss(js.split('__BUILD__').join(BUILD_ID)));
     })
     .catch(() => next());
 });

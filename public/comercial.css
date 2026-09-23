@@ -146,7 +146,14 @@ blockquote{margin:28px 0;padding:20px 24px;background:var(--bg-card);border:1px 
 /* ---------- Banda de clientes ---------- */
 .proof{margin:40px 0 0;padding:22px 26px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);display:grid;grid-template-columns:auto 1fr;gap:16px 28px;align-items:center;box-shadow:var(--sh-xs)}
 .proof .proof-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);font-weight:700;padding-right:24px;border-right:1px solid var(--border);align-self:stretch;display:flex;align-items:center;max-width:120px;line-height:1.4}
-.proof .clients{display:flex;flex-wrap:wrap;gap:14px 32px}
+/* Los nombres de cliente son de anchos muy dispares ("NONWATIO" frente a
+   "Hospital Universitario Clínico San Cecilio"), así que con flex-wrap el
+   reparto salía irregular y con filas cojas (2+3+1, 1+2+2+1) — ya pasaba con
+   cinco. Rejilla con un número de columnas que divide a seis (3, 2 y 1): nunca
+   queda uno suelto. Si algún día son siete, hay que volver a mirar esto. */
+.proof .clients{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 32px;align-items:start}
+@media (max-width:1000px){.proof .clients{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.proof .clients{grid-template-columns:minmax(0,1fr)}}
 .proof .client{display:flex;flex-direction:column;gap:2px}
 .proof .client b{font-weight:600;font-size:.94rem;color:var(--text1);letter-spacing:-.01em}
 .proof .client span{font-size:.74rem;color:var(--text3)}
