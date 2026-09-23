@@ -12,6 +12,16 @@ Disallow: /login
 Disallow: /forgot-password
 Disallow: /reset-password
 
+# Googlebot: mismo criterio que el grupo *. /api queda fuera del índice.
+# Las respuestas bajo /api envían además X-Robots-Tag: noindex, nofollow.
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /reset-password
+
 # Bots de modelos LLM/IA (entrenamiento + búsqueda)
 User-agent: GPTBot
 Allow: /
