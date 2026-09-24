@@ -2299,6 +2299,9 @@ async function showTimeSlots(date) {
       el.classList.add('disabled');
       el.setAttribute('aria-disabled', 'true');
       if (slot.booked) { el.title = 'Hora ya reservada'; el.style.textDecoration = 'line-through'; }
+      // Hora retirada por un cierre parcial: se ve igual que una ya cogida,
+      // pero el aviso no afirma que haya una reserva detrás.
+      else if (slot.cerrado) { el.title = 'No disponible'; el.style.textDecoration = 'line-through'; }
       else if (slot.tooSoon) { el.title = 'Demasiado pronto — reserva con al menos 4h de antelación'; }
     } else {
       el.setAttribute('tabindex', '0');

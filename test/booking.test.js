@@ -8,6 +8,7 @@ const {
   escHtml,
   generateDaySlots,
   parseWindows,
+  partialClosureSlots,
   expandClosure,
   madridIsoFromLocal,
   prettyTimeMadrid,
@@ -72,6 +73,40 @@ test('generateDaySlots: las ventanas se alinean al paso y no se solapan', () => 
   // Tramos solapados no duplican horas.
   assert.deepEqual(generateDaySlots({ ...CFG, windows: parseWindows('10:00-11:00,10:30-11:30') }),
     ['10:00', '10:30', '11:00']);
+});
+
+const VENTANAS = generateDaySlots({ ...CFG, windows: parseWindows('10:00-12:30,16:00-17:30') });
+
+test('partialClosureSlots: cierra el día a partir de una hora', () => {
+  const fuera = partialClosureSlots('2026-09-30', [{ date: '2026-09-30', from: '12:00' }], VENTANAS);
+  assert.deepEqual([...fuera].sort(), ['12:00', '16:00', '16:30', '17:00'],
+    'a partir de las 12 se van las 12:00 y toda la tarde');
+  const quedan = VENTANAS.filter((t) => !fuera.has(t));
+  assert.deepEqual(quedan, ['10:00', '10:30', '11:00', '11:30'], 'la mañana sigue abierta');
+});
+
+test('partialClosureSlots: from es inclusivo y to exclusivo', () => {
+  const f = partialClosureSlots('2026-09-30', [{ date: '2026-09-30', from: '11:00', to: '16:30' }], VENTANAS);
+  assert.ok(f.has('11:00'), 'la hora de inicio entra en el cierre');
+  assert.ok(!f.has('16:30'), 'la hora de fin queda fuera');
+  assert.deepEqual([...f].sort(), ['11:00', '11:30', '12:00', '16:00']);
+});
+
+test('partialClosureSlots: solo afecta a su día y aguanta la basura', () => {
+  const cierres = [{ date: '2026-09-30', from: '12:00' }];
+  assert.equal(partialClosureSlots('2026-10-01', cierres, VENTANAS).size, 0, 'otro día no se toca');
+  assert.equal(partialClosureSlots('2026-09-30', [], VENTANAS).size, 0);
+  assert.equal(partialClosureSlots('2026-09-30', null, VENTANAS).size, 0);
+  for (const malo of [{ date: '2026-09-30', from: '25:00' }, { date: '2026-09-30', from: 'tarde' },
+                      { date: '2026-09-30', from: '16:00', to: '10:00' }, null]) {
+    assert.equal(partialClosureSlots('2026-09-30', [malo], VENTANAS).size, 0,
+      'un cierre mal escrito se ignora en vez de tumbar el arranque');
+  }
+});
+
+test('partialClosureSlots: sin from cierra el día entero', () => {
+  const f = partialClosureSlots('2026-09-30', [{ date: '2026-09-30' }], VENTANAS);
+  assert.equal(f.size, VENTANAS.length);
 });
 
 test('expandClosure: incluye los dos extremos', () => {

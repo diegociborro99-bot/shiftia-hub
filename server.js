@@ -100,7 +100,15 @@ const BOOKING_LOW_STOCK = Number(process.env.BOOKING_LOW_STOCK || 6);
 // DELETE /api/admin/blocked-dates/:date. Los fines de semana ya están cerrados
 // por la regla de lunes a viernes; incluirlos aquí solo los hace explícitos.
 const BOOKING_CLOSURES = [
+  { from: '2026-10-14', to: '2026-10-16', reason: 'Todo el equipo en un congreso presencial de inteligencia artificial. Esos días no hay reuniones; el soporte técnico se sigue atendiendo.' },
   { from: '2026-10-17', to: '2026-10-27', reason: 'Implementación presencial en el extranjero' }
+];
+
+// Cierres de parte de un día. No pasan por blocked_dates —esa tabla cierra la
+// jornada entera y enseña el motivo—: aquí solo se retiran las horas, sin
+// explicar nada al visitante. `from` entra en el cierre; `to` es opcional.
+const BOOKING_PARTIAL_CLOSURES = [
+  { date: '2026-09-30', from: '12:00' }
 ];
 
 // La expansión a días sueltos vive en ./lib/booking.js (ver test/booking.test.js).
@@ -1588,6 +1596,12 @@ const generateDaySlots = () => bookingLib.generateDaySlots({
   lunchBlock: BOOKING_LUNCH_BLOCK,
   windows: BOOKING_WINDOWS
 });
+// Horas retiradas de un día por un cierre parcial. Se consulta desde los tres
+// sitios que deciden disponibilidad —slots, availability y el POST— para que
+// ninguno ofrezca lo que otro rechaza.
+const horasCerradas = (dateStr) =>
+  bookingLib.partialClosureSlots(dateStr, BOOKING_PARTIAL_CLOSURES, generateDaySlots());
+
 // "10:00–12:30 y 16:00–17:30", para los mensajes de error de la reserva.
 const describeWindows = () => {
   const hhmm = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
@@ -2180,8 +2194,9 @@ app.get('/api/booking/availability', apiLimiter, async (req, res) => {
     let libres7 = 0;
     dias.forEach((dia, i) => {
       if (cerradas.has(dia) || esFinDeSemana(dia)) return;
+      const parciales = horasCerradas(dia);
       for (const t of horas) {
-        if (ocupadas.has(dia + ' ' + t)) continue;
+        if (ocupadas.has(dia + ' ' + t) || parciales.has(t)) continue;
         const instante = madridIsoFromLocal(dia, t);
         if (instante.getTime() - ahora.getTime() < BOOKING_MIN_LEAD_HOURS * 3600 * 1000) continue;
         if (!proximo) proximo = { date: dia, time: t };
@@ -2278,14 +2293,17 @@ app.get('/api/booking/slots', apiLimiter, async (req, res) => {
 
     // Lead-time mínimo (no permitimos reservar el mismo día con < BOOKING_MIN_LEAD_HOURS)
     const now = new Date();
+    const cerradas = horasCerradas(date);
     const available = allSlots.map(t => {
       const slotInstant = madridIsoFromLocal(date, t);
       const tooSoon = (slotInstant.getTime() - now.getTime()) < BOOKING_MIN_LEAD_HOURS * 3600 * 1000;
+      const cerrado = cerradas.has(t);
       return {
         time: t,
         booked: booked.has(t),
         tooSoon,
-        available: !blocked && !booked.has(t) && !tooSoon
+        cerrado,
+        available: !blocked && !booked.has(t) && !tooSoon && !cerrado
       };
     });
 
@@ -2358,6 +2376,11 @@ app.post('/api/booking', contactLimiter, async (req, res) => {
     const horasDelDia = generateDaySlots();
     if (!horasDelDia.includes(time)) {
       return res.status(400).json({ error: `Esa hora no se atiende. Horario: ${describeWindows()} (Europe/Madrid)` });
+    }
+    // Cierre parcial del día: se rechaza igual que una hora ya cogida, sin
+    // detallar el motivo.
+    if (horasCerradas(date).has(time)) {
+      return res.status(400).json({ error: 'Esa hora no está disponible. Por favor, elige otra.' });
     }
 
     // Fin de semana — usamos getDay() en UTC sobre el instante Madrid 12:00
