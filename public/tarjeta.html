@@ -121,9 +121,16 @@
     background: radial-gradient(circle, rgba(47,163,147,.32), transparent 68%);
     pointer-events: none;
   }
-  .card > * { position: relative; }
+  /* El propio símbolo, en grande y saliéndose por el canto: marca la tarjeta
+     sin competir con el texto, que va por delante. */
+  .watermark {
+    position: absolute; right: -58px; bottom: -66px;
+    width: 250px; height: 250px; opacity: .07;
+    pointer-events: none;
+  }
+  .card > *:not(.watermark) { position: relative; }
 
-  .mark { width: 46px; height: 46px; display: block; }
+  .mark { width: 58px; height: 58px; display: block; }
   .brand {
     font-family: var(--serif); font-weight: 400;
     font-size: 2.6rem; line-height: 1; letter-spacing: -.015em;
@@ -213,6 +220,12 @@
 <main class="wrap">
 
   <section class="card">
+    <svg class="watermark" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-linecap="round" aria-hidden="true">
+      <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="2.2"/>
+      <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="2.2"/>
+      <path d="M28 8l4-4 2 5" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+
     <svg class="mark" viewBox="0 0 40 40" role="img" aria-label="Shiftia">
       <defs><linearGradient id="m" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
         <stop offset="0" stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/>
