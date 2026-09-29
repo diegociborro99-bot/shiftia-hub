@@ -169,6 +169,7 @@ const PRETTY_HTML_ROUTES = {
   '/docs':     'docs.html',
   '/demo':     'demo.html',
   '/sobre-nosotros': 'sobre-nosotros.html',
+  '/tarjeta':  'tarjeta.html',   // tarjeta de visita virtual, pensada para compartir por enlace o QR
   '/status':   'status.html', // enlazado desde llms.txt; sin esta entrada devolvía 404
   '/recursos': 'recursos/index.html',
   '/recursos/descanso-minimo-entre-turnos': 'recursos/descanso-minimo-entre-turnos.html',
@@ -336,6 +337,16 @@ app.get('/sw.js', (req, res, next) => {
       res.send(versionarCss(js.split('__BUILD__').join(BUILD_ID)));
     })
     .catch(() => next());
+});
+
+// DEBE ir antes de express.static, igual que el sw.js.
+// La vCard de la tarjeta. express.static la serviría como text/x-vcard (el tipo
+// antiguo); con text/vcard, el de la RFC 6350, iOS y Android la abren
+// directamente en la app de contactos en vez de tratarla como fichero suelto.
+app.get('/shiftia.vcf', (req, res) => {
+  res.type('text/vcard; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.sendFile(path.join(PUBLIC_DIR, 'shiftia.vcf'));
 });
 
 app.use(express.static(path.join(__dirname, 'public'), {
@@ -2837,6 +2848,7 @@ app.get('/sitemap.xml', (req, res) => {
     { loc: '/docs',                                      priority: '0.7', changefreq: 'monthly' },
     { loc: '/sobre-nosotros',                            priority: '0.6', changefreq: 'monthly' },
     { loc: '/status',                                    priority: '0.3', changefreq: 'weekly'  },
+    { loc: '/tarjeta',                                   priority: '0.4', changefreq: 'yearly'  },
     { loc: '/privacidad',                                priority: '0.3', changefreq: 'yearly'  },
     { loc: '/terminos',                                  priority: '0.3', changefreq: 'yearly'  },
     { loc: '/cookies',                                   priority: '0.3', changefreq: 'yearly'  }
@@ -2856,6 +2868,7 @@ ${urls.map(u => `  <url>
 });
 
 app.get('/sobre-nosotros', (req, res) => sendPublicHtml(res, 'sobre-nosotros.html'));
+app.get('/tarjeta', (req, res) => sendPublicHtml(res, 'tarjeta.html'));
 app.get('/privacidad', (req, res) => sendPublicHtml(res, 'privacidad.html'));
 app.get('/terminos',   (req, res) => sendPublicHtml(res, 'terminos.html'));
 app.get('/cookies',    (req, res) => sendPublicHtml(res, 'cookies.html'));

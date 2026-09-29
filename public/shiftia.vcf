@@ -1,0 +1,13 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Ciborro;Diego;;;
+FN:Diego Ciborro
+ORG:Shiftia (Highkey Labs Software Solutions)
+TITLE:Fundador
+ROLE:Planificación de turnos y cuadrantes con IA
+TEL;TYPE=WORK,VOICE:+34663504647
+EMAIL;TYPE=WORK,INTERNET:info@shiftia.es
+URL:https://www.shiftia.es
+ADR;TYPE=WORK:;;;Oviedo;Asturias;;España
+NOTE:Software español de planificación de turnos y cuadrantes con IA para empresas con plantilla propia que rota: sanidad, residencias, industria, seguridad, hostelería y comercio.
+END:VCARD

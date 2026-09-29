@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarjeta de contacto | Shiftia</title>
+<meta name="description" content="Tarjeta de visita digital de Shiftia: teléfono, email y web en un toque, con la opción de guardar el contacto en el móvil o agendar una llamada de 30 minutos.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://www.shiftia.es/tarjeta">
+<meta property="og:title" content="Shiftia — Planificación de turnos y cuadrantes con IA">
+<meta property="og:description" content="Tarjeta de contacto: teléfono, email, web y la opción de agendar una llamada de 30 minutos.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://www.shiftia.es/tarjeta">
+<meta property="og:image" content="https://www.shiftia.es/og-image.png?v=2">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Shiftia">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shiftia — Planificación de turnos y cuadrantes con IA">
+<meta name="twitter:description" content="Tarjeta de contacto: teléfono, email, web y la opción de agendar una llamada.">
+<meta name="twitter:image" content="https://www.shiftia.es/og-image.png?v=2">
+<meta name="theme-color" content="#0e0f0f">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ContactPage",
+      "@id": "https://www.shiftia.es/tarjeta#webpage",
+      "url": "https://www.shiftia.es/tarjeta",
+      "name": "Tarjeta de contacto | Shiftia",
+      "inLanguage": "es-ES",
+      "about": { "@id": "https://www.shiftia.es/#organization" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.shiftia.es/#organization",
+      "name": "Shiftia",
+      "legalName": "Highkey Labs Software Solutions",
+      "url": "https://www.shiftia.es/",
+      "logo": "https://www.shiftia.es/icon-512.png",
+      "email": "info@shiftia.es",
+      "telephone": "+34 663 50 46 47",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Oviedo",
+        "addressRegion": "Asturias",
+        "addressCountry": "ES"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/shiftia",
+        "https://maps.google.com/?cid=13805315898529063097"
+      ]
+    },
+    {
+      "@type": "Person",
+      "name": "Diego Ciborro",
+      "jobTitle": "Fundador",
+      "worksFor": { "@id": "https://www.shiftia.es/#organization" },
+      "email": "info@shiftia.es",
+      "telephone": "+34 663 50 46 47",
+      "url": "https://www.shiftia.es/tarjeta"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.shiftia.es/" },
+        { "@type": "ListItem", "position": 2, "name": "Tarjeta de contacto", "item": "https://www.shiftia.es/tarjeta" }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+  :root {
+    --ink: #0e0f0f;
+    --bg: #faf9f6;
+    --card: #ffffff;
+    --line: #e8e6df;
+    --muted: #4a4a47;
+    --subtle: #8a8a85;
+    --teal: #0f7a6d;
+    --teal-lit: #2fa393;
+    --serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
+    --sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'Geist Mono', SFMono-Regular, Menlo, monospace;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    display: flex; justify-content: center;
+    padding: 32px 18px 40px;
+    min-height: 100vh;
+  }
+  .wrap { width: 100%; max-width: 420px; }
+
+  /* ---------- La tarjeta ---------- */
+  .card {
+    position: relative; overflow: hidden;
+    background: var(--ink);
+    border-radius: 22px;
+    padding: 28px 26px 26px;
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(15,15,15,.06), 0 28px 60px -28px rgba(15,15,15,.55);
+  }
+  /* Un solo foco de color, arriba a la izquierda, para que el negro respire */
+  .card::before {
+    content: ''; position: absolute; top: -70px; left: -70px;
+    width: 250px; height: 250px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(47,163,147,.32), transparent 68%);
+    pointer-events: none;
+  }
+  .card > * { position: relative; }
+
+  .mark { width: 46px; height: 46px; display: block; }
+  .brand {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 2.6rem; line-height: 1; letter-spacing: -.015em;
+    margin: 18px 0 0;
+  }
+  .claim {
+    margin: 9px 0 0; max-width: 22em;
+    font-size: .95rem; line-height: 1.45; color: rgba(255,255,255,.66);
+  }
+  .rule { height: 1px; background: rgba(255,255,255,.14); margin: 22px 0 18px; }
+  .who { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .who b { font-size: 1.06rem; font-weight: 600; letter-spacing: -.01em; }
+  .who span {
+    font-family: var(--mono); font-size: .62rem; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--teal-lit);
+  }
+  .role { margin: 5px 0 0; font-size: .86rem; line-height: 1.45; color: rgba(255,255,255,.55); }
+
+  /* ---------- Acciones ---------- */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .act {
+    display: flex; align-items: center; gap: 11px;
+    padding: 13px 14px; border-radius: 14px;
+    background: var(--card); border: 1px solid var(--line);
+    color: var(--ink); text-decoration: none;
+    box-shadow: 0 1px 2px rgba(15,15,15,.04);
+    transition: border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+  }
+  .act:hover { border-color: var(--teal); box-shadow: 0 12px 26px -20px rgba(15,122,109,.7); transform: translateY(-1px); }
+  .act:active { transform: none; }
+  .act:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .act svg { width: 17px; height: 17px; flex: none; color: var(--teal); }
+  .act .txt { min-width: 0; }
+  .act .k {
+    display: block; font-family: var(--mono); font-size: .58rem; font-weight: 600;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--subtle);
+  }
+  .act .v {
+    display: block; font-size: .87rem; font-weight: 500; margin-top: 1px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .cta {
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    width: 100%; margin-top: 10px; padding: 15px 18px;
+    border-radius: 14px; font-size: .96rem; font-weight: 600;
+    text-decoration: none; border: 1px solid var(--ink);
+    background: var(--ink); color: var(--bg);
+    transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .cta:hover { transform: translateY(-1px); box-shadow: 0 14px 30px -18px rgba(15,15,15,.6); }
+  .cta:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .cta svg { width: 17px; height: 17px; }
+  .cta.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .cta.ghost:hover { border-color: var(--ink); box-shadow: none; }
+
+  /* ---------- QR y pie ---------- */
+  .qr-row {
+    display: flex; align-items: center; gap: 16px;
+    margin-top: 22px; padding: 16px 18px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+  }
+  .qr { flex: none; width: 82px; height: 82px; }
+  .qr svg { width: 100%; height: 100%; display: block; }
+  .qr-txt { font-size: .82rem; line-height: 1.45; color: var(--muted); }
+  .qr-txt b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+
+  .foot {
+    margin-top: 20px; text-align: center;
+    font-size: .76rem; line-height: 1.6; color: var(--subtle);
+  }
+  .foot a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); }
+  .foot a:hover { color: var(--ink); border-color: var(--subtle); }
+
+  @media (max-width: 380px) {
+    .grid { grid-template-columns: 1fr; }
+    .brand { font-size: 2.3rem; }
+    .qr-row { flex-direction: column; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .act, .cta { transition: none; }
+    .act:hover, .cta:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <section class="card">
+    <svg class="mark" viewBox="0 0 40 40" role="img" aria-label="Shiftia">
+      <defs><linearGradient id="m" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/>
+      </linearGradient></defs>
+      <rect width="40" height="40" rx="9" ry="9" fill="url(#m)"/>
+      <g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round">
+        <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/>
+        <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/>
+        <path d="M28 8l4-4 2 5" stroke-width="2.8" stroke-linejoin="round"/>
+      </g>
+    </svg>
+
+    <h1 class="brand">Shiftia</h1>
+    <p class="claim">Planificación de turnos y cuadrantes con IA para equipos que rotan.</p>
+
+    <div class="rule"></div>
+
+    <div class="who">
+      <b>Diego Ciborro</b>
+      <span>Fundador</span>
+    </div>
+    <p class="role">Enfermero especialista en activo en la sanidad pública. Shiftia nace de hacer cuadrantes reales en un servicio que no cierra ningún día.</p>
+  </section>
+
+  <nav class="grid" aria-label="Datos de contacto">
+    <a class="act" href="tel:+34663504647">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+      <span class="txt"><span class="k">Teléfono</span><span class="v">663 50 46 47</span></span>
+    </a>
+    <a class="act" href="mailto:info@shiftia.es">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+      <span class="txt"><span class="k">Email</span><span class="v">info@shiftia.es</span></span>
+    </a>
+    <a class="act" href="https://www.shiftia.es/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20"/></svg>
+      <span class="txt"><span class="k">Web</span><span class="v">shiftia.es</span></span>
+    </a>
+    <a class="act" href="https://www.linkedin.com/company/shiftia" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      <span class="txt"><span class="k">LinkedIn</span><span class="v">/company/shiftia</span></span>
+    </a>
+  </nav>
+
+  <a class="cta" href="/shiftia.vcf" download="Shiftia-Diego-Ciborro.vcf">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    Guardar contacto
+  </a>
+
+  <a class="cta ghost" href="https://www.shiftia.es/#contact">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Agendar una llamada de 30 min
+  </a>
+
+  <div class="qr-row">
+    <div class="qr" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#0e0f0f" d="M0 0.5h7m2 0h7m1 0h3m2 0h7M0 1.5h1m5 0h1m6 0h5m2 0h1m1 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h6m1 0h1m3 0h1m2 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h4m2 0h2m1 0h1m2 0h1m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h2m1 0h1m3 0h2m2 0h2m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h2m1 0h1m8 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h3m3 0h1m1 0h1m1 0h1m1 0h1M0 8.5h1m1 0h5m2 0h2m1 0h1m3 0h2m4 0h5M3 9.5h2m2 0h3m3 0h3m2 0h3m1 0h3m3 0h1M1 10.5h1m1 0h1m2 0h2m1 0h2m2 0h4m1 0h1m2 0h1M1 11.5h5m1 0h3m3 0h1m1 0h1m3 0h2m1 0h2m1 0h1m1 0h1M2 12.5h1m3 0h2m4 0h1m1 0h2m1 0h1m1 0h1m5 0h2M0 13.5h1m2 0h2m2 0h1m3 0h2m2 0h2m2 0h1m1 0h2m1 0h1m3 0h1M2 14.5h1m1 0h1m1 0h5m1 0h1m4 0h2m1 0h4m1 0h2M1 15.5h1m2 0h1m4 0h3m2 0h1m1 0h1m1 0h1m2 0h1m1 0h2m2 0h1M1 16.5h4m1 0h1m2 0h1m1 0h1m4 0h2m5 0h1m1 0h2M0 17.5h4m3 0h1m1 0h2m1 0h4m1 0h8m1 0h1m1 0h1M0 18.5h1m3 0h3m1 0h3m2 0h6m1 0h4m2 0h1M0 19.5h1m1 0h4m4 0h1m1 0h2m1 0h1m2 0h1m4 0h2m2 0h1M0 20.5h1m2 0h2m1 0h1m1 0h5m1 0h2m1 0h1m1 0h6m1 0h3M8 21.5h2m5 0h2m1 0h1m1 0h1m3 0h5M0 22.5h7m2 0h1m9 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h1m1 0h3m1 0h1m1 0h1m2 0h2m3 0h1m2 0h2M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h1m6 0h1m2 0h5m1 0h1m1 0h1M0 25.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h4m7 0h1m1 0h2M0 26.5h1m1 0h3m1 0h1m1 0h3m3 0h3m2 0h1m1 0h7M0 27.5h1m5 0h1m2 0h1m1 0h5m2 0h3m2 0h1m1 0h1m1 0h1M0 28.5h7m1 0h3m1 0h2m1 0h1m1 0h1m1 0h1m1 0h6"/></svg></div>
+    <p class="qr-txt"><b>Comparte la tarjeta</b>Enseña este código y que lo escaneen: abre esta misma página en su móvil.</p>
+  </div>
+
+  <p class="foot">
+    Oviedo, Asturias · Producto de Highkey Labs Software Solutions<br>
+    <a href="https://maps.google.com/?cid=13805315898529063097" rel="noopener">Perfil de empresa en Google</a>
+  </p>
+
+</main>
+</body>
+</html>
