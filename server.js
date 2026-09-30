@@ -349,6 +349,18 @@ app.get('/shiftia.vcf', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'shiftia.vcf'));
 });
 
+// El dossier se comparte por enlace, así que su URL tiene que ser estable y no
+// se puede versionar como el CSS. A cambio, caché de una hora en vez de los
+// siete días de los estáticos: si no, corregir una cifra tarda una semana en
+// llegar a quien abra el enlace, y Cloudflare sigue sirviendo el PDF viejo.
+// DEBE ir antes de express.static.
+app.get('/dossier.pdf', (req, res) => {
+  res.type('application/pdf');
+  res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+  res.setHeader('CDN-Cache-Control', 'public, max-age=3600');
+  res.sendFile(path.join(PUBLIC_DIR, 'dossier.pdf'));
+});
+
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
   etag: true,
