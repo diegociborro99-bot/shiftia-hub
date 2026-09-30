@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Shiftia — Dossier comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  :root {
+    --ink: #0e0f0f;
+    --bg: #faf9f6;
+    --paper: #ffffff;
+    --line: #e8e6df;
+    --line2: #c8c5bb;
+    --muted: #4a4a47;
+    --subtle: #8a8a85;
+    --teal: #0f7a6d;
+    --teal-lit: #2fa393;
+    --teal-soft: #e9f5f2;
+    --amber: #8a5300;
+    --amber-soft: #fdf4e4;
+    --serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+    --sans: 'Geist', -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'Geist Mono', SFMono-Regular, Menlo, monospace;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--ink); background: var(--bg); font-size: 10pt; line-height: 1.5; }
+
+  .page {
+    position: relative; width: 210mm; height: 297mm; overflow: hidden;
+    background: var(--bg); padding: 20mm 18mm 16mm;
+    page-break-after: always; break-after: page;
+    display: flex; flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  .page.dark { background: var(--ink); color: #fff; }
+
+  /* ---------- Cabecera y pie de página ---------- */
+  .ph { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9mm; }
+  .ph .mk { display: flex; align-items: center; gap: 2.5mm; }
+  .ph svg { width: 7mm; height: 7mm; }
+  .ph b { font-family: var(--serif); font-weight: 400; font-size: 14pt; letter-spacing: -.01em; }
+  .ph span { font-family: var(--mono); font-size: 7pt; letter-spacing: .14em; text-transform: uppercase; color: var(--subtle); }
+  .pf {
+    position: absolute; left: 18mm; right: 18mm; bottom: 9mm;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono); font-size: 7pt; letter-spacing: .1em; color: var(--subtle);
+    border-top: 1px solid var(--line); padding-top: 2.5mm;
+  }
+
+  /* ---------- Tipografía ---------- */
+  h1 { font-family: var(--serif); font-weight: 400; font-size: 34pt; line-height: 1.02; letter-spacing: -.02em; margin: 0 0 4mm; }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: 23pt; line-height: 1.1; letter-spacing: -.015em; margin: 0 0 3mm; }
+  h3 { font-size: 11pt; font-weight: 600; letter-spacing: -.01em; margin: 0 0 1.5mm; }
+  p { margin: 0 0 3mm; color: var(--muted); }
+  .lead { font-size: 12pt; line-height: 1.5; color: var(--ink); margin-bottom: 6mm; }
+  .eyebrow {
+    display: inline-block; font-family: var(--mono); font-size: 7.5pt; font-weight: 600;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--teal);
+    background: var(--teal-soft); padding: 1.6mm 3.5mm; border-radius: 99px; margin-bottom: 4mm;
+  }
+  em { font-style: italic; color: var(--teal); }
+  strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Piezas ---------- */
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 4mm; padding: 6mm; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+
+  .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 3.5mm; padding: 4.5mm; }
+  .stat b { display: block; font-family: var(--serif); font-weight: 400; font-size: 24pt; line-height: 1; letter-spacing: -.02em; }
+  .stat span { display: block; font-size: 8.5pt; color: var(--muted); margin-top: 1.5mm; line-height: 1.35; }
+
+  .num { display: flex; gap: 4mm; margin-bottom: 4.5mm; }
+  .num i {
+    flex: none; width: 8mm; height: 8mm; border-radius: 50%;
+    background: var(--ink); color: var(--bg); font-style: normal;
+    font-family: var(--mono); font-size: 9pt; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .num div { flex: 1; }
+
+  ul.ticks { list-style: none; margin: 0; padding: 0; }
+  ul.ticks li { position: relative; padding-left: 6mm; margin-bottom: 2.6mm; color: var(--muted); }
+  ul.ticks li::before {
+    content: ''; position: absolute; left: 0; top: 1.4mm;
+    width: 3.4mm; height: 1.8mm; border-left: 1.4pt solid var(--teal); border-bottom: 1.4pt solid var(--teal);
+    transform: rotate(-45deg);
+  }
+  ul.ticks li b { color: var(--ink); }
+
+  figure { margin: 0; }
+  figure img { width: 100%; display: block; border-radius: 3mm; border: 1px solid var(--line); }
+  figcaption { font-size: 8pt; color: var(--subtle); margin-top: 2.5mm; line-height: 1.4; }
+
+  .quote { background: var(--paper); border: 1px solid var(--line); border-left: 1.2mm solid var(--teal); border-radius: 3mm; padding: 5mm; margin-bottom: 3.5mm; }
+  .quote p { font-family: var(--serif); font-size: 12.5pt; line-height: 1.3; color: var(--ink); margin: 0 0 2.5mm; }
+  .quote cite { font-style: normal; font-family: var(--mono); font-size: 7.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--subtle); }
+
+  .note { background: var(--amber-soft); border: 1px solid rgba(138,83,0,.18); border-radius: 3mm; padding: 4mm 4.5mm; font-size: 8.5pt; color: var(--amber); line-height: 1.45; }
+  .note b { color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  th, td { text-align: left; padding: 3mm 3mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--subtle); font-weight: 600; }
+  td b { font-weight: 600; }
+  tr.hi td { background: var(--teal-soft); }
+  .price { font-family: var(--serif); font-size: 16pt; letter-spacing: -.02em; }
+
+  .law { font-family: var(--mono); font-size: 7.5pt; color: var(--teal); letter-spacing: .04em; }
+  .spacer { flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- ============ 1. PORTADA ============ -->
+<div class="page dark" style="padding:0;">
+  <svg style="position:absolute; right:-40mm; bottom:-52mm; width:190mm; height:190mm; opacity:.06;" viewBox="0 0 40 40" fill="none" stroke="#fff" stroke-linecap="round">
+    <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="2"/>
+    <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="2"/>
+    <path d="M28 8l4-4 2 5" stroke-width="1.6" stroke-linejoin="round"/>
+  </svg>
+  <div style="position:absolute; top:-30mm; left:-30mm; width:120mm; height:120mm; border-radius:50%; background:radial-gradient(circle, rgba(47,163,147,.30), transparent 68%);"></div>
+
+  <div style="position:relative; padding:22mm 18mm; height:100%; display:flex; flex-direction:column;">
+    <div style="display:flex; align-items:center; gap:4mm;">
+      <svg viewBox="0 0 40 40" style="width:15mm;height:15mm;">
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs>
+        <rect width="40" height="40" rx="9" fill="url(#g1)"/>
+        <g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round">
+          <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/>
+          <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/>
+          <path d="M28 8l4-4 2 5" stroke-width="2.8" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <span style="font-family:var(--serif); font-size:26pt; letter-spacing:-.01em;">Shiftia</span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div style="font-family:var(--mono); font-size:8pt; letter-spacing:.2em; text-transform:uppercase; color:var(--teal-lit); margin-bottom:6mm;">Dossier comercial · 2026</div>
+    <h1 style="font-size:42pt; color:#fff; max-width:150mm;">El cuadrante del mes,<br>hecho en minutos<br>y <em style="color:var(--teal-lit);">sin incumplir nada</em>.</h1>
+    <p style="font-size:13pt; color:rgba(255,255,255,.62); max-width:130mm; line-height:1.5; margin-top:2mm;">
+      Planificación de turnos con IA para empresas con plantilla propia que rota:
+      sanidad, residencias, industria, seguridad, hostelería y comercio.
+    </p>
+
+    <div class="spacer"></div>
+
+    <div style="display:flex; gap:10mm; border-top:1px solid rgba(255,255,255,.16); padding-top:6mm; font-size:9pt;">
+      <div><div style="font-family:var(--mono); font-size:7pt; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:1.5mm;">Web</div><b style="color:#fff;">shiftia.es</b></div>
+      <div><div style="font-family:var(--mono); font-size:7pt; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:1.5mm;">Email</div><b style="color:#fff;">info@shiftia.es</b></div>
+      <div><div style="font-family:var(--mono); font-size:7pt; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:1.5mm;">Teléfono</div><b style="color:#fff;">+34 663 50 46 47</b></div>
+      <div><div style="font-family:var(--mono); font-size:7pt; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:1.5mm;">Sede</div><b style="color:#fff;">Oviedo, Asturias</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2. EL PROBLEMA ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>El problema</span>
+  </div>
+
+  <span class="eyebrow">Por qué duele</span>
+  <h2>Hacer el cuadrante a mano<br>cuesta tiempo y <em>expone legalmente</em>.</h2>
+  <p class="lead">Quien planifica turnos casi nunca es un planificador: es un supervisor de enfermería, un jefe de sala o un responsable de producción que además tiene su propio trabajo.</p>
+
+  <div class="grid3" style="margin-bottom:7mm;">
+    <div class="stat"><b>12 h</b><span>de descanso mínimo entre jornadas. Un doblete mal puesto lo rompe sin que nadie se dé cuenta.</span></div>
+    <div class="stat"><b>4 años</b><span>hay que conservar el registro de jornada, a disposición de la Inspección.</span></div>
+    <div class="stat"><b>7.500 €</b><span>de multa máxima por infracción grave en materia de jornada, no por trabajador.</span></div>
+  </div>
+
+  <h3>Lo que pasa cada mes en una plantilla que rota</h3>
+  <ul class="ticks" style="margin-bottom:6mm;">
+    <li><b>El Excel no sabe de convenio.</b> Ni de descansos mínimos, ni del tope de noches, ni de las reducciones de jornada.</li>
+    <li><b>Una baja a las siete de la mañana</b> obliga a repasar a mano quién libra, quién viene de noche y a quién le toca.</li>
+    <li><b>El reparto se desequilibra solo.</b> Siempre hay alguien que acumula noches y fines de semana, y se nota en el ambiente antes que en los números.</li>
+    <li><b>Los cambios viven en WhatsApp.</b> Se aprueban por mensaje y se pierden, y a fin de mes nadie sabe cuántos festivos lleva cada uno.</li>
+  </ul>
+
+  <div class="note">
+    <b>Y el coste no es solo el tiempo.</b> El artículo 34.3 del Estatuto de los Trabajadores fija las 12 horas de descanso entre jornadas; el artículo 37.1, el día y medio semanal. Incumplirlos no suele ser mala fe: es una casilla mal puesta en una hoja de cálculo que nadie vuelve a mirar.
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>2</span></div>
+</div>
+
+<!-- ============ 3. EL PRODUCTO ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>El producto</span>
+  </div>
+
+  <span class="eyebrow">Qué es</span>
+  <h2>Un planificador que conoce<br>tu convenio y tu plantilla.</h2>
+  <p class="lead">Shiftia genera el cuadrante completo —mes a mes, todo el año— respetando las reglas que le configuras. No es una ETT ni un marketplace: trabaja <strong>solo con tu personal</strong>.</p>
+
+  <figure style="margin-bottom:5mm;">
+    <img src="producto.png" alt="Cuadrante generado por Shiftia con el panel del motor de IA">
+    <figcaption><strong>La pantalla real del producto.</strong> A la izquierda el cuadrante; a la derecha, el motor comprobando cobertura, equidad nocturna y conflictos antes de publicar. Puedes probarlo sin registrarte en shiftia.es/demo.</figcaption>
+  </figure>
+
+  <div class="grid2">
+    <div class="card" style="padding:5mm;">
+      <h3>Genera el cuadrante entero</h3>
+      <p style="margin:0; font-size:9pt;">La IA lo crea desde cero respetando convenio, equidad de noches y restricciones individuales. No es solo cubrir bajas: es la planificación continua.</p>
+    </div>
+    <div class="card" style="padding:5mm;">
+      <h3>Cubre una baja en un segundo</h3>
+      <p style="margin:0; font-size:9pt;">Propone tres candidatos puntuando 11 criterios —carga, descansos, convenio, contrato, preferencias, polivalencia y más—. La decisión final siempre es humana.</p>
+    </div>
+    <div class="card" style="padding:5mm;">
+      <h3>Avisa antes de publicar</h3>
+      <p style="margin:0; font-size:9pt;">El detector de conflictos revisa el cuadrante contra tus reglas y señala qué falla y por qué, con el artículo concreto.</p>
+    </div>
+    <div class="card" style="padding:5mm;">
+      <h3>Importa lo que ya tienes</h3>
+      <p style="margin:0; font-size:9pt;">Sube tu cuadrante actual en PDF y el lector con IA rellena la aplicación. No hay que empezar de cero ni teclear la plantilla.</p>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>3</span></div>
+</div>
+
+<!-- ============ 4. CÓMO FUNCIONA ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>Cómo funciona</span>
+  </div>
+
+  <span class="eyebrow">En tres pasos</span>
+  <h2>De la hoja de cálculo<br>al cuadrante publicado.</h2>
+
+  <div style="margin:6mm 0 7mm;">
+    <div class="num"><i>1</i><div>
+      <h3>Se configuran tus reglas</h3>
+      <p style="margin:0;">Descansos mínimos, tope de noches, jornadas reducidas, conciliaciones y restricciones individuales. Lo hacemos nosotros contigo en la implantación: tú no rellenas formularios.</p>
+    </div></div>
+    <div class="num"><i>2</i><div>
+      <h3>La IA propone el cuadrante</h3>
+      <p style="margin:0;">Con tu plantilla real y tus reglas. Reparte noches, fines de semana y festivos de forma equilibrada, y marca a quién le queda descompensado.</p>
+    </div></div>
+    <div class="num"><i>3</i><div>
+      <h3>Tú revisas, apruebas y publicas</h3>
+      <p style="margin:0;">Antes de publicar, el detector de conflictos avisa de cualquier incumplimiento. El equipo lo ve en su móvil y pide cambios desde ahí.</p>
+    </div></div>
+  </div>
+
+  <h3 style="margin-bottom:3mm;">Y además, cada mes</h3>
+  <div class="grid2" style="gap:3mm;">
+    <ul class="ticks" style="margin:0;">
+      <li>Vacaciones y ausencias con balance por persona</li>
+      <li>Verificación de cobertura antes de aprobar un permiso</li>
+      <li>Cambios entre compañeros que solo hay que aprobar</li>
+    </ul>
+    <ul class="ticks" style="margin:0;">
+      <li>Recuento de domingos, festivos y nocturnidades</li>
+      <li>Cómputo de horas mensual y anual</li>
+      <li>Histórico y auditoría exportable en CSV y PDF</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top:6mm; background:var(--teal-soft); border-color:rgba(15,122,109,.2);">
+    <h3 style="color:var(--teal);">Dos experiencias, un sistema</h3>
+    <p style="margin:0; font-size:9.5pt;"><strong>Quien planifica</strong> ve el cuadrante completo, los conflictos y los balances. <strong>Quien trabaja</strong> ve su turno, pide cambios y consulta sus horas desde el móvil. Nadie tiene que preguntar por WhatsApp qué le toca mañana.</p>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>4</span></div>
+</div>
+
+<!-- ============ 5. CUMPLIMIENTO ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>Cumplimiento</span>
+  </div>
+
+  <span class="eyebrow">El convenio, como reglas</span>
+  <h2>La norma deja de ser<br>algo que <em>hay que recordar</em>.</h2>
+  <p class="lead">Las reglas se configuran una vez y el motor no genera un turno que las rompa. Estas son las que más se incumplen sin querer:</p>
+
+  <table style="margin-bottom:6mm;">
+    <tr><th style="width:38%;">Regla</th><th style="width:22%;">Norma</th><th>Qué hace Shiftia</th></tr>
+    <tr>
+      <td><b>12 h entre jornadas</b></td>
+      <td class="law">Art. 34.3 ET</td>
+      <td>No encadena un turno que deje menos de 12 h, salvo la excepción que tengas configurada.</td>
+    </tr>
+    <tr>
+      <td><b>Excepción del cambio de turno</b></td>
+      <td class="law">Art. 19.2<br>RD 1561/1995</td>
+      <td>En trabajo a turnos, el día del cambio puede bajar de 12 h. Se compensa en los días inmediatamente siguientes, y el sistema lo lleva contado.</td>
+    </tr>
+    <tr>
+      <td><b>Día y medio semanal</b></td>
+      <td class="law">Art. 37.1 ET</td>
+      <td>Acumulable hasta 14 días. El detector avisa si una racha se pasa.</td>
+    </tr>
+    <tr>
+      <td><b>Trabajo nocturno</b></td>
+      <td class="law">Art. 36 ET</td>
+      <td>Tope de noches por persona y periodo, con la media repartida solo entre quien rota.</td>
+    </tr>
+    <tr class="hi">
+      <td><b>Sanidad pública</b></td>
+      <td class="law">Ley 55/2003<br>Estatuto Marco</td>
+      <td>Régimen propio de jornada y descansos del personal estatutario, configurable aparte.</td>
+    </tr>
+  </table>
+
+  <div class="grid2">
+    <div class="card" style="padding:5mm;">
+      <h3>Tu convenio manda</h3>
+      <p style="margin:0; font-size:9pt;">Un convenio puede mejorar la ley, nunca empeorarla. Si el tuyo fija dos días de descanso o un tope de noches más estricto, esa es la regla que se configura.</p>
+    </div>
+    <div class="card" style="padding:5mm;">
+      <h3>Rastro para la Inspección</h3>
+      <p style="margin:0; font-size:9pt;">Histórico de cambios y auditoría exportable. Quién cambió qué turno, cuándo y con qué aprobación.</p>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:5mm;">
+    <b>Con honestidad:</b> Shiftia planifica el cuadrante, no es un sistema de fichaje. El registro horario del artículo 34.9 lo aporta tu sistema de control de presencia.
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>5</span></div>
+</div>
+
+<!-- ============ 6. AUDITORÍA GRATUITA ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>Auditoría gratuita</span>
+  </div>
+
+  <span class="eyebrow">Sin compromiso</span>
+  <h2>Antes de contratar nada:<br>súbenos <em>tu</em> cuadrante.</h2>
+  <p class="lead">Lo analizamos y te devolvemos un informe con cada incumplimiento, su motivo y el artículo que lo respalda. Sin registro y sin cambiar de software.</p>
+
+  <figure>
+    <img src="informe-1.png" alt="Primera página del informe de auditoría">
+    <figcaption><strong>1 · Lo que falla.</strong> Cada incumplimiento localizado, con la norma que lo respalda. Abajo, la cobertura día a día: el número de personas por turno que la corrección no puede tocar.</figcaption>
+  </figure>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>6</span></div>
+</div>
+
+<!-- ============ 7. AUDITORÍA · CORREGIDO ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>Auditoría gratuita</span>
+  </div>
+
+  <h2 style="margin-bottom:4mm;">Y cómo queda arreglado.</h2>
+
+  <figure style="margin-bottom:6mm;">
+    <img src="informe-2.png" alt="Página del cuadrante corregido">
+    <figcaption><strong>2 · El cuadrante corregido.</strong> En verde, las celdas que cambian. La corrección intercambia turnos del mismo día entre dos personas, así que <strong>la cobertura diaria no cambia</strong>: la misma gente en cada turno, solo cambia quién lo hace.</figcaption>
+  </figure>
+
+  <div class="card" style="background:var(--teal-soft); border-color:rgba(15,122,109,.2);">
+    <h3 style="color:var(--teal);">Qué recibes</h3>
+    <div class="grid3" style="gap:4mm; margin-top:3mm;">
+      <div><b style="font-size:9.5pt;">Informe</b><div style="font-size:8.5pt; color:var(--muted); margin-top:1mm;">Cada incumplimiento, con su motivo</div></div>
+      <div><b style="font-size:9.5pt;">Cuadrante corregido</b><div style="font-size:8.5pt; color:var(--muted); margin-top:1mm;">Sin tocar la cobertura diaria</div></div>
+      <div><b style="font-size:9.5pt;">Gratis</b><div style="font-size:8.5pt; color:var(--muted); margin-top:1mm;">Sin registro y sin permanencia</div></div>
+    </div>
+    <p style="margin:4mm 0 0; font-size:9pt;"><strong>shiftia.es/recursos/auditoria-cuadrante</strong></p>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>7</span></div>
+</div>
+
+<!-- ============ 7. QUIÉN LO USA ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>Quién lo usa</span>
+  </div>
+
+  <span class="eyebrow">Clientes reales</span>
+  <h2>Ya se planifica con Shiftia<br>en seis organizaciones.</h2>
+
+  <div class="grid3" style="gap:3mm; margin-bottom:6mm;">
+    <div class="stat" style="padding:4mm;"><b style="font-size:12pt; font-family:var(--sans); font-weight:600;">Hospital Univ.<br>Clínico San Cecilio</b><span>Servicio de Urología · Granada</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:12pt; font-family:var(--sans); font-weight:600;">Servicios<br>sanitarios</b><span>Laboratorios y servicios · Asturias</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:12pt; font-family:var(--sans); font-weight:600;">SPAR<br>Supermercados</b><span>Retail · Gran Canaria</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:12pt; font-family:var(--sans); font-weight:600;">NONWATIO</b><span>Frío industrial · Valencia</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:12pt; font-family:var(--sans); font-weight:600;">Grupo Pasarela</b><span>Hostelería · 4 locales en Elche</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:12pt; font-family:var(--sans); font-weight:600;">La Otra Abacería</b><span>Hostelería · León</span></div>
+  </div>
+
+  <h3 style="margin-bottom:3mm;">Lo que nos escribieron</h3>
+
+  <div class="quote">
+    <p>«Revisar en Excel que se cumplieran los criterios con 20 operadores podía costar fácilmente una hora. Ahora <em>se tarda apenas unos segundos</em>.»</p>
+    <cite>Responsable de planificación · 20 operadores a turnos · Industria</cite>
+  </div>
+
+  <div class="quote">
+    <p>«Ahora la aplicación me muestra directamente las alternativas más viables para cubrir ese turno.»</p>
+    <cite>Supervisor/a de enfermería · 32 profesionales · Hospital</cite>
+  </div>
+
+  <div class="quote" style="margin-bottom:4mm;">
+    <p>«Los cambios se gestionaban prácticamente todos por WhatsApp. Ahora el trabajador lo solicita en la aplicación y al aprobarlo queda actualizado directamente.»</p>
+    <cite>Responsable de restaurante · 18 trabajadores · Hostelería</cite>
+  </div>
+
+  <div class="note">
+    <b>El límite honesto de estas valoraciones:</b> son extractos literales de lo que cada cliente nos envió por escrito, publicados de forma anónima con su permiso. Ninguno cuantifica su ahorro total. La única cifra concreta de toda esta página es esa hora de planificación para 20 operadores.
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>8</span></div>
+</div>
+
+<!-- ============ 8. PRECIOS ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>Precios</span>
+  </div>
+
+  <span class="eyebrow">Planes</span>
+  <h2>Tarifa plana.<br>Sin coste <em>por trabajador</em>.</h2>
+  <p class="lead">Crecer de plantilla no te penaliza. Sin permanencia y con garantía de devolución de 30 días.</p>
+
+  <table style="margin-bottom:5mm;">
+    <tr><th style="width:24%;">Plan</th><th style="width:22%;">Mensual</th><th style="width:20%;">Anual (−20%)</th><th>Para quién</th></tr>
+    <tr>
+      <td><b>Esencial</b></td>
+      <td><span class="price">29 €</span><span style="font-size:8pt; color:var(--subtle);">/mes</span></td>
+      <td>23 €/mes</td>
+      <td>Hasta 15 trabajadores. El núcleo de la planificación.</td>
+    </tr>
+    <tr class="hi">
+      <td><b>Pro</b> <span style="font-family:var(--mono); font-size:7pt; color:var(--teal); letter-spacing:.1em;">★ MÁS ELEGIDO</span></td>
+      <td><span class="price">69 €</span><span style="font-size:8pt; color:var(--subtle);">/mes</span></td>
+      <td>55 €/mes</td>
+      <td>Hasta 40 trabajadores. <b>Incluye la generación con IA.</b></td>
+    </tr>
+    <tr>
+      <td><b>Business</b></td>
+      <td><span class="price">129 €</span><span style="font-size:8pt; color:var(--subtle);">/mes</span></td>
+      <td>103 €/mes</td>
+      <td>Hasta 100 trabajadores, multi-centro.</td>
+    </tr>
+    <tr>
+      <td><b>Enterprise</b></td>
+      <td colspan="2">A medida</td>
+      <td>Más de 100 trabajadores, opción on-premise.</td>
+    </tr>
+  </table>
+
+  <figure style="margin-bottom:4mm;">
+    <img src="calc.png" alt="Calculadora de retorno de Shiftia">
+    <figcaption>La calculadora de la web, con los valores de un equipo de 20 personas cuyo responsable dedica 6 h a la semana a planificar.</figcaption>
+  </figure>
+
+  <div class="note">
+    <b>De dónde sale esa estimación.</b> Las 18 h al mes y los 4.801 € al año del ejemplo son un cálculo propio de Shiftia, basado en una reducción media del 70 % del tiempo de planificación. No son un dato de nuestros clientes ni de ninguna auditoría externa: son una estimación con los parámetros que tú mismo ajustas en shiftia.es.
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>9</span></div>
+</div>
+
+<!-- ============ 9. IMPLANTACIÓN ============ -->
+<div class="page">
+  <div class="ph">
+    <div class="mk"><svg viewBox="0 0 40 40"><rect width="40" height="40" rx="9" fill="#0f7a6d"/><g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round"><path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/><path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/></g></svg><b>Shiftia</b></div>
+    <span>Implantación</span>
+  </div>
+
+  <span class="eyebrow">Qué pasa si decís que sí</span>
+  <h2>De cinco a siete días<br>laborables. Acompañados.</h2>
+
+  <div class="grid4" style="margin-bottom:7mm;">
+    <div class="stat" style="padding:4mm;"><b style="font-size:20pt;">5–7</b><span>días laborables de implantación</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:20pt;">0 €</b><span>de coste de onboarding</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:20pt;">30</b><span>días de garantía de devolución</span></div>
+    <div class="stat" style="padding:4mm;"><b style="font-size:20pt;">0</b><span>permanencia. Cancelas cuando quieras</span></div>
+  </div>
+
+  <div style="margin-bottom:7mm;">
+    <div class="num"><i>1</i><div><h3>Llamada de 30 minutos</h3><p style="margin:0;">Nos cuentas cómo son tus turnos y qué convenio te aplica. Sin presentación comercial.</p></div></div>
+    <div class="num"><i>2</i><div><h3>Configuramos tus reglas</h3><p style="margin:0;">Importamos tu cuadrante actual —vale un PDF— y dejamos el convenio configurado como reglas.</p></div></div>
+    <div class="num"><i>3</i><div><h3>Primer cuadrante juntos</h3><p style="margin:0;">Lo generamos contigo delante y lo comparamos con el que habrías hecho a mano.</p></div></div>
+    <div class="num"><i>4</i><div><h3>Tu equipo entra</h3><p style="margin:0;">Cada persona ve sus turnos en el móvil. No hace falta formar a nadie: se entiende solo.</p></div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="padding:5mm;">
+      <h3>Datos y seguridad</h3>
+      <p style="margin:0; font-size:9pt;">Cifrado, copias automáticas y cumplimiento del RGPD. Opción on-premise en el plan Enterprise si tu organización lo exige.</p>
+    </div>
+    <div class="card" style="padding:5mm;">
+      <h3>Quién está detrás</h3>
+      <p style="margin:0; font-size:9pt;">Lo dirige <strong>Diego Ciborro</strong>, enfermero especialista en activo en la sanidad pública. Shiftia nace de hacer cuadrantes reales en un servicio que no cierra ningún día.</p>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="pf"><span>Shiftia · Dossier comercial 2026</span><span>10</span></div>
+</div>
+
+<!-- ============ 10. CONTRAPORTADA ============ -->
+<div class="page dark" style="padding:0;">
+  <div style="position:absolute; bottom:-40mm; left:-40mm; width:130mm; height:130mm; border-radius:50%; background:radial-gradient(circle, rgba(47,163,147,.26), transparent 68%);"></div>
+
+  <div style="position:relative; padding:24mm 18mm; height:100%; display:flex; flex-direction:column;">
+    <div style="display:flex; align-items:center; gap:3.5mm; margin-bottom:auto;">
+      <svg viewBox="0 0 40 40" style="width:12mm;height:12mm;">
+        <defs><linearGradient id="g2" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2fa393"/><stop offset="1" stop-color="#0f7a6d"/></linearGradient></defs>
+        <rect width="40" height="40" rx="9" fill="url(#g2)"/>
+        <g transform="translate(20 20) scale(.72) translate(-20 -20)" fill="none" stroke="#fff" stroke-linecap="round">
+          <path d="M20 35c-8-2-14-8-12-16s10-12 18-10c-6-1-12 3-13 9s4 12 10 14" stroke-width="3.4"/>
+          <path d="M18 10c8 2 14 8 12 16s-10 12-18 10c6 1 12-3 13-9s-4-12-10-14" stroke-width="3.4"/>
+          <path d="M28 8l4-4 2 5" stroke-width="2.8" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <span style="font-family:var(--serif); font-size:20pt;">Shiftia</span>
+    </div>
+
+    <h2 style="color:#fff; font-size:30pt; max-width:140mm;">Empieza por lo que<br>no cuesta nada.</h2>
+    <p style="color:rgba(255,255,255,.62); font-size:11.5pt; max-width:125mm; line-height:1.55;">
+      Súbenos tu cuadrante actual y te devolvemos el informe de auditoría con los incumplimientos
+      encontrados y la versión corregida. Sin registro. Y si te encaja, hablamos.
+    </p>
+
+    <div style="display:flex; gap:6mm; margin:8mm 0 auto;">
+      <div style="flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.14); border-radius:4mm; padding:5mm;">
+        <div style="font-family:var(--mono); font-size:7pt; letter-spacing:.14em; text-transform:uppercase; color:var(--teal-lit); margin-bottom:2mm;">Auditoría gratuita</div>
+        <b style="font-size:10pt; color:#fff;">shiftia.es/recursos/<br>auditoria-cuadrante</b>
+      </div>
+      <div style="flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.14); border-radius:4mm; padding:5mm;">
+        <div style="font-family:var(--mono); font-size:7pt; letter-spacing:.14em; text-transform:uppercase; color:var(--teal-lit); margin-bottom:2mm;">Demo sin registro</div>
+        <b style="font-size:10pt; color:#fff;">shiftia.es/demo</b>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:8mm; border-top:1px solid rgba(255,255,255,.16); padding-top:6mm;">
+      <div style="font-size:10pt; line-height:1.8;">
+        <div style="font-family:var(--mono); font-size:7pt; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.45); margin-bottom:2mm;">Contacto</div>
+        <b style="color:#fff;">Diego Ciborro</b> <span style="color:rgba(255,255,255,.5);">· Fundador</span><br>
+        <span style="color:rgba(255,255,255,.75);">info@shiftia.es · +34 663 50 46 47</span><br>
+        <span style="color:rgba(255,255,255,.5); font-size:9pt;">Oviedo, Asturias · Highkey Labs Software Solutions</span>
+      </div>
+      <div style="flex:none; text-align:center;">
+        <div style="background:#fff; padding:3mm; border-radius:3mm; width:32mm; height:32mm;">
+          <img src="qr.png" alt="QR a la tarjeta de contacto" style="width:100%; height:100%; display:block;">
+        </div>
+        <div style="font-family:var(--mono); font-size:6.5pt; letter-spacing:.1em; color:rgba(255,255,255,.45); margin-top:2mm;">shiftia.es/tarjeta</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
