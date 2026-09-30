@@ -1261,6 +1261,39 @@ section { padding: 140px 48px; }
 /* Día cerrado por vacaciones/festivo/viaje: tachado, para distinguirlo de un
    fin de semana o de un día fuera del horizonte de reserva. */
 .cal-day.blocked { text-decoration: line-through; }
+/* Descarga del dossier junto al formulario de contacto. Mucha gente no reserva
+   una llamada pero sí se lleva un PDF: este es el segundo camino. */
+.dossier-cta {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 26px; padding: 16px 18px;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border, #e8e6df);
+  border-radius: 14px; text-decoration: none; color: inherit;
+  box-shadow: var(--ds-shadow-sm, 0 1px 2px rgba(15,15,15,.04));
+  transition: border-color .2s cubic-bezier(.16,1,.3,1), box-shadow .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1);
+}
+.dossier-cta:hover { border-color: var(--ds-accent, #0f7a6d); box-shadow: 0 12px 28px -20px rgba(15,122,109,.6); transform: translateY(-1px); }
+.dossier-cta:focus-visible { outline: 2px solid var(--ds-accent, #0f7a6d); outline-offset: 2px; }
+.dc-ico {
+  flex: none; width: 38px; height: 38px; border-radius: 11px;
+  background: var(--ds-accent-soft, #e9f5f2); color: var(--ds-accent, #0f7a6d);
+  display: grid; place-items: center;
+}
+.dc-ico svg { width: 18px; height: 18px; }
+.dc-txt { flex: 1; min-width: 0; }
+.dc-txt b { display: block; font-size: 0.95rem; font-weight: 600; letter-spacing: -.01em; color: var(--text1); }
+.dc-txt span { display: block; font-size: 0.83rem; line-height: 1.45; color: var(--text2); margin-top: 2px; }
+.dc-go { flex: none; width: 17px; height: 17px; color: var(--text3); }
+.dossier-cta:hover .dc-go { color: var(--ds-accent, #0f7a6d); }
+@media (max-width: 480px) {
+  .dossier-cta { padding: 14px 15px; gap: 12px; }
+  .dc-go { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dossier-cta { transition: none; }
+  .dossier-cta:hover { transform: none; }
+}
+
 /* Atajo al primer hueco que queda libre de verdad. Lo que dice sale de
    /api/booking/availability —reservas y cierres reales—, así que el visitante
    puede comprobarlo abriendo el calendario: pinchar lo lleva justo ahí. */
